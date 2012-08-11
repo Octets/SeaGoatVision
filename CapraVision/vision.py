@@ -22,37 +22,11 @@ Created on 2012-07-26
 
 @author: benoit
 '''
-
-def open_filter_chain(file_name):
-    pass
-
-def save_filter_chain(file_name, chain):
-    pass
-
-class FilterChain:
+        
+if __name__ == '__main__':
+    import gobject, gtk, pygtk, gui
+    gobject.threads_init()
+    w = gui.WinFilterChain()
+    w.window.show_all()
+    gtk.main()
     
-    def __init__(self):
-        self.filters = []
-        self.observers = []
-        pass
-    
-    def add_filter(self, filter):
-        self.filtres.append(filter)
-    
-    def remove_filter(self, filter):
-        self.filters.remove(filter)
-        
-    def add_observer(self, observer):
-        self.observers.append(observer)
-        
-    def remove_observer(self, observer):
-        self.observers.remove(observer)
-        
-    def execute(self, image):
-        for f in self.filters:
-            if inspect.isfunction(f):
-                output = f(image)
-            else:
-                output = f.execute(image)
-            [observer(filter, output) for observer in self.observers]
-        

@@ -36,14 +36,14 @@ class ImageFolder:
             image = cv2.imread(f)
             if image <> None:
                 yield image
-        return None
 
 class Webcam:
-    
+            
     def __init__(self, camera_number):
         self.run = True
         self.video = cv2.VideoCapture(camera_number)
-
+        #self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 640)
+        #self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 480)
     def __del__(self):
         self.close()
         

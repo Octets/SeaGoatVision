@@ -26,7 +26,10 @@ Created on 2012-07-23
 import pygtk
 pygtk.require("2.0")
 import gtk
+import gobject
 import chain
+import threading
+from filters import bgr_to_rgb
 
 def get_ui(window, *names):
     ui = gtk.Builder()
@@ -80,3 +83,30 @@ class WinFilterChain:
     def on_cboSource_changed(self, widget):
         pass
     
+class WinViewer():
+    
+    def __init__(self, source, filterchain, filter):
+        ui = get_ui(self, 'winViewer')
+        self.window = ui.get_object('winViewer')
+        self.imgSource = ui.get_object('imgSource')
+        self.source = source
+        self.chain = filterchain
+        self.filter = filter
+        self.window.set_title(filter.__name__)
+        filterchain.add_observer(self.chain_observer)
+        self.thread = chain.ThreadMainLoop(source, filterchain, 0)
+        self.thread.start()
+
+    def chain_observer(self, filter, output):
+        if filter.__name__ == self.filter.__name__:
+            gobject.idle_add(self.update_image, output)
+            return
+        
+    def update_image(self, image):
+        image = bgr_to_rgb(image)
+        pixbuf = gtk.gdk.pixbuf_new_from_array(image, gtk.gdk.COLORSPACE_RGB, 8)
+        self.imgSource.set_from_pixbuf(pixbuf)
+
+    def on_winViewer_destroy(self, widget):
+        self.thread.stop()
+        

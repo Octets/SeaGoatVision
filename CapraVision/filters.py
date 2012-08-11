@@ -26,6 +26,13 @@ Created on 2012-07-28
 import cv2.cv as cv, cv2
 import numpy as np
 
+def noop(image):
+    return image
+
+def bgr_to_rgb(image):
+    image = cv2.cvtColor(image, cv.CV_BGR2RGB)
+    return image
+
 def bgr_to_hsv(image):
     image = cv2.cvtColor(image, cv.CV_BGR2HSV)
     #image = cv2.cvtColor(image, cv.CV_BGR2GRAY)

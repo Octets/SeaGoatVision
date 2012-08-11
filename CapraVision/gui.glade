@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy toplevel-contextual -->
+  <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkListStore" id="filtersListStore"/>
   <object class="GtkListStore" id="sourcesListStore"/>
   <object class="GtkWindow" id="winFilterChain">
@@ -40,8 +39,6 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -56,6 +53,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="on_btnOpen_clicked" swapped="no"/>
               </object>
               <packing>
@@ -110,6 +108,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -134,6 +133,9 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="model">filtersListStore</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection1"/>
+                </child>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -154,6 +156,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="on_btnAdd_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -169,6 +172,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="on_btnRemove_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -184,6 +188,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="on_btnConfig_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -199,6 +204,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="on_btnView_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -233,6 +239,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="on_btnCreate_clicked" swapped="no"/>
               </object>
               <packing>
@@ -248,6 +255,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="on_btnSave_clicked" swapped="no"/>
               </object>
               <packing>
@@ -263,6 +271,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="on_btnSaveAs_clicked" swapped="no"/>
               </object>
               <packing>
@@ -278,6 +287,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="on_btnCancel_clicked" swapped="no"/>
               </object>
               <packing>
@@ -293,6 +303,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="on_btnQuit_clicked" swapped="no"/>
               </object>
               <packing>
@@ -322,7 +333,7 @@
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Perspective</property>
     <child>
-      <object class="GtkVBox" id="vbox1">
+      <object class="GtkVBox" id="vbox2">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">3</property>
@@ -334,6 +345,18 @@
             <property name="n_columns">6</property>
             <property name="column_spacing">3</property>
             <property name="row_spacing">3</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
             <child>
               <object class="GtkLabel" id="lblTopLeft">
                 <property name="visible">True</property>
@@ -497,8 +520,6 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <property name="numeric">True</property>
                 <signal name="value-changed" handler="on_spnTopLeftX_value_changed" swapped="no"/>
               </object>
@@ -516,8 +537,6 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <property name="snap_to_ticks">True</property>
                 <property name="numeric">True</property>
                 <signal name="value-changed" handler="on_spnTopLeftY_value_changed" swapped="no"/>
@@ -537,8 +556,6 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <signal name="value-changed" handler="on_spnBottomLeftX_value_changed" swapped="no"/>
               </object>
               <packing>
@@ -556,8 +573,6 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <signal name="value-changed" handler="on_spnBottomLeftY_value_changed" swapped="no"/>
               </object>
               <packing>
@@ -575,8 +590,6 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <signal name="value-changed" handler="on_spnTopRightX_value_changed" swapped="no"/>
               </object>
               <packing>
@@ -593,8 +606,6 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <signal name="value-changed" handler="on_spnTopRightY_value_changed" swapped="no"/>
               </object>
               <packing>
@@ -612,8 +623,6 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <signal name="value-changed" handler="on_spnBottomRightX_value_changed" swapped="no"/>
               </object>
               <packing>
@@ -631,8 +640,6 @@
                 <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
                 <signal name="value-changed" handler="on_spnBottomRightY_value_changed" swapped="no"/>
               </object>
               <packing>
@@ -643,18 +650,6 @@
                 <property name="x_options"></property>
               </packing>
             </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -664,7 +659,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHButtonBox" id="hbuttonbox1">
+          <object class="GtkHButtonBox" id="hbuttonbox2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
@@ -675,6 +670,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="on_btnOK_clicked" swapped="no"/>
               </object>
               <packing>
@@ -684,12 +680,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btnCancel">
+              <object class="GtkButton" id="btnCancel1">
                 <property name="label" translatable="yes">Cancel</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="on_btnCancel_clicked" swapped="no"/>
               </object>
               <packing>
@@ -716,12 +713,12 @@
     <property name="default_width">300</property>
     <property name="default_height">150</property>
     <child>
-      <object class="GtkVBox" id="vbox2">
+      <object class="GtkVBox" id="vbox3">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">3</property>
         <child>
-          <object class="GtkVBox" id="vbox3">
+          <object class="GtkVBox" id="vbox4">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">3</property>
@@ -819,18 +816,19 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHButtonBox" id="hbuttonbox1">
+              <object class="GtkHButtonBox" id="hbuttonbox3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="spacing">3</property>
                 <property name="layout_style">end</property>
                 <child>
-                  <object class="GtkButton" id="btnOK">
+                  <object class="GtkButton" id="btnOK1">
                     <property name="label" translatable="yes">OK</property>
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="on_btnOK_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -840,12 +838,13 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btnCancel">
+                  <object class="GtkButton" id="btnCancel2">
                     <property name="label" translatable="yes">Cancel</property>
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="use_action_appearance">False</property>
                     <signal name="clicked" handler="on_btnCancel_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -879,11 +878,11 @@
     <property name="default_width">440</property>
     <property name="default_height">250</property>
     <child>
-      <object class="GtkVBox" id="vbox1">
+      <object class="GtkVBox" id="vbox5">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkTable" id="table1">
+          <object class="GtkTable" id="table3">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="n_rows">6</property>
@@ -1061,18 +1060,19 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHButtonBox" id="hbuttonbox1">
+          <object class="GtkHButtonBox" id="hbuttonbox4">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">3</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="btnOK">
+              <object class="GtkButton" id="btnOK2">
                 <property name="label" translatable="yes">OK</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="on_btnOK_clicked" swapped="no"/>
               </object>
               <packing>
@@ -1082,12 +1082,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btnCancel">
+              <object class="GtkButton" id="btnCancel3">
                 <property name="label" translatable="yes">Cancel</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <signal name="clicked" handler="on_btnCancel_clicked" swapped="no"/>
               </object>
               <packing>
@@ -1103,6 +1104,17 @@
             <property name="position">1</property>
           </packing>
         </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="winViewer">
+    <property name="can_focus">False</property>
+    <signal name="destroy" handler="on_winViewer_destroy" swapped="no"/>
+    <child>
+      <object class="GtkImage" id="imgSource">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="stock">gtk-missing-image</property>
       </object>
     </child>
   </object>

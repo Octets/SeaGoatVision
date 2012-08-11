@@ -14,17 +14,20 @@ import threading
 import gobject
 import gtk
 
+gtk.disable_setlocale()
+gtk.init_check()
 gobject.threads_init()
+gtk.gdk.threads_init()
 
 video = cv2.VideoCapture(0)
 
-pers = Perspective()
-rgbrem = RGBLevel()
-rgbthres = RGBThreshold()
+#pers = Perspective()
+#rgbrem = RGBLevel()
+#rgbthres = RGBThreshold()
 
-win = map_filter_to_ui(pers)
-w = win(pers)
-w.window.show_all()
+#win = map_filter_to_ui(pers)
+#w = win(pers)
+#w.window.show_all()
 
 #winRGBLevel = WinRGBLevel(rgbrem)
 #winRGBLevel.window.show_all()
@@ -56,21 +59,43 @@ class Capture(threading.Thread):
         while run:
             #image = source_image()
             image = source_video()
-            #cv2.imshow('init', image)
+            cv2.imshow('init', image)
 
-            image = pers.execute(image)
+            #image = pers.execute(image)
             #cv2.imshow('perspec', image)
             
-            image = rgbrem.execute(image)
+            #image = rgbrem.execute(image)
             #cv2.imshow('rgbrem', image)
             
-            image = rgbthres.execute(image)
-            cv2.imshow('rgbthres', image)
+            #image = rgbthres.execute(image)
+            #cv2.imshow('rgbthres', image)
         
             c = cv2.waitKey(1)
     
-c = Capture()
-c.start()
-gtk.main()
+#c = Capture()
+#print "Start capture"
+#c.start()
+#print "ok"
+#t = threading.Thread(target=gtk.main, name="GTK Thread")
+#t.deamon = True
+#t.start()
+
+run = True
+while run:
+    print "running"
+    #image = source_image()
+    image = source_video()
+    cv2.imshow('init', image)
+    print "avant wait"
+    try:
+        c = cv2.waitKey(1)
+    except e:
+        print e
+    print "apres wait"
+
+#gtk.main()
+print "apres gtk main"
 cv2.destroyAllWindows()
+print "almost done"
 c.stop()
+print "done"
