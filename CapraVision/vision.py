@@ -22,11 +22,13 @@ Created on 2012-07-26
 
 @author: benoit
 '''
+
+from gi.repository import Gtk, GObject
+import gui
         
 if __name__ == '__main__':
-    import gobject, gtk, pygtk, gui
-    gobject.threads_init()
+    GObject.threads_init()
     w = gui.WinFilterChain()
     w.window.show_all()
-    gtk.main()
+    Gtk.main()
     

@@ -23,16 +23,16 @@ Created on 2012-07-23
 @author: Benoit Paquet
 '''
 
-import pygtk
-pygtk.require("2.0")
-import gtk
-import gobject
-import chain
+from gi.repository import Gtk, GObject, GdkPixbuf
+import cv2
+import tempfile
 import threading
+
+import chain
 from filters import bgr_to_rgb
 
 def get_ui(window, *names):
-    ui = gtk.Builder()
+    ui = Gtk.Builder()
     ui.add_objects_from_file('gui.glade', [name for name in names])
     ui.connect_signals(window)
     return ui
@@ -92,21 +92,34 @@ class WinViewer():
         self.source = source
         self.chain = filterchain
         self.filter = filter
-        self.window.set_title(filter.__name__)
         filterchain.add_observer(self.chain_observer)
+        self.temp_file = tempfile.mktemp('.jpg')
+        self.window.set_title(filter.__name__)
         self.thread = chain.ThreadMainLoop(source, filterchain, 0)
         self.thread.start()
 
     def chain_observer(self, filter, output):
         if filter.__name__ == self.filter.__name__:
-            gobject.idle_add(self.update_image, output)
+            GObject.idle_add(self.update_image3, output)
             return
         
     def update_image(self, image):
         image = bgr_to_rgb(image)
-        pixbuf = gtk.gdk.pixbuf_new_from_array(image, gtk.gdk.COLORSPACE_RGB, 8)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_data(image, GdkPixbuf.Colorspace.RGB, 8)
         self.imgSource.set_from_pixbuf(pixbuf)
 
+    # fix for GTK3 because https://bugzilla.gnome.org/show_bug.cgi?id=674691
+    def update_image3(self, image):
+        cv2.imwrite(self.temp_file, image)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.temp_file)
+        self.imgSource.set_from_pixbuf(pixbuf)
+        
     def on_winViewer_destroy(self, widget):
         self.thread.stop()
         
+    def on_btnConfigure_clicked(self, widget):
+        pass
+    
+    def on_cboSource_changed(self, widget):
+        pass
+    

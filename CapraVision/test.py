@@ -1,12 +1,12 @@
 import unittest
 
-import pygtk
-import gtk
+from gi.repository import Gtk
+from gi.repository import GObject
+GObject.threads_init()
+
 import cv2
 import gui, source, chain
 from filters import noop
-import gobject
-gobject.threads_init()
 
 def source_image():
     image = cv2.imread('0-157.png')
@@ -18,8 +18,7 @@ def test_viewer():
     c.add_filter(noop)
     w = gui.WinViewer(s, c, noop)
     w.window.show_all()
-    gtk.main()
+    Gtk.main()
     
 if __name__ == '__main__':
-    print "test"
     test_viewer()

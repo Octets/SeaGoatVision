@@ -23,9 +23,7 @@ Created on 2012-08-01
 @author: benoit
 '''
 
-import pygtk
-pygtk.require("2.0")
-import gtk
+from gi.repository import Gtk
 from gui import get_ui
 import copy
 
@@ -172,7 +170,7 @@ class WinPerspective:
         self.spnBottomRightY.set_value(self.filtre.bottomrighty)
         
     def create_adj(self):
-        return gtk.Adjustment(0.0, 0.0, 65535.0, 1, 10.0, 0.0)
+        return Gtk.Adjustment(0.0, 0.0, 65535.0, 1, 10.0, 0.0)
     
     def on_btnOK_clicked(self, widget):
         self.window.destroy()
