@@ -17,12 +17,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-Created on 2012-07-28
-
-@author: Benoit Paquet
-'''
-
 import cv2.cv as cv, cv2
 import numpy as np
 

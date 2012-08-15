@@ -17,19 +17,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-Created on 2012-07-23
-
-@author: Benoit Paquet
-'''
-
 from gi.repository import Gtk, GObject, GdkPixbuf
 import cv2
 import tempfile
 import threading
 
-import chain
-from filters import bgr_to_rgb
+import chain, sources
+from filters.implementations import bgr_to_rgb
 
 def get_ui(window, *names):
     ui = Gtk.Builder()
@@ -38,12 +32,16 @@ def get_ui(window, *names):
     return ui
 
 class WinFilterChain:
-    
+    """
+    Main window
+    Allow the user to create, edit and test filter chains
+    """
     def __init__(self):
         ui = get_ui(self, 'winFilterChain', 'filtersListStore', 'sourcesListStore')
         self.window = ui.get_object('winFilterChain')
         self.chain = chain.FilterChain()
-    
+        self.init_window()
+        
     def init_window(self):
         pass
     
@@ -83,36 +81,67 @@ class WinFilterChain:
     def on_cboSource_changed(self, widget):
         pass
     
+    def on_winFilterChain_destroy(self, widget):
+        Gtk.main_quit()
+        
 class WinViewer():
-    
-    def __init__(self, source, filterchain, filter):
-        ui = get_ui(self, 'winViewer')
-        self.window = ui.get_object('winViewer')
-        self.imgSource = ui.get_object('imgSource')
-        self.source = source
+    """
+    Show the source after being processed by the filter chain.
+    The window receives a filter in it's constructor.  
+    This is the last executed filter on the source.
+    """
+    def __init__(self, filterchain, filter):
+        self.thread = None
+        self.source_list = sources.load_sources()
+        self.source = None
         self.chain = filterchain
         self.filter = filter
         filterchain.add_observer(self.chain_observer)
         self.temp_file = tempfile.mktemp('.jpg')
-        self.window.set_title(filter.__name__)
-        self.thread = chain.ThreadMainLoop(source, filterchain, 0)
-        self.thread.start()
 
+        ui = get_ui(self, 'winViewer', 'sourcesListStore')
+        self.window = ui.get_object('winViewer')
+        self.sourcesListStore = ui.get_object('sourcesListStore') 
+        self.sourcesListStore.append(['None'])
+        [self.sourcesListStore.append([name]) for name in self.source_list.keys()]
+        self.imgSource = ui.get_object('imgSource')
+        self.cboSource = ui.get_object('cboSource')
+        self.cboSource.set_active(1)
+        self.window.set_title(filter.__name__)
+        
+    def change_source(self, new_source):
+        if self.thread <> None:
+            self.thread.stop()
+            self.thread = None
+        if self.source <> None:
+            sources.close_source(self.source)
+        if new_source <> None:
+            self.source = sources.create_source(new_source)
+            self.thread = chain.ThreadMainLoop(self.source, self.chain, 1/60)
+            self.thread.start()
+        else:
+            self.source = None
+        
+    #This method is the observer of the FilterChain class.
     def chain_observer(self, filter, output):
         if filter.__name__ == self.filter.__name__:
             GObject.idle_add(self.update_image3, output)
             return
         
     def update_image(self, image):
-        image = bgr_to_rgb(image)
-        pixbuf = GdkPixbuf.Pixbuf.new_from_data(image, GdkPixbuf.Colorspace.RGB, 8)
-        self.imgSource.set_from_pixbuf(pixbuf)
+        if image <> None:
+            image = bgr_to_rgb(image)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(image, GdkPixbuf.Colorspace.RGB, 8)
+            self.imgSource.set_from_pixbuf(pixbuf)
 
     # fix for GTK3 because https://bugzilla.gnome.org/show_bug.cgi?id=674691
+    # To overcome this bug, the image is saved to a file in the temp folder.
+    # The image is then reloaded in the window.
     def update_image3(self, image):
-        cv2.imwrite(self.temp_file, image)
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.temp_file)
-        self.imgSource.set_from_pixbuf(pixbuf)
+        if image <> None:
+            cv2.imwrite(self.temp_file, image)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.temp_file)
+            self.imgSource.set_from_pixbuf(pixbuf)
         
     def on_winViewer_destroy(self, widget):
         self.thread.stop()
@@ -121,5 +150,9 @@ class WinViewer():
         pass
     
     def on_cboSource_changed(self, widget):
-        pass
+        index = self.cboSource.get_active()
+        source = None
+        if index > 0:
+            source = self.source_list[self.sourcesListStore[index][0]]
+        self.change_source(source)
     

@@ -17,12 +17,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-Created on 2012-07-26
-
-@author: benoit
-'''
-
 import threading, time
 import inspect
 
@@ -36,6 +30,7 @@ class ThreadMainLoop(threading.Thread):
     
     def __init__(self, source, filterchain, sleep_time):
         threading.Thread.__init__(self)
+        self.daemon = True
         self.source = source
         self.filterchain = filterchain
         self.sleep_time = sleep_time

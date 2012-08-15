@@ -17,23 +17,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-Created on 2012-08-01
-
-@author: benoit
-'''
-
 import inspect
-
-def map_filter_to_ui(filter):
-    import gui_filters
-    for win in vars(gui_filters).values():
-        if inspect.isclass(win):
-            if win.__name__ == 'Win' + filter.__class__.__name__:
-                return win
-    return None
+import filters
 
 def load_filters():
-    import filters
     return {name : filter for name, filter in vars(filters).items() if inspect.isclass(filter) or inspect.isfunction(filter)}
 
