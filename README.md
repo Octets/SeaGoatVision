@@ -1,6 +1,6 @@
 Requirements:
  - Python 2.7
- - PyGObjets/GTK+3
+ - PyGObjet/GTK+3
  - Glade 3
  - OpenCV 2.4 w/ Python/Numpy bindings
  - Numpy
