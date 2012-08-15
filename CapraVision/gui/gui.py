@@ -32,12 +32,11 @@ def get_ui(window, *names):
     return ui
 
 class WinFilterChain:
-    """
-    Main window
+    """Main window
     Allow the user to create, edit and test filter chains
     """
     def __init__(self):
-        ui = get_ui(self, 'winFilterChain', 'filtersListStore', 'sourcesListStore')
+        ui = get_ui(self, 'winFilterChain', 'filtersListStore', 'sourcesListStore', 'imgOpen', 'imgNew')
         self.window = ui.get_object('winFilterChain')
         self.chain = chain.FilterChain()
         self.init_window()
@@ -46,6 +45,9 @@ class WinFilterChain:
         pass
     
     def on_btnOpen_clicked(self, widget):
+        pass
+    
+    def on_btnNew_clicked(self, widget):
         pass
     
     def on_btnSource_clicked(self, widget):
@@ -63,15 +65,9 @@ class WinFilterChain:
     def on_btnView_clicked(self, widget):
         pass
     
-    def on_btnCreate_clicked(self, widget):
-        pass
-    
     def on_btnSave_clicked(self, widget):
         pass
 
-    def on_btnSaveAs_clicked(self, widget):
-        pass
-    
     def on_btnCancel_clicked(self, widget):
         pass
     
@@ -85,8 +81,7 @@ class WinFilterChain:
         Gtk.main_quit()
         
 class WinViewer():
-    """
-    Show the source after being processed by the filter chain.
+    """Show the source after being processed by the filter chain.
     The window receives a filter in it's constructor.  
     This is the last executed filter on the source.
     """

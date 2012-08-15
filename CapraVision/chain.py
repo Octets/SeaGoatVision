@@ -17,17 +17,27 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Contains the FilterChain class and helper functions to work with the filter chain."""
+
 import threading, time
 import inspect
 
 def open_filter_chain(file_name):
+    """Open a filter chain file and load its content in a new filter chain."""
     pass
 
 def save_filter_chain(file_name, chain):
+    """Save the content of the filter chain in a file."""
     pass
 
 class ThreadMainLoop(threading.Thread):
+    """Main thread to process the images.
     
+    Args:
+        source: the source to receive images from.
+        filterchain: the configured filterchain
+        sleep_time: time to wait in seconds before getting the next image
+    """
     def __init__(self, source, filterchain, sleep_time):
         threading.Thread.__init__(self)
         self.daemon = True
@@ -47,7 +57,11 @@ class ThreadMainLoop(threading.Thread):
         self.running = False
         
 class FilterChain:
+    """ Observable.  Contains the chain of filters to execute on an image.
     
+    The observer must be a method that receive a filter and an image as parameter.
+    The observer method is called after each execution of a filter in the filter chain.
+    """
     def __init__(self):
         self.filters = []
         self.observers = []

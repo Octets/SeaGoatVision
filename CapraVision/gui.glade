@@ -2,6 +2,16 @@
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkListStore" id="filtersListStore"/>
+  <object class="GtkImage" id="imgNew">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-new</property>
+  </object>
+  <object class="GtkImage" id="imgOpen">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-open</property>
+  </object>
   <object class="GtkListStore" id="sourcesListStore">
     <columns>
       <!-- column-name Name -->
@@ -54,12 +64,12 @@
             </child>
             <child>
               <object class="GtkButton" id="btnOpen">
-                <property name="label" translatable="yes">...</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
+                <property name="image">imgOpen</property>
                 <signal name="clicked" handler="on_btnOpen_clicked" swapped="no"/>
               </object>
               <packing>
@@ -67,6 +77,22 @@
                 <property name="fill">False</property>
                 <property name="padding">3</property>
                 <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btnNew">
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="image">imgNew</property>
+                <signal name="clicked" handler="on_btnNew_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -184,23 +210,8 @@
           <object class="GtkHButtonBox" id="hbuttonbox1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="layout_style">spread</property>
-            <child>
-              <object class="GtkButton" id="btnCreate">
-                <property name="label" translatable="yes">Create New</property>
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <signal name="clicked" handler="on_btnCreate_clicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
+            <property name="spacing">3</property>
+            <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="btnSave">
                 <property name="label" translatable="yes">Save</property>
@@ -214,23 +225,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btnSaveAs">
-                <property name="label" translatable="yes">Save As</property>
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <signal name="clicked" handler="on_btnSaveAs_clicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">2</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
@@ -246,12 +241,12 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">3</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btnQuit">
-                <property name="label" translatable="yes">Quit</property>
+              <object class="GtkButton" id="btnClear">
+                <property name="label" translatable="yes">Clear</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -262,7 +257,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">4</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -615,6 +610,7 @@
           <object class="GtkHButtonBox" id="hbuttonbox2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="spacing">5</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="btnOK">

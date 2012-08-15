@@ -41,9 +41,7 @@ class ImageFolder:
                 yield image
         
 class Webcam:
-    """
-    Return images from the webcam
-    """ 
+    """Return images from the webcam.""" 
     def __init__(self):
         self.run = True
         self.camera_number = 0

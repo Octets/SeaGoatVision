@@ -16,9 +16,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-Contains helper classes to work with the sources
-"""
+"""Contains helper classes to work with the sources"""
 
 import inspect, threading, sys
 import implementations
@@ -36,9 +34,7 @@ def create_source(source_class):
     return make_source_thread_safe(source_class())
 
 def load_sources():
-    """
-    Return a dictionary that contains every Source class from the Sources module
-    """
+    """Return a dictionary that contains every Source class from the Sources module"""
     return {name : source_class 
             for name, source_class in vars(implementations).items()
             if inspect.isclass(source_class)}
@@ -47,8 +43,7 @@ def make_source_thread_safe(source):
     return ThreadSafeSourceWrapper(source)
         
 class ThreadSafeSourceWrapper:
-    """
-    This is a wrapper around the sources to make it thread-safe
+    """This is a wrapper around the sources to make it thread-safe.
     The goal of this class is to remove boiler plate code from the sources.
     Each methods from the base source must be defined.
     """

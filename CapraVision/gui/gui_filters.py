@@ -16,8 +16,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-Contains the user interfaces to configure the filters
+"""Contains the user interfaces to configure the filters.
 
 To add a new ui, the constructor must receive the filter to configure
 and the name must be as follow: WinFilterName
@@ -28,9 +27,7 @@ from gui import get_ui
 import copy
 
 def map_filter_to_ui(filter):
-    """
-    Returns the appropriate window class to configure the filter
-    """
+    """Returns the appropriate window class to configure the filter"""
     for win in vars(gui_filters).values():
         if inspect.isclass(win):
             if win.__name__ == 'Win' + filter.__class__.__name__:
