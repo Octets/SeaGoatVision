@@ -23,7 +23,7 @@ import tempfile
 import threading
 import os
 
-import chain, sources
+import chain, sources, filters
 from filters.implementations import bgr_to_rgb
 
 def get_ui(window, *names):
@@ -84,7 +84,26 @@ class WinFilterChain:
     
     def on_winFilterChain_destroy(self, widget):
         Gtk.main_quit()
+      
+class WinFilterSel:
+    
+    def __init__(self):
+        self.filter_list = filters.load_filters()
+        print self.filter_list.keys()
+        ui = get_ui(self, 'filtersListStore')
+        self.window = ui.get_object(win_name(self))
+        self.filtersListStore = ui.get_object('filtersListStore')
+        for name in self.filter_list.keys():
+            print name
+            self.filtersListStore.append([name])
+        self.lstFilters = ui.get_object('lstFilters')
         
+    def on_btnOK_clicked(self, widget):
+        pass
+    
+    def on_btnCancel_clicked(self, widget):
+        pass
+      
 class WinViewer():
     """Show the source after being processed by the filter chain.
     The window receives a filter in it's constructor.  

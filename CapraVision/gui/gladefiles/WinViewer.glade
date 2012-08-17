@@ -35,6 +35,7 @@
                 <property name="model">sourcesListStore</property>
                 <property name="has_entry">True</property>
                 <property name="entry_text_column">0</property>
+                <signal name="changed" handler="on_cboSource_changed" swapped="no"/>
                 <child internal-child="entry">
                   <object class="GtkEntry" id="combobox-entry4">
                     <property name="can_focus">False</property>
@@ -57,6 +58,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="on_btnConfigure_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -85,5 +87,11 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="sourcesListStore">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+    </columns>
   </object>
 </interface>

@@ -1,12 +1,16 @@
-import unittest
+import os
+os.chdir(os.path.join(os.getcwd(), ".."))
+os.sys.path.insert(0,os.getcwd()) 
 
 from gi.repository import Gtk
 from gi.repository import GObject
 GObject.threads_init()
 
 import cv2
-import gui, sources, chain
+from filters.implementations import bgr_to_rgb
+
 from filters.implementations import noop
+import gui, sources, chain
 
 def source_image():
     image = cv2.imread('0-157.png')
