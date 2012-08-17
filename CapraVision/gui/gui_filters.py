@@ -23,7 +23,7 @@ and the name must be as follow: WinFilterName
 """
 
 from gi.repository import Gtk
-from gui import get_ui
+from gui import get_ui, win_name
 import copy
 
 def map_filter_to_ui(filter):
@@ -40,8 +40,8 @@ class WinRGBLevel:
         self.filtre = filtre
         self.filtre_init = copy.copy(filtre)
 
-        ui = get_ui(self, 'winRGBLevel')
-        self.window = ui.get_object('winRGBLevel')
+        ui = get_ui(self)
+        self.window = ui.get_object(win_name(self))
         self.hscRed = ui.get_object('hscRed')
         self.hscGreen = ui.get_object('hscGreen')
         self.hscBlue = ui.get_object('hscBlue')
@@ -79,8 +79,8 @@ class WinRGBThreshold:
         self.filtre = filtre
         self.filtre_init = copy.copy(filtre)
         
-        ui = get_ui(self, 'winRGBThreshold')
-        self.window = ui.get_object('winRGBThreshold')
+        ui = get_ui(self)
+        self.window = ui.get_object(win_name(self))
         self.hscRedMin = ui.get_object('hscRedMin')
         self.hscRedMax = ui.get_object('hscRedMax')
         self.hscBlueMin = ui.get_object('hscBlueMin')
@@ -146,8 +146,8 @@ class WinPerspective:
         self.filtre = filtre
         self.filtre_init = copy.copy(filtre)
 
-        ui = get_ui(self, 'winPerspective', 'adjPerspective')
-        self.window = ui.get_object('winPerspective')
+        ui = get_ui(self, 'adjPerspective')
+        self.window = ui.get_object(win_name(self))
         self.spnTopLeftX = ui.get_object('spnTopLeftX')
         self.spnTopLeftY = ui.get_object('spnTopLeftY')
         self.spnBottomLeftX = ui.get_object('spnBottomLeftX')

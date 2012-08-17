@@ -21,23 +21,28 @@ from gi.repository import Gtk, GObject, GdkPixbuf
 import cv2
 import tempfile
 import threading
+import os
 
 import chain, sources
 from filters.implementations import bgr_to_rgb
 
 def get_ui(window, *names):
     ui = Gtk.Builder()
-    ui.add_objects_from_file('gui.glade', [name for name in names])
+    glade_file = os.path.join('gui', 'gladefiles', win_name(window) + '.glade')
+    ui.add_objects_from_file(glade_file, [win_name(window)] + [name for name in names])
     ui.connect_signals(window)
     return ui
+
+def win_name(window):
+    return window.__class__.__name__
 
 class WinFilterChain:
     """Main window
     Allow the user to create, edit and test filter chains
     """
     def __init__(self):
-        ui = get_ui(self, 'winFilterChain', 'filtersListStore', 'sourcesListStore', 'imgOpen', 'imgNew')
-        self.window = ui.get_object('winFilterChain')
+        ui = get_ui(self, 'filterChainListStore', 'imgOpen', 'imgNew')
+        self.window = ui.get_object(win_name(self))
         self.chain = chain.FilterChain()
         self.init_window()
         
@@ -94,8 +99,8 @@ class WinViewer():
         filterchain.add_observer(self.chain_observer)
         self.temp_file = tempfile.mktemp('.jpg')
 
-        ui = get_ui(self, 'winViewer', 'sourcesListStore')
-        self.window = ui.get_object('winViewer')
+        ui = get_ui(self, 'sourcesListStore')
+        self.window = ui.get_object(win_name(self))
         self.sourcesListStore = ui.get_object('sourcesListStore') 
         self.sourcesListStore.append(['None'])
         [self.sourcesListStore.append([name]) for name in self.source_list.keys()]
