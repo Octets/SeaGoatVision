@@ -21,9 +21,6 @@
 This module contains the code for the sources.
 Sources are objects that returns images.  
 It can be a a webcam, list of files from the hard drive or anything else.
-
-Sources classes must start with the "Source" prefix. 
-To understand how to add a new source, see the BaseSource class.
 """
 
 import cv2

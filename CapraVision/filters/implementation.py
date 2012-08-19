@@ -21,31 +21,41 @@ import cv2.cv as cv, cv2
 import numpy as np
 
 def noop(image):
+    """Do nothing"""
     return image
 
 def bgr_to_rgb(image):
+    """Convert to RGB.  Useful for interacting with other libraries"""
     image = cv2.cvtColor(image, cv.CV_BGR2RGB)
     return image
 
 def bgr_to_hsv(image):
+    """Convert to Hue Saturation Brightness/Value"""
     image = cv2.cvtColor(image, cv.CV_BGR2HSV)
     #image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
     return image
     
 def bgr_to_grayscale(image):
+    """Convert to grayscale"""
     image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
     return image
 
 def bgr_to_yuv(image):
+    """Convert to YUV (Luminance with two colors)"""
     image = cv2.cvtColor(image, cv.CV_BGR2YCrCb)
     return image
 
 def yuv_to_bgr(image):
+    """Convert from YUV to BGR"""
     image = cv2.cvtColor(image, cv.CV_YCrCb2BGR)
     return image
     
-class RGBLevel():
-    
+class ColorLevel():
+    """Determine the value in % a color will have.
+        0% = Nothing
+        50% = Half the original value.
+        100% = Original
+        Example: With 50% Blue and the following pixel (100, 100, 100) give (50, 100, 100)"""
     def __init__(self):
         self.red = 100
         self.green = 100
@@ -61,8 +71,11 @@ class RGBLevel():
             image[:,:, 0] *= (self.blue/100) 
         return image
 
-class RGBThreshold:
-    
+class ColorThreshold:
+    """Apply a binary threshold on the three channels of the images
+        Each channel have a minimum and a maximum value.
+        Everything within this threshold is white (255, 255, 255)
+        Everything else is black (0, 0, 0)"""
     def __init__(self):
         self.shift_hue_plane = False
         self.bluemin = 20.0
@@ -92,7 +105,7 @@ class RGBThreshold:
             return 0.0
 
 class Perspective:
-    
+    """Wrap perspective"""
     def __init__(self):
         self.topleftx = 0
         self.toplefty = 0

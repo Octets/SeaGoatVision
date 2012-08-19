@@ -24,7 +24,7 @@ import threading
 import os
 
 import chain, sources, filters
-from filters.implementations import bgr_to_rgb
+from filters.implementation import bgr_to_rgb
 
 def get_ui(window, *names):
     ui = Gtk.Builder()
@@ -89,14 +89,13 @@ class WinFilterSel:
     
     def __init__(self):
         self.filter_list = filters.load_filters()
-        print self.filter_list.keys()
         ui = get_ui(self, 'filtersListStore')
         self.window = ui.get_object(win_name(self))
         self.filtersListStore = ui.get_object('filtersListStore')
-        for name in self.filter_list.keys():
-            print name
-            self.filtersListStore.append([name])
         self.lstFilters = ui.get_object('lstFilters')
+        
+        [self.filtersListStore.append([name, filter.__doc__]) for name, filter in self.filter_list.items()]
+        self.filtersListStore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         
     def on_btnOK_clicked(self, widget):
         pass

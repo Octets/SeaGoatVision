@@ -18,8 +18,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inspect
-import filters.implementations
+import filters.implementation
 
 def load_filters():
-    return {name : filter for name, filter in vars(filters.implementations).items() if inspect.isclass(filter) or inspect.isfunction(filter)}
+    return {name : filter for name, filter in vars(filters.implementation).items() if inspect.isclass(filter) or inspect.isfunction(filter)}
 

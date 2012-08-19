@@ -7,9 +7,9 @@ from gi.repository import GObject
 GObject.threads_init()
 
 import cv2
-from filters.implementations import bgr_to_rgb
+from filters.implementation import bgr_to_rgb
 
-from filters.implementations import noop
+from filters.implementation import noop
 import gui, sources, chain
 
 def source_image():
@@ -24,5 +24,23 @@ def test_viewer():
     w.window.show_all()
     Gtk.main()
     
+def testFileChooser():
+    dialog = Gtk.FileChooserDialog("Please choose a filterchain file", None,
+                                   Gtk.FileChooserAction.OPEN,
+                                   (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                    Gtk.STOCK_OK, Gtk.ResponseType.OK))
+    ff = Gtk.FileFilter()
+    
+    dialog.set_filter(".filterchain")
+    response = dialog.run()
+    if response == Gtk.ResponseType.OK:
+        print "Select clicked"
+        print "Folder selected: " + dialog.get_filename()
+    elif response == Gtk.ResponseType.CANCEL:
+        print "Cancel clicked"
+    else:
+        print 'Aucun'
+        dialog.destroy()
+
 if __name__ == '__main__':
-    test_viewer()
+    testFileChooser()

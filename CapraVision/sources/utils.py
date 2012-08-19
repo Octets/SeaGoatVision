@@ -19,7 +19,7 @@
 """Contains helper classes to work with the sources"""
 
 import inspect, threading, sys
-import implementations
+import implementation
 
 def close_source(source):
     """Verify if the source has a close() method and call it if so"""
