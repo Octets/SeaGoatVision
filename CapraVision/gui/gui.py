@@ -41,13 +41,22 @@ class WinFilterChain:
     Allow the user to create, edit and test filter chains
     """
     def __init__(self):
-        ui = get_ui(self, 'filterChainListStore', 'imgOpen', 'imgNew')
+        ui = get_ui(self, 'filterChainListStore', 'imgOpen', 'imgNew', 'imgUp', 'imgDown')
         self.window = ui.get_object(win_name(self))
         self.chain = chain.FilterChain()
+        self.filterChainListStore = ui.get_object('filterChainListStore')
         self.init_window()
         
     def init_window(self):
         pass
+    
+    def add_filter(self, filter):
+        self.chain.add_filter(filter)
+        self.show_filter_chain()
+    
+    def show_filter_chain(self):
+        self.filterChainListStore.clear()
+        [self.filterChainListStore.append([filter.__name__, filter.__doc__]) for filter in self.chain.filters]
     
     def on_btnOpen_clicked(self, widget):
         pass
@@ -59,8 +68,9 @@ class WinFilterChain:
         pass
     
     def on_btnAdd_clicked(self, widget):
-        pass
-    
+        win = WinFilterSel(self.add_filter)
+        win.window.show_all()
+            
     def on_btnRemove_clicked(self, widget):
         pass
     
@@ -70,6 +80,12 @@ class WinFilterChain:
     def on_btnView_clicked(self, widget):
         pass
     
+    def on_btnUp_clicked(self, widget):
+        pass
+    
+    def on_dtnDown_clicked(self, widget):
+        pass
+    
     def on_btnSave_clicked(self, widget):
         pass
 
@@ -77,6 +93,9 @@ class WinFilterChain:
         pass
     
     def on_btnQuit_clicked(self, widget):
+        pass
+    
+    def on_btnClear_clicked(self, widget):
         pass
     
     def on_cboSource_changed(self, widget):
@@ -94,6 +113,8 @@ class WinFilterSel:
         self.window = ui.get_object(win_name(self))
         self.filtersListStore = ui.get_object('filtersListStore')
         self.lstFilters = ui.get_object('lstFilters')
+
+        self.window.set_modal(True)
         
         [self.filtersListStore.append([name, filter.__doc__]) for name, filter in self.filter_list.items()]
         self.filtersListStore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
