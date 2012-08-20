@@ -7,6 +7,9 @@
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Choose filter</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-on-parent</property>
+    <property name="destroy_with_parent">True</property>
     <child>
       <object class="GtkBox" id="box3">
         <property name="visible">True</property>
@@ -22,6 +25,7 @@
             <property name="reorderable">True</property>
             <property name="enable_search">False</property>
             <property name="enable_grid_lines">horizontal</property>
+            <signal name="button-press-event" handler="on_lstFilters_button_press_event" swapped="no"/>
             <child internal-child="selection">
               <object class="GtkTreeSelection" id="sel"/>
             </child>

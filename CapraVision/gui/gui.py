@@ -86,6 +86,7 @@ class WinFilterChain:
         Gtk.main_quit()
       
 class WinFilterSel:
+    """Allow the user to select a filter to add to the filterchain"""
     
     def __init__(self):
         self.filter_list = filters.load_filters()
@@ -97,12 +98,26 @@ class WinFilterSel:
         [self.filtersListStore.append([name, filter.__doc__]) for name, filter in self.filter_list.items()]
         self.filtersListStore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         
+        self.selected_filter = None
+        
+    def get_selected_filter(self):
+        model = self.lstFilters.get_model()
+        (model, iter) = self.lstFilters.get_selection().get_selected()
+        filter_name = self.filtersListStore.get_value(iter, 0)
+        return self.filter_list[filter_name]
+    
     def on_btnOK_clicked(self, widget):
-        pass
+        self.selected_filter = self.get_selected_filter()
+        self.window.destroy()
     
     def on_btnCancel_clicked(self, widget):
-        pass
-      
+        self.window.destroy()
+    
+    def on_lstFilters_button_press_event(self, widget, event):
+        if event.get_click_count()[1] == 2L:
+            self.selected_filter = self.get_selected_filter()
+            self.window.destroy()
+                
 class WinViewer():
     """Show the source after being processed by the filter chain.
     The window receives a filter in it's constructor.  
