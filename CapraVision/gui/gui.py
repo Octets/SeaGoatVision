@@ -68,8 +68,8 @@ class WinFilterChain:
         pass
     
     def on_btnAdd_clicked(self, widget):
-        win = WinFilterSel(self.add_filter)
-        win.window.show_all()
+        win = WinFilterSel()
+        win.window.run()
             
     def on_btnRemove_clicked(self, widget):
         pass
