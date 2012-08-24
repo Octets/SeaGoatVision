@@ -23,18 +23,18 @@ and the name must be as follow: WinFilterName
 """
 
 from gi.repository import Gtk
-from gui import get_ui, win_name
-import copy
+from utils import get_ui, win_name
+import copy, sys, inspect
 
 def map_filter_to_ui(filter):
     """Returns the appropriate window class to configure the filter"""
-    for win in vars(gui_filters).values():
+    for win in vars(sys.modules[__name__]).values():
         if inspect.isclass(win):
             if win.__name__ == 'Win' + filter.__class__.__name__:
                 return win
     return None
 
-class WinRGBLevel:
+class WinColorLevel:
     
     def __init__(self, filtre):
         self.filtre = filtre
@@ -71,9 +71,9 @@ class WinRGBLevel:
         self.filtre.green = self.hscGreen.get_value()
 
     def on_hscBlue_value_changed(self, widget):
-        self.filtre.blue = self.hscRed.get_value()
+        self.filtre.blue = self.hscBlue.get_value()
     
-class WinRGBThreshold:
+class WinColorThreshold:
     
     def __init__(self, filtre):
         self.filtre = filtre

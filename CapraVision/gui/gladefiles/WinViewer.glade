@@ -4,6 +4,7 @@
   <object class="GtkWindow" id="WinViewer">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
+    <signal name="destroy" handler="on_WinViewer_destroy" swapped="no"/>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>

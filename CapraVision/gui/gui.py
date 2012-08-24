@@ -21,20 +21,12 @@ from gi.repository import Gtk, GObject, GdkPixbuf
 import cv2
 import tempfile
 import threading
-import os
 
+from utils import get_ui, win_name
+from guifilter import map_filter_to_ui
 import chain, sources, filters
-from filters.implementation import bgr_to_rgb
-
-def get_ui(window, *names):
-    ui = Gtk.Builder()
-    glade_file = os.path.join('gui', 'gladefiles', win_name(window) + '.glade')
-    ui.add_objects_from_file(glade_file, [win_name(window)] + [name for name in names])
-    ui.connect_signals(window)
-    return ui
-
-def win_name(window):
-    return window.__class__.__name__
+from filters.implementation import BGR2RGB
+bgr2rgb = BGR2RGB()
 
 class WinFilterChain:
     """Main window
@@ -43,6 +35,7 @@ class WinFilterChain:
     def __init__(self):
         ui = get_ui(self, 'filterChainListStore', 'imgOpen', 'imgNew', 'imgUp', 'imgDown')
         self.window = ui.get_object(win_name(self))
+        self.lstFilters = ui.get_object('lstFilters')
         self.chain = chain.FilterChain()
         self.filterChainListStore = ui.get_object('filterChainListStore')
         self.init_window()
@@ -51,13 +44,39 @@ class WinFilterChain:
         pass
     
     def add_filter(self, filter):
-        self.chain.add_filter(filter)
+        self.chain.add_filter(filter())
         self.show_filter_chain()
     
     def show_filter_chain(self):
         self.filterChainListStore.clear()
-        [self.filterChainListStore.append([filter.__name__, filter.__doc__]) for filter in self.chain.filters]
+        for filter in self.chain.filters:
+            self.filterChainListStore.append([filter.__class__.__name__, filter.__doc__]) 
     
+    def row_selected(self):
+        (model, iter) = self.lstFilters.get_selection().get_selected()
+        return iter is not None
+
+    def selected_filter(self):
+        (model, iter) = self.lstFilters.get_selection().get_selected()
+        if iter is None:
+            return None
+        path = model.get_path(iter)
+        return self.chain.filters[path.get_indices()[0]]
+    
+    def del_current_row(self):
+        (model, iter) = self.lstFilters.get_selection().get_selected()
+        self.chain.remove_filter(self.selected_filter())
+        del self.filterChainListStore[iter]
+        
+    def msg_warn_del_row(self):
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.QUESTION, 
+            Gtk.ButtonsType.YES_NO, "Question")
+        dialog.format_secondary_text(
+            "Do you want to remove the selected filter?")
+        result = dialog.run()
+        dialog.destroy()
+        return result
+            
     def on_btnOpen_clicked(self, widget):
         pass
     
@@ -69,17 +88,29 @@ class WinFilterChain:
     
     def on_btnAdd_clicked(self, widget):
         win = WinFilterSel()
-        win.window.run()
+        if win.window.run() == Gtk.ResponseType.OK:
+            self.add_filter(win.selected_filter)
+        win.window.destroy()
             
     def on_btnRemove_clicked(self, widget):
-        pass
-    
+        if self.row_selected() and self.msg_warn_del_row() == Gtk.ResponseType.YES:
+            self.del_current_row()
+                    
     def on_btnConfig_clicked(self, widget):
-        pass
+        if self.row_selected():
+            filter = self.selected_filter()
+            cls = map_filter_to_ui(filter)
+            if cls is not None:
+                win = cls(filter)
+                win.window.show_all()
     
     def on_btnView_clicked(self, widget):
-        pass
-    
+        filter = self.selected_filter()
+        if filter is None:
+            return
+        win = WinViewer(self.chain, filter)
+        win.window.show_all()
+        
     def on_btnUp_clicked(self, widget):
         pass
     
@@ -122,7 +153,6 @@ class WinFilterSel:
         self.selected_filter = None
         
     def get_selected_filter(self):
-        model = self.lstFilters.get_model()
         (model, iter) = self.lstFilters.get_selection().get_selected()
         filter_name = self.filtersListStore.get_value(iter, 0)
         return self.filter_list[filter_name]
@@ -137,11 +167,12 @@ class WinFilterSel:
     def on_lstFilters_button_press_event(self, widget, event):
         if event.get_click_count()[1] == 2L:
             self.selected_filter = self.get_selected_filter()
+            self.window.response(Gtk.ResponseType.OK)
             self.window.destroy()
                 
 class WinViewer():
     """Show the source after being processed by the filter chain.
-    The window receives a filter in it's constructor.  
+    The window receives a filter in its constructor.  
     This is the last executed filter on the source.
     """
     def __init__(self, filterchain, filter):
@@ -161,7 +192,7 @@ class WinViewer():
         self.imgSource = ui.get_object('imgSource')
         self.cboSource = ui.get_object('cboSource')
         self.cboSource.set_active(1)
-        self.window.set_title(filter.__name__)
+        self.window.set_title(filter.__class__.__name__)
         
     def change_source(self, new_source):
         if self.thread <> None:
@@ -178,13 +209,13 @@ class WinViewer():
         
     #This method is the observer of the FilterChain class.
     def chain_observer(self, filter, output):
-        if filter.__name__ == self.filter.__name__:
+        if filter is self.filter:
             GObject.idle_add(self.update_image3, output)
             return
         
     def update_image(self, image):
         if image <> None:
-            image = bgr_to_rgb(image)
+            image = bgr2rgb.execute(image)
             pixbuf = GdkPixbuf.Pixbuf.new_from_data(image, GdkPixbuf.Colorspace.RGB, 8)
             self.imgSource.set_from_pixbuf(pixbuf)
 
@@ -197,7 +228,7 @@ class WinViewer():
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.temp_file)
             self.imgSource.set_from_pixbuf(pixbuf)
         
-    def on_winViewer_destroy(self, widget):
+    def on_WinViewer_destroy(self, widget):
         self.thread.stop()
         
     def on_btnConfigure_clicked(self, widget):

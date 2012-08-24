@@ -81,9 +81,6 @@ class FilterChain:
         
     def execute(self, image):
         for f in self.filters:
-            if inspect.isfunction(f):
-                output = f(image)
-            else:
-                output = f.execute(image)
-            [observer(f, output) for observer in self.observers]
+            image = f.execute(image)
+        [observer(f, image) for observer in self.observers]
         

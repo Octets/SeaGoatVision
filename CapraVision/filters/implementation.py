@@ -20,37 +20,48 @@
 import cv2.cv as cv, cv2
 import numpy as np
 
-def noop(image):
+class Noop:
     """Do nothing"""
-    return image
-
-def bgr_to_rgb(image):
+    
+    def execute(self, image):
+        return image
+    
+class BGR2RGB:
     """Convert to RGB.  Useful for interacting with other libraries"""
-    image = cv2.cvtColor(image, cv.CV_BGR2RGB)
-    return image
+    
+    def execute(self, image):
+        image = cv2.cvtColor(image, cv.CV_BGR2RGB)
+        return image
 
-def bgr_to_hsv(image):
+class BGR2HSV:
     """Convert to Hue Saturation Brightness/Value"""
-    image = cv2.cvtColor(image, cv.CV_BGR2HSV)
-    #image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
-    return image
     
-def bgr_to_grayscale(image):
+    def execute(self, image):
+        image = cv2.cvtColor(image, cv.CV_BGR2HSV)
+        return image
+    
+class BGR2Grayscale:
     """Convert to grayscale"""
-    image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
-    return image
-
-def bgr_to_yuv(image):
-    """Convert to YUV (Luminance with two colors)"""
-    image = cv2.cvtColor(image, cv.CV_BGR2YCrCb)
-    return image
-
-def yuv_to_bgr(image):
-    """Convert from YUV to BGR"""
-    image = cv2.cvtColor(image, cv.CV_YCrCb2BGR)
-    return image
     
-class ColorLevel():
+    def execute(self, image):
+        image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
+        return image
+
+class BGR2YUV:
+    """Convert to YUV (Luminance with two colors)"""
+    
+    def execute(self, image):
+        image = cv2.cvtColor(image, cv.CV_BGR2YCrCb)
+        return image
+
+class YUV2BGR:
+    """Convert from YUV to BGR"""
+    
+    def execute(self, image):
+        image = cv2.cvtColor(image, cv.CV_YCrCb2BGR)
+        return image
+    
+class ColorLevel:
     """Determine the value in % a color will have.
         0% = Nothing
         50% = Half the original value.

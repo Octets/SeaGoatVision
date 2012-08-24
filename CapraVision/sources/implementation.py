@@ -26,6 +26,17 @@ It can be a a webcam, list of files from the hard drive or anything else.
 import cv2
 import os
 
+global captures 
+captures = {}
+
+def get_capture(cam_no):
+    if captures.has_key(cam_no):
+        return captures[cam_no]
+    else:
+        cap = cv2.VideoCapture(cam_no)
+        captures[cam_no] = cap
+        return cap
+
 class ImageFolder:
     
     def __init__(self):
@@ -38,11 +49,12 @@ class ImageFolder:
                 yield image
         
 class Webcam:
-    """Return images from the webcam.""" 
+    """Return images from the webcam."""
+         
     def __init__(self):
         self.run = True
         self.camera_number = 0
-        self.video = cv2.VideoCapture(self.camera_number)
+        self.video = get_capture(self.camera_number)
         #self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 640)
         #self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 480)
         
@@ -51,5 +63,6 @@ class Webcam:
         return image
         
     def close(self):
-        self.video.release()
+        pass
+        #self.video.release()
         

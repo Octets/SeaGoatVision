@@ -8,12 +8,11 @@
       <!-- column-name Desc -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">hohoh</col>
-        <col id="1" translatable="yes">hehe</col>
-      </row>
-    </data>
+  </object>
+  <object class="GtkImage" id="imgDown">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-go-down</property>
   </object>
   <object class="GtkImage" id="imgNew">
     <property name="visible">True</property>
@@ -24,6 +23,11 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">document-open</property>
+  </object>
+  <object class="GtkImage" id="imgUp">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-go-up</property>
   </object>
   <object class="GtkWindow" id="WinFilterChain">
     <property name="can_focus">False</property>
@@ -333,15 +337,5 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkImage" id="imgDown">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-go-down</property>
-  </object>
-  <object class="GtkImage" id="imgUp">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-go-up</property>
   </object>
 </interface>

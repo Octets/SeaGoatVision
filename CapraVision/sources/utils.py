@@ -36,7 +36,7 @@ def create_source(source_class):
 def load_sources():
     """Return a dictionary that contains every Source class from the Sources module"""
     return {name : source_class 
-            for name, source_class in vars(implementations).items()
+            for name, source_class in vars(implementation).items()
             if inspect.isclass(source_class)}
 
 def make_source_thread_safe(source):

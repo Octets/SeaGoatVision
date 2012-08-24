@@ -195,6 +195,7 @@
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
                 <property name="numeric">True</property>
+                <signal name="value-changed" handler="on_spnTopLeftX_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -213,6 +214,7 @@
                 <property name="secondary_icon_activatable">False</property>
                 <property name="snap_to_ticks">True</property>
                 <property name="numeric">True</property>
+                <signal name="value-changed" handler="on_spnTopLeftY_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -230,6 +232,7 @@
                 <property name="invisible_char_set">True</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
+                <signal name="value-changed" handler="on_spnBottomLeftX_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -247,6 +250,7 @@
                 <property name="invisible_char_set">True</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
+                <signal name="value-changed" handler="on_spnBottomLeftY_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -264,6 +268,7 @@
                 <property name="invisible_char_set">True</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
+                <signal name="value-changed" handler="on_spnTopRightX_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">5</property>
@@ -280,6 +285,7 @@
                 <property name="invisible_char_set">True</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
+                <signal name="value-changed" handler="on_spnTopRightY_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">5</property>
@@ -297,6 +303,7 @@
                 <property name="invisible_char_set">True</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
+                <signal name="value-changed" handler="on_spnBottomRightX_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">5</property>
@@ -314,6 +321,7 @@
                 <property name="invisible_char_set">True</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
+                <signal name="value-changed" handler="on_spnBottomRightY_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">5</property>
@@ -345,6 +353,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="on_btnOK_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -360,6 +369,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="on_btnCancel_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
