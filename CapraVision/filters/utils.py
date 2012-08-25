@@ -21,6 +21,8 @@ import inspect
 import filters.implementation
 
 def load_filters():
-    return {name : filter for name, filter in vars(filters.implementation).items() if inspect.isclass(filter)}
+    return {name : filter 
+            for name, filter in vars(filters.implementation).items() 
+                if inspect.isclass(filter)}
 
  

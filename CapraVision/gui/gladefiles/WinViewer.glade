@@ -4,6 +4,7 @@
   <object class="GtkWindow" id="WinViewer">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
+    <property name="title" translatable="yes">Filterchain Viewer</property>
     <signal name="destroy" handler="on_WinViewer_destroy" swapped="no"/>
     <child>
       <object class="GtkBox" id="box1">
@@ -11,6 +12,51 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">3</property>
+        <child>
+          <object class="GtkBox" id="box3">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="spacing">3</property>
+            <child>
+              <object class="GtkLabel" id="lblFilter">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Filter :</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="cboFilter">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="model">filterChainListStore</property>
+                <property name="has_entry">True</property>
+                <property name="entry_text_column">0</property>
+                <signal name="changed" handler="on_cboFilter_changed" swapped="no"/>
+                <child internal-child="entry">
+                  <object class="GtkEntry" id="combobox-entry3">
+                    <property name="can_focus">False</property>
+                    <property name="editable">False</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkBox" id="box2">
             <property name="visible">True</property>
@@ -38,10 +84,8 @@
                 <property name="entry_text_column">0</property>
                 <signal name="changed" handler="on_cboSource_changed" swapped="no"/>
                 <child internal-child="entry">
-                  <object class="GtkEntry" id="combobox-entry4">
+                  <object class="GtkEntry" id="combobox-entry">
                     <property name="can_focus">False</property>
-                    <property name="editable">False</property>
-                    <property name="invisible_char">●</property>
                   </object>
                 </child>
               </object>
@@ -71,7 +115,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -83,11 +127,17 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="filterChainListStore">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkListStore" id="sourcesListStore">
     <columns>

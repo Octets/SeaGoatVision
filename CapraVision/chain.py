@@ -64,23 +64,36 @@ class FilterChain:
     """
     def __init__(self):
         self.filters = []
-        self.observers = []
-        pass
+        self.image_observers = [] 
+        self.filter_observers = []
     
     def add_filter(self, filter):
         self.filters.append(filter)
-    
+        self.notify_filter_observers()
+        
     def remove_filter(self, filter):
         self.filters.remove(filter)
+        self.notify_filter_observers()
         
-    def add_observer(self, observer):
-        self.observers.append(observer)
+    def add_image_observer(self, observer):
+        self.image_observers.append(observer)
         
-    def remove_observer(self, observer):
-        self.observers.remove(observer)
+    def remove_image_observer(self, observer):
+        self.image_observers.remove(observer)
         
+    def add_filter_observer(self, observer):
+        self.filter_observers.append(observer)
+        
+    def remove_filter_observer(self, observer):
+        self.filter_observers.remove(observer)
+        
+    def notify_filter_observers(self):
+        for observer in self.filter_observers:
+            observer()
+    
     def execute(self, image):
         for f in self.filters:
-            image = f.execute(image)
-        [observer(f, image) for observer in self.observers]
+            image = f.execute(image.copy())
+            for observer in self.image_observers:
+                observer(f, image)
         

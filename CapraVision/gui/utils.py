@@ -23,7 +23,8 @@ import os
 def get_ui(window, *names):
     ui = Gtk.Builder()
     glade_file = os.path.join('gui', 'gladefiles', win_name(window) + '.glade')
-    ui.add_objects_from_file(glade_file, [win_name(window)] + [name for name in names])
+    ui.add_objects_from_file(glade_file, [win_name(window)] + 
+                             [name for name in names])
     ui.connect_signals(window)
     return ui
 

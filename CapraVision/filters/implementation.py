@@ -101,12 +101,21 @@ class ColorThreshold:
         self.configure()
     
     def configure(self):
-        self.barray = np.array([self.get_binary_value(self.bluemin, self.bluemax, x) for x in range(0, 256)], dtype=np.float32)
-        self.garray = np.array([self.get_binary_value(self.greenmin, self.greenmax, x) for x in range(0, 256)], dtype=np.float32)
-        self.rarray = np.array([self.get_binary_value(self.redmin, self.redmax, x) for x in range(0, 256)], dtype=np.float32)
+        self.barray = np.array(
+                        [self.get_binary_value(self.bluemin, self.bluemax, x) 
+                            for x in range(0, 256)], dtype=np.float32)
+        self.garray = np.array(
+                        [self.get_binary_value(self.greenmin, self.greenmax, x) 
+                            for x in range(0, 256)], dtype=np.float32)
+        self.rarray = np.array(
+                        [self.get_binary_value(self.redmin, self.redmax, x) 
+                            for x in range(0, 256)], dtype=np.float32)
         
     def execute(self, image):
-        image[:,:, 0] = image[:,:, 1] = image[:,:, 2] = 255 * self.barray[image[:,:, 0]] * self.garray[image[:,:, 1]] * self.rarray[image[:,:, 2]]
+        image[:,:, 0] = image[:,:, 1] = image[:,:, 2] = (
+                                            255 * self.barray[image[:,:, 0]] * 
+                                            self.garray[image[:,:, 1]] * 
+                                            self.rarray[image[:,:, 2]])
         return image
 
     def get_binary_value(self, mini, maxi, val):
@@ -131,7 +140,11 @@ class Perspective:
         self.configure()
         
     def configure(self):
-        c1 = np.array([[self.topleftx, self.toplefty], [self.bottomleftx, self.bottomlefty], [self.toprightx, self.toprighty], [self.bottomrightx, self.bottomrighty]], np.float32)
+        c1 = np.array([[self.topleftx, self.toplefty], 
+                       [self.bottomleftx, self.bottomlefty], 
+                       [self.toprightx, self.toprighty], 
+                       [self.bottomrightx, self.bottomrighty]], 
+                      np.float32)
         c2 = np.array([[0, 0], [0, 480], [640, 0], [640, 480]], np.float32)
         self.mmat = cv2.getPerspectiveTransform(c2, c1)
         
