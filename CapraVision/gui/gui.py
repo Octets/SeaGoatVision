@@ -43,16 +43,9 @@ class WinFilterChain:
         self.window = ui.get_object(win_name(self))
         self.lstFilters = ui.get_object('lstFilters')
         self.chain = chain.FilterChain()
+        self.chain.add_filter_observer(self.filters_changed_observer)
         self.filterChainListStore = ui.get_object('filterChainListStore')
-        self.init_window()
         
-    def init_window(self):
-        pass
-    
-    def add_filter(self, filter):
-        self.chain.add_filter(filter())
-        self.show_filter_chain()
-    
     def show_filter_chain(self):
         self.filterChainListStore.clear()
         for filter in self.chain.filters:
@@ -70,10 +63,16 @@ class WinFilterChain:
         path = model.get_path(iter)
         return self.chain.filters[path.get_indices()[0]]
     
+    def selected_index(self):
+        (model, iter) = self.lstFilters.get_selection().get_selected()
+        if iter is None:
+            return -1
+        path = model.get_path(iter)
+        return path.get_indices()[0]
+        
     def del_current_row(self):
         (model, iter) = self.lstFilters.get_selection().get_selected()
         self.chain.remove_filter(self.selected_filter())
-        del self.filterChainListStore[iter]
         
     def msg_warn_del_row(self):
         dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.QUESTION, 
@@ -84,6 +83,9 @@ class WinFilterChain:
         dialog.destroy()
         return result
             
+    def filters_changed_observer(self):
+        self.show_filter_chain()
+    
     def on_btnOpen_clicked(self, widget):
         pass
     
@@ -96,7 +98,7 @@ class WinFilterChain:
     def on_btnAdd_clicked(self, widget):
         win = WinFilterSel()
         if win.window.run() == Gtk.ResponseType.OK:
-            self.add_filter(win.selected_filter)
+            self.chain.add_filter(win.selected_filter())
         win.window.destroy()
             
     def on_btnRemove_clicked(self, widget):
@@ -117,21 +119,25 @@ class WinFilterChain:
         win.window.show_all()
         
     def on_btnUp_clicked(self, widget):
-        pass
+        filter = self.selected_filter()
+        if filter is not None:
+            index = self.selected_index()
+            if index > 0:
+                self.chain.move_filter_up(filter)
+                self.lstFilters.set_cursor(index - 1)
     
-    def on_dtnDown_clicked(self, widget):
-        pass
-    
+    def on_btnDown_clicked(self, widget):
+        filter = self.selected_filter()
+        if filter is not None:
+            index = self.selected_index()
+            if index < len(self.chain.filters) - 1:
+                self.chain.move_filter_down(filter)
+                self.lstFilters.set_cursor(index + 1)
+            
     def on_btnSave_clicked(self, widget):
         pass
 
-    def on_btnCancel_clicked(self, widget):
-        pass
-    
-    def on_btnQuit_clicked(self, widget):
-        pass
-    
-    def on_btnClear_clicked(self, widget):
+    def on_btnSaveAs_clicked(self, widget):
         pass
     
     def on_cboSource_changed(self, widget):
@@ -265,6 +271,8 @@ class WinViewer():
         
     def on_WinViewer_destroy(self, widget):
         self.thread.stop()
+        self.chain.remove_filter_observer(self.filters_changed_observer)
+        self.chain.remove_image_observer(self.chain_observer)
         
     def on_btnConfigure_clicked(self, widget):
         pass

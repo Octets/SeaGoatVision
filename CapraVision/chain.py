@@ -75,6 +75,18 @@ class FilterChain:
         self.filters.remove(filter)
         self.notify_filter_observers()
         
+    def move_filter_up(self, filter):
+        i = self.filters.index(filter)
+        if i > 0:
+            self.filters[i], self.filters[i-1] = self.filters[i-1], filter
+            self.notify_filter_observers()
+        
+    def move_filter_down(self, filter):
+        i = self.filters.index(filter)
+        if i < len(self.filters) - 1:
+            self.filters[i], self.filters[i+1] = self.filters[i+1], filter
+            self.notify_filter_observers()
+    
     def add_image_observer(self, observer):
         self.image_observers.append(observer)
         
