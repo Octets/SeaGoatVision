@@ -15,6 +15,7 @@
     <property name="title" translatable="yes">Capra Vision</property>
     <property name="default_width">440</property>
     <property name="default_height">360</property>
+    <signal name="destroy" handler="on_WinFilterChain_destroy" swapped="no"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -278,6 +279,7 @@
                 <property name="headers_visible">False</property>
                 <property name="headers_clickable">False</property>
                 <property name="tooltip_column">1</property>
+                <signal name="button-press-event" handler="on_lstFilters_button_press_event" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection9"/>
                 </child>

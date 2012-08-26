@@ -25,7 +25,7 @@ import threading
 
 from filters.implementation import BGR2RGB
 from guifilter import map_filter_to_ui
-from utils import get_ui, win_name
+from utils import get_ui, win_name, WindowState
 
 import chain
 import sources
@@ -42,9 +42,18 @@ class WinFilterChain:
                     'imgOpen', 'imgNew', 'imgUp', 'imgDown')
         self.window = ui.get_object(win_name(self))
         self.lstFilters = ui.get_object('lstFilters')
+        self.btnView = ui.get_object('btnView')
+        self.btnAdd = ui.get_object('btnAdd')
+        self.btnRemove = ui.get_object('btnRemove')
+        self.btnConfig = ui.get_object('btnConfig')
+        self.btnUp = ui.get_object('btnUp')
+        self.btnDown = ui.get_object('btnDown')
+        
         self.chain = chain.FilterChain()
         self.chain.add_filter_observer(self.filters_changed_observer)
         self.filterChainListStore = ui.get_object('filterChainListStore')
+        self.state = WindowState.Empty
+        #self.change_state()
         
     def show_filter_chain(self):
         self.filterChainListStore.clear()
@@ -83,9 +92,24 @@ class WinFilterChain:
         dialog.destroy()
         return result
             
+    def show_config(self, filter):
+        cls = map_filter_to_ui(filter)
+        if cls is not None:
+            win = cls(filter)
+            win.window.show_all()
+    
     def filters_changed_observer(self):
         self.show_filter_chain()
     
+    def change_state(self):
+        tools_enabled = self.state <> WindowState.Empty
+        self.btnAdd.set_sensitive(tools_enabled)
+        self.btnConfig.set_sensitive(tools_enabled)
+        self.btnDown.set_sensitive(tools_enabled)
+        self.btnRemove.set_sensitive(tools_enabled)
+        self.btnUp.set_sensitive(tools_enabled)
+        self.btnView.set_sensitive(tools_enabled)
+
     def on_btnOpen_clicked(self, widget):
         pass
     
@@ -108,12 +132,8 @@ class WinFilterChain:
                     
     def on_btnConfig_clicked(self, widget):
         if self.row_selected():
-            filter = self.selected_filter()
-            cls = map_filter_to_ui(filter)
-            if cls is not None:
-                win = cls(filter)
-                win.window.show_all()
-    
+            self.show_config(self.selected_filter())
+            
     def on_btnView_clicked(self, widget):
         win = WinViewer(self.chain)
         win.window.show_all()
@@ -143,7 +163,11 @@ class WinFilterChain:
     def on_cboSource_changed(self, widget):
         pass
     
-    def on_winFilterChain_destroy(self, widget):
+    def on_lstFilters_button_press_event(self, widget, event):
+        if event.get_click_count()[1] == 2L:
+            self.show_config(self.selected_filter())
+
+    def on_WinFilterChain_destroy(self, widget):
         Gtk.main_quit()
       
 class WinFilterSel:

@@ -30,3 +30,13 @@ def get_ui(window, *names):
 
 def win_name(window):
     return window.__class__.__name__
+
+class WindowState:
+    """Enumeration for the main window state
+        Empty = No file to edit
+        CreateNew = User created a new filter chain
+        ShowExisting = User opened a file and he did not modify anything yet
+        ExistingModified = File exists and the user made modifications
+    """
+    Empty, Create, Show, Modified = range(4)
+     
