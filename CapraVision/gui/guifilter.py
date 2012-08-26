@@ -36,10 +36,11 @@ def map_filter_to_ui(filter):
 
 class WinColorLevel:
     
-    def __init__(self, filtre):
+    def __init__(self, filtre, cb):
         self.filtre = filtre
         self.filtre_init = copy.copy(filtre)
-
+        self.cb = cb
+        
         ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
         self.hscRed = ui.get_object('hscRed')
@@ -56,6 +57,7 @@ class WinColorLevel:
         self.hscBlue.set_value(self.filtre.blue)
         
     def on_btnOK_clicked(self, widget):
+        self.cb()
         self.window.destroy()
     
     def on_btnCancel_clicked(self, widget):
@@ -75,9 +77,10 @@ class WinColorLevel:
     
 class WinColorThreshold:
     
-    def __init__(self, filtre):
+    def __init__(self, filtre, cb):
         self.filtre = filtre
         self.filtre_init = copy.copy(filtre)
+        self.cb = cb
         
         ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
@@ -104,6 +107,7 @@ class WinColorThreshold:
         self.hscBlueMax.set_value(self.filtre.bluemax)
         
     def on_btnOK_clicked(self, widget):
+        self.cb()
         self.window.destroy()
         
     def on_btnCancel_clicked(self, widget):
@@ -142,10 +146,11 @@ class WinColorThreshold:
 
 class WinPerspective:
     
-    def __init__(self, filtre):
+    def __init__(self, filtre, cb):
         self.filtre = filtre
         self.filtre_init = copy.copy(filtre)
-
+        self.cb = cb
+        
         ui = get_ui(self, 'adjPerspective')
         self.window = ui.get_object(win_name(self))
         self.spnTopLeftX = ui.get_object('spnTopLeftX')
@@ -180,6 +185,7 @@ class WinPerspective:
         return Gtk.Adjustment(0.0, 0.0, 65535.0, 1, 10.0, 0.0)
     
     def on_btnOK_clicked(self, widget):
+        self.cb()
         self.window.destroy()
         
     def on_btnCancel_clicked(self, widget):
