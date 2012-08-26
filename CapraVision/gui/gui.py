@@ -111,7 +111,23 @@ class WinFilterChain:
         self.btnView.set_sensitive(tools_enabled)
 
     def on_btnOpen_clicked(self, widget):
-        pass
+        dialog = Gtk.FileChooserDialog("Choose a filterchain file", None,
+                                   Gtk.FileChooserAction.OPEN,
+                                   (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                    Gtk.STOCK_OK, Gtk.ResponseType.OK))
+        ff = Gtk.FileFilter()
+        ff.set_name('Filterchain')
+        ff.add_pattern('*.filterchain')
+    
+        dialog.set_filter(ff)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            c = chain.read(dialog.get_filename())
+            if c is not None:
+                self.chain = c
+                self.chain.add_filter_observer(self.filters_changed_observer)
+                self.show_filter_chain()
+        dialog.destroy()
     
     def on_btnNew_clicked(self, widget):
         pass
@@ -155,7 +171,7 @@ class WinFilterChain:
                 self.lstFilters.set_cursor(index + 1)
             
     def on_btnSave_clicked(self, widget):
-        pass
+        chain.write('/home/benoit/test.filterchain', self.chain)
 
     def on_btnSaveAs_clicked(self, widget):
         pass

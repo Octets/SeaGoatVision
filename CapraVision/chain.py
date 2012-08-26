@@ -19,17 +19,54 @@
 
 """Contains the FilterChain class and helper functions to work with the filter chain."""
 
-import threading, time
+import ConfigParser
 import inspect
+import threading
+import time
 
-def open_filter_chain(file_name):
+import filters
+
+def isnumeric(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
+    
+def read(file_name):
     """Open a filter chain file and load its content in a new filter chain."""
-    pass
+    new_chain = FilterChain()
+    cfg = ConfigParser.ConfigParser()
+    cfg.read(file_name)
+    for section in cfg.sections():
+        filter = filters.create_filter(section) 
+        for member in filter.__dict__:
+            if member[0] == '_':
+                continue
+            val = cfg.get(section, member)
+            if val == "True" or val == "False":
+                filter.__dict__[member] = cfg.getboolean(section, member)
+            elif isnumeric(val):
+                filter.__dict__[member] = cfg.getfloat(section, member)
+            else:
+                filter.__dict__[member] = val
+        if hasattr(filter, 'configure'):
+            filter.configure()
+        new_chain.add_filter(filter)
+    return new_chain
 
-def save_filter_chain(file_name, chain):
+def write(file_name, chain):
     """Save the content of the filter chain in a file."""
-    pass
-
+    cfg = ConfigParser.ConfigParser()
+    for filter in chain.filters:
+        fname = filter.__class__.__name__
+        cfg.add_section(fname)
+        for name, value in filter.__dict__.items():
+            if name[0] == '_':
+                continue
+            cfg.set(fname, name, value)
+    cfg.write(open(file_name, 'w'))
+    
 class ThreadMainLoop(threading.Thread):
     """Main thread to process the images.
     
