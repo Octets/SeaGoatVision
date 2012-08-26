@@ -53,10 +53,15 @@ class WinFilterChain:
         self.btnDown = ui.get_object('btnDown')
         self.txtFilterChain = ui.get_object('txtFilterChain')
         
+        self.win_list = []
+        
         self.filterChainListStore = ui.get_object('filterChainListStore')
         self.set_state_empty()
         self.change_state()
 
+    def add_window_to_list(self, win):
+        self.win_list.append(win.window)
+        
     def change_state(self):
         tools_enabled = self.state <> WindowState.Empty
         self.btnAdd.set_sensitive(tools_enabled)
@@ -80,6 +85,14 @@ class WinFilterChain:
         return (self.state == WindowState.Create or
             self.state == WindowState.Modified)
 
+    def msg_confirm_create_new(self):
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
+                                   Gtk.ButtonsType.YES_NO, 
+                                   "Create new filterchain?")
+        result = dialog.run()
+        dialog.destroy()
+        return result
+        
     def msg_confirm_save_before_closing(self):
         dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
                                    None, 
@@ -120,7 +133,9 @@ class WinFilterChain:
         return iter is not None
 
     def save_chain(self):
-        if self.state == WindowState.Create:
+        if self.state == WindowState.Empty:
+            return True
+        elif self.state == WindowState.Create:
             return self.save_chain_as()
         else:
             chain.write(self.txtFilterChain.get_text(), self.chain)
@@ -128,6 +143,8 @@ class WinFilterChain:
             return True
 
     def save_chain_as(self):
+        if self.state == WindowState.Empty:
+            return True
         dialog = Gtk.FileChooserDialog("Save filterchain", None,
                                    Gtk.FileChooserAction.SAVE,
                                    (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -187,8 +204,10 @@ class WinFilterChain:
         cls = map_filter_to_ui(filter)
         if cls is not None:
             win = cls(filter, self.filter_modif_callback)
+            self.add_window_to_list(win)
+            win.window.connect('destroy', self.on_window_destroy)
             win.window.show_all()
-
+    
     def show_filter_chain(self):
         self.filterChainListStore.clear()
         for filter in self.chain.filters:
@@ -198,12 +217,17 @@ class WinFilterChain:
     def use_new_chain(self, chain):
         if chain is None:
             return
+        for win in list(self.win_list):
+            win.destroy()
         self.chain = chain
         self.chain.add_filter_observer(self.filters_changed_observer)
         self.show_filter_chain()
                                                                                     
     def on_btnNew_clicked(self, widget):
-        if self.is_state_modified_or_created():
+        if self.state == WindowState.Show:
+            if self.msg_confirm_create_new() == Gtk.ResponseType.NO:
+                return
+        elif self.is_state_modified_or_created():
             result = self.msg_confirm_save_before_new()
             if result == Gtk.ResponseType.YES:
                 pass
@@ -246,6 +270,8 @@ class WinFilterChain:
 
     def on_btnView_clicked(self, widget):
         win = WinViewer(self.chain)
+        win.window.connect('destroy', self.on_window_destroy)
+        self.add_window_to_list(win)
         win.window.show_all()
 
     def on_btnAdd_clicked(self, widget):
@@ -283,6 +309,9 @@ class WinFilterChain:
     def on_lstFilters_button_press_event(self, widget, event):
         if event.get_click_count()[1] == 2L:
             self.show_config(self.selected_filter())
+
+    def on_window_destroy(self, widget):
+        self.win_list.remove(widget)
 
     def on_WinFilterChain_delete_event(self, widget, data=None):
         if self.is_state_modified_or_created():
