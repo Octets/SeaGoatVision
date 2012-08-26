@@ -25,4 +25,8 @@ def load_filters():
             for name, filter in vars(filters.implementation).items() 
                 if inspect.isclass(filter)}
 
- 
+def create_filter(filter_name):
+    for name, filter in load_filters().items():
+        if name == filter_name:
+             return filter()
+    return None

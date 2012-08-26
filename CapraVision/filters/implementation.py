@@ -16,7 +16,17 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+""" Filters implementations
+    Rules:
+        - Filter must be a class
+        - Filter must have a execute(image) function that 
+            returns the processed image
+        - Filter can have a configure() function to configure the 
+            object after creation
+        - If there are data members that must not be saved, the member name
+            must start with an underscore.  
+            Eg: self._dont_save = 123 # value will not be save
+                self.save = 456 # value will be saved"""
 import cv2.cv as cv, cv2
 import numpy as np
 
@@ -71,7 +81,7 @@ class ColorLevel:
         self.red = 100
         self.green = 100
         self.blue = 100
-    
+        
     def execute(self, image):
         if self.red <> 100:
             image[:,:, 2] *= (self.red/100)
@@ -95,27 +105,27 @@ class ColorThreshold:
         self.greenmax = 256.0
         self.redmin = 20.0
         self.redmax = 256.0
-        self.barray = None
-        self.garray = None
-        self.rarray = None
+        self._barray = None
+        self._garray = None
+        self._rarray = None
         self.configure()
     
     def configure(self):
-        self.barray = np.array(
+        self._barray = np.array(
                         [self.get_binary_value(self.bluemin, self.bluemax, x) 
                             for x in range(0, 256)], dtype=np.float32)
-        self.garray = np.array(
+        self._garray = np.array(
                         [self.get_binary_value(self.greenmin, self.greenmax, x) 
                             for x in range(0, 256)], dtype=np.float32)
-        self.rarray = np.array(
+        self._rarray = np.array(
                         [self.get_binary_value(self.redmin, self.redmax, x) 
                             for x in range(0, 256)], dtype=np.float32)
         
     def execute(self, image):
         image[:,:, 0] = image[:,:, 1] = image[:,:, 2] = (
-                                            255 * self.barray[image[:,:, 0]] * 
-                                            self.garray[image[:,:, 1]] * 
-                                            self.rarray[image[:,:, 2]])
+                                            255 * self._barray[image[:,:, 0]] * 
+                                            self._garray[image[:,:, 1]] * 
+                                            self._rarray[image[:,:, 2]])
         return image
 
     def get_binary_value(self, mini, maxi, val):
