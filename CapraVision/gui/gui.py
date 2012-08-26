@@ -56,65 +56,30 @@ class WinFilterChain:
         self.filterChainListStore = ui.get_object('filterChainListStore')
         self.set_state_empty()
         self.change_state()
-        
-    def use_new_chain(self, chain):
-        if chain is None:
-            return
-        self.chain = chain
-        self.chain.add_filter_observer(self.filters_changed_observer)
-        self.show_filter_chain()
-        
-    def show_filter_chain(self):
-        self.filterChainListStore.clear()
-        for filter in self.chain.filters:
-            self.filterChainListStore.append(
-                        [filter.__class__.__name__, filter.__doc__]) 
-    
-    def row_selected(self):
-        (model, iter) = self.lstFilters.get_selection().get_selected()
-        return iter is not None
 
-    def selected_filter(self):
-        (model, iter) = self.lstFilters.get_selection().get_selected()
-        if iter is None:
-            return None
-        path = model.get_path(iter)
-        return self.chain.filters[path.get_indices()[0]]
-    
-    def selected_index(self):
-        (model, iter) = self.lstFilters.get_selection().get_selected()
-        if iter is None:
-            return -1
-        path = model.get_path(iter)
-        return path.get_indices()[0]
-        
+    def change_state(self):
+        tools_enabled = self.state <> WindowState.Empty
+        self.btnAdd.set_sensitive(tools_enabled)
+        self.btnConfig.set_sensitive(tools_enabled)
+        self.btnDown.set_sensitive(tools_enabled)
+        self.btnRemove.set_sensitive(tools_enabled)
+        self.btnUp.set_sensitive(tools_enabled)
+        self.btnView.set_sensitive(tools_enabled)
+
     def del_current_row(self):
         (model, iter) = self.lstFilters.get_selection().get_selected()
         self.chain.remove_filter(self.selected_filter())
         
-    def msg_warn_del_row(self):
-        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
-                            Gtk.ButtonsType.YES_NO, "Delete selected filter")
-        dialog.format_secondary_text(
-                                "Do you want to remove the selected filter?")
-        result = dialog.run()
-        dialog.destroy()
-        return result
-            
-    def msg_confirm_save_before_x(self, action):
-        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
-                                   None, 
-                                   "Save changes?")
-        dialog.add_button('Close without saving', Gtk.ButtonsType.CLOSE)
-        dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ButtonsType.CANCEL)
-        dialog.add_button(Gtk.STOCK_SAVE, Gtk.ButtonsType.OK)
-        dialog.format_secondary_text(
-            "Do you want to save the current filterchain before {}?"
-                .format(action))
-        result = dialog.run()
-        dialog.destroy()
-        return result
+    def filter_modif_callback(self):
+        self.set_state_modified()
         
+    def filters_changed_observer(self):
+        self.show_filter_chain()
+
+    def is_state_modified_or_created(self):
+        return (self.state == WindowState.Create or
+            self.state == WindowState.Modified)
+
     def msg_confirm_save_before_closing(self):
         dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
                                    None, 
@@ -140,54 +105,20 @@ class WinFilterChain:
         result = dialog.run()
         dialog.destroy()
         return result
-    
-    def show_config(self, filter):
-        cls = map_filter_to_ui(filter)
-        if cls is not None:
-            win = cls(filter, self.filter_modif_callback)
-            win.window.show_all()
-    
-    def filter_modif_callback(self):
-        self.set_state_modified()
-        
-    def filters_changed_observer(self):
-        self.show_filter_chain()
-    
-    def change_state(self):
-        tools_enabled = self.state <> WindowState.Empty
-        self.btnAdd.set_sensitive(tools_enabled)
-        self.btnConfig.set_sensitive(tools_enabled)
-        self.btnDown.set_sensitive(tools_enabled)
-        self.btnRemove.set_sensitive(tools_enabled)
-        self.btnUp.set_sensitive(tools_enabled)
-        self.btnView.set_sensitive(tools_enabled)
 
-    def is_state_modified_or_created(self):
-        return (self.state == WindowState.Create or
-            self.state == WindowState.Modified)
-            
-    def set_state_modified(self):
-        if self.state <> WindowState.Create:
-            self.state = WindowState.Modified
-            self.window.set_title(self.WINDOW_TITLE + " *")
-            self.change_state()
-            
-    def set_state_empty(self):
-        self.state = WindowState.Empty
-        self.window.set_title(self.WINDOW_TITLE)
-        self.change_state()
-        
-    def set_state_create(self):
-        self.state = WindowState.Create
-        self.window.set_title(self.WINDOW_TITLE + " *")
-        self.txtFilterChain.set_text('<new>')
-        self.change_state()
-        
-    def set_state_show(self):
-        self.state = WindowState.Show
-        self.window.set_title(self.WINDOW_TITLE)
-        self.change_state()
-        
+    def msg_warn_del_row(self):
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
+                            Gtk.ButtonsType.YES_NO, "Delete selected filter")
+        dialog.format_secondary_text(
+                                "Do you want to remove the selected filter?")
+        result = dialog.run()
+        dialog.destroy()
+        return result
+
+    def row_selected(self):
+        (model, iter) = self.lstFilters.get_selection().get_selected()
+        return iter is not None
+
     def save_chain(self):
         if self.state == WindowState.Create:
             return self.save_chain_as()
@@ -215,7 +146,72 @@ class WinFilterChain:
             return True
         else:
             return False
+
+    def selected_filter(self):
+        (model, iter) = self.lstFilters.get_selection().get_selected()
+        if iter is None:
+            return None
+        path = model.get_path(iter)
+        return self.chain.filters[path.get_indices()[0]]
     
+    def selected_index(self):
+        (model, iter) = self.lstFilters.get_selection().get_selected()
+        if iter is None:
+            return -1
+        path = model.get_path(iter)
+        return path.get_indices()[0]
+
+    def set_state_create(self):
+        self.state = WindowState.Create
+        self.window.set_title(self.WINDOW_TITLE + " *")
+        self.txtFilterChain.set_text('<new>')
+        self.change_state()
+
+    def set_state_empty(self):
+        self.state = WindowState.Empty
+        self.window.set_title(self.WINDOW_TITLE)
+        self.change_state()
+
+    def set_state_modified(self):
+        if self.state <> WindowState.Create:
+            self.state = WindowState.Modified
+            self.window.set_title(self.WINDOW_TITLE + " *")
+            self.change_state()
+                            
+    def set_state_show(self):
+        self.state = WindowState.Show
+        self.window.set_title(self.WINDOW_TITLE)
+        self.change_state()
+
+    def show_config(self, filter):
+        cls = map_filter_to_ui(filter)
+        if cls is not None:
+            win = cls(filter, self.filter_modif_callback)
+            win.window.show_all()
+
+    def show_filter_chain(self):
+        self.filterChainListStore.clear()
+        for filter in self.chain.filters:
+            self.filterChainListStore.append(
+                        [filter.__class__.__name__, filter.__doc__]) 
+
+    def use_new_chain(self, chain):
+        if chain is None:
+            return
+        self.chain = chain
+        self.chain.add_filter_observer(self.filters_changed_observer)
+        self.show_filter_chain()
+                                                                                    
+    def on_btnNew_clicked(self, widget):
+        if self.is_state_modified_or_created():
+            result = self.msg_confirm_save_before_new()
+            if result == Gtk.ResponseType.YES:
+                pass
+            elif result == Gtk.ResponseType.CANCEL:
+                return
+        self.use_new_chain(chain.FilterChain())
+        self.set_state_create()
+
     def on_btnOpen_clicked(self, widget):
         if self.is_state_modified_or_created():
             result = self.msg_confirm_save_before_new()
@@ -241,17 +237,17 @@ class WinFilterChain:
                 self.txtFilterChain.set_text(dialog.get_filename())
                 self.set_state_show()
         dialog.destroy()
-    
-    def on_btnNew_clicked(self, widget):
-        if self.is_state_modified_or_created():
-            result = self.msg_confirm_save_before_new()
-            if result == Gtk.ResponseType.YES:
-                pass
-            elif result == Gtk.ResponseType.CANCEL:
-                return
-        self.use_new_chain(chain.FilterChain())
-        self.set_state_create()
+            
+    def on_btnSave_clicked(self, widget):
+        self.save_chain()
         
+    def on_btnSaveAs_clicked(self, widget):
+        self.save_chain_as()
+
+    def on_btnView_clicked(self, widget):
+        win = WinViewer(self.chain)
+        win.window.show_all()
+
     def on_btnAdd_clicked(self, widget):
         win = WinFilterSel()
         if win.window.run() == Gtk.ResponseType.OK:
@@ -267,11 +263,7 @@ class WinFilterChain:
     def on_btnConfig_clicked(self, widget):
         if self.row_selected():
             self.show_config(self.selected_filter())
-            
-    def on_btnView_clicked(self, widget):
-        win = WinViewer(self.chain)
-        win.window.show_all()
-        
+                    
     def on_btnUp_clicked(self, widget):
         filter = self.selected_filter()
         if filter is not None:
@@ -287,13 +279,7 @@ class WinFilterChain:
             if index < len(self.chain.filters) - 1:
                 self.chain.move_filter_down(filter)
                 self.lstFilters.set_cursor(index + 1)
-            
-    def on_btnSave_clicked(self, widget):
-        self.save_chain()
-        
-    def on_btnSaveAs_clicked(self, widget):
-        self.save_chain_as()
-        
+                    
     def on_lstFilters_button_press_event(self, widget, event):
         if event.get_click_count()[1] == 2L:
             self.show_config(self.selected_filter())
@@ -375,6 +361,24 @@ class WinViewer():
         self.cboSource.set_active(1)
         self.set_default_filter()
 
+    #This method is the observer of the FilterChain class.
+    def chain_observer(self, filter, output):
+        if filter is self.filter:
+            GObject.idle_add(self.update_image3, output)
+
+    def change_source(self, new_source):
+        if self.thread <> None:
+            self.thread.stop()
+            self.thread = None
+        if self.source <> None:
+            sources.close_source(self.source)
+        if new_source <> None:
+            self.source = sources.create_source(new_source)
+            self.thread = chain.ThreadMainLoop(self.source, self.chain, 1/60)
+            self.thread.start()
+        else:
+            self.source = None
+
     def fill_filters_source(self):
         old_filter = self.filter
         count = len(self.filterChainListStore)
@@ -389,32 +393,14 @@ class WinViewer():
         else:
             self.set_default_filter()
             
+    def filters_changed_observer(self):
+        self.fill_filters_source()
+
     def set_default_filter(self):
         if len(self.chain.filters) > 0:
             self.filter = self.chain.filters[-1]
             self.cboFilter.set_active(len(self.chain.filters)-1)
-        
-    def change_source(self, new_source):
-        if self.thread <> None:
-            self.thread.stop()
-            self.thread = None
-        if self.source <> None:
-            sources.close_source(self.source)
-        if new_source <> None:
-            self.source = sources.create_source(new_source)
-            self.thread = chain.ThreadMainLoop(self.source, self.chain, 1/60)
-            self.thread.start()
-        else:
-            self.source = None
-        
-    #This method is the observer of the FilterChain class.
-    def chain_observer(self, filter, output):
-        if filter is self.filter:
-            GObject.idle_add(self.update_image3, output)
-        
-    def filters_changed_observer(self):
-        self.fill_filters_source()
-        
+                                
     def update_image(self, image):
         if image <> None:
             image = bgr2rgb.execute(image)
@@ -430,12 +416,7 @@ class WinViewer():
             cv2.imwrite(self.temp_file, image)
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.temp_file)
             self.imgSource.set_from_pixbuf(pixbuf)
-        
-    def on_WinViewer_destroy(self, widget):
-        self.thread.stop()
-        self.chain.remove_filter_observer(self.filters_changed_observer)
-        self.chain.remove_image_observer(self.chain_observer)
-        
+                
     def on_btnConfigure_clicked(self, widget):
         pass
     
@@ -453,4 +434,9 @@ class WinViewer():
             self.filter = f 
         else:
             self.filter = None
+
+    def on_WinViewer_destroy(self, widget):
+        self.thread.stop()
+        self.chain.remove_filter_observer(self.filters_changed_observer)
+        self.chain.remove_image_observer(self.chain_observer)
         
