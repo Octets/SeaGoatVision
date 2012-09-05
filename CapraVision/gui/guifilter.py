@@ -231,3 +231,35 @@ class WinPerspective:
         self.filtre.bottomrighty = self.spnBottomRightY.get_value()
         self.filtre.configure()
         
+class WinExec:
+    
+    def __init__(self, filtre, cb):
+        self.filtre = filtre
+        self.filtre_init = copy.copy(filtre)
+        self.cb = cb
+        
+        ui = get_ui(self)
+        self.window = ui.get_object(win_name(self))
+        self.txtCurrent = ui.get_object('txtCurrent')
+        self.txtWorking = ui.get_object('txtWorking')
+        
+        self.init_window()
+        
+    def init_window(self):
+        self.txtCurrent.get_buffer().set_text(self.filtre.code)
+        self.txtWorking.get_buffer().set_text(self.filtre.code)
+    
+    def on_btnOK_clicked(self, widget):
+        self.cb()
+        self.window.destroy()
+        
+    def on_btnCancel_clicked(self, widget):
+        self.filtre.code = self.filtre_init.code
+        self.init_window()
+
+    def on_btnApply_clicked(self, widget):
+        start, end = self.txtWorking.get_buffer().get_bounds()
+        code = self.txtWorking.get_buffer().get_text(start, end, False)
+        self.txtCurrent.get_buffer().set_text(code)
+        self.filtre.code = code
+    

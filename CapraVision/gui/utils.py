@@ -17,8 +17,28 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GdkPixbuf
+import Image
+
 import os
+import StringIO
+import numpy
+
+from filters.implementation import BGR2RGB
+ 
+def numpy_to_pixbuf(image):
+    bgr2rgb = BGR2RGB()
+    image = bgr2rgb.execute(image)
+    img = Image.fromarray(image)
+    buff = StringIO.StringIO()
+    img.save(buff, 'ppm')
+    contents = buff.getvalue()
+    buff.close()
+    loader = GdkPixbuf.PixbufLoader()
+    loader.write(contents)
+    pixbuf = loader.get_pixbuf()
+    loader.close()
+    return pixbuf
 
 def get_ui(window, *names):
     ui = Gtk.Builder()

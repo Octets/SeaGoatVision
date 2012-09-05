@@ -20,18 +20,14 @@
 from gi.repository import Gtk, GObject, GdkPixbuf
 
 import cv2
-import tempfile
 import threading
 
-from filters.implementation import BGR2RGB
 from guifilter import map_filter_to_ui
-from utils import get_ui, win_name, WindowState
+from utils import get_ui, win_name, WindowState, numpy_to_pixbuf
 
 import chain
 import sources
 import filters
-
-bgr2rgb = BGR2RGB()
 
 class WinFilterChain:
     """Main window
@@ -373,8 +369,6 @@ class WinViewer():
         self.source = None
         self.filter = None
         
-        self.temp_file = tempfile.mktemp('.jpg')
-
         ui = get_ui(self, 'sourcesListStore', 'filterChainListStore')
         self.window = ui.get_object(win_name(self))
         self.cboFilter = ui.get_object('cboFilter')
@@ -393,7 +387,7 @@ class WinViewer():
     #This method is the observer of the FilterChain class.
     def chain_observer(self, filter, output):
         if filter is self.filter:
-            GObject.idle_add(self.update_image3, output)
+            GObject.idle_add(self.update_image, output)
 
     def change_source(self, new_source):
         if self.thread <> None:
@@ -403,7 +397,7 @@ class WinViewer():
             sources.close_source(self.source)
         if new_source <> None:
             self.source = sources.create_source(new_source)
-            self.thread = chain.ThreadMainLoop(self.source, self.chain, 1/60)
+            self.thread = chain.ThreadMainLoop(self.source, self.chain, 1/30.0)
             self.thread.start()
         else:
             self.source = None
@@ -432,19 +426,7 @@ class WinViewer():
                                 
     def update_image(self, image):
         if image <> None:
-            image = bgr2rgb.execute(image)
-            pixbuf = GdkPixbuf.Pixbuf.new_from_data(image, 
-                                                    GdkPixbuf.Colorspace.RGB, 8)
-            self.imgSource.set_from_pixbuf(pixbuf)
-
-    # fix for GTK3 because https://bugzilla.gnome.org/show_bug.cgi?id=674691
-    # To overcome this bug, the image is saved to a file in the temp folder.
-    # The image is then reloaded in the window.
-    def update_image3(self, image):
-        if image <> None:
-            cv2.imwrite(self.temp_file, image)
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.temp_file)
-            self.imgSource.set_from_pixbuf(pixbuf)
+            self.imgSource.set_from_pixbuf(numpy_to_pixbuf(image))
                 
     def on_btnConfigure_clicked(self, widget):
         pass

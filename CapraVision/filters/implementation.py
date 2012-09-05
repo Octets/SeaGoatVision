@@ -160,3 +160,18 @@ class Perspective:
         
     def execute(self, image):
         return cv2.warpPerspective(image, self.mmat, (640, 480))
+
+class Exec:
+    """Create and edit a filter on the fly for testing purposes"""
+    
+    def __init__(self):
+        self.code = ""
+        
+    def execute(self, image):
+        try:
+            if self.code.strip() <> "":
+                exec self.code
+        except Exception, e:
+            print e
+        return image
+    
