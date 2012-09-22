@@ -451,3 +451,40 @@ class WinViewer():
         self.chain.remove_filter_observer(self.filters_changed_observer)
         self.chain.remove_image_observer(self.chain_observer)
         
+class WinMapper:
+    
+    def __init__(self):
+        ui = get_ui(self, 'imageListStore', 'adjSize')
+        self.window = ui.get_object(win_name(self))
+        self.imageListStore = ui.get_object('imageListStore') 
+
+    def on_btnOpen_clicked(self, widget):
+        pass
+    
+    def on_btnFirst_clicked(self, widget):
+        pass
+    
+    def on_btnPrevious_clicked(self, widget):
+        pass
+    
+    def on_btnNext_clicked(self, widget):
+        pass
+    
+    def on_btnLast_clicked(self, widget):
+        pass
+    
+    def on_btnClear_clicked(self, widget):
+        pass
+    
+    def on_btnUndo_clicked(self, widget):
+        pass
+    
+    def on_btnRedo_clicked(self, widget):
+        pass
+    
+    def on_btnColor_clicked(self, widget):
+        pass
+    
+    def on_spnSize_change_value(self, widget):
+        pass
+    

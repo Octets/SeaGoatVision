@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkAdjustment" id="adjSize">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkWindow" id="WinMapper">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Line Identification</property>
+    <property name="window_position">center-on-parent</property>
+    <child>
+      <object class="GtkBox" id="box1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox" id="box5">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="spacing">3</property>
+            <child>
+              <object class="GtkLabel" id="lblFolder">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Folder :</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="txtFolder">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="editable">False</property>
+                <property name="invisible_char">●</property>
+                <property name="invisible_char_set">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btnOpen">
+                <property name="label">gtk-open</property>
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+                <property name="yalign">0.43999999761581421</property>
+                <signal name="clicked" handler="on_btnOpen_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolbar" id="toolbar">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="show_arrow">False</property>
+                <child>
+                  <object class="GtkToolButton" id="btnFirst">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Previous image</property>
+                    <property name="tooltip_text" translatable="yes">Previous image</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">First</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-goto-first</property>
+                    <signal name="clicked" handler="on_btnFirst_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="btnPrevious">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Previous</property>
+                    <property name="tooltip_text" translatable="yes">Previous</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Previous</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-go-back</property>
+                    <signal name="clicked" handler="on_btnPrevious_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="btnNext">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Next</property>
+                    <property name="tooltip_text" translatable="yes">Next</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Next</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-go-forward</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="btnLast">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Last</property>
+                    <property name="tooltip_text" translatable="yes">Last</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Last</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-goto-last</property>
+                    <signal name="clicked" handler="on_btnLast_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="btnClear">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Clear entire selection</property>
+                    <property name="tooltip_text" translatable="yes">Clear entire selection</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Clear</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-clear</property>
+                    <signal name="clicked" handler="on_btnClear_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="btnUndo">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Undo</property>
+                    <property name="tooltip_text" translatable="yes">Undo</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Undo</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-undo</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="btnRedo">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Redo</property>
+                    <property name="tooltip_text" translatable="yes">Redo</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Redo</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-redo</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="btnColor">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Choose color</property>
+                    <property name="tooltip_text" translatable="yes">Choose color</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Color</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-select-color</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolItem" id="btnSize">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Size</property>
+                    <property name="tooltip_text" translatable="yes">Size</property>
+                    <property name="use_action_appearance">False</property>
+                    <child>
+                      <object class="GtkBox" id="box6">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="spacing">3</property>
+                        <child>
+                          <object class="GtkLabel" id="lblSiz">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Size:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="spnSize">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="invisible_char">●</property>
+                            <property name="width_chars">2</property>
+                            <property name="caps_lock_warning">False</property>
+                            <property name="adjustment">adjSize</property>
+                            <property name="climb_rate">1</property>
+                            <property name="numeric">True</property>
+                            <signal name="change-value" handler="on_spnSize_change_value" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="pack_type">end</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="box2">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkTreeView" id="lstImages">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="margin_top">12</property>
+                <property name="model">imageListStore</property>
+                <child>
+                  <object class="GtkTreeViewColumn" id="colIdentified">
+                    <property name="title" translatable="yes">Done</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="colName">
+                    <property name="min_width">200</property>
+                    <property name="title" translatable="yes">Image Name</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkDrawingArea" id="drwImage">
+                <property name="width_request">640</property>
+                <property name="height_request">480</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkListStore" id="imageListStore">
+    <columns>
+      <!-- column-name Identified -->
+      <column type="gboolean"/>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+</interface>
