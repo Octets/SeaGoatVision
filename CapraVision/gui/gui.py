@@ -397,7 +397,8 @@ class WinViewer():
             sources.close_source(self.source)
         if new_source <> None:
             self.source = sources.create_source(new_source)
-            self.thread = chain.ThreadMainLoop(self.source, self.chain, 1/30.0)
+            self.thread = chain.ThreadMainLoop(self.source, 1/30.0)
+            self.thread.add_observer(self.thread_observer)
             self.thread.start()
         else:
             self.source = None
@@ -424,6 +425,9 @@ class WinViewer():
             self.filter = self.chain.filters[-1]
             self.cboFilter.set_active(len(self.chain.filters)-1)
                                 
+    def thread_observer(self, image):
+        self.chain.execute(image)
+        
     def update_image(self, image):
         if image <> None:
             self.imgSource.set_from_pixbuf(numpy_to_pixbuf(image))
@@ -458,8 +462,21 @@ class WinMapper:
         self.window = ui.get_object(win_name(self))
         self.imageListStore = ui.get_object('imageListStore') 
 
-    def on_btnOpen_clicked(self, widget):
+    def load_folder(self, folder):
         pass
+    
+    def on_btnOpen_clicked(self, widget):
+        dialog = Gtk.FileChooserDialog("Choose an image folder", None,
+                                   Gtk.FileChooserAction.SELECT_FOLDER,
+                                   (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                    Gtk.STOCK_OK, Gtk.ResponseType.OK))
+    
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            folder = chain.read(dialog.get_filename())
+            if folder is not None:
+                load_folder(folder)
+        dialog.destroy()
     
     def on_btnFirst_clicked(self, widget):
         pass

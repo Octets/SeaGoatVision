@@ -75,21 +75,34 @@ class ThreadMainLoop(threading.Thread):
         filterchain: the configured filterchain
         sleep_time: time to wait in seconds before getting the next image
     """
-    def __init__(self, source, filterchain, sleep_time):
+    def __init__(self, source, sleep_time):
         threading.Thread.__init__(self)
         self.daemon = True
         self.source = source
-        self.filterchain = filterchain
         self.sleep_time = sleep_time
-        self.running = True
+        self.running = False
+        self.observers = []
+        
+    def add_observer(self, observer):
+        self.observers.append(observer)
+        
+    def remove_observer(self, observer):
+        self.observers.remove(observer)
         
     def run(self):
-        while self.running:
-            image = self.source.next_frame()
-            self.filterchain.execute(image)
+        self.running = True
+        for image in self.source:
+            self.notify_observers(image)
+            if not self.running:
+                break
             if self.sleep_time >= 0:
                 time.sleep(self.sleep_time)
-
+        self.running = False
+        
+    def notify_observers(self, image):
+        for observer in self.observers:
+            observer(image)
+            
     def stop(self):
         self.running = False
         

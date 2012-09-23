@@ -42,6 +42,9 @@ def load_sources():
 def make_source_thread_safe(source):
     return ThreadSafeSourceWrapper(source)
         
+def supported_image_formats():
+    return ['bmp', 'jpeg', 'jpg', 'png', 'pbm', 'pgm', 'ppm', 'tiff', 'tif']
+
 class ThreadSafeSourceWrapper:
     """This is a wrapper around the sources to make it thread-safe.
     The goal of this class is to remove boiler plate code from the sources.
@@ -52,8 +55,14 @@ class ThreadSafeSourceWrapper:
         self.source = source
         self.lock = threading.Lock()
         
-    def next_frame(self):
-        return self.thread_safe_call(self.source.next_frame)
+    def __getattr__(self, name):
+        return getattr(self.source, name)
+    
+    def __iter__(self):
+        return self
+    
+    def next(self):
+        return self.thread_safe_call(self.source.next)
     
     def close(self):
         return self.thread_safe_call(self.source.close)
