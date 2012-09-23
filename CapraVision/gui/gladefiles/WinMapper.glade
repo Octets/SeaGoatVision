@@ -121,6 +121,7 @@
                     <property name="label" translatable="yes">Next</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-go-forward</property>
+                    <signal name="clicked" handler="on_btnNext_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -305,6 +306,9 @@
                     <property name="margin_top">12</property>
                     <property name="model">imageListStore</property>
                     <signal name="cursor-changed" handler="on_lstImages_cursor_changed" swapped="no"/>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="treeview-selection1"/>
+                    </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="colIdentified">
                         <property name="title" translatable="yes">Done</property>

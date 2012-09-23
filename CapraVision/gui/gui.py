@@ -483,16 +483,21 @@ class WinMapper:
         dialog.destroy()
     
     def on_btnFirst_clicked(self, widget):
-        pass
+        self.lstImages.set_cursor(0)
     
     def on_btnPrevious_clicked(self, widget):
-        pass
+        position = tree_selected_index(self.lstImages) - 1
+        if position >= 0:
+            self.lstImages.set_cursor(position)
     
     def on_btnNext_clicked(self, widget):
-        pass
+        position = tree_selected_index(self.lstImages) + 1
+        if position < len(self.imageListStore):
+            self.lstImages.set_cursor(position)
     
     def on_btnLast_clicked(self, widget):
-        pass
+        position = len(self.imageListStore) - 1
+        self.lstImages.set_cursor(position)
     
     def on_btnClear_clicked(self, widget):
         pass
