@@ -19,7 +19,7 @@
 
 """
 This module contains the code for the sources.
-Sources are objects that returns images.  
+Sources are objects that returns file_names.  
 It can be a a webcam, list of files from the hard drive or anything else.
 
 Sources should implement the iterator protocol:
@@ -28,6 +28,8 @@ Sources should implement the iterator protocol:
 
 import cv2
 import os
+
+import utils
 
 global captures 
 captures = {}
@@ -43,44 +45,38 @@ def get_capture(cam_no):
 class ImageFolder:
     
     def __init__(self):
-        self.folder_name = '.'
-        self.images = []
+        self.folder_name = ''
+        self.file_names = []
         self.position = 0
         
     def read_folder(self, folder):
-        self.images = []
+        self.file_names = utils.find_all_images(folder)
         self.folder_name = folder
         self.position = 0
-        for root, subfolders, files in os.walk(folder):
-            for file in files:
-                ext = os.path.splitext(file)[1]
-                if ext in supported_image_formats():
-                    self.images.append(os.path.join(root,file))
-        list.sort(self.images)
         
     def __iter__(self):
         return self
     
     def next(self):
-        if self.position == len(self.images):
+        if self.position >= len(self.file_names):
             raise StopIteration
         else:
-            image = load_image(self.position)
+            image = self.load_image(self.position)
             self.position += 1
             return image
     
     def load_image(self, position):
-        image = self.images(position)
+        image = self.file_names[position]
         return cv2.imread(image)
         
     def current_position(self):
         return self.position
     
     def total_images(self):
-        return len(self.images)
+        return len(self.file_names)
     
 class Webcam:
-    """Return images from the webcam."""
+    """Return file_names from the webcam."""
          
     def __init__(self):
         self.run = True

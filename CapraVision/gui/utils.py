@@ -26,6 +26,17 @@ import numpy
 
 from filters.implementation import BGR2RGB
  
+def tree_selected_index(treeview):
+    (model, iter) = treeview.get_selection().get_selected()
+    if iter is None:
+        return -1
+    path = model.get_path(iter)
+    return path.get_indices()[0]
+
+def tree_row_selected(treeview):
+    (model, iter) = treeview.get_selection().get_selected()
+    return iter is not None
+
 def numpy_to_pixbuf(image):
     bgr2rgb = BGR2RGB()
     image = bgr2rgb.execute(image)

@@ -17,13 +17,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, GObject, GdkPixbuf
+from gi.repository import Gtk, Gdk, GObject, GdkPixbuf
 
 import cv2
+import os
 import threading
 
 from guifilter import map_filter_to_ui
-from utils import get_ui, win_name, WindowState, numpy_to_pixbuf
+from utils import *
 
 import chain
 import sources
@@ -124,10 +125,6 @@ class WinFilterChain:
         dialog.destroy()
         return result
 
-    def row_selected(self):
-        (model, iter) = self.lstFilters.get_selection().get_selected()
-        return iter is not None
-
     def save_chain(self):
         if self.state == WindowState.Empty:
             return True
@@ -167,13 +164,6 @@ class WinFilterChain:
         path = model.get_path(iter)
         return self.chain.filters[path.get_indices()[0]]
     
-    def selected_index(self):
-        (model, iter) = self.lstFilters.get_selection().get_selected()
-        if iter is None:
-            return -1
-        path = model.get_path(iter)
-        return path.get_indices()[0]
-
     def set_state_create(self):
         self.state = WindowState.Create
         self.window.set_title(self.WINDOW_TITLE + " *")
@@ -278,18 +268,18 @@ class WinFilterChain:
         win.window.destroy()
             
     def on_btnRemove_clicked(self, widget):
-        if (self.row_selected() and 
+        if (tree_row_selected(self.lstFilters) and 
                             self.msg_warn_del_row() == Gtk.ResponseType.YES):
             self.del_current_row()
                     
     def on_btnConfig_clicked(self, widget):
-        if self.row_selected():
+        if tree_row_selected(self.lstFilters):
             self.show_config(self.selected_filter())
                     
     def on_btnUp_clicked(self, widget):
         filter = self.selected_filter()
         if filter is not None:
-            index = self.selected_index()
+            index = utils.tree_selected_index(self.lstFilters)
             if index > 0:
                 self.chain.move_filter_up(filter)
                 self.lstFilters.set_cursor(index - 1)
@@ -297,7 +287,7 @@ class WinFilterChain:
     def on_btnDown_clicked(self, widget):
         filter = self.selected_filter()
         if filter is not None:
-            index = self.selected_index()
+            index = tree_selected_index(self.lstFilters)
             if index < len(self.chain.filters) - 1:
                 self.chain.move_filter_down(filter)
                 self.lstFilters.set_cursor(index + 1)
@@ -461,10 +451,23 @@ class WinMapper:
         ui = get_ui(self, 'imageListStore', 'adjSize')
         self.window = ui.get_object(win_name(self))
         self.imageListStore = ui.get_object('imageListStore') 
-
+        self.txtFolder = ui.get_object('txtFolder')
+        self.lstImages = ui.get_object('lstImages')
+        self.drwImage = ui.get_object('drwImage')
+        
+        self.pixbuf_image = None
+        
     def load_folder(self, folder):
-        pass
-    
+        images = sources.find_all_images(folder)
+        self.imageListStore.clear()
+        for image in images:
+            self.imageListStore.append([os.path.exists(image + '.map'), 
+                                        os.path.basename(image),
+                                        image,
+                                        None])
+        if len(images) > 0:
+            self.lstImages.set_cursor(0)
+            
     def on_btnOpen_clicked(self, widget):
         dialog = Gtk.FileChooserDialog("Choose an image folder", None,
                                    Gtk.FileChooserAction.SELECT_FOLDER,
@@ -473,9 +476,10 @@ class WinMapper:
     
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            folder = chain.read(dialog.get_filename())
+            folder = dialog.get_filename()
+            self.txtFolder.set_text(folder)
             if folder is not None:
-                load_folder(folder)
+                self.load_folder(folder)
         dialog.destroy()
     
     def on_btnFirst_clicked(self, widget):
@@ -504,4 +508,19 @@ class WinMapper:
     
     def on_spnSize_change_value(self, widget):
         pass
+    
+    def on_lstImages_cursor_changed(self, widget):
+        index = tree_selected_index(self.lstImages)
+        if index >= 0:
+            img = cv2.imread(self.imageListStore[index][2])
+            self.pixbuf_image = numpy_to_pixbuf(img)
+            self.drwImage.set_size_request(img.shape[1], img.shape[0])
+            self.drwImage.queue_draw()
+            
+    def on_drwImage_draw(self, widget, context):
+        if self.pixbuf_image is not None:
+            Gdk.cairo_set_source_pixbuf(context, self.pixbuf_image, 0, 0)
+            context.paint()
+    
+            
     

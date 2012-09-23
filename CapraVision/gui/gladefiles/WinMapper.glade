@@ -20,6 +20,7 @@
           <object class="GtkBox" id="box5">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="valign">start</property>
             <property name="spacing">3</property>
             <child>
               <object class="GtkLabel" id="lblFolder">
@@ -86,6 +87,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
@@ -104,6 +106,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
@@ -121,6 +124,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
@@ -139,6 +143,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
@@ -157,6 +162,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
@@ -174,6 +180,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
@@ -191,6 +198,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
@@ -208,6 +216,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
@@ -271,8 +280,8 @@
             </child>
           </object>
           <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -280,39 +289,81 @@
           <object class="GtkBox" id="box2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="spacing">3</property>
             <child>
-              <object class="GtkTreeView" id="lstImages">
+              <object class="GtkScrolledWindow" id="scrolledwindow1">
+                <property name="width_request">280</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="margin_top">12</property>
-                <property name="model">imageListStore</property>
+                <property name="halign">start</property>
+                <property name="hscrollbar_policy">never</property>
+                <property name="shadow_type">in</property>
                 <child>
-                  <object class="GtkTreeViewColumn" id="colIdentified">
-                    <property name="title" translatable="yes">Done</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="colName">
-                    <property name="min_width">200</property>
-                    <property name="title" translatable="yes">Image Name</property>
+                  <object class="GtkTreeView" id="lstImages">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="margin_top">12</property>
+                    <property name="model">imageListStore</property>
+                    <signal name="cursor-changed" handler="on_lstImages_cursor_changed" swapped="no"/>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="colIdentified">
+                        <property name="title" translatable="yes">Done</property>
+                        <child>
+                          <object class="GtkCellRendererToggle" id="cellDone"/>
+                          <attributes>
+                            <attribute name="active">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="colName">
+                        <property name="fixed_width">200</property>
+                        <property name="min_width">200</property>
+                        <property name="max_width">200</property>
+                        <property name="title" translatable="yes">Image Name</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellName"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">0</property>
               </packing>
             </child>
             <child>
-              <object class="GtkDrawingArea" id="drwImage">
-                <property name="width_request">640</property>
-                <property name="height_request">480</property>
+              <object class="GtkScrolledWindow" id="scrolledwindow2">
+                <property name="width_request">642</property>
+                <property name="height_request">482</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkViewport" id="viewport1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkDrawingArea" id="drwImage">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
+                        <signal name="draw" handler="on_drwImage_draw" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
@@ -333,6 +384,10 @@
       <column type="gboolean"/>
       <!-- column-name Name -->
       <column type="gchararray"/>
+      <!-- column-name FullPath -->
+      <column type="gchararray"/>
+      <!-- column-name Matrix -->
+      <column type="gpointer"/>
     </columns>
   </object>
 </interface>
