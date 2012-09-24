@@ -178,6 +178,7 @@
                     <property name="label" translatable="yes">Undo</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-undo</property>
+                    <signal name="clicked" handler="on_btnUndo_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -196,6 +197,7 @@
                     <property name="label" translatable="yes">Redo</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-redo</property>
+                    <signal name="clicked" handler="on_btnRedo_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -214,6 +216,7 @@
                     <property name="label" translatable="yes">Color</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-select-color</property>
+                    <signal name="clicked" handler="on_btnColor_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -360,11 +363,11 @@
                         <property name="can_focus">False</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <signal name="configure-event" handler="on_drwImage_configure_event" swapped="no"/>
                         <signal name="button-press-event" handler="on_drwImage_button_press_event" swapped="no"/>
-                        <signal name="motion-notify-event" handler="on_drwImage_motion_notify_event" swapped="no"/>
                         <signal name="draw" handler="on_drwImage_draw_image" swapped="no"/>
                         <signal name="draw" handler="on_drwImage_draw_lines" swapped="no"/>
+                        <signal name="configure-event" handler="on_drwImage_configure_event" swapped="no"/>
+                        <signal name="motion-notify-event" handler="on_drwImage_motion_notify_event" swapped="no"/>
                       </object>
                     </child>
                   </object>

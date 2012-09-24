@@ -21,6 +21,7 @@ from gi.repository import Gtk, Gdk, GObject, GdkPixbuf
 import cairo
 
 import cv2
+import numpy as np
 import os
 import threading
 
@@ -459,18 +460,32 @@ class WinMapper:
         self.lstImages = ui.get_object('lstImages')
         self.drwImage = ui.get_object('drwImage')
         self.spnSize = ui.get_object('spnSize')
-
+        self.spnSize.set_value(16)
+        
         self.drwImage.set_events(self.drwImage.get_events()
                       | Gdk.EventMask.LEAVE_NOTIFY_MASK
                       | Gdk.EventMask.BUTTON_PRESS_MASK
                       | Gdk.EventMask.POINTER_MOTION_MASK
                       | Gdk.EventMask.POINTER_MOTION_HINT_MASK)
+        
         self.pixbuf_image = None
         self.surface = None
-        self.color_r = 255
-        self.color_g = 255
-        self.color_b = 255
+        self.color = Gdk.RGBA()
+        self.color.red = 255
+        self.color.green = 255
+        self.color.blue = 255
+        self.matrix = None
         
+    def configure_surface(self):
+        allocation = self.drwImage.get_allocation()
+        self.surface = self.drwImage.get_window().create_similar_surface(
+                                                    cairo.CONTENT_COLOR_ALPHA,
+                                                    allocation.width,
+                                                    allocation.height)
+        context = cairo.Context(self.surface)
+        context.set_source_rgba(0, 0, 0, 0)
+        context.paint()
+    
     def draw_brush(self, widget, x, y):
         size = self.spnSize.get_value_as_int()
         rect = Gdk.Rectangle()
@@ -480,6 +495,10 @@ class WinMapper:
         rect.height = size
 
         context = cairo.Context(self.surface)
+        context.set_source_rgba(
+                                self.color.red, 
+                                self.color.green, 
+                                self.color.blue, 1)
 
         Gdk.cairo_rectangle(context, rect)
         context.fill()
@@ -538,8 +557,13 @@ class WinMapper:
         pass
     
     def on_btnColor_clicked(self, widget):
-        pass
-    
+        dialog = Gtk.ColorChooserDialog("Please choose a color")
+        dialog.set_rgba(self.color)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            dialog.get_rgba(self.color)
+        dialog.destroy()
+        
     def on_spnSize_change_value(self, widget):
         pass
     
@@ -550,17 +574,10 @@ class WinMapper:
             self.pixbuf_image = numpy_to_pixbuf(img)
             self.drwImage.set_size_request(img.shape[1], img.shape[0])
             self.drwImage.queue_draw()
+            self.configure_surface()
             
     def on_drwImage_configure_event(self, widget, event):
-        allocation = self.drwImage.get_allocation()
-        self.surface = self.drwImage.get_window().create_similar_surface(
-                                                              cairo.CONTENT_COLOR_ALPHA,
-                                                              allocation.width,
-                                                              allocation.height)
-        context = cairo.Context(self.surface)
-        context.set_source_rgba(0, 0, 0, 0)
-        context.paint()
-
+        self.configure_surface()
         return True
     
     def on_drwImage_draw_image(self, widget, context):
@@ -579,7 +596,8 @@ class WinMapper:
     
     def on_drwImage_motion_notify_event(self, widget, event):
         (window, x, y, state) = event.window.get_pointer()
-        if state & Gdk.ModifierType.BUTTON1_MASK and self.pixbuf_image is not None:
+        if (state & Gdk.ModifierType.BUTTON1_MASK 
+                and self.pixbuf_image is not None):
             self.draw_brush(widget, x, y)    
             
         return True
