@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from gi.repository import Gtk, Gdk, GObject, GdkPixbuf
+import cairo
 
 import cv2
 import os
@@ -366,7 +367,7 @@ class WinViewer():
         self.filterChainListStore = ui.get_object('filterChainListStore')
         self.imgSource = ui.get_object('imgSource')
         self.cboSource = ui.get_object('cboSource')
-
+        
         self.sourcesListStore.append(['None'])
         for name in self.source_list.keys():
             self.sourcesListStore.append([name])
@@ -446,6 +447,9 @@ class WinViewer():
         self.chain.remove_image_observer(self.chain_observer)
         
 class WinMapper:
+    """Tool to identify lines in images
+        Drawing code adapted from gtk demo drawingarea.py
+    """
     
     def __init__(self):
         ui = get_ui(self, 'imageListStore', 'adjSize')
@@ -454,8 +458,33 @@ class WinMapper:
         self.txtFolder = ui.get_object('txtFolder')
         self.lstImages = ui.get_object('lstImages')
         self.drwImage = ui.get_object('drwImage')
-        
+        self.spnSize = ui.get_object('spnSize')
+
+        self.drwImage.set_events(self.drwImage.get_events()
+                      | Gdk.EventMask.LEAVE_NOTIFY_MASK
+                      | Gdk.EventMask.BUTTON_PRESS_MASK
+                      | Gdk.EventMask.POINTER_MOTION_MASK
+                      | Gdk.EventMask.POINTER_MOTION_HINT_MASK)
         self.pixbuf_image = None
+        self.surface = None
+        self.color_r = 255
+        self.color_g = 255
+        self.color_b = 255
+        
+    def draw_brush(self, widget, x, y):
+        size = self.spnSize.get_value_as_int()
+        rect = Gdk.Rectangle()
+        rect.x = x - size / 2
+        rect.y = y - size / 2
+        rect.width = size
+        rect.height = size
+
+        context = cairo.Context(self.surface)
+
+        Gdk.cairo_rectangle(context, rect)
+        context.fill()
+
+        widget.get_window().invalidate_rect(rect, False)
         
     def load_folder(self, folder):
         images = sources.find_all_images(folder)
@@ -522,10 +551,43 @@ class WinMapper:
             self.drwImage.set_size_request(img.shape[1], img.shape[0])
             self.drwImage.queue_draw()
             
-    def on_drwImage_draw(self, widget, context):
+    def on_drwImage_configure_event(self, widget, event):
+        allocation = self.drwImage.get_allocation()
+        self.surface = self.drwImage.get_window().create_similar_surface(
+                                                              cairo.CONTENT_COLOR_ALPHA,
+                                                              allocation.width,
+                                                              allocation.height)
+        context = cairo.Context(self.surface)
+        context.set_source_rgba(0, 0, 0, 0)
+        context.paint()
+
+        return True
+    
+    def on_drwImage_draw_image(self, widget, context):
         if self.pixbuf_image is not None:
             Gdk.cairo_set_source_pixbuf(context, self.pixbuf_image, 0, 0)
             context.paint()
+
+        return False
+
+    def on_drwImage_draw_lines(self, widget, context):
+        if self.pixbuf_image is not None:
+            context.set_source_surface(self.surface, 0, 0)
+            context.paint()
+
+        return True
     
+    def on_drwImage_motion_notify_event(self, widget, event):
+        (window, x, y, state) = event.window.get_pointer()
+        if state & Gdk.ModifierType.BUTTON1_MASK and self.pixbuf_image is not None:
+            self.draw_brush(widget, x, y)    
+            
+        return True
+    
+    def on_drwImage_button_press_event(self, widget, event):
+        if event.button == 1 and self.pixbuf_image is not None:
+            self.draw_brush(widget, event.x, event.y)
+        
+        return True
             
     

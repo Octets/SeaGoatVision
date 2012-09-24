@@ -360,7 +360,11 @@
                         <property name="can_focus">False</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <signal name="draw" handler="on_drwImage_draw" swapped="no"/>
+                        <signal name="configure-event" handler="on_drwImage_configure_event" swapped="no"/>
+                        <signal name="button-press-event" handler="on_drwImage_button_press_event" swapped="no"/>
+                        <signal name="motion-notify-event" handler="on_drwImage_motion_notify_event" swapped="no"/>
+                        <signal name="draw" handler="on_drwImage_draw_image" swapped="no"/>
+                        <signal name="draw" handler="on_drwImage_draw_lines" swapped="no"/>
                       </object>
                     </child>
                   </object>
