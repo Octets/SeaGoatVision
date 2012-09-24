@@ -465,6 +465,7 @@ class WinMapper:
         self.drwImage.set_events(self.drwImage.get_events()
                       | Gdk.EventMask.LEAVE_NOTIFY_MASK
                       | Gdk.EventMask.BUTTON_PRESS_MASK
+                      | Gdk.EventMask.BUTTON_RELEASE_MASK
                       | Gdk.EventMask.POINTER_MOTION_MASK
                       | Gdk.EventMask.POINTER_MOTION_HINT_MASK)
         
@@ -476,24 +477,54 @@ class WinMapper:
         self.color.blue = 255
         self.matrix = None
         
-    def configure_surface(self):
-        allocation = self.drwImage.get_allocation()
-        self.surface = self.drwImage.get_window().create_similar_surface(
-                                                    cairo.CONTENT_COLOR_ALPHA,
-                                                    allocation.width,
-                                                    allocation.height)
-        context = cairo.Context(self.surface)
-        context.set_source_rgba(0, 0, 0, 0)
-        context.paint()
-    
-    def draw_brush(self, widget, x, y):
-        size = self.spnSize.get_value_as_int()
+    def brush_size(self, x, y, size):
         rect = Gdk.Rectangle()
         rect.x = x - size / 2
         rect.y = y - size / 2
         rect.width = size
         rect.height = size
-
+        
+        if rect.x < 0:
+            rect.width += rect.x
+            rect.x = 0
+        if rect.y < 0:
+            rect.height += rect.y
+            rect.y = 0
+        if rect.x + rect.width > self.pixbuf_image.get_width():
+            rect.width -= ((rect.x + rect.width) - self.pixbuf_image.get_width())
+        if rect.y + rect.height > self.pixbuf_image.get_height():
+            rect.height -= ((rect.y + rect.height) - self.pixbuf_image.get_height())
+        if rect.height < 0:
+            rect.height = 0
+        if rect.width < 0:
+            rect.width = 0
+        return rect
+    
+    def configure(self):
+        self.configure_matrix()
+        self.configure_surface()
+        self.read_matrix_from_disk()
+        self.apply_matrix_to_pixbuf()
+        
+    def configure_surface(self):
+        self.surface = self.drwImage.get_window().create_similar_surface(
+                                                    cairo.CONTENT_COLOR_ALPHA,
+                                                    self.pixbuf_image.get_width(),
+                                                    self.pixbuf_image.get_height())
+        context = cairo.Context(self.surface)
+        context.set_source_rgba(0, 0, 0, 0)
+        context.paint()
+            
+    def configure_matrix(self):
+        self.matrix = np.zeros(
+            (self.pixbuf_image.get_height(), self.pixbuf_image.get_width()), np.uint8)
+        
+    def draw(self, widget, x, y):
+        self.draw_brush(widget, x, y, self.spnSize.get_value_as_int())
+        self.draw_matrix(x, y, self.spnSize.get_value_as_int())
+        
+    def draw_brush(self, widget, x, y, size):
+        rect = self.brush_size(x, y, size)
         context = cairo.Context(self.surface)
         context.set_source_rgba(
                                 self.color.red, 
@@ -505,6 +536,11 @@ class WinMapper:
 
         widget.get_window().invalidate_rect(rect, False)
         
+    def draw_matrix(self, x, y, size):
+        rect = self.brush_size(x, y, size)
+        brush = np.ones((rect.height, rect.width), np.uint8)
+        self.matrix[rect.y:rect.y+rect.height, rect.x:rect.x+rect.width] = brush
+        
     def load_folder(self, folder):
         images = sources.find_all_images(folder)
         self.imageListStore.clear()
@@ -515,7 +551,28 @@ class WinMapper:
                                         None])
         if len(images) > 0:
             self.lstImages.set_cursor(0)
-            
+                
+    def save_matrix_to_disk(self):
+        index = tree_selected_index(self.lstImages)
+        f = file(self.imageListStore[index][2] + '.map', 'w')
+        f.write(self.matrix.tostring())
+        f.close()
+        
+    def read_matrix_from_disk(self):
+        index = tree_selected_index(self.lstImages)
+        file_name = self.imageListStore[index][2] + '.map'
+        if os.path.exists(file_name):
+            f = file(file_name, 'r')
+            s = f.read()
+            f.close()
+            self.matrix = np.fromstring(s, np.uint8)
+        
+    def apply_matrix_to_pixbuf(self):
+        for x in range(0, self.pixbuf_image.get_width() - 1):
+            for y in range(0, self.pixbuf_image.get_height() - 1):
+                if self.matrix[y, x] == 1:
+                    self.draw_brush(self.drwImage, x, y, 1)
+                    
     def on_btnOpen_clicked(self, widget):
         dialog = Gtk.FileChooserDialog("Choose an image folder", None,
                                    Gtk.FileChooserAction.SELECT_FOLDER,
@@ -574,38 +631,33 @@ class WinMapper:
             self.pixbuf_image = numpy_to_pixbuf(img)
             self.drwImage.set_size_request(img.shape[1], img.shape[0])
             self.drwImage.queue_draw()
-            self.configure_surface()
-            
-    def on_drwImage_configure_event(self, widget, event):
-        self.configure_surface()
-        return True
-    
+            self.configure()
+                
     def on_drwImage_draw_image(self, widget, context):
         if self.pixbuf_image is not None:
             Gdk.cairo_set_source_pixbuf(context, self.pixbuf_image, 0, 0)
             context.paint()
-
         return False
 
     def on_drwImage_draw_lines(self, widget, context):
         if self.pixbuf_image is not None:
             context.set_source_surface(self.surface, 0, 0)
             context.paint()
-
         return True
     
     def on_drwImage_motion_notify_event(self, widget, event):
         (window, x, y, state) = event.window.get_pointer()
         if (state & Gdk.ModifierType.BUTTON1_MASK 
                 and self.pixbuf_image is not None):
-            self.draw_brush(widget, x, y)    
-            
+            self.draw(widget, x, y)    
         return True
     
     def on_drwImage_button_press_event(self, widget, event):
         if event.button == 1 and self.pixbuf_image is not None:
-            self.draw_brush(widget, event.x, event.y)
-        
+            self.draw(widget, event.x, event.y)
         return True
             
+    def on_drwImage_button_release_event(self, widget, event):
+        if event.button == 1 and self.matrix is not None:
+            self.save_matrix_to_disk()
     
