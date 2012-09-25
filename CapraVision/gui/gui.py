@@ -475,7 +475,9 @@ class WinMapper:
         self.color.red = 255
         self.color.green = 255
         self.color.blue = 255
-        self.matrix = None
+        self.matrices = []
+        self.undo_list = []
+        self.current_index = 0
         
     def brush_size(self, x, y, size):
         rect = Gdk.Rectangle()
@@ -501,7 +503,7 @@ class WinMapper:
         return rect
     
     def configure(self):
-        self.configure_matrix()
+        self.configure_matrices()
         self.configure_surface()
         self.read_matrix_from_disk()
         self.apply_matrix_to_pixbuf()
@@ -515,9 +517,11 @@ class WinMapper:
         context.set_source_rgba(0, 0, 0, 0)
         context.paint()
             
-    def configure_matrix(self):
-        self.matrix = np.zeros(
-            (self.pixbuf_image.get_height(), self.pixbuf_image.get_width()), np.uint8)
+    def configure_matrices(self):
+        self.matrices = []
+        self.matrices.append(np.zeros(
+            (self.pixbuf_image.get_height(), 
+             self.pixbuf_image.get_width()), np.bool))
         
     def draw(self, widget, x, y):
         self.draw_brush(widget, x, y, self.spnSize.get_value_as_int())
@@ -538,8 +542,9 @@ class WinMapper:
         
     def draw_matrix(self, x, y, size):
         rect = self.brush_size(x, y, size)
-        brush = np.ones((rect.height, rect.width), np.uint8)
-        self.matrix[rect.y:rect.y+rect.height, rect.x:rect.x+rect.width] = brush
+        brush = np.ones((rect.height, rect.width), np.bool)
+        self.matrices[-1] \
+            [rect.y:rect.y+rect.height, rect.x:rect.x+rect.width] = brush
         
     def load_folder(self, folder):
         images = sources.find_all_images(folder)
@@ -553,9 +558,8 @@ class WinMapper:
             self.lstImages.set_cursor(0)
                 
     def save_matrix_to_disk(self):
-        index = tree_selected_index(self.lstImages)
-        f = file(self.imageListStore[index][2] + '.map', 'w')
-        f.write(self.matrix.tostring())
+        f = file(self.imageListStore[self.current_index][2] + '.map', 'w')
+        f.write(self.matrices[-1].tostring())
         f.close()
         
     def read_matrix_from_disk(self):
@@ -565,12 +569,14 @@ class WinMapper:
             f = file(file_name, 'r')
             s = f.read()
             f.close()
-            self.matrix = np.fromstring(s, np.uint8)
-        
+            self.matrices[-1] = np.fromstring(s, np.bool).reshape(
+                                            self.pixbuf_image.get_height(), 
+                                            self.pixbuf_image.get_width())
+            
     def apply_matrix_to_pixbuf(self):
-        for x in range(0, self.pixbuf_image.get_width() - 1):
-            for y in range(0, self.pixbuf_image.get_height() - 1):
-                if self.matrix[y, x] == 1:
+        for x in xrange(0, self.pixbuf_image.get_width() - 1):
+            for y in xrange(0, self.pixbuf_image.get_height() - 1):
+                if self.matrices[-1][y, x] == 1:
                     self.draw_brush(self.drwImage, x, y, 1)
                     
     def on_btnOpen_clicked(self, widget):
@@ -608,10 +614,24 @@ class WinMapper:
         pass
     
     def on_btnUndo_clicked(self, widget):
-        pass
-    
+        if len(self.matrices) == 1:
+            return
+        matrix = self.matrices[-1]
+        del self.matrices[-1]
+        self.undo_list.append(matrix)
+        self.configure_surface()
+        self.apply_matrix_to_pixbuf()
+        self.drwImage.queue_draw()
+
     def on_btnRedo_clicked(self, widget):
-        pass
+        if len(self.undo_list) == 0:
+            return
+        matrix = self.undo_list[-1]
+        del self.undo_list[-1]
+        self.matrices.append(matrix)
+        self.configure_surface()
+        self.apply_matrix_to_pixbuf()
+        self.drwImage.queue_draw()
     
     def on_btnColor_clicked(self, widget):
         dialog = Gtk.ColorChooserDialog("Please choose a color")
@@ -627,6 +647,10 @@ class WinMapper:
     def on_lstImages_cursor_changed(self, widget):
         index = tree_selected_index(self.lstImages)
         if index >= 0:
+            self.undo_list = []
+            if len(self.matrices) > 1:
+                self.save_matrix_to_disk()
+            self.current_index = index 
             img = cv2.imread(self.imageListStore[index][2])
             self.pixbuf_image = numpy_to_pixbuf(img)
             self.drwImage.set_size_request(img.shape[1], img.shape[0])
@@ -654,10 +678,11 @@ class WinMapper:
     
     def on_drwImage_button_press_event(self, widget, event):
         if event.button == 1 and self.pixbuf_image is not None:
+            self.matrices.append(self.matrices[-1].copy())
+            self.undo_list = []
             self.draw(widget, event.x, event.y)
         return True
             
     def on_drwImage_button_release_event(self, widget, event):
-        if event.button == 1 and self.matrix is not None:
-            self.save_matrix_to_disk()
+        pass
     
