@@ -493,9 +493,11 @@ class WinMapper:
             rect.height += rect.y
             rect.y = 0
         if rect.x + rect.width > self.pixbuf_image.get_width():
-            rect.width -= ((rect.x + rect.width) - self.pixbuf_image.get_width())
+            rect.width -= ((rect.x + rect.width) - 
+                           self.pixbuf_image.get_width())
         if rect.y + rect.height > self.pixbuf_image.get_height():
-            rect.height -= ((rect.y + rect.height) - self.pixbuf_image.get_height())
+            rect.height -= ((rect.y + rect.height) - 
+                            self.pixbuf_image.get_height())
         if rect.height < 0:
             rect.height = 0
         if rect.width < 0:
@@ -510,9 +512,9 @@ class WinMapper:
         
     def configure_surface(self):
         self.surface = self.drwImage.get_window().create_similar_surface(
-                                                    cairo.CONTENT_COLOR_ALPHA,
-                                                    self.pixbuf_image.get_width(),
-                                                    self.pixbuf_image.get_height())
+                                                cairo.CONTENT_COLOR_ALPHA,
+                                                self.pixbuf_image.get_width(),
+                                                self.pixbuf_image.get_height())
         context = cairo.Context(self.surface)
         context.set_source_rgba(0, 0, 0, 0)
         context.paint()
@@ -620,8 +622,11 @@ class WinMapper:
     
     def on_btnClear_clicked(self, widget):
         if self.msg_confirm_clear() == Gtk.ResponseType.YES:
-            self.configure_matrix()
-            self.apply_matrix_to_pixbuf()
+            self.matrices.append(np.zeros(
+                            (self.pixbuf_image.get_height(), 
+                            self.pixbuf_image.get_width()), np.bool))
+            self.configure_surface()
+            self.drwImage.queue_draw()
         
     def on_btnUndo_clicked(self, widget):
         if len(self.matrices) == 1:
