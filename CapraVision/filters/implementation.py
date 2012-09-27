@@ -175,3 +175,31 @@ class Exec:
             print e
         return image
     
+class LineOrientation:
+    
+    def __init__(self):
+        self.mask_width = 360
+        self.mask_height = 80
+        self.hue = 22
+        self.hue_range = 22
+        self.sat_min = 100
+        self.sat_max = 255
+        self.area_min = 300
+        self.area_max = 35000
+    
+        self._first_pass = True
+        self._shape = None
+        self._image_threshold = None
+        
+    def init_images(self, image):
+        self._shape = image.shape
+        self._image_threshold = np.zeros(self._shape, image.dtype)
+        self._image_morphology = self._image_threshold.copy()
+        
+    def execute(self, image):
+        if self._first_pass:
+            self.init_images(image)
+        
+        cv2.split(image, self._image_threshold)
+        
+        return image

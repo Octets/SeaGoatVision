@@ -556,7 +556,15 @@ class WinMapper:
                                         None])
         if len(images) > 0:
             self.lstImages.set_cursor(0)
-                
+        
+    def msg_confirm_clear(self):
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
+                                   Gtk.ButtonsType.YES_NO, 
+                                   "Clear picture?")
+        result = dialog.run()
+        dialog.destroy()
+        return result
+            
     def save_matrix_to_disk(self):
         f = file(self.imageListStore[self.current_index][2] + '.map', 'w')
         f.write(self.matrices[-1].tostring())
@@ -611,8 +619,10 @@ class WinMapper:
         self.lstImages.set_cursor(position)
     
     def on_btnClear_clicked(self, widget):
-        pass
-    
+        if self.msg_confirm_clear() == Gtk.ResponseType.YES:
+            self.configure_matrix()
+            self.apply_matrix_to_pixbuf()
+        
     def on_btnUndo_clicked(self, widget):
         if len(self.matrices) == 1:
             return
