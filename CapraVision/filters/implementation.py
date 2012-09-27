@@ -190,16 +190,26 @@ class LineOrientation:
         self._first_pass = True
         self._shape = None
         self._image_threshold = None
+        self._kernel = None
         
     def init_images(self, image):
         self._shape = image.shape
         self._image_threshold = np.zeros(self._shape, image.dtype)
         self._image_morphology = self._image_threshold.copy()
+        self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
         
     def execute(self, image):
         if self._first_pass:
             self.init_images(image)
         
         cv2.split(image, self._image_threshold)
+        self._image_morphology = cv2.morphologyEx(
+                                    imageThreshold, cv2.MORPH_CLOSE, kernel)
+                
+        contours, hierarchy = cv2.findContours(
+                                            self._image_morphology, 
+                                            cv2.RETR_TREE, 
+                                            cv2.CHAIN_APPROX_SIMPLE)
         
         return image
+    
