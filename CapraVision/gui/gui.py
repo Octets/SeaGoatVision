@@ -281,7 +281,7 @@ class WinFilterChain:
     def on_btnUp_clicked(self, widget):
         filter = self.selected_filter()
         if filter is not None:
-            index = utils.tree_selected_index(self.lstFilters)
+            index = tree_selected_index(self.lstFilters)
             if index > 0:
                 self.chain.move_filter_up(filter)
                 self.lstFilters.set_cursor(index - 1)

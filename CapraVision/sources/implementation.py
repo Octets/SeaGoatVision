@@ -82,8 +82,8 @@ class Webcam:
         self.run = True
         self.camera_number = 0
         self.video = get_capture(self.camera_number)
-        #self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 640)
-        #self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 480)
+        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 320)
+        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 240)
         
     def video_capture(self):
         if self.video == None:
