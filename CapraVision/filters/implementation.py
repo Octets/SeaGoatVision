@@ -178,39 +178,22 @@ class Exec:
         return image
     
 class LineOrientation:
+    """Port of the old line detection code"""
     
     def __init__(self):
-        self.mask_width = 360
-        self.mask_height = 80
-        self.hue = 22
-        self.hue_range = 22
-        self.sat_min = 100
-        self.sat_max = 255
+
         self.area_min = 300
         self.area_max = 35000
     
-        self._first_pass = True
-        self._shape = None
-        self._image_threshold = None
-        self._kernel = None
-        
-    def init_images(self, image):
-        self._shape = image.shape[0:2] + (1,)
-        self._image_threshold = np.zeros(self._shape, image.dtype)
-        self._image_morphology = self._image_threshold.copy()
         self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
-        
+                
     def execute(self, image):
-        if self._first_pass:
-            self.init_images(image)
-            self._first_pass = False
-        
-        self._image_threshold = cv2.split(image)[0]
-        self._image_morphology = cv2.morphologyEx(
-                    self._image_threshold, cv2.MORPH_CLOSE, self._kernel)
+        image_threshold = cv2.split(image)[0]
+        image_morphology = cv2.morphologyEx(
+                    image_threshold, cv2.MORPH_CLOSE, self._kernel)
                 
         contours, hierarchy = cv2.findContours(
-                                            self._image_morphology, 
+                                            image_morphology, 
                                             cv2.RETR_TREE, 
                                             cv2.CHAIN_APPROX_SIMPLE)
         lines = self.find_lines(contours, image)
@@ -219,28 +202,25 @@ class LineOrientation:
         return image
     
     def draw_lines(self, lines, image):
-        for l in lines:
-            point1 = (l.x - l.t * l.vx, l.y - l.t * l.vy)
-            point2 = (l.x + l.t * l.vx, l.y + l.t * l.vy)
+        for l, t in lines:
+            vx, vy, x, y = l
+            point1 = (x - t * vx, y - t * vy)
+            point2 = (x + t * vx, y + t * vy)
             cv2.line(image, point1, point2, (0, 0, 255), 3)
-            cv2.circle(image, (l.x, l.y), 5, (0, 255, 0))
+            cv2.circle(image, (x, y), 5, (0, 255, 0))
             
     def find_lines(self, contours, image):
         lines = []
         for contour in contours:
-            approx = cv2.approxPolyDP(contour, cv2.arcLength(contour, False), False)
+            approx = cv2.approxPolyDP(contour, 
+                                      cv2.arcLength(contour, False), False)
             area = np.abs(cv2.contourArea(contour))
             
             if self.area_min < area < self.area_max:
                 line_values = cv2.fitLine(approx, cv.CV_DIST_L2, 0, 0.01, 0.01)
                 rect = cv2.boundingRect(approx)
-                l = line.Line()
-                l.vx = line_values[0]
-                l.vy = line_values[1]
-                l.x = line_values[2]
-                l.y = line_values[3]
-                l.t = np.sqrt((rect[0]**2 + rect[1]**2) / 2.0)
-                lines.append(l)
+                t = np.sqrt((rect[0]**2 + rect[1]**2) / 2.0)
+                lines.append((line_values, t))
                 cv2.drawContours(image, contour, -1, (255, 255, 0))
 
         return lines
