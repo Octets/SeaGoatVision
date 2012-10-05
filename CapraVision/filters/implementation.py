@@ -30,8 +30,6 @@
 import cv2.cv as cv, cv2
 import numpy as np
 
-import line
-
 class Noop:
     """Do nothing"""
     
@@ -177,6 +175,34 @@ class Exec:
             print e
         return image
     
+class HoughTransform:
+    
+    def __init__(self):
+        pass
+    
+    def execute(self, image):
+        edges = cv2.Canny(image, 50, 200)
+        lines = cv2.HoughLines(edges, 1, cv.CV_PI / 180, 1)
+        rho = lines[:, :, 0]
+        theta = lines[:, :, 1]
+        a = np.cos(theta)
+        b = np.sin(theta)
+        x0 = a * rho
+        y0 = b * rho
+
+        size = lines.shape[1]        
+        pt1x = np.round(x0 + 1000 * -b).astype(np.int)
+        pt1y = np.round(y0 + 1000 * a).astype(np.int)
+        pt2x = np.round(x0 - 1000 * -b).astype(np.int)
+        pt2y = np.round(y0 - 1000 * a).astype(np.int)
+        
+        for i in xrange(size):
+            cv2.line(image, 
+                     (pt1x.item(i), pt1y.item(i)), 
+                     (pt2x.item(i), pt2y.item(i)), 
+                     (0, 0, 255))
+        return image
+    
 class LineOrientation:
     """Port of the old line detection code"""
     
@@ -206,7 +232,7 @@ class LineOrientation:
             vx, vy, x, y = l
             point1 = (x - t * vx, y - t * vy)
             point2 = (x + t * vx, y + t * vy)
-            cv2.line(image, point1, point2, (0, 0, 255), 3)
+            cv2.line(image, point1, point2, (0, 0, 255), 3, -1)
             cv2.circle(image, (x, y), 5, (0, 255, 0))
             
     def find_lines(self, contours, image):
