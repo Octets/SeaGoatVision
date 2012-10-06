@@ -17,5 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import filters
-import main
+from WinFilterChain import *
+from WinFilterSel import *
+from WinMapper import *
+from WinViewer import *

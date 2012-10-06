@@ -20,12 +20,24 @@
 from gi.repository import Gtk, GdkPixbuf
 import Image
 
+import filters
+import inspect
 import os
 import StringIO
+import sys
 import numpy
 
 from CapraVision.filters.implementation import BGR2RGB
  
+def map_filter_to_ui(filter):
+    """Returns the appropriate window class to configure the filter"""
+
+    for win in vars(filters).values():
+        if inspect.isclass(win):
+            if win.__name__ == 'Win' + filter.__class__.__name__:
+                return win
+    return None
+
 def tree_selected_index(treeview):
     (model, iter) = treeview.get_selection().get_selected()
     if iter is None:

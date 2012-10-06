@@ -16,6 +16,14 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""Contains the user interfaces to configure the filters.
 
-import filters
-import main
+To add a new ui, the constructor must receive the filter to configure
+and the name must be as follow: WinFilterName
+"""
+
+from WinColorLevel import *
+from WinColorThreshold import *
+from WinExec import *
+from WinHoughTransform import *
+from WinPerspective import *
