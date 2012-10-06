@@ -24,7 +24,7 @@ import os
 import StringIO
 import numpy
 
-from filters.implementation import BGR2RGB
+from CapraVision.filters.implementation import BGR2RGB
  
 def tree_selected_index(treeview):
     (model, iter) = treeview.get_selection().get_selected()

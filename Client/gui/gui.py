@@ -28,9 +28,9 @@ import threading
 from guifilter import map_filter_to_ui
 from utils import *
 
-import chain
-import sources
-import filters
+from CapraVision import chain
+from CapraVision import sources
+from CapraVision import filters
 
 class WinFilterChain:
     """Main window

@@ -51,10 +51,11 @@ class BGR2HSV:
         return image
     
 class BGR2Grayscale:
-    """Convert to grayscale"""
+    """Convert to grayscale then convert back to BGR"""
     
     def execute(self, image):
         image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
+        image = cv2.cvtColor(image, cv.CV_GRAY2BGR)
         return image
 
 class BGR2YUV:
@@ -182,7 +183,9 @@ class HoughTransform:
     
     def execute(self, image):
         edges = cv2.Canny(image, 50, 200)
-        lines = cv2.HoughLines(edges, 1, cv.CV_PI / 180, 1)
+        lines = cv2.HoughLines(edges, 1, cv.CV_PI / 180, 80)
+        if lines is None:
+            return image
         rho = lines[:, :, 0]
         theta = lines[:, :, 1]
         a = np.cos(theta)
@@ -200,7 +203,7 @@ class HoughTransform:
             cv2.line(image, 
                      (pt1x.item(i), pt1y.item(i)), 
                      (pt2x.item(i), pt2y.item(i)), 
-                     (0, 0, 255))
+                     (0, 0, 255), 3, -1)
         return image
     
 class LineOrientation:
