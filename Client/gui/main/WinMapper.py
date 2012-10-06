@@ -17,6 +17,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from gui.utils import *
+
+from gi.repository import Gtk, Gdk, GObject, GdkPixbuf
+import cairo
+
+import cv2
+import numpy as np
+
+from CapraVision import sources
+
 class WinMapper:
     """Tool to identify lines in images
         Drawing code adapted from gtk demo drawingarea.py

@@ -26,7 +26,7 @@ import gui
         
 if __name__ == '__main__':
     GObject.threads_init()
-    w = gui.WinMapper()
+    w = gui.main.WinMapper()
     w.window.show_all()
     Gtk.main()
     
