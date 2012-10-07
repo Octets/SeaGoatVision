@@ -93,10 +93,14 @@ class ThreadSafeSourceWrapper:
     def __init__(self, source):
         self.source = source
         self.lock = threading.Lock()
+        self.__class__.__name__ = source.__class__.__name__
         
     def __getattr__(self, name):
         return getattr(self.source, name)
     
+    def __setattr(self, name, value):
+        setattr(self.source, name, value)
+        
     def __iter__(self):
         return self
     

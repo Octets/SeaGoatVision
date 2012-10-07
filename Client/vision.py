@@ -25,7 +25,9 @@ import gui.filters.WinColorLevel
 
 from gi.repository import Gtk, GObject
 import gui.main
-        
+
+import gui.sources
+
 if __name__ == '__main__':
     GObject.threads_init()
     w = gui.main.WinFilterChain()

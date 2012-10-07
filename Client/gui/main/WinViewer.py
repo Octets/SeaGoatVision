@@ -35,6 +35,7 @@ class WinViewer():
         filterchain.add_image_observer(self.chain_observer)
         filterchain.add_filter_observer(self.filters_changed_observer)
         
+        self.win_list = []
         self.thread = None
         self.source = None
         self.filter = None
@@ -53,6 +54,9 @@ class WinViewer():
         self.fill_filters_source()
         self.cboSource.set_active(1)
         self.set_default_filter()
+
+    def add_window_to_list(self, win):
+        self.win_list.append(win.window)
 
     #This method is the observer of the FilterChain class.
     def chain_observer(self, filter, output):
@@ -94,7 +98,15 @@ class WinViewer():
         if len(self.chain.filters) > 0:
             self.filter = self.chain.filters[-1]
             self.cboFilter.set_active(len(self.chain.filters)-1)
-                                
+                        
+    def show_config(self, source):
+        cls = map_source_to_ui(source)
+        if cls is not None:
+            win = cls(source)
+            self.add_window_to_list(win)
+            win.window.connect('destroy', self.on_window_destroy)
+            win.window.show_all()
+            
     def thread_observer(self, image):
         self.chain.execute(image)
         
@@ -103,8 +115,8 @@ class WinViewer():
             self.imgSource.set_from_pixbuf(numpy_to_pixbuf(image))
                 
     def on_btnConfigure_clicked(self, widget):
-        pass
-    
+        self.show_config(self.source)
+        
     def on_cboSource_changed(self, widget):
         index = self.cboSource.get_active()
         source = None
@@ -119,6 +131,9 @@ class WinViewer():
             self.filter = f 
         else:
             self.filter = None
+
+    def on_window_destroy(self, widget):
+        self.win_list.remove(widget)
 
     def on_WinViewer_destroy(self, widget):
         self.thread.stop()

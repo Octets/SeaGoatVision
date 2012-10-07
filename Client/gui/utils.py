@@ -21,6 +21,8 @@ from gi.repository import Gtk, GdkPixbuf
 import Image
 
 import filters
+import sources
+
 import inspect
 import os
 import StringIO
@@ -30,11 +32,17 @@ import numpy
 from CapraVision.filters.implementation import BGR2RGB
  
 def map_filter_to_ui(filter):
-    """Returns the appropriate window class to configure the filter"""
+    return map_object_to_ui(filter, filters)
 
-    for win in vars(filters).values():
+def map_source_to_ui(source):
+    return map_object_to_ui(source, sources)
+
+def map_object_to_ui(object, module):
+    """Returns the appropriate window class to configure the object"""
+
+    for win in vars(module).values():
         if inspect.isclass(win):
-            if win.__name__ == 'Win' + filter.__class__.__name__:
+            if win.__name__ == 'Win' + object.__class__.__name__:
                 return win
     return None
 

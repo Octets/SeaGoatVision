@@ -92,6 +92,9 @@ class ThreadMainLoop(threading.Thread):
     def run(self):
         self.running = True
         for image in self.source:
+            if image is None:
+                time.sleep(self.sleep_time)
+                continue
             self.notify_observers(image)
             if not self.running:
                 break
