@@ -29,6 +29,7 @@
                 self.save = 456 # value will be saved"""
 import cv2.cv as cv, cv2
 import numpy as np
+import math
 
 class Noop:
     """Do nothing"""
@@ -219,12 +220,12 @@ class LineOrientation:
         self.area_min = 300
         self.area_max = 35000
     
-        self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
+        self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3), (0,0))
                 
     def execute(self, image):
         image_threshold = cv2.split(image)[0]
         image_morphology = cv2.morphologyEx(
-                    image_threshold, cv2.MORPH_CLOSE, self._kernel)
+                    image_threshold, cv2.MORPH_CLOSE, self._kernel, iterations=1)
                 
         contours, hierarchy = cv2.findContours(
                                             image_morphology, 
@@ -241,19 +242,19 @@ class LineOrientation:
             point1 = (x - t * vx, y - t * vy)
             point2 = (x + t * vx, y + t * vy)
             cv2.line(image, point1, point2, (0, 0, 255), 3, -1)
-            cv2.circle(image, (x, y), 5, (0, 255, 0))
+            cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
             
     def find_lines(self, contours, image):
         lines = []
         for contour in contours:
-            approx = cv2.approxPolyDP(contour, 
-                                      cv2.arcLength(contour, False), False)
+            approx = cv2.approxPolyDP(contour, 0, False)
+                                      #cv2.arcLength(contour, False), False)
             area = np.abs(cv2.contourArea(contour))
             
             if self.area_min < area < self.area_max:
                 line_values = cv2.fitLine(approx, cv.CV_DIST_L2, 0, 0.01, 0.01)
                 rect = cv2.boundingRect(approx)
-                t = np.sqrt((rect[0]**2 + rect[1]**2) / 2.0)
+                t = math.sqrt((rect[2]**2 + rect[3]**2) / 2.0)
                 lines.append((line_values, t))
                 cv2.drawContours(image, contour, -1, (255, 255, 0))
 
