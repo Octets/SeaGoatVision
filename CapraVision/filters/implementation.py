@@ -179,11 +179,16 @@ class Exec:
 class HoughTransform:
     
     def __init__(self):
-        pass
-    
+        self.canny1 = 50
+        self.canny2 = 200
+        self.rho = 1
+        self.theta = 180
+        self.threshold = 100
+        self.line_size = 1000
+            
     def execute(self, image):
-        edges = cv2.Canny(image, 50, 200)
-        lines = cv2.HoughLines(edges, 1, cv.CV_PI / 180, 80)
+        edges = cv2.Canny(image, self.canny1, self.canny2)
+        lines = cv2.HoughLines(edges, self.rho, cv.CV_PI / self.theta, self.threshold)
         if lines is None:
             return image
         rho = lines[:, :, 0]
@@ -194,10 +199,10 @@ class HoughTransform:
         y0 = b * rho
 
         size = lines.shape[1]        
-        pt1x = np.round(x0 + 1000 * -b).astype(np.int)
-        pt1y = np.round(y0 + 1000 * a).astype(np.int)
-        pt2x = np.round(x0 - 1000 * -b).astype(np.int)
-        pt2y = np.round(y0 - 1000 * a).astype(np.int)
+        pt1x = np.round(x0 + self.line_size * -b).astype(np.int)
+        pt1y = np.round(y0 + self.line_size * a).astype(np.int)
+        pt2x = np.round(x0 - self.line_size * -b).astype(np.int)
+        pt2y = np.round(y0 - self.line_size * a).astype(np.int)
         
         for i in xrange(size):
             cv2.line(image, 

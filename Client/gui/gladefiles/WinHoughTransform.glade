@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkWindow" id="window1">
+  <object class="GtkWindow" id="WinHoughTransform">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
+    <property name="title" translatable="yes">Hough Transform</property>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>
@@ -58,10 +59,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="spinbutton1">
+              <object class="GtkSpinButton" id="spnCanny1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
+                <property name="numeric">True</property>
+                <signal name="value-changed" handler="on_spnCanny1_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -71,10 +74,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="spinbutton2">
+              <object class="GtkSpinButton" id="spnCanny2">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
+                <property name="numeric">True</property>
+                <signal name="value-changed" handler="on_spnCanny2_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -153,10 +158,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="spinbutton3">
+              <object class="GtkSpinButton" id="spnRho">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
+                <property name="numeric">True</property>
+                <signal name="value-changed" handler="on_spnRho_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -166,10 +173,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="spinbutton4">
+              <object class="GtkSpinButton" id="spnTheta">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
+                <property name="numeric">True</property>
+                <signal name="value-changed" handler="on_spnTheta_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -179,14 +188,45 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="spinbutton5">
+              <object class="GtkSpinButton" id="spnThreshold">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
+                <property name="numeric">True</property>
+                <signal name="value-changed" handler="on_spnThreshold_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">2</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label8">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">Line Size :</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">3</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="spnLineSize">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="invisible_char">●</property>
+                <property name="numeric">True</property>
+                <signal name="value-changed" handler="on_spnLineSize_value_changed" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">3</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -205,7 +245,7 @@
             <property name="spacing">3</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="btnCancel">
                 <property name="label">gtk-cancel</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
@@ -213,6 +253,7 @@
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
+                <signal name="clicked" handler="on_btnCancel_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -221,7 +262,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="btnOK">
                 <property name="label">gtk-ok</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
@@ -229,6 +270,7 @@
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
+                <signal name="clicked" handler="on_btnOK_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
