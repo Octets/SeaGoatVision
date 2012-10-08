@@ -50,5 +50,5 @@ class WinExec:
         start, end = self.txtWorking.get_buffer().get_bounds()
         code = self.txtWorking.get_buffer().get_text(start, end, False)
         self.txtCurrent.get_buffer().set_text(code)
-        self.filtre.code = code
+        self.filtre.set_code(code)
     

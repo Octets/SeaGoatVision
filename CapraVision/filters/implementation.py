@@ -168,11 +168,19 @@ class Exec:
     
     def __init__(self):
         self.code = ""
+        self._ccode = None
+        
+    def set_code(self, code):
+        self.code = code
+        self._ccode = compile(code, '<string>', 'exec')
+        
+    def configure(self):
+        self.set_code(self.code)
         
     def execute(self, image):
         try:
-            if self.code.strip() <> "":
-                exec self.code
+            if self._ccode is not None:
+                exec self._ccode
         except Exception, e:
             print e
         return image
