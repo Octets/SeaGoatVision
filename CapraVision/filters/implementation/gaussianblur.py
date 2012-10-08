@@ -27,8 +27,8 @@ class GaussianBlur:
         self.sigma_x = 3
         self.sigma_y = 3
     
-    def execute(self):
-        image = cv2.GaussianBlur(image, (self.kernel_height, self.kernel_width), 
+    def execute(self, image):
+        return cv2.GaussianBlur(image, (self.kernel_height, self.kernel_width), 
                      sigmaX = self.sigma_x, sigmaY = self.sigma_y)
         
     
