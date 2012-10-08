@@ -16,5 +16,18 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
+This module contains the code for the sources.
+Sources are objects that returns file_names.  
+It can be a a webcam, list of files from the hard drive or anything else.
 
-from utils import *
+Sources should implement the iterator protocol:
+    http://docs.python.org/library/stdtypes.html#iterator-types
+"""
+
+import os
+
+for f in os.listdir(os.path.dirname(__file__)):
+    file, _ = os.path.splitext(f)
+    code = 'from %(module)s import *' % {'module' : file} 
+    exec code

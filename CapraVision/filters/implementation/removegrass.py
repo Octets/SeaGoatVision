@@ -17,4 +17,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils import *
+import cv2
+
+class RemoveGrass:
+    
+    def __init__(self):
+        self.threshold = 330
+    
+    def execute(self):
+        image = cv2.blur(image, (3,3))
+        blue, green, red = cv2.split(image.astype('uint16'))
+        threshold = (green + blue) > 330
+        image[:,:,0] = blue * threshold
+        image[:,:,1] = green * threshold
+        image[:,:,2] = red * threshold
+        return image

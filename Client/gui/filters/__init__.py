@@ -22,8 +22,9 @@ To add a new ui, the constructor must receive the filter to configure
 and the name must be as follow: WinFilterName
 """
 
-from WinColorLevel import *
-from WinColorThreshold import *
-from WinExec import *
-from WinHoughTransform import *
-from WinPerspective import *
+import os
+
+for f in os.listdir(os.path.dirname(__file__)):
+    file, _ = os.path.splitext(f)
+    code = 'from %(module)s import *' % {'module' : file} 
+    exec code

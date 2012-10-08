@@ -17,4 +17,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils import *
+import cv2
+
+class SingleImage:
+    
+    def __init__(self):
+        self.file = ''
+        self.image = None
+        
+    def __iter__(self):
+        return self
+    
+    def set_image(self, file):
+        self.file = file
+        self.image = cv2.imread(self.file)
+        
+    def next(self):
+        return self.image 
+    
+    def close(self):
+        pass
+    
+    

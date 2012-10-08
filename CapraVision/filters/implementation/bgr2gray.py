@@ -17,4 +17,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils import *
+import cv2
+import cv2.cv as cv
+
+class BGR2Grayscale:
+    """Convert to grayscale then convert back to BGR"""
+    
+    def execute(self, image):
+        image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
+        image = cv2.cvtColor(image, cv.CV_GRAY2BGR)
+        return image

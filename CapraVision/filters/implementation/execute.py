@@ -17,4 +17,28 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils import *
+import cv2
+import cv2.cv as cv
+import numpy as np
+
+class Exec:
+    """Create and edit a filter on the fly for testing purposes"""
+    
+    def __init__(self):
+        self.code = ""
+        self._ccode = None
+        
+    def set_code(self, code):
+        self.code = code
+        self._ccode = compile(code, '<string>', 'exec')
+        
+    def configure(self):
+        self.set_code(self.code)
+        
+    def execute(self, image):
+        try:
+            if self._ccode is not None:
+                exec self._ccode
+        except Exception, e:
+            print e
+        return image

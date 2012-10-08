@@ -17,7 +17,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from WinFilterChain import *
-from WinFilterSel import *
-from WinMapper import *
-from WinViewer import *
+import os
+
+for f in os.listdir(os.path.dirname(__file__)):
+    file, _ = os.path.splitext(f)
+    code = 'from %(module)s import *' % {'module' : file} 
+    exec code
