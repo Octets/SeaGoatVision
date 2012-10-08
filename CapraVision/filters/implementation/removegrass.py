@@ -22,13 +22,40 @@ import cv2
 class RemoveGrass:
     
     def __init__(self):
-        self.threshold = 330
-    
-    def execute(self):
-        image = cv2.blur(image, (3,3))
-        blue, green, red = cv2.split(image.astype('uint16'))
-        threshold = (green + blue) > 330
-        image[:,:,0] = blue * threshold
-        image[:,:,1] = green * threshold
-        image[:,:,2] = red * threshold
+        self.threshold = 100
+        self.technique = 0
+        
+    def remove_green_from_blue(self, image):
+        blue, green, red = cv2.split(image)
+        new_blue = blue - green / 2
+        black = blue < new_blue
+        new_blue[black] = 0
+        threshold = new_blue < self.threshold
+        blue[threshold] = 0
+        green[threshold] = 0
+        red[threshold] = 0
+        image[:,:,0] = blue
+        image[:,:,1] = green 
+        image[:,:,2] = red 
         return image
+    
+    def add_green_to_blue(self, image):
+        blue, green, red = cv2.split(image)
+        new_color = green + blue
+        white = ((new_color < green) & (new_color < blue))
+        new_color[white] = 255
+        threshold = new_color > self.threshold
+        blue[threshold] = 0
+        green[threshold] = 0
+        red[threshold] = 0
+        image[:,:,0] = blue
+        image[:,:,1] = green
+        image[:,:,2] = red
+        return image
+        
+    def execute(self, image):
+        if self.technique == 0:
+            return self.add_green_to_blue(image)
+        else:
+            return self.remove_green_from_blue(image)
+                    
