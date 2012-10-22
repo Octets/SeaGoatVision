@@ -55,6 +55,10 @@ class WinGaussianBlur:
         self.window.destroy()
     
     def on_btnCancel_clicked(self, widget):
+        self.filtre.kernel_height = self.filtre_init.kernel_height
+        self.filtre.kernel_width = self.filtre_init.kernel_width
+        self.filtre.sigma_x = self.filtre_init.sigma_x
+        self.filtre.sigma_y = self.filtre_init.sigma_y
         self.init_window()
     
     def on_spnHeight_value_changed(self, widget):

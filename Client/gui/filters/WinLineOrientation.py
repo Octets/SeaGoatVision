@@ -44,6 +44,8 @@ class WinLineOrientation:
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
 
     def on_btnCancel_clicked(self, widget):
+        self.filtre.area_min = self.filtre_init.area_min
+        self.filtre.area_max = self.filtre_init.area_max
         self.init_window()
     
     def on_btnOK_clicked(self, widget):

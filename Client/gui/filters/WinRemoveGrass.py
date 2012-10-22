@@ -31,7 +31,7 @@ class WinRemoveGrass:
         self.window = ui.get_object(win_name(self))
         self.lstTechnique = ui.get_object('lstTechnique')
         self.cboTechnique = ui.get_object('cboTechnique')
-        self.spnThreshold =ui.get_object('spnThreshold')
+        self.spnThreshold = ui.get_object('spnThreshold')
         self.spnThreshold.set_adjustment(self.create_adj())
         self.init_window()
         
@@ -43,6 +43,8 @@ class WinRemoveGrass:
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
 
     def on_btnCancel_clicked(self, widget):
+        self.filtre.technique = self.filtre_init.technique
+        self.filtre.threshold = self.filtre_init.threshold
         self.init_window()
     
     def on_btnOK_clicked(self, widget):

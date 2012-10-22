@@ -77,5 +77,11 @@ class WinHoughTransform:
         self.window.destroy()
     
     def on_btnCancel_clicked(self, widget):
+        self.filtre.canny1 = self.filtre_init.canny1
+        self.filtre.canny2 = self.filtre_init.canny2
+        self.filtre.rho = self.filtre_init.rho
+        self.filtre.theta = self.filtre_init.theta
+        self.filtre.threshold = self.filtre_init.threshold
+        self.filtre.line_size = self.filtre_init.line_size
         self.init_window()
     

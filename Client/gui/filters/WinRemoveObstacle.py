@@ -31,13 +31,18 @@ class WinRemoveObstacle:
         self.window = ui.get_object(win_name(self))
         self.spnThreshold =ui.get_object('spnThreshold')
         self.spnThreshold.set_adjustment(self.create_adj())
+        self.spnVBlur = ui.get_object('spnVBlur')
+        self.spnVBlur.set_adjustment(self.create_adj())
+        self.spnHBlur = ui.get_object('spnHBlur')
+        self.spnHBlur.set_adjustment(self.create_adj())
+        
         self.init_window()
 
     def init_window(self):
         self.spnThreshold.set_value(self.filtre_init.threshold)
         
     def create_adj(self):
-        return Gtk.Adjustment(1, 0, 65000, 1000, 1000, 0)
+        return Gtk.Adjustment(1, 0, 255, 1, 1, 0)
 
     def on_btnCancel_clicked(self, widget):
         self.init_window()
@@ -49,3 +54,6 @@ class WinRemoveObstacle:
     def on_spnThreshold_value_changed(self, widget):
         self.filtre.threshold = self.spnThreshold.get_value()
     
+    def on_spnVBlur_value_changed(self, widget):
+        self.filtre.vertical_blur = self.sp
+        
