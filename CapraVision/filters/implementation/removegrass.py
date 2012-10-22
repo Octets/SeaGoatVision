@@ -20,6 +20,7 @@
 import cv2
 
 class RemoveGrass:
+    """Remove grass from an image"""
     
     def __init__(self):
         self.threshold = 100

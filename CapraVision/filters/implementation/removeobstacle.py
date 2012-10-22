@@ -2,6 +2,7 @@
 import cv2
 
 class RemoveObstacle:
+    """Remove obstacles from an image"""
     
     def __init__(self):
         self.threshold = 230

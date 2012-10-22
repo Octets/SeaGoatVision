@@ -20,7 +20,7 @@
 import cv2
 
 class GaussianBlur:
-    
+    """Smoothes an image using a Gaussian filter"""
     def __init__(self):
         self.kernel_height = 3
         self.kernel_width = 3
