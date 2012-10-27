@@ -21,3 +21,4 @@ all: build
 
 build: 
 	protoc --python_out=. $(PROTONAME).proto
+
