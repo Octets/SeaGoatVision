@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
@@ -16,3 +14,11 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+PROTONAME=vServer
+
+all: build
+
+build: 
+	protoc --python_out=. $(PROTONAME).proto
+
