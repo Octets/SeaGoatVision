@@ -84,7 +84,8 @@ class WinLineTest:
             return
         self.lblNbImages.set_text(str(image_number))
         test.launch()
-        self.lblNoise.set_text(str(test.avg_noise()))
+        noise = str(round(test.avg_noise() * 100.0, 2)) + '%'
+        self.lblNoise.set_text(noise)
         precision = str(round(test.avg_precision() * 100.0, 2)) + '%'
         self.lblPrecision.set_text(precision)
         

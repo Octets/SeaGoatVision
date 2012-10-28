@@ -59,7 +59,12 @@ class LineTest:
         sum_undetected = np.count_nonzero(undetected)
         return (sum_map - sum_undetected) / float(sum_map)
     
+    def remove_line(self, filtered, map):
+        detected = (filtered & map)
+        return (filtered & np.invert(detected))
+    
     def find_noise(self, filtered, map):
+        filtered = self.remove_line(filtered, map)
         cnt_filtered, _ = cv2.findContours(filtered, 
                                            cv2.RETR_TREE, 
                                            cv2.CHAIN_APPROX_SIMPLE)
@@ -68,17 +73,17 @@ class LineTest:
                                    cv2.CHAIN_APPROX_SIMPLE)
         noise = 0
         for cf in cnt_filtered:
-            dist = self.find_dist_between_blob_and_line(cf, cnt_map)
+            dist = abs(self.find_dist_between_blob_and_line(cf, cnt_map))
             area = np.abs(cv2.contourArea(cf))
             noise += dist * area
             
         return noise / self.max_noise(cnt_map, filtered.shape)
     
     def max_noise(self, cnt_map, image_size):
-        max_dist = math.sqrt(image_size[0]**2 + image_size[1]**2) / 2.0
+        max_dist = math.sqrt(image_size[0]**2 + image_size[1]**2) / 4.0
         max_noise = 0
         for cm in cnt_map:
-            area = np.abs(cv2.contourArea(cm))
+            area = np.abs(cv2.contourArea(cm)) / 2.0
             max_noise += area * max_dist
         return max_noise
         
@@ -89,8 +94,8 @@ class LineTest:
             x = int(moment['m10'] / m00)
             y = int(moment['m01'] / m00)
         else:
-            x = 0
-            y = 0
+            x = cf[0][0][0]
+            y = cf[0][0][1]
         min_dist = sys.maxint
         for cm in cnt_map:
             dist = cv2.pointPolygonTest(cm, (x, y), True)
