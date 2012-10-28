@@ -26,5 +26,6 @@ class Blur:
         self.kernel_height = 3
     
     def execute(self, image):
-        return cv2.blur(image, (self.kernel_width, self.kernel_height))
+        return cv2.blur(image, (int(self.kernel_width), 
+                                int(self.kernel_height)))
     

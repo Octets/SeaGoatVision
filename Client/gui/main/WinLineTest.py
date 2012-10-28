@@ -84,6 +84,9 @@ class WinLineTest:
             return
         self.lblNbImages.set_text(str(image_number))
         test.launch()
+        self.lblNoise.set_text(str(test.avg_noise()))
+        precision = str(round(test.avg_precision() * 100.0, 2)) + '%'
+        self.lblPrecision.set_text(precision)
         
     def on_btnClear_clicked(self, widget):
         self.txtFilterchain.set_text('')

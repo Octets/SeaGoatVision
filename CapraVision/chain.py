@@ -161,4 +161,5 @@ class FilterChain:
             image = f.execute(image.copy())
             for observer in self.image_observers:
                 observer(f, image)
-        
+        return image
+    

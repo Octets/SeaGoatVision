@@ -21,6 +21,7 @@ from CapraVision.sources.implementation.imagefolder import ImageFolder
 from CapraVision import chain
 
 import cv2
+import cv2.cv as cv
 import math
 import numpy as np
 import os
@@ -30,37 +31,39 @@ class LineTest:
     
     def __init__(self, image_folder, filterchain):
         self.image_folder = ImageFolder()
+        self.image_folder.return_file_name = True
         self.image_folder.read_folder(image_folder)
         self.chain = chain.read(filterchain)
         self.precisions = {}
         self.noises = {}
         
     def launch(self):
-        for image in self.image_folder:
-            file_name = self.image_folder.current_file_name()
+        for file_name, image in self.image_folder:
             if os.path.exists(file_name + '.map'):
-                map = np.fromfile(image + '.map')
                 filtered = self.chain.execute(image)
                 filtered = self.make_binary_array(filtered)
-                precisions[file_name] = self.find_precision(filtered, map)
-                noises[file_name] = self.find_noise(filtered, map)
+                map = np.fromfile(file_name + '.map', dtype=np.uint8)
+                map = map.reshape(filtered.shape)
+                self.precisions[file_name] = self.find_precision(filtered, map)
+                self.noises[file_name] = self.find_noise(filtered, map)
             
     def make_binary_array(self, filtered):
-        bin = np.zeros(filtered.shape[0:2], dtype=np.bool)
-        bin[filtered > 0] = True
+        gray = cv2.cvtColor(filtered, cv.CV_BGR2GRAY)
+        bin = np.zeros(gray.shape, dtype=np.uint8)
+        bin[gray > 0] = 255
         return bin
     
     def find_precision(self, filtered, map):
-        detected = filtered & map
-        sum_map = np.sum(map)
-        sum_detected = np.sum(detected)
-        return (sum_map + sum_detected) / sum_map
+        undetected = (filtered & np.invert(map))
+        sum_map = np.count_nonzero(map)
+        sum_undetected = np.count_nonzero(undetected)
+        return (sum_map - sum_undetected) / float(sum_map)
     
     def find_noise(self, filtered, map):
         cnt_filtered, _ = cv2.findContours(filtered, 
                                            cv2.RETR_TREE, 
                                            cv2.CHAIN_APPROX_SIMPLE)
-        cnt_map = cv2.findContours(map, 
+        cnt_map, _ = cv2.findContours(map, 
                                    cv2.RETR_TREE,
                                    cv2.CHAIN_APPROX_SIMPLE)
         noise = 0
@@ -69,20 +72,25 @@ class LineTest:
             area = np.abs(cv2.contourArea(cf))
             noise += dist * area
             
-        return noise / max_noise(cnt_map, filtered.shape)
+        return noise / self.max_noise(cnt_map, filtered.shape)
     
     def max_noise(self, cnt_map, image_size):
-        max_dist = math.sqrt(image_size[0]**2, image_size[1]**2) / 2.0
+        max_dist = math.sqrt(image_size[0]**2 + image_size[1]**2) / 2.0
         max_noise = 0
         for cm in cnt_map:
             area = np.abs(cv2.contourArea(cm))
             max_noise += area * max_dist
         return max_noise
         
-    def find_dist_between_blob_and_line(self, blob, cnt_map):
+    def find_dist_between_blob_and_line(self, cf, cnt_map):
         moment = cv2.moments(cf)
-        x = int(moment['m10'] / moment['m00'])
-        y = int(moment['m01'] / moment['m00'])
+        m00 = moment['m00']
+        if m00 <> 0:
+            x = int(moment['m10'] / m00)
+            y = int(moment['m01'] / m00)
+        else:
+            x = 0
+            y = 0
         min_dist = sys.maxint
         for cm in cnt_map:
             dist = cv2.pointPolygonTest(cm, (x, y), True)
@@ -100,12 +108,12 @@ class LineTest:
         return count
     
     def avg_noise(self):
-        c = len(self.noises)
+        c = len(self.noises.values())
         s = sum(self.noises.values())
         return s / c
     
     def avg_precision(self):
-        c = len(self.precisions)
+        c = len(self.precisions.values())
         s = sum(self.precisions.values())
         return s / c
         

@@ -29,7 +29,7 @@ class ImageFolder:
         self.return_file_name = False
         
     def read_folder(self, folder):
-        self.file_names = utils.find_all_images(folder)
+        self.file_names = CapraVision.sources.utils.find_all_images(folder)
         self.folder_name = folder
         self.position = 0
         
@@ -44,18 +44,21 @@ class ImageFolder:
             file_name = self.file_names[self.position]
             self.position += 1
             if self.return_file_name:
-                return (image, file_name)
+                return (file_name, image)
             else:
                 return image
     
     def load_image(self, position):
-        image = self.current_file_name()
+        image = self.current_file_name(position)
         return cv2.imread(image)
         
     def current_position(self):
         return self.position
     
-    def current_file_name(self):
+    def current_file_name(self, position=-1):
+        if position == -1:
+            position = self.position
+            
         return self.file_names[position]
     
     def total_images(self):
