@@ -26,6 +26,7 @@ class ImageFolder:
         self.folder_name = ''
         self.file_names = []
         self.position = 0
+        self.return_file_name = False
         
     def read_folder(self, folder):
         self.file_names = utils.find_all_images(folder)
@@ -40,15 +41,22 @@ class ImageFolder:
             raise StopIteration
         else:
             image = self.load_image(self.position)
+            file_name = self.file_names[self.position]
             self.position += 1
-            return image
+            if self.return_file_name:
+                return (image, file_name)
+            else:
+                return image
     
     def load_image(self, position):
-        image = self.file_names[position]
+        image = self.current_file_name()
         return cv2.imread(image)
         
     def current_position(self):
         return self.position
+    
+    def current_file_name(self):
+        return self.file_names[position]
     
     def total_images(self):
         return len(self.file_names)

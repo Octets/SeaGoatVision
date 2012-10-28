@@ -25,29 +25,73 @@ import cv2
 import numpy as np
 
 from CapraVision import sources
+from CapraVision.tests.line_test import LineTest
 
 class WinLineTest:
     
     def __init__(self):
-        ui = get_ui(self, 'imageListStore', 'adjSize')
+        ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
         self.txtFilterchain = ui.get_object('txtFilterchain')
         self.txtTestFolder = ui.get_object('txtTestFolder')
         self.lblPrecision = ui.get_object('lblPrecision')
         self.lblNoise = ui.get_object('lblNoise')
+        self.lblNbImages = ui.get_object('lblNbImages')
+        
+        self.test = None
         
     def init_window(self):
         pass
     
-    def on_btnOK_clicked(self, widget):
-        pass
+    def msg_on_no_filterchain(self):
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.ERROR, 
+                                   Gtk.ButtonsType.OK, 
+                                   "You must select a filterchain file.")
+        result = dialog.run()
+        dialog.destroy()
+        return result
     
+    def msg_on_no_test_folder(self):
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.ERROR, 
+                                   Gtk.ButtonsType.OK, 
+                                   "You must select a test folder.")
+        result = dialog.run()
+        dialog.destroy()
+        return result
+    
+    def msg_on_no_test_images(self):
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.ERROR, 
+                            Gtk.ButtonsType.OK, 
+                            "There are no image map files in the test folder.")
+        result = dialog.run()
+        dialog.destroy()
+        return result
+    
+    def on_btnOK_clicked(self, widget):
+        folder = self.txtTestFolder.get_text()
+        filterchain = self.txtFilterchain.get_text()
+        if folder == '':
+            self.msg_on_no_test_folder()
+            return
+        elif filterchain == '':
+            self.msg_on_no_filterchain()
+            return
+        
+        test = LineTest(folder, filterchain)
+        image_number = test.total_images()
+        if image_number == 0:
+            self.msg_on_no_test_images()
+            return
+        self.lblNbImages.set_text(str(image_number))
+        test.launch()
+        
     def on_btnClear_clicked(self, widget):
         self.txtFilterchain.set_text('')
         self.txtTestFolder.set_text('')
         self.lblNoise.set_text('0%')
         self.lblPrecision.set_text('0%')
-    
+        self.lblNbImages.set_text('0')
+        
     def on_btnOpenFilterchain_clicked(self, widget):
         dialog = Gtk.FileChooserDialog("Choose a filterchain file", None,
                                    Gtk.FileChooserAction.OPEN,
@@ -71,7 +115,7 @@ class WinLineTest:
                                     Gtk.STOCK_OK, Gtk.ResponseType.OK))    
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.txtOpenTestFolder.set_text(dialog.get_filename())
+            self.txtTestFolder.set_text(dialog.get_filename())
         dialog.destroy()
 
     
