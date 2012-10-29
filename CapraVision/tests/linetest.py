@@ -29,24 +29,38 @@ import sys
 
 class LineTest:
     
-    def __init__(self, image_folder, filterchain):
-        self.image_folder = ImageFolder()
-        self.image_folder.return_file_name = True
-        self.image_folder.read_folder(image_folder)
+    def __init__(self, test_folder, filterchain):
+        image_folder = ImageFolder()
+        image_folder.return_file_name = True
+        image_folder.read_folder(test_folder)
         self.chain = chain.read(filterchain)
+        self.testable_images = self.find_testable_images(self.image_folder)
         self.precisions = {}
         self.noises = {}
         
-    def launch(self):
-        for file_name, image in self.image_folder:
+    def find_testable_images(self, image_folder):
+        testable_images = {}
+        for file_name, image in image_folder:
             if os.path.exists(file_name + '.map'):
-                filtered = self.chain.execute(image)
-                filtered = self.make_binary_array(filtered)
-                map = np.fromfile(file_name + '.map', dtype=np.uint8)
-                map = map.reshape(filtered.shape)
-                self.precisions[file_name] = self.find_precision(filtered, map)
-                self.noises[file_name] = self.find_noise(filtered, map)
+                testable_images[file_name] = image
+        return testable_images
+    
+    def launch(self):
+        for file_name, image in self.testable_images:
+            filtered, map = self.get_test_images(image, file_name)
+            self.precisions[file_name] = self.find_precision(filtered, map)
+            self.noises[file_name] = self.find_noise(filtered, map)
             
+    def get_test_images(self, file_name):
+        image = self.testable_images[file_name]
+        filtered = self.chain.execute(image)
+        filtered = self.make_binary_array(filtered)
+        
+        map = np.fromfile(file_name + '.map', dtype=np.uint8)
+        map = map.reshape(filtered.shape)
+
+        return (filtered, map)
+    
     def make_binary_array(self, filtered):
         gray = cv2.cvtColor(filtered, cv.CV_BGR2GRAY)
         bin = np.zeros(gray.shape, dtype=np.uint8)
@@ -59,10 +73,24 @@ class LineTest:
         sum_undetected = np.count_nonzero(undetected)
         return (sum_map - sum_undetected) / float(sum_map)
     
+    def example_image(self, file_name):
+        image = self.testable_images[file_name]
+        filtered, map = self.get_test_images(file_name)
+        detected = (filtered & map)
+        undetected = (filtered & np.invert(map))
+        noise = self.remove_line(filtered, map)
+
+        ret_image = np.zeros(image.shape, np.uint8)
+        ret_image[:,:,0] = noise
+        ret_image[:,:,1] = detected
+        ret_image[:,:,2] = undetected
+        
+        return ret_image
+    
     def remove_line(self, filtered, map):
         detected = (filtered & map)
         return (filtered & np.invert(detected))
-    
+            
     def find_noise(self, filtered, map):
         filtered = self.remove_line(filtered, map)
         cnt_filtered, _ = cv2.findContours(filtered, 

@@ -30,13 +30,16 @@ from CapraVision.tests.line_test import LineTest
 class WinLineTest:
     
     def __init__(self):
-        ui = get_ui(self)
+        ui = get_ui(self, 'imageListStore', 'imageCalculate')
         self.window = ui.get_object(win_name(self))
         self.txtFilterchain = ui.get_object('txtFilterchain')
         self.txtTestFolder = ui.get_object('txtTestFolder')
         self.lblPrecision = ui.get_object('lblPrecision')
         self.lblNoise = ui.get_object('lblNoise')
         self.lblNbImages = ui.get_object('lblNbImages')
+        self.lstImage = ui.get_object('lstImage')
+        self.imgOriginal = ui.get_object('imgOriginal')
+        self.imgExample = ui.get_object('imgExample')
         
         self.test = None
         
@@ -67,28 +70,50 @@ class WinLineTest:
         dialog.destroy()
         return result
     
-    def on_btnOK_clicked(self, widget):
-        folder = self.txtTestFolder.get_text()
-        filterchain = self.txtFilterchain.get_text()
-        if folder == '':
-            self.msg_on_no_test_folder()
-            return
-        elif filterchain == '':
-            self.msg_on_no_filterchain()
-            return
-        
-        test = LineTest(folder, filterchain)
-        image_number = test.total_images()
-        if image_number == 0:
-            self.msg_on_no_test_images()
-            return
-        self.lblNbImages.set_text(str(image_number))
-        test.launch()
+    def fill_labels(self, test):
+        self.lblNbImages.set_text(str(test.total_images()))
         noise = str(round(test.avg_noise() * 100.0, 2)) + '%'
         self.lblNoise.set_text(noise)
         precision = str(round(test.avg_precision() * 100.0, 2)) + '%'
         self.lblPrecision.set_text(precision)
+
+    def fill_image_list(self):
+        pass
         
+    def validate_folder(self, folder):
+        if folder == '':
+            self.msg_on_no_test_folder()
+            return False
+        else:
+            return True
+        
+    def validate_filterchain(self, filterchain):
+        if filterchain == '':
+            self.msg_on_no_filterchain()
+            return False
+        else:
+            return True
+    
+    def validate_image_number(self, image_number):
+        if image_number == 0:
+            self.msg_on_no_test_images()
+            return False
+        else:
+            return True
+    
+    def on_btnOK_clicked(self, widget):
+        folder = self.txtTestFolder.get_text()
+        filterchain = self.txtFilterchain.get_text()
+        if (self.validate_folder(folder) and 
+            self.validate_filterchain(filterchain)):
+            
+            test = LineTest(folder, filterchain)
+            image_number = test.total_images()
+            if self.validate_image_number(image_number):
+                test.launch()
+                self.fill_labels(test)
+                self.fill_image_list()
+            
     def on_btnClear_clicked(self, widget):
         self.txtFilterchain.set_text('')
         self.txtTestFolder.set_text('')
@@ -111,7 +136,6 @@ class WinLineTest:
             self.txtFilterchain.set_text(dialog.get_filename())
         dialog.destroy()
 
-    
     def on_btnOpenTestFolder_clicked(self, widget):
         dialog = Gtk.FileChooserDialog("Choose an image folder", None,
                                    Gtk.FileChooserAction.SELECT_FOLDER,
@@ -122,4 +146,6 @@ class WinLineTest:
             self.txtTestFolder.set_text(dialog.get_filename())
         dialog.destroy()
 
+    def on_lstImage_cursor_changed(self, widget):
+        pass
     

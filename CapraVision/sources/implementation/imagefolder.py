@@ -38,6 +38,7 @@ class ImageFolder:
     
     def next(self):
         if self.position >= len(self.file_names):
+            self.position = 0
             raise StopIteration
         else:
             image = self.load_image(self.position)
@@ -64,3 +65,5 @@ class ImageFolder:
     def total_images(self):
         return len(self.file_names)
     
+    def reset_position(self):
+        self.position = 0
