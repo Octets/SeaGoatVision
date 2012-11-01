@@ -34,7 +34,7 @@ class LineTest:
         image_folder.return_file_name = True
         image_folder.read_folder(test_folder)
         self.chain = chain.read(filterchain)
-        self.testable_images = self.find_testable_images(self.image_folder)
+        self.testable_images = self.find_testable_images(image_folder)
         self.precisions = {}
         self.noises = {}
         
@@ -46,8 +46,8 @@ class LineTest:
         return testable_images
     
     def launch(self):
-        for file_name, image in self.testable_images:
-            filtered, map = self.get_test_images(image, file_name)
+        for file_name, image in self.testable_images.items():
+            filtered, map = self.get_test_images(file_name)
             self.precisions[file_name] = self.find_precision(filtered, map)
             self.noises[file_name] = self.find_noise(filtered, map)
             
@@ -132,13 +132,7 @@ class LineTest:
         return min_dist
     
     def total_images(self):
-        count = 0
-        for f in self.image_folder.file_names:
-            map = f + '.map'
-            if os.path.exists(map):
-                count += 1
-            
-        return count
+        return len(self.testable_images)
     
     def avg_noise(self):
         c = len(self.noises.values())

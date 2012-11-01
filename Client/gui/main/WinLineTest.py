@@ -25,7 +25,7 @@ import cv2
 import numpy as np
 
 from CapraVision import sources
-from CapraVision.tests.line_test import LineTest
+from CapraVision.tests.linetest import LineTest
 
 class WinLineTest:
     
