@@ -39,16 +39,20 @@ class LineTest:
         self.noises = {}
 
     def avg_noise(self):
+        """Returns the calculated average noise"""
         c = len(self.noises.values())
         s = sum(self.noises.values())
         return s / c
     
     def avg_precision(self):
+        """Returns the calculated averaged precision"""
         c = len(self.precisions.values())
         s = sum(self.precisions.values())
         return s / c
     
     def example_image(self, file_name):
+        """Returns an example of what is correctly detected,
+            noise and what is not detected"""
         image = self.testable_images[file_name]
         filtered, map = self.get_test_images(file_name)
         detected = (filtered & map)
@@ -61,7 +65,7 @@ class LineTest:
         ret_image[:,:,2] = undetected
         
         return ret_image
-
+    
     def find_dist_between_blob_and_line(self, cf, cnt_map):
         moment = cv2.moments(cf)
         m00 = moment['m00']
@@ -136,6 +140,9 @@ class LineTest:
             area = np.abs(cv2.contourArea(cm)) / 2.0
             max_noise += area * max_dist
         return max_noise
+
+    def original_image(self, file_name):
+        return self.testable_images[file_name]
 
     def remove_line(self, filtered, map):
         detected = (filtered & map)

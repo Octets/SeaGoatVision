@@ -32,6 +32,7 @@ class WinLineTest:
     def __init__(self):
         ui = get_ui(self, 'imageListStore', 'imageCalculate')
         self.window = ui.get_object(win_name(self))
+        self.imageListStore = ui.get_object('imageListStore')
         self.txtFilterchain = ui.get_object('txtFilterchain')
         self.txtTestFolder = ui.get_object('txtTestFolder')
         self.lblPrecision = ui.get_object('lblPrecision')
@@ -77,8 +78,13 @@ class WinLineTest:
         precision = str(round(test.avg_precision() * 100.0, 2)) + '%'
         self.lblPrecision.set_text(precision)
 
-    def fill_image_list(self):
-        pass
+    def fill_image_list(self, images):
+        self.imageListStore.clear()
+        for i in xrange(len(images)):
+            self.imageListStore.append([images.keys()[i], i])
+        if len(images) > 0:
+            self.lstImage.set_cursor(0)
+        
         
     def validate_folder(self, folder):
         if folder == '':
@@ -107,12 +113,12 @@ class WinLineTest:
         if (self.validate_folder(folder) and 
             self.validate_filterchain(filterchain)):
             
-            test = LineTest(folder, filterchain)
-            image_number = test.total_images()
+            self.test = LineTest(folder, filterchain)
+            image_number = self.test.total_images()
             if self.validate_image_number(image_number):
-                test.launch()
-                self.fill_labels(test)
-                self.fill_image_list()
+                self.test.launch()
+                self.fill_labels(self.test)
+                self.fill_image_list(self.test.testable_images)
             
     def on_btnClear_clicked(self, widget):
         self.txtFilterchain.set_text('')
@@ -147,5 +153,10 @@ class WinLineTest:
         dialog.destroy()
 
     def on_lstImage_cursor_changed(self, widget):
-        pass
-    
+        index = tree_selected_index(self.lstImage)
+        if index >= 0:
+            file_name = self.imageListStore[index][0]
+            self.imgExample.set_from_pixbuf(numpy_to_pixbuf(
+                                        self.test.example_image(file_name)))
+            self.imgOriginal.set_from_pixbuf(numpy_to_pixbuf(
+                                        self.test.original_image(file_name)))
