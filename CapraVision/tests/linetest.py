@@ -28,13 +28,28 @@ import os
 import sys
 
 class LineTest:
+    """This class test the precision of the detection of lines of a filterchain.
+        It uses a folder that contains image files and mappings files.  The
+        mapping files contains the information about 
+        the lines inside the images
     
+    After creation, the launch() method should be called to execute the test.    
+    """
+        
     def __init__(self, test_folder, filterchain):
-        image_folder = ImageFolder()
-        image_folder.return_file_name = True
-        image_folder.read_folder(test_folder)
+        """Creates the object.
+        Args:
+            test_folder: Complete path to the folder that contains the 
+            test images and its mapping.
+            filterchain: Complete path to the filterchain file."""
+            
+        image_folder = self.create_image_folder_source(test_folder)
         self.chain = chain.read(filterchain)
         self.testable_images = self.find_testable_images(image_folder)
+        
+        # These dictionaries contains the values calculated by the test.
+        # Keys: image file name.
+        # Values: float representing the percentage. 
         self.precisions = {}
         self.noises = {}
 
@@ -50,9 +65,17 @@ class LineTest:
         s = sum(self.precisions.values())
         return s / c
     
+    def create_image_folder_source(self, test_folder):
+        image_folder = ImageFolder()
+        image_folder.return_file_name = True
+        image_folder.read_folder(test_folder)
+        return image_folder
+    
     def example_image(self, file_name):
         """Returns an example of what is correctly detected,
-            noise and what is not detected"""
+            noise and what is not detected
+        Args:
+            file_name: the complete path to the image in the test folder."""
         image = self.testable_images[file_name]
         filtered, map = self.get_test_images(file_name)
         detected = (filtered & map)
@@ -67,6 +90,13 @@ class LineTest:
         return ret_image
     
     def find_dist_between_blob_and_line(self, cf, cnt_map):
+        """Returns the minimum distance between a blob and a line.
+        Args:
+            cf: the contour of the blob
+            cnt_map: the contour of the line
+        """
+        
+        # Find the center of the blob
         moment = cv2.moments(cf)
         m00 = moment['m00']
         if m00 <> 0:
@@ -76,6 +106,8 @@ class LineTest:
             x = cf[0][0][0]
             y = cf[0][0][1]
         min_dist = sys.maxint
+        
+        # If there are many lines, we find the closest one
         for cm in cnt_map:
             dist = cv2.pointPolygonTest(cm, (x, y), True)
             if dist < min_dist:
@@ -83,6 +115,10 @@ class LineTest:
         return min_dist
 
     def find_noise(self, filtered, map):
+        """Returns the percentage of noise in the image
+        Args:
+            filtered: the filtered image from the filterchain
+            map: the array containing the line information"""
         filtered = self.remove_line(filtered, map)
         cnt_filtered, _ = cv2.findContours(filtered, 
                                            cv2.RETR_TREE, 
@@ -99,12 +135,19 @@ class LineTest:
         return noise / self.max_noise(cnt_map, filtered.shape)
     
     def find_precision(self, filtered, map):
+        """Returns the precision of the line detection
+        Args:
+            filtered: the filtered image from the filterchain
+            map: the array containing the line information"""
         undetected = (filtered & np.invert(map))
         sum_map = np.count_nonzero(map)
         sum_undetected = np.count_nonzero(undetected)
         return (sum_map - sum_undetected) / float(sum_map)
     
     def find_testable_images(self, image_folder):
+        """Find all the images that have a mapping file associated with them
+        Args:
+            image_folder: an ImageFolder source object"""
         testable_images = {}
         for file_name, image in image_folder:
             if os.path.exists(file_name + '.map'):
@@ -112,6 +155,13 @@ class LineTest:
         return testable_images
     
     def get_test_images(self, file_name):
+        """Create the image and its map from the file name.
+        Args:
+            file_name: complete path to an image in the test folder
+        Returns:
+            A tuple containing the filtered image from the filterchain and 
+            the mapping of the lines in the image
+        """
         image = self.testable_images[file_name]
         filtered = self.chain.execute(image)
         filtered = self.make_binary_array(filtered)
@@ -122,18 +172,26 @@ class LineTest:
         return (filtered, map)
 
     def launch(self):
+        """Execute the test"""
         for file_name, image in self.testable_images.items():
             filtered, map = self.get_test_images(file_name)
             self.precisions[file_name] = self.find_precision(filtered, map)
             self.noises[file_name] = self.find_noise(filtered, map)
                 
     def make_binary_array(self, filtered):
+        """Convert a filtered image to binary
+        pixel = 0 -> 0
+        pixel > 0 -> 255"""
         gray = cv2.cvtColor(filtered, cv.CV_BGR2GRAY)
         bin = np.zeros(gray.shape, dtype=np.uint8)
         bin[gray > 0] = 255
         return bin
                         
     def max_noise(self, cnt_map, image_size):
+        """Returns the max noise value for the image.
+        Args:
+            cnt_map: the contour of the lines
+            image_size: the size of the image eg (640, 480)"""
         max_dist = math.sqrt(image_size[0]**2 + image_size[1]**2) / 4.0
         max_noise = 0
         for cm in cnt_map:
@@ -142,12 +200,15 @@ class LineTest:
         return max_noise
 
     def original_image(self, file_name):
+        """Returns the original unmodified image"""
         return self.testable_images[file_name]
 
     def remove_line(self, filtered, map):
+        """Remove the line from a filtered image using the map"""
         detected = (filtered & map)
         return (filtered & np.invert(detected))
     
     def total_images(self):
+        """Returns the amount of testable images in the test folder"""
         return len(self.testable_images)
             
