@@ -73,7 +73,7 @@ class LineTest:
     
     def example_image(self, file_name):
         """Returns an example of what is correctly detected,
-            noise and what is not detected
+            noise and what is not detected.  The size of the image is 320x240.
         Args:
             file_name: the complete path to the image in the test folder."""
         image = self.testable_images[file_name]
@@ -87,7 +87,7 @@ class LineTest:
         ret_image[:,:,1] = detected
         ret_image[:,:,2] = undetected
         
-        return ret_image
+        return cv2.resize(ret_image, (320, 240))
     
     def find_dist_between_blob_and_line(self, cf, cnt_map):
         """Returns the minimum distance between a blob and a line.
@@ -200,8 +200,8 @@ class LineTest:
         return max_noise
 
     def original_image(self, file_name):
-        """Returns the original unmodified image"""
-        return self.testable_images[file_name]
+        """Returns the original image scaled to 320x240"""
+        return cv2.resize(self.testable_images[file_name], (320, 240))
 
     def remove_line(self, filtered, map):
         """Remove the line from a filtered image using the map"""

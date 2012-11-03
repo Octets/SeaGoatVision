@@ -49,6 +49,7 @@ class WinMapper:
                       | Gdk.EventMask.POINTER_MOTION_MASK
                       | Gdk.EventMask.POINTER_MOTION_HINT_MASK)
         
+        self.image = None
         self.pixbuf_image = None
         self.surface = None
         self.color = Gdk.RGBA()

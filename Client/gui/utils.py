@@ -47,7 +47,10 @@ def map_object_to_ui(object, module):
     return None
 
 def tree_selected_index(treeview):
-    (model, iter) = treeview.get_selection().get_selected()
+    sel = treeview.get_selection()
+    if sel is None:
+        return -1
+    (model, iter) = sel.get_selected()
     if iter is None:
         return -1
     path = model.get_path(iter)
