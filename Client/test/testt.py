@@ -13,7 +13,6 @@ b = blue[map].flatten()
 g = green[map].flatten()
 r = red[map].flatten()
 
-bx = 
 x = arange(1, b.size + 1)
 print b.size
 print x.size

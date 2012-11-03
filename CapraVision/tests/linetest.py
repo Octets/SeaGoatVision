@@ -83,9 +83,9 @@ class LineTest:
         noise = self.remove_line(filtered, map)
 
         ret_image = np.zeros(image.shape, np.uint8)
-        ret_image[:,:,0] = noise
-        ret_image[:,:,1] = detected
-        ret_image[:,:,2] = undetected
+        ret_image[:,:,0] = noise 
+        #ret_image[:,:,1] = detected 
+        #ret_image[:,:,2] = undetected 
         
         return cv2.resize(ret_image, (320, 240))
     
