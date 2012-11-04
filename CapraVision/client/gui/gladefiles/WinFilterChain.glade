@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkListStore" id="filterChainListStore">
-    <columns>
-      <!-- column-name Name -->
-      <column type="gchararray"/>
-      <!-- column-name Desc -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkWindow" id="WinFilterChain">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -25,6 +17,7 @@
           <object class="GtkToolbar" id="toolbar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="show_arrow">False</property>
             <child>
               <object class="GtkToolButton" id="btnNew">
                 <property name="use_action_appearance">False</property>
@@ -219,6 +212,63 @@
                 <property name="homogeneous">True</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkSeparatorToolItem" id="sep3">
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkMenuToolButton" id="btnTools">
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                <property name="tooltip_text" translatable="yes">Tools</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">Tools</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-execute</property>
+                <signal name="clicked" handler="on_btnTools_clicked" swapped="no"/>
+                <child type="menu">
+                  <object class="GtkMenu" id="menuTools">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="toolLineMapper">
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">Line Mapper</property>
+                        <property name="label" translatable="yes">Line Mapper</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_toolLineMapper_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="toolLineTest">
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">Line Testing</property>
+                        <property name="label" translatable="yes">Line Testing</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_toolLineTest_activate" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -280,6 +330,9 @@
                 <property name="headers_clickable">False</property>
                 <property name="tooltip_column">1</property>
                 <signal name="button-press-event" handler="on_lstFilters_button_press_event" swapped="no"/>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="treeview-selection1"/>
+                </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="colName">
                     <property name="title" translatable="yes">Name</property>
@@ -307,5 +360,13 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="filterChainListStore">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+      <!-- column-name Desc -->
+      <column type="gchararray"/>
+    </columns>
   </object>
 </interface>

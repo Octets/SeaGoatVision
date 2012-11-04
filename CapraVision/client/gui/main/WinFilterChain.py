@@ -25,6 +25,8 @@ from CapraVision import sources
 from CapraVision import filters
 
 from WinFilterSel import WinFilterSel
+from WinLineTest import WinLineTest
+from WinMapper import WinMapper
 from WinViewer import WinViewer
 
 class WinFilterChain:
@@ -46,6 +48,7 @@ class WinFilterChain:
         self.btnUp = ui.get_object('btnUp')
         self.btnDown = ui.get_object('btnDown')
         self.txtFilterChain = ui.get_object('txtFilterChain')
+        self.menuTools = ui.get_object('menuTools')
         
         self.win_list = []
         
@@ -288,6 +291,11 @@ class WinFilterChain:
                 self.fchain.move_filter_down(filter)
                 self.lstFilters.set_cursor(index + 1)
                     
+    def on_btnTools_clicked(self, widget):
+        print 'weil'
+        self.menuTools.popup(None, None, None, None, 0, 
+                             Gtk.get_current_event_time())
+
     def on_lstFilters_button_press_event(self, widget, event):
         if event.get_click_count()[1] == 2L:
             self.show_config(self.selected_filter())
@@ -304,3 +312,16 @@ class WinFilterChain:
             elif result == Gtk.ResponseType.CANCEL:
                 return True
         Gtk.main_quit()
+
+    def on_toolLineMapper_activate(self, widget):
+        win = WinMapper()
+        self.add_window_to_list(win)
+        win.window.connect('destroy', self.on_window_destroy)
+        win.window.show_all()
+        
+    def on_toolLineTest_activate(self, widget):
+        win = WinLineTest()
+        self.add_window_to_list(win)
+        win.window.connect('destroy', self.on_window_destroy)
+        win.window.show_all()
+    

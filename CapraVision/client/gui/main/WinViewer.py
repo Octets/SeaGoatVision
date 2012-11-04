@@ -33,7 +33,7 @@ class WinViewer():
     """
     def __init__(self, fchain):
         self.source_list = sources.load_sources()
-        self.fchain = filterchain
+        self.fchain = fchain
         fchain.add_image_observer(self.chain_observer)
         fchain.add_filter_observer(self.filters_changed_observer)
         
