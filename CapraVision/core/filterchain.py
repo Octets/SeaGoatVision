@@ -47,6 +47,8 @@ def read(file_name):
             elif isnumeric(val):
                 filter.__dict__[member] = cfg.getfloat(section, member)
             else:
+                if isinstance(val, str):
+                    val = '\n'.join([line[1:-1] for line in str.splitlines(val)])
                 filter.__dict__[member] = val
         if hasattr(filter, 'configure'):
             filter.configure()
@@ -62,6 +64,9 @@ def write(file_name, chain):
         for name, value in filter.__dict__.items():
             if name[0] == '_':
                 continue
+            if isinstance(value, str):
+                value = '\n'.join(['"%s"' % line for line in str.splitlines(value)])
+                    
             cfg.set(fname, name, value)
     cfg.write(open(file_name, 'w'))
 

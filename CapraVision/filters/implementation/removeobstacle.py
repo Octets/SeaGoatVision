@@ -13,7 +13,7 @@ class RemoveObstacle:
         blue, green, red = cv2.split(image)
         threshold = (red < self.threshold)
         red[threshold] = 0
-        red = cv2.blur(red, (self.horizontal_blur, self.vertical_blur))
+        red = cv2.blur(red, (int(self.horizontal_blur), int(self.vertical_blur)))
         mask = red > 0
         image[mask] = 0
         

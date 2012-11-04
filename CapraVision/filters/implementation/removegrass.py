@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
+import numpy as np
 
 class RemoveGrass:
     """Remove grass from an image"""
@@ -54,9 +55,16 @@ class RemoveGrass:
         image[:,:,2] = red
         return image
         
+    def enhance_grass(self, image):
+        blue, green, red = cv2.split(image)
+        image[:,:,0] = np.subtract(blue, green / 2)
+        return image
+    
     def execute(self, image):
         if self.technique == 0:
             return self.add_green_to_blue(image)
-        else:
+        elif self.technique == 1:
             return self.remove_green_from_blue(image)
-                    
+        elif self.technique == 2:
+            return self.enhance_grass(image)
+            
