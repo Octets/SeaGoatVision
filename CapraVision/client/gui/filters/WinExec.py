@@ -17,6 +17,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from gi.repository import GtkSource
+
 import copy
 from CapraVision.client.gui.utils import *
 
@@ -29,15 +31,38 @@ class WinExec:
         
         ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
-        self.txtCurrent = ui.get_object('txtCurrent')
-        self.txtWorking = ui.get_object('txtWorking')
+        self.scwCurrent = ui.get_object('scwCurrent')
+        self.scwWorking = ui.get_object('scwWorking')
+        
+        self.txtCurrent = GtkSource.View.new_with_buffer(GtkSource.Buffer())
+        self.txtCurrent.set_editable(False)
+        self.txtCurrent.set_can_focus(False)
+        self.txtCurrent.set_show_line_numbers(True)
+        
+        self.txtWorking = GtkSource.View.new_with_buffer(GtkSource.Buffer())
+        self.txtWorking.set_insert_spaces_instead_of_tabs(True)
+        self.txtWorking.set_indent_on_tab(True)
+        self.txtWorking.set_indent_width(4)
+        self.txtWorking.set_show_line_numbers(True)
+        self.txtWorking.set_can_default(True)
+        
+        lang_manager = GtkSource.LanguageManager()
+        self.txtCurrent.get_buffer().set_language(
+                                        lang_manager.get_language('python'))
+        self.txtWorking.get_buffer().set_language(
+                                        lang_manager.get_language('python'))
+        self.scwCurrent.add(self.txtCurrent)
+        self.scwWorking.add(self.txtWorking)
+        
+        self.window.set_default(self.txtWorking)
+        self.window.set_focus(self.txtWorking)
         
         self.init_window()
         
     def init_window(self):
         self.txtCurrent.get_buffer().set_text(self.filtre.code)
         self.txtWorking.get_buffer().set_text(self.filtre.code)
-    
+        
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
