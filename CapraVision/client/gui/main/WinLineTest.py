@@ -125,6 +125,7 @@ class WinLineTest:
         self.lblNoise.set_text('0%')
         self.lblPrecision.set_text('0%')
         self.lblNbImages.set_text('0')
+        self.imageListStore.clear()
         
     def on_btnOpenFilterchain_clicked(self, widget):
         dialog = Gtk.FileChooserDialog("Choose a filterchain file", None,

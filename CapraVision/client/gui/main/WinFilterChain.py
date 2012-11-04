@@ -291,7 +291,6 @@ class WinFilterChain:
                 self.lstFilters.set_cursor(index + 1)
                     
     def on_btnTools_clicked(self, widget):
-        print 'weil'
         self.menuTools.popup(None, None, None, None, 0, 
                              Gtk.get_current_event_time())
 

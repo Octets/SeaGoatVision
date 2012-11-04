@@ -78,14 +78,14 @@ class LineTest:
             file_name: the complete path to the image in the test folder."""
         image = self.testable_images[file_name]
         filtered, map = self.get_test_images(file_name)
-        detected = (filtered & map)
-        undetected = (filtered & np.invert(map))
+        detected = (filtered * map)
+        undetected = (np.invert(detected) * map)
         noise = self.remove_line(filtered, map)
 
         ret_image = np.zeros(image.shape, np.uint8)
-        ret_image[:,:,0] = noise 
-        #ret_image[:,:,1] = detected 
-        #ret_image[:,:,2] = undetected 
+        ret_image[:,:,0] = undetected
+        ret_image[:,:,1] = detected 
+        ret_image[:,:,2] = noise | undetected 
         
         return cv2.resize(ret_image, (320, 240))
     
@@ -139,7 +139,8 @@ class LineTest:
         Args:
             filtered: the filtered image from the filterchain
             map: the array containing the line information"""
-        undetected = (filtered & np.invert(map))
+        detected = (filtered * map)
+        undetected = (np.invert(detected) * map)
         sum_map = np.count_nonzero(map)
         sum_undetected = np.count_nonzero(undetected)
         return (sum_map - sum_undetected) / float(sum_map)
@@ -205,7 +206,7 @@ class LineTest:
 
     def remove_line(self, filtered, map):
         """Remove the line from a filtered image using the map"""
-        detected = (filtered & map)
+        detected = (filtered * map)
         return (filtered & np.invert(detected))
     
     def total_images(self):
