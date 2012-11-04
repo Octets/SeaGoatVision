@@ -25,7 +25,7 @@ import cairo
 import cv2
 import numpy as np
 
-from CapraVision import sources
+from CapraVision import imageproviders
 
 class WinMapper:
     """Tool to identify lines in images
@@ -130,7 +130,7 @@ class WinMapper:
             [rect.y:rect.y+rect.height, rect.x:rect.x+rect.width] = brush
         
     def load_folder(self, folder):
-        images = sources.find_all_images(folder)
+        images = imageproviders.find_all_images(folder)
         self.imageListStore.clear()
         for image in images:
             self.imageListStore.append([os.path.exists(image + '.map'), 

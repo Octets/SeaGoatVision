@@ -21,7 +21,6 @@ from CapraVision.client.gui.utils import *
 
 from CapraVision.core import filterchain
 
-from CapraVision import sources
 from CapraVision import filters
 
 from WinFilterSel import WinFilterSel

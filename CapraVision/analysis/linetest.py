@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.sources.implementation.imagefolder import ImageFolder
+from CapraVision.imageproviders.implementation.imagefolder import ImageFolder
 from CapraVision.core import filterchain
 
 import cv2

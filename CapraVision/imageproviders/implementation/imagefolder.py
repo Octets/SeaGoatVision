@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import CapraVision.sources.utils
+import CapraVision.imageproviders.utils
 import cv2
 
 class ImageFolder:
@@ -29,7 +29,7 @@ class ImageFolder:
         self.return_file_name = False
         
     def read_folder(self, folder):
-        self.file_names = CapraVision.sources.utils.find_all_images(folder)
+        self.file_names = CapraVision.imageproviders.utils.find_all_images(folder)
         self.folder_name = folder
         self.position = 0
         

@@ -22,8 +22,6 @@ import CapraVision.client.gui.filters.WinColorLevel
 from gi.repository import Gtk, GObject
 import CapraVision.client.gui.main
 
-import CapraVision.client.gui.sources
-
 if __name__ == '__main__':
     GObject.threads_init()
     w = CapraVision.client.gui.main.WinFilterChain()

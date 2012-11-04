@@ -21,7 +21,7 @@ from gi.repository import Gtk, GdkPixbuf
 import Image
 
 import filters
-import sources
+import imageproviders
 
 import inspect
 import os
@@ -35,7 +35,7 @@ def map_filter_to_ui(filter):
     return map_object_to_ui(filter, filters)
 
 def map_source_to_ui(source):
-    return map_object_to_ui(source, sources)
+    return map_object_to_ui(source, imageproviders)
 
 def map_object_to_ui(object, module):
     """Returns the appropriate window class to configure the object"""

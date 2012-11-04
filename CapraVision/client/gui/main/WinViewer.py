@@ -24,7 +24,7 @@ from CapraVision.client.gui.utils import *
 from CapraVision.core import filterchain
 from CapraVision.core import mainloop
 
-from CapraVision import sources
+from CapraVision import imageproviders
 
 class WinViewer():
     """Show the source after being processed by the filter fchain.
@@ -32,7 +32,7 @@ class WinViewer():
     This is the last executed filter on the source.
     """
     def __init__(self, fchain):
-        self.source_list = sources.load_sources()
+        self.source_list = imageproviders.load_sources()
         self.fchain = fchain
         fchain.add_image_observer(self.chain_observer)
         fchain.add_filter_observer(self.filters_changed_observer)
@@ -70,9 +70,9 @@ class WinViewer():
             self.thread.stop()
             self.thread = None
         if self.source <> None:
-            sources.close_source(self.source)
+            imageproviders.close_source(self.source)
         if new_source <> None:
-            self.source = sources.create_source(new_source)
+            self.source = imageproviders.create_source(new_source)
             self.thread = mainloop.ThreadMainLoop(self.source, 1/30.0)
             self.thread.add_observer(self.thread_observer)
             self.thread.start()
