@@ -10,7 +10,8 @@
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Line Identification</property>
-    <property name="window_position">center-on-parent</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-always</property>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>
