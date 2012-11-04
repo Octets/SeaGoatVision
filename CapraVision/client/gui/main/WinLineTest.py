@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gui.utils import *
+from CapraVision.client.gui.utils import *
 
 from gi.repository import Gtk
 
@@ -25,7 +25,7 @@ import cv2
 import numpy as np
 
 from CapraVision import sources
-from CapraVision.tests.linetest import LineTest
+from CapraVision.analysis.linetest import LineTest
 
 class WinLineTest:
     

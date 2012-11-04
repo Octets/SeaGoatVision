@@ -18,9 +18,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import copy
-from gui.utils import *
+from CapraVision.client.gui.utils import *
 
-class WinColorLevel:
+class WinRemoveObstacle:
     
     def __init__(self, filtre, cb):
         self.filtre = filtre
@@ -29,34 +29,36 @@ class WinColorLevel:
         
         ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
-        self.hscRed = ui.get_object('hscRed')
-        self.hscGreen = ui.get_object('hscGreen')
-        self.hscBlue = ui.get_object('hscBlue')
+        self.spnThreshold =ui.get_object('spnThreshold')
+        self.spnThreshold.set_adjustment(self.create_adj())
+        self.spnVBlur = ui.get_object('spnVBlur')
+        self.spnVBlur.set_adjustment(self.create_adj())
+        self.spnHBlur = ui.get_object('spnHBlur')
+        self.spnHBlur.set_adjustment(self.create_adj())
+        
         self.init_window()
-        
+
     def init_window(self):
-        self.hscRed.set_range(0, 100)
-        self.hscRed.set_value(self.filtre.red)
-        self.hscGreen.set_range(0, 100)
-        self.hscGreen.set_value(self.filtre.green)
-        self.hscBlue.set_range(0, 100)
-        self.hscBlue.set_value(self.filtre.blue)
+        self.spnThreshold.set_value(self.filtre_init.threshold)
+        self.spnHBlur.set_value(self.filtre_init.horizontal_blur)
+        self.spnVBlur.set_value(self.filtre_init.vertical_blur)
         
+    def create_adj(self):
+        return Gtk.Adjustment(1, 0, 255, 1, 1, 0)
+
+    def on_btnCancel_clicked(self, widget):
+        self.init_window()
+    
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
     
-    def on_btnCancel_clicked(self, widget):
-        self.filtre.red = self.filtre_init.red
-        self.filtre.green = self.filtre_init.green
-        self.filtre.blue = self.filtre_init.blue
-        self.init_window()
+    def on_spnThreshold_value_changed(self, widget):
+        self.filtre.threshold = int(self.spnThreshold.get_value())
+    
+    def on_spnVBlur_value_changed(self, widget):
+        self.filtre.vertical_blur = int(self.spnVBlur.get_value())
         
-    def on_hscRed_value_changed(self, widget):
-        self.filtre.red = self.hscRed.get_value()
-        
-    def on_hscGreen_value_changed(self, widget):
-        self.filtre.green = self.hscGreen.get_value()
-
-    def on_hscBlue_value_changed(self, widget):
-        self.filtre.blue = self.hscBlue.get_value()
+    def on_spnHBlur_value_changed(self, widget):
+        self.filtre.horizontal_blur = int(self.spnHBlur.get_value())
+    

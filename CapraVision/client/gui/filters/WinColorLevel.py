@@ -18,9 +18,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import copy
-from gui.utils import *
+from CapraVision.client.gui.utils import *
 
-class WinExec:
+class WinColorLevel:
     
     def __init__(self, filtre, cb):
         self.filtre = filtre
@@ -29,26 +29,34 @@ class WinExec:
         
         ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
-        self.txtCurrent = ui.get_object('txtCurrent')
-        self.txtWorking = ui.get_object('txtWorking')
-        
+        self.hscRed = ui.get_object('hscRed')
+        self.hscGreen = ui.get_object('hscGreen')
+        self.hscBlue = ui.get_object('hscBlue')
         self.init_window()
         
     def init_window(self):
-        self.txtCurrent.get_buffer().set_text(self.filtre.code)
-        self.txtWorking.get_buffer().set_text(self.filtre.code)
-    
+        self.hscRed.set_range(0, 100)
+        self.hscRed.set_value(self.filtre.red)
+        self.hscGreen.set_range(0, 100)
+        self.hscGreen.set_value(self.filtre.green)
+        self.hscBlue.set_range(0, 100)
+        self.hscBlue.set_value(self.filtre.blue)
+        
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
-        
-    def on_btnCancel_clicked(self, widget):
-        self.filtre.code = self.filtre_init.code
-        self.init_window()
-
-    def on_btnApply_clicked(self, widget):
-        start, end = self.txtWorking.get_buffer().get_bounds()
-        code = self.txtWorking.get_buffer().get_text(start, end, False)
-        self.txtCurrent.get_buffer().set_text(code)
-        self.filtre.set_code(code)
     
+    def on_btnCancel_clicked(self, widget):
+        self.filtre.red = self.filtre_init.red
+        self.filtre.green = self.filtre_init.green
+        self.filtre.blue = self.filtre_init.blue
+        self.init_window()
+        
+    def on_hscRed_value_changed(self, widget):
+        self.filtre.red = self.hscRed.get_value()
+        
+    def on_hscGreen_value_changed(self, widget):
+        self.filtre.green = self.hscGreen.get_value()
+
+    def on_hscBlue_value_changed(self, widget):
+        self.filtre.blue = self.hscBlue.get_value()

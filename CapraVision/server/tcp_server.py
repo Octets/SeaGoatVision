@@ -26,7 +26,7 @@ import time
 import traceback
 
 from threading import Thread
-from CapraVision import filterchain
+from CapraVision.core import filterchain
 
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
     

@@ -18,9 +18,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import copy
-from gui.utils import *
+from CapraVision.client.gui.utils import *
 
-class WinRemoveObstacle:
+class WinExec:
     
     def __init__(self, filtre, cb):
         self.filtre = filtre
@@ -29,36 +29,26 @@ class WinRemoveObstacle:
         
         ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
-        self.spnThreshold =ui.get_object('spnThreshold')
-        self.spnThreshold.set_adjustment(self.create_adj())
-        self.spnVBlur = ui.get_object('spnVBlur')
-        self.spnVBlur.set_adjustment(self.create_adj())
-        self.spnHBlur = ui.get_object('spnHBlur')
-        self.spnHBlur.set_adjustment(self.create_adj())
+        self.txtCurrent = ui.get_object('txtCurrent')
+        self.txtWorking = ui.get_object('txtWorking')
         
         self.init_window()
-
+        
     def init_window(self):
-        self.spnThreshold.set_value(self.filtre_init.threshold)
-        self.spnHBlur.set_value(self.filtre_init.horizontal_blur)
-        self.spnVBlur.set_value(self.filtre_init.vertical_blur)
-        
-    def create_adj(self):
-        return Gtk.Adjustment(1, 0, 255, 1, 1, 0)
-
-    def on_btnCancel_clicked(self, widget):
-        self.init_window()
+        self.txtCurrent.get_buffer().set_text(self.filtre.code)
+        self.txtWorking.get_buffer().set_text(self.filtre.code)
     
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
-    
-    def on_spnThreshold_value_changed(self, widget):
-        self.filtre.threshold = int(self.spnThreshold.get_value())
-    
-    def on_spnVBlur_value_changed(self, widget):
-        self.filtre.vertical_blur = int(self.spnVBlur.get_value())
         
-    def on_spnHBlur_value_changed(self, widget):
-        self.filtre.horizontal_blur = int(self.spnHBlur.get_value())
+    def on_btnCancel_clicked(self, widget):
+        self.filtre.code = self.filtre_init.code
+        self.init_window()
+
+    def on_btnApply_clicked(self, widget):
+        start, end = self.txtWorking.get_buffer().get_bounds()
+        code = self.txtWorking.get_buffer().get_text(start, end, False)
+        self.txtCurrent.get_buffer().set_text(code)
+        self.filtre.set_code(code)
     

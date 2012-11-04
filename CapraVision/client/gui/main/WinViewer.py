@@ -19,21 +19,23 @@
 
 from gi.repository import GObject
 
-from gui.utils import *
+from CapraVision.client.gui.utils import *
 
-from CapraVision import chain
+from CapraVision.core import filterchain
+from CapraVision.core import mainloop
+
 from CapraVision import sources
 
 class WinViewer():
-    """Show the source after being processed by the filter chain.
+    """Show the source after being processed by the filter fchain.
     The window receives a filter in its constructor.  
     This is the last executed filter on the source.
     """
-    def __init__(self, filterchain):
+    def __init__(self, fchain):
         self.source_list = sources.load_sources()
-        self.chain = filterchain
-        filterchain.add_image_observer(self.chain_observer)
-        filterchain.add_filter_observer(self.filters_changed_observer)
+        self.fchain = filterchain
+        fchain.add_image_observer(self.chain_observer)
+        fchain.add_filter_observer(self.filters_changed_observer)
         
         self.win_list = []
         self.thread = None
@@ -71,7 +73,7 @@ class WinViewer():
             sources.close_source(self.source)
         if new_source <> None:
             self.source = sources.create_source(new_source)
-            self.thread = chain.ThreadMainLoop(self.source, 1/30.0)
+            self.thread = mainloop.ThreadMainLoop(self.source, 1/30.0)
             self.thread.add_observer(self.thread_observer)
             self.thread.start()
         else:
@@ -82,12 +84,12 @@ class WinViewer():
         count = len(self.filterChainListStore)
         
         self.filterChainListStore.clear()
-        for filter in self.chain.filters:
+        for filter in self.fchain.filters:
             self.filterChainListStore.append([filter.__class__.__name__]) 
         if (old_filter is not None and 
-                            old_filter in self.chain.filters and 
+                            old_filter in self.fchain.filters and 
                             count >= len(self.filterChainListStore)):
-            self.cboFilter.set_active(self.chain.filters.index(old_filter))
+            self.cboFilter.set_active(self.fchain.filters.index(old_filter))
         else:
             self.set_default_filter()
             
@@ -95,9 +97,9 @@ class WinViewer():
         self.fill_filters_source()
 
     def set_default_filter(self):
-        if len(self.chain.filters) > 0:
-            self.filter = self.chain.filters[-1]
-            self.cboFilter.set_active(len(self.chain.filters)-1)
+        if len(self.fchain.filters) > 0:
+            self.filter = self.fchain.filters[-1]
+            self.cboFilter.set_active(len(self.fchain.filters)-1)
                         
     def show_config(self, source):
         cls = map_source_to_ui(source)
@@ -108,7 +110,7 @@ class WinViewer():
             win.window.show_all()
             
     def thread_observer(self, image):
-        self.chain.execute(image)
+        self.fchain.execute(image)
         
     def update_image(self, image):
         if image <> None:
@@ -127,7 +129,7 @@ class WinViewer():
     def on_cboFilter_changed(self, widget):
         index = self.cboFilter.get_active()
         if index <> -1:
-            f = self.chain.filters[index]
+            f = self.fchain.filters[index]
             self.filter = f 
         else:
             self.filter = None
@@ -137,5 +139,5 @@ class WinViewer():
 
     def on_WinViewer_destroy(self, widget):
         self.thread.stop()
-        self.chain.remove_filter_observer(self.filters_changed_observer)
-        self.chain.remove_image_observer(self.chain_observer)
+        self.fchain.remove_filter_observer(self.filters_changed_observer)
+        self.fchain.remove_image_observer(self.chain_observer)

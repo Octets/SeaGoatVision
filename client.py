@@ -17,20 +17,20 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os 
-parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-os.sys.path.insert(0, parentdir)
+#import os 
+#parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#os.sys.path.insert(0, parentdir)
 
-import gui.filters.WinColorLevel
+import CapraVision.client.gui.filters.WinColorLevel
 
 from gi.repository import Gtk, GObject
-import gui.main
+import CapraVision.client.gui.main
 
-import gui.sources
+import CapraVision.client.gui.sources
 
 if __name__ == '__main__':
     GObject.threads_init()
-    w = gui.main.WinFilterChain()
+    w = CapraVision.client.gui.main.WinFilterChain()
     w.window.show_all()
     Gtk.main()
     

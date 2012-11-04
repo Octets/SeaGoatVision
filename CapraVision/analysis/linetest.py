@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from CapraVision.sources.implementation.imagefolder import ImageFolder
-from CapraVision import chain
+from CapraVision.core import filterchain
 
 import cv2
 import cv2.cv as cv
@@ -36,7 +36,7 @@ class LineTest:
     After creation, the launch() method should be called to execute the test.    
     """
         
-    def __init__(self, test_folder, filterchain):
+    def __init__(self, test_folder, fchain):
         """Creates the object.
         Args:
             test_folder: Complete path to the folder that contains the 
@@ -44,7 +44,7 @@ class LineTest:
             filterchain: Complete path to the filterchain file."""
             
         image_folder = self.create_image_folder_source(test_folder)
-        self.chain = chain.read(filterchain)
+        self.fchain = filterchain.read(fchain)
         self.testable_images = self.find_testable_images(image_folder)
         
         # These dictionaries contains the values calculated by the test.
@@ -163,7 +163,7 @@ class LineTest:
             the mapping of the lines in the image
         """
         image = self.testable_images[file_name]
-        filtered = self.chain.execute(image)
+        filtered = self.fchain.execute(image)
         filtered = self.make_binary_array(filtered)
         
         map = np.fromfile(file_name + '.map', dtype=np.uint8)
