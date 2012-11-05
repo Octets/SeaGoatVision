@@ -24,6 +24,18 @@ import CapraVision.filters
 import ConfigParser
 import inspect
 
+def params_list(chain):
+    flist = []
+    for filter in chain.filters:
+        fname = filter.__class__.__name__
+        params = []
+        for name, value in filter.__dict__.items():
+            if name[0] == '_':
+                continue
+            params.append((name, value))
+        flist.append((fname, params))
+    return flist
+
 def isnumeric(string):
     try:
         float(string)
@@ -58,18 +70,14 @@ def read(file_name):
 def write(file_name, chain):
     """Save the content of the filter chain in a file."""
     cfg = ConfigParser.ConfigParser()
-    for filter in chain.filters:
-        fname = filter.__class__.__name__
+    for fname, params in params_list(chain):
         cfg.add_section(fname)
-        for name, value in filter.__dict__.items():
-            if name[0] == '_':
-                continue
+        for name, value in params:
             if isinstance(value, str):
                 value = '\n'.join(['"%s"' % line for line in str.splitlines(value)])
-                    
             cfg.set(fname, name, value)
     cfg.write(open(file_name, 'w'))
-
+    
 class FilterChain:
     """ Observable.  Contains the chain of filters to execute on an image.
     
