@@ -24,7 +24,7 @@ from gi.repository import Gtk
 import cv2
 import numpy as np
 
-from CapraVision.analysis.linetest import LineTest
+from CapraVision.client.analysis.linetest import LineTest
 
 class WinLineTest:
     

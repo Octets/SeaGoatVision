@@ -76,7 +76,7 @@ def numpy_to_pixbuf(image):
 
 def get_ui(window, *names):
     ui = Gtk.Builder()
-    glade_file = os.path.join('CapraVision/client/gui', 'gladefiles', 
+    glade_file = os.path.join('CapraVision', 'client', 'gui', 'gladefiles', 
                               win_name(window) + '.glade')
     ui.add_objects_from_file(glade_file, [win_name(window)] + 
                              [name for name in names])
