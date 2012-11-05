@@ -10,7 +10,6 @@
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Line Identification</property>
-    <property name="modal">True</property>
     <property name="window_position">center-always</property>
     <child>
       <object class="GtkBox" id="box1">
@@ -52,11 +51,9 @@
             <child>
               <object class="GtkButton" id="btnOpen">
                 <property name="label">gtk-open</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <property name="yalign">0.43999999761581421</property>
                 <signal name="clicked" handler="on_btnOpen_clicked" swapped="no"/>
@@ -74,13 +71,11 @@
                 <property name="show_arrow">False</property>
                 <child>
                   <object class="GtkToolButton" id="btnFirst">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Previous image</property>
                     <property name="tooltip_text" translatable="yes">Previous image</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">First</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-goto-first</property>
@@ -93,13 +88,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="btnPrevious">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Previous</property>
                     <property name="tooltip_text" translatable="yes">Previous</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Previous</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-go-back</property>
@@ -112,13 +105,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="btnNext">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Next</property>
                     <property name="tooltip_text" translatable="yes">Next</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Next</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-go-forward</property>
@@ -131,13 +122,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="btnLast">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Last</property>
                     <property name="tooltip_text" translatable="yes">Last</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Last</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-goto-last</property>
@@ -150,13 +139,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="btnClear">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Clear entire selection</property>
                     <property name="tooltip_text" translatable="yes">Clear entire selection</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Clear</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-clear</property>
@@ -169,13 +156,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="btnUndo">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Undo</property>
                     <property name="tooltip_text" translatable="yes">Undo</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Undo</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-undo</property>
@@ -188,13 +173,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="btnRedo">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Redo</property>
                     <property name="tooltip_text" translatable="yes">Redo</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Redo</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-redo</property>
@@ -207,13 +190,11 @@
                 </child>
                 <child>
                   <object class="GtkToolButton" id="btnColor">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Choose color</property>
                     <property name="tooltip_text" translatable="yes">Choose color</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Color</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-select-color</property>
@@ -226,13 +207,11 @@
                 </child>
                 <child>
                   <object class="GtkToolItem" id="btnSize">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
                     <property name="tooltip_markup" translatable="yes">Size</property>
                     <property name="tooltip_text" translatable="yes">Size</property>
-                    <property name="use_action_appearance">False</property>
                     <child>
                       <object class="GtkBox" id="box6">
                         <property name="visible">True</property>

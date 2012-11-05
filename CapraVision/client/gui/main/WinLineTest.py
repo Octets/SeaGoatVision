@@ -29,7 +29,7 @@ from CapraVision.analysis.linetest import LineTest
 class WinLineTest:
     
     def __init__(self):
-        ui = get_ui(self, 'imageListStore', 'imageCalculate')
+        ui = get_ui(self, 'imageListStore', 'paramsListStore')
         self.window = ui.get_object(win_name(self))
         self.imageListStore = ui.get_object('imageListStore')
         self.txtFilterchain = ui.get_object('txtFilterchain')
@@ -40,6 +40,15 @@ class WinLineTest:
         self.lstImage = ui.get_object('lstImage')
         self.imgOriginal = ui.get_object('imgOriginal')
         self.imgExample = ui.get_object('imgExample')
+        
+        self.paramsListStore = ui.get_object('paramsListStore')
+        self.cboParams = ui.get_object('cboParams')
+        self.spnFrom = ui.get_object('spnFrom')
+        self.spnTo = ui.get_object('spnTo')
+        self.lblBestPrecision = ui.get_object('lblBestPrecision')
+        self.lblBestNoise = ui.get_object('lblBestNoise')
+        self.lblOverallBest = ui.get_object('lblOverallBest')
+        self.imgGraphEval = ui.get_object('imgGraphEval')
         
         self.test = None
         
@@ -106,7 +115,7 @@ class WinLineTest:
         else:
             return True
     
-    def on_btnOK_clicked(self, widget):
+    def on_btnExecPrecision_clicked(self, widget):
         folder = self.txtTestFolder.get_text()
         filterchain = self.txtFilterchain.get_text()
         if (self.validate_folder(folder) and 
@@ -119,6 +128,9 @@ class WinLineTest:
                 self.fill_labels(self.test)
                 self.fill_image_list(self.test.testable_images)
             
+    def on_btnExecParams_clicked(self, widget):
+        pass
+    
     def on_btnClear_clicked(self, widget):
         self.txtFilterchain.set_text('')
         self.txtTestFolder.set_text('')
