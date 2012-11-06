@@ -21,7 +21,9 @@
 
 import socket
 import time
+
 from threading import Thread
+from CapraVision.core import filterchain
 
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
     
@@ -96,3 +98,10 @@ class ClientHandler:
         
     def send(self, data):
         self.conn.send(data)
+
+if __name__ == '__main__':
+    PORT=5030
+    IP="127.0.0.1"
+    
+    server = Server()
+    server.start(PORT, IP)

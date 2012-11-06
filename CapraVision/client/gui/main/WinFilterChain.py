@@ -304,6 +304,7 @@ class WinFilterChain:
             self.show_config(self.selected_filter())
 
     def on_window_destroy(self, widget):
+        self.server.stop()
         self.win_list.remove(widget)
 
     def on_WinFilterChain_delete_event(self, widget, data=None):
