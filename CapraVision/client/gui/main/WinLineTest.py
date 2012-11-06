@@ -17,14 +17,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.client.gui.utils import *
-
 from gi.repository import Gtk
 
 import cv2
 import numpy as np
 
-from CapraVision.analysis.linetest import LineTest
+from CapraVision.client.analysis.linetest import LineTest
+from CapraVision.client.gui.utils import *
+from CapraVision.core import filterchain
 
 class WinLineTest:
     
@@ -44,13 +44,16 @@ class WinLineTest:
         self.paramsListStore = ui.get_object('paramsListStore')
         self.cboParams = ui.get_object('cboParams')
         self.spnFrom = ui.get_object('spnFrom')
+        self.spnFrom.set_adjustment(self.create_adj(0))
         self.spnTo = ui.get_object('spnTo')
+        self.spnTo.set_adjustment(self.create_adj(255))
         self.lblBestPrecision = ui.get_object('lblBestPrecision')
         self.lblBestNoise = ui.get_object('lblBestNoise')
         self.lblOverallBest = ui.get_object('lblOverallBest')
         self.imgGraphEval = ui.get_object('imgGraphEval')
         
         self.test = None
+        self.chain = None
         
     def init_window(self):
         pass
@@ -79,6 +82,9 @@ class WinLineTest:
         dialog.destroy()
         return result
     
+    def create_adj(self, init_val):
+        return Gtk.Adjustment(init_val, 0, 65535, 1, 10, 0)
+
     def fill_labels(self, test):
         self.lblNbImages.set_text(str(test.total_images()))
         noise = str(round(test.avg_noise() * 100.0, 2)) + '%'
@@ -93,6 +99,14 @@ class WinLineTest:
         if len(images) > 0:
             self.lstImage.set_cursor(0)
         
+    def fill_paramsListStore(self, chain):
+        self.paramsListStore.clear()
+        for fname, params in filterchain.params_list(chain):
+            for name, value in params:
+                if filterchain.isnumeric(value) and not isinstance(value, bool):
+                    self.paramsListStore.append(
+                                [fname, name, fname + ' - ' + name, value])
+        self.cboParams.set_active(0)
         
     def validate_folder(self, folder):
         if folder == '':
@@ -101,8 +115,8 @@ class WinLineTest:
         else:
             return True
         
-    def validate_filterchain(self, filterchain):
-        if filterchain == '':
+    def validate_filterchain(self, chain):
+        if chain == '':
             self.msg_on_no_filterchain()
             return False
         else:
@@ -117,11 +131,11 @@ class WinLineTest:
     
     def on_btnExecPrecision_clicked(self, widget):
         folder = self.txtTestFolder.get_text()
-        filterchain = self.txtFilterchain.get_text()
+        chain = self.txtFilterchain.get_text()
         if (self.validate_folder(folder) and 
-            self.validate_filterchain(filterchain)):
+            self.validate_filterchain(chain)):
             
-            self.test = LineTest(folder, filterchain)
+            self.test = LineTest(folder, self.chain)
             image_number = self.test.total_images()
             if self.validate_image_number(image_number):
                 self.test.launch()
@@ -138,6 +152,8 @@ class WinLineTest:
         self.lblPrecision.set_text('0%')
         self.lblNbImages.set_text('0')
         self.imageListStore.clear()
+        self.test = None
+        self.chain = None
         
     def on_btnOpenFilterchain_clicked(self, widget):
         dialog = Gtk.FileChooserDialog("Choose a filterchain file", None,
@@ -152,6 +168,8 @@ class WinLineTest:
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             self.txtFilterchain.set_text(dialog.get_filename())
+            self.chain = filterchain.read(self.txtFilterchain.get_text())
+            self.fill_paramsListStore(self.chain)
         dialog.destroy()
 
     def on_btnOpenTestFolder_clicked(self, widget):
