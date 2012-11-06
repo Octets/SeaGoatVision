@@ -1,24 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkListStore" id="imageListStore">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name index -->
-      <column type="gint"/>
-    </columns>
-  </object>
   <object class="GtkListStore" id="paramsListStore">
     <columns>
-      <!-- column-name filterName -->
-      <column type="gchararray"/>
       <!-- column-name paramName -->
       <column type="gchararray"/>
-      <!-- column-name fullName -->
+      <!-- column-name filterName -->
       <column type="gchararray"/>
-      <!-- column-name value -->
-      <column type="gdouble"/>
     </columns>
   </object>
   <object class="GtkWindow" id="WinLineTest">
@@ -72,11 +60,9 @@
             <child>
               <object class="GtkButton" id="btnOpenFilterchain">
                 <property name="label">gtk-open</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="on_btnOpenFilterchain_clicked" swapped="no"/>
               </object>
@@ -119,11 +105,9 @@
             <child>
               <object class="GtkButton" id="btnOpenTestFolder">
                 <property name="label">gtk-open</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="on_btnOpenTestFolder_clicked" swapped="no"/>
               </object>
@@ -137,11 +121,9 @@
             <child>
               <object class="GtkButton" id="btnClear">
                 <property name="label">gtk-clear</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="on_btnClear_clicked" swapped="no"/>
               </object>
@@ -291,11 +273,9 @@
                         <child>
                           <object class="GtkButton" id="btnExecPrecision">
                             <property name="label">gtk-execute</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="use_stock">True</property>
                             <signal name="clicked" handler="on_btnExecPrecision_clicked" swapped="no"/>
                           </object>
@@ -393,11 +373,9 @@
                         <child>
                           <object class="GtkButton" id="btnExecParams">
                             <property name="label">gtk-execute</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="use_stock">True</property>
                             <signal name="clicked" handler="on_btnExecParams_clicked" swapped="no"/>
                           </object>
@@ -537,7 +515,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="cellrenderertext2"/>
                                   <attributes>
-                                    <attribute name="text">2</attribute>
+                                    <attribute name="text">0</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -638,5 +616,13 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="imageListStore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name index -->
+      <column type="gint"/>
+    </columns>
   </object>
 </interface>

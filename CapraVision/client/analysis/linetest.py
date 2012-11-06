@@ -44,14 +44,14 @@ class LineTest:
             filterchain: Complete path to the filterchain file."""
             
         image_folder = self.create_image_folder_source(test_folder)
-        self.fchain = fchain
+        self.fchain = filterchain.read(fchain)
         self.testable_images = self.find_testable_images(image_folder)
         
         # These dictionaries contains the values calculated by the test.
         # Keys: image file name.
         # Values: float representing the percentage. 
-        self.precisions = None
-        self.noises = None
+        self.precisions = {}
+        self.noises = {}
 
     def avg_noise(self):
         """Returns the calculated average noise"""
@@ -60,7 +60,7 @@ class LineTest:
         return s / c
     
     def avg_precision(self):
-        """Returns the calculated average precision"""
+        """Returns the calculated averaged precision"""
         c = len(self.precisions.values())
         s = sum(self.precisions.values())
         return s / c
@@ -174,9 +174,6 @@ class LineTest:
 
     def launch(self):
         """Execute the test"""
-        self.precisions = {}
-        self.noises = {}
-        S
         for file_name, image in self.testable_images.items():
             filtered, map = self.get_test_images(file_name)
             self.precisions[file_name] = self.find_precision(filtered, map)
