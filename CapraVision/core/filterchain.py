@@ -116,6 +116,14 @@ class FilterChain:
     def notify_filter_observers(self):
         for observer in self.filter_observers:
             observer()
+            
+    def add_filter_output_observer(self, output):
+        for f in self.filters:
+            f.add_output_observer(output)
+            
+    def remove_filter_output_observer(self, output):
+        for f in self.filters:
+            f.remove_output_observer(output)
     
     def execute(self, image):
         for f in self.filters:

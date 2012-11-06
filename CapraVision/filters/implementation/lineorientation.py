@@ -22,11 +22,13 @@ import cv2.cv as cv
 import math
 import numpy as np
 
-class LineOrientation:
+from CapraVision.filters.filter import Filter
+
+class LineOrientation(Filter):
     """Port of the old line detection code"""
     
     def __init__(self):
-
+        Filter.__init__(self)
         self.area_min = 300
         self.area_max = 35000
     

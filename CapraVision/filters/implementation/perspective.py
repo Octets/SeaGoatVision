@@ -20,9 +20,12 @@
 import cv2
 import numpy as np
 
-class Perspective:
+from CapraVision.filters.filter import Filter
+
+class Perspective(Filter):
     """Wrap perspective"""
     def __init__(self):
+        Filter.__init__(self)
         self.topleftx = 0
         self.toplefty = 0
         self.bottomleftx = 100

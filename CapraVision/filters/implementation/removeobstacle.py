@@ -1,10 +1,13 @@
 
 import cv2
 
-class RemoveObstacle:
+from CapraVision.filters.filter import Filter
+
+class RemoveObstacle(Filter):
     """Remove obstacles from an image"""
     
     def __init__(self):
+        Filter.__init__(self)
         self.threshold = 230
         self.vertical_blur = 18
         self.horizontal_blur = 3

@@ -31,11 +31,13 @@ class WinViewer():
     The window receives a filter in its constructor.  
     This is the last executed filter on the source.
     """
-    def __init__(self, fchain):
+    def __init__(self, fchain, server):
         self.source_list = imageproviders.load_sources()
         self.fchain = fchain
+        self.server = server
         fchain.add_image_observer(self.chain_observer)
         fchain.add_filter_observer(self.filters_changed_observer)
+        fchain.add_filter_output_observer(server.send)
         
         self.win_list = []
         self.thread = None

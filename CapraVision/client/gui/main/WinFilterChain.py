@@ -27,6 +27,7 @@ from WinFilterSel import WinFilterSel
 from WinLineTest import WinLineTest
 from WinMapper import WinMapper
 from WinViewer import WinViewer
+from CapraVision.server.tcp_server import Server
 
 class WinFilterChain:
     """Main window
@@ -54,6 +55,10 @@ class WinFilterChain:
         self.filterChainListStore = ui.get_object('filterChainListStore')
         self.set_state_empty()
         self.change_state()
+        
+        self.server = Server()
+        self.server.start("127.0.0.1", 5030)
+        
 
     def add_window_to_list(self, win):
         self.win_list.append(win.window)
@@ -253,7 +258,7 @@ class WinFilterChain:
         self.save_chain_as()
 
     def on_btnView_clicked(self, widget):
-        win = WinViewer(self.fchain)
+        win = WinViewer(self.fchain, self.server)
         win.window.connect('destroy', self.on_window_destroy)
         self.add_window_to_list(win)
         win.window.show_all()
@@ -299,6 +304,7 @@ class WinFilterChain:
             self.show_config(self.selected_filter())
 
     def on_window_destroy(self, widget):
+        self.server.stop()
         self.win_list.remove(widget)
 
     def on_WinFilterChain_delete_event(self, widget, data=None):
@@ -309,6 +315,7 @@ class WinFilterChain:
                     Gtk.main_quit()
             elif result == Gtk.ResponseType.CANCEL:
                 return True
+        self.server.stop()
         Gtk.main_quit()
 
     def on_toolLineMapper_activate(self, widget):

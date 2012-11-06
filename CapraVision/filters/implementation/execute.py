@@ -21,10 +21,13 @@ import cv2
 import cv2.cv as cv
 import numpy as np
 
-class Exec:
+from CapraVision.filters.filter import Filter
+
+class Exec(Filter):
     """Create and edit a filter on the fly for testing purposes"""
     
     def __init__(self):
+        Filter.__init__(self)
         self.code = ""
         self._ccode = None
         

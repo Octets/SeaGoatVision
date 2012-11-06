@@ -17,15 +17,3 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import cv2
-import cv2.cv as cv
-
-from CapraVision.filters.filter import Filter
-
-class BGR2YUV(Filter):
-    """Convert to YUV (Luminance with two colors)"""
-    
-    def execute(self, image):
-        Filter.__init__(self)
-        image = cv2.cvtColor(image, cv.CV_BGR2YCrCb)
-        return image

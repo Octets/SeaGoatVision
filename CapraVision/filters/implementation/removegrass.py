@@ -20,10 +20,13 @@
 import cv2
 import numpy as np
 
-class RemoveGrass:
+from CapraVision.filters.filter import Filter
+
+class RemoveGrass(Filter):
     """Remove grass from an image"""
     
     def __init__(self):
+        Filter.__init__(self)
         self.threshold = 100
         self.technique = 0
         

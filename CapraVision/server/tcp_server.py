@@ -19,11 +19,8 @@
 """ 
 """
 
-import SocketServer
 import socket
-import sys
 import time
-import traceback
 
 from threading import Thread
 from CapraVision.core import filterchain
@@ -36,29 +33,45 @@ class Server:
         self.handlers = []
     
     def start(self, ip, port):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        t = Thread(target=self.innerStart, args=(ip, port,))
+        t.start()
+    
+    def innerStart(self, ip, port):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        s.bind((ip, port))
+        self.socket.bind((ip, port))
         print "Server awaiting connections on port " + str(port)
         
         self.done = False
         
         while not self.done:
-            s.listen(1)
-            conn, addr = s.accept()
-            print 'Connected to:', addr
-            handler = ClientHandler(conn)
-            self.handlers.append(handler)
-            t = Thread(target=handler.handle)
-            t.start()           
+            self.socket.listen(1)
+            self.socket.settimeout(2)
+            try:
+                conn, addr = self.socket.accept()
+                print 'Connected to:', addr
+                handler = ClientHandler(conn)
+                self.handlers.append(handler)
+                t = Thread(target=handler.handle)
+                t.start()
+            except:
+                pass #Do nothing if no user is added           
 
             
     def stop(self):
         self.done = True
+        self.socket.close()
+        for handler in self.handlers:
+            handler.stop()
         
     def send(self, data):
         for handler in self.handlers:
-            handler.send(data)
+            try:
+                handler.send(data)
+            except:
+                handler.stop()
+                self.handlers.remove(handler)
+                print "Client disconnected"
     
 class ClientHandler:
     
@@ -68,14 +81,20 @@ class ClientHandler:
     
     def handle(self):
         while not self.done:
-            data = self.conn.recv(BUFFER_SIZE)
-            if not data: break
-            print "received data:", data
-            self.conn.send(data)  # echo
-            self.conn.close()
+            try:
+                data = self.conn.recv(BUFFER_SIZE)
+            except:
+                time.sleep(1)
+                pass #Do noting if no data is received
+                
+            #if not data: break
+            #print "received data:", data
+            #self.conn.send(data)  # echo
+            #self.conn.close()
             
     def stop(self):
         self.done = True
+        self.conn.close()
         
     def send(self, data):
         self.conn.send(data)
@@ -83,9 +102,6 @@ class ClientHandler:
 if __name__ == '__main__':
     PORT=5030
     IP="127.0.0.1"
-    print "Loading filterchain manager"
-    fcmanager = filterchain.FilterchainManager()
     
     server = Server()
-    t = Thread(target=server.start, args=(IP, PORT,))
-    t.start()
+    server.start(PORT, IP)

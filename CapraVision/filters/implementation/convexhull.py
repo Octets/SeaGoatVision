@@ -20,10 +20,12 @@
 import cv2
 import cv2.cv as cv
 
-class ConvexHull:
+from CapraVision.filters.filter import Filter
+
+class ConvexHull(Filter):
     
     def __init__(self):
-        pass
+        Filter.__init__(self)
     
     def execute(self, image):
         gray = cv2.cvtColor(image, cv.CV_BGR2GRAY)
