@@ -17,12 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, GObject
-import CapraVision.client.gtk.main
-
 if __name__ == '__main__':
-    GObject.threads_init()
-    w = CapraVision.client.gtk.main.WinFilterChain()
-    w.window.show_all()
-    Gtk.main()
-    
+    from CapraVision.client.gtk.maingtk import run
+    run()
+
