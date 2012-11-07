@@ -17,7 +17,35 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-if __name__ == '__main__':
+import argparse
+
+def runGtk():
     from CapraVision.client.gtk.maingtk import run
     run()
 
+def runQt():
+    print("Not supported")
+
+def runCli():
+    from CapraVision.client.cli.cli import run
+    run()
+    
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Open client for vision server.')
+    #parser.add_argument('string', metavar='interface name', type=str, default="gtk", help='cli, gtk or qt is supported.')
+    parser.add_argument('interface', metavar='interface name', nargs='?', type=str, default="gtk", help='cli, gtk or qt is supported.')
+    
+    args = parser.parse_args()
+    
+    sInterface = args.interface.lower()
+    if sInterface == "gtk":
+        runGtk()
+    elif sInterface == "qt":
+        runQt()
+    elif sInterface == "cli":
+        runCli()
+    else:
+        print("Interface not supported : %s" % sInterface)
+    
+
+    

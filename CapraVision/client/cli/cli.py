@@ -18,32 +18,18 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Description : Server Service implementation using vServer_pb2, generate by .proto file
+Description : Run the command line interface to communicate with the CapraVision Server
 Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
 
-# Import required RPC modules
-from vProto import vServer_pb2
+def run():
+    from vCmd import VCmd
+    VCmd().cmdloop()
 
-# Import CapraVision library
-from CapraVision.filters import utils
-
-class VServerImpl(vServer_pb2.CommandService):
-    def __init__(self, *args, **kwargs):
-        vServer_pb2.CommandService.__init__(self, *args, **kwargs)
-    
-    def GetFilterList(self, controller, request, done):
-        print "Get Filter List"
-        
-        # Create a reply
-        response = vServer_pb2.GetFilterListResponse()
-        filters = utils.load_filters()
-        for sFilter in filters.keys():
-            response.filters.append(sFilter)
-        
-        print "Response : %s" % (response)
-        
-        # We're done, call the run method of the done callback
-        done.run(response)
-        
+if __name__ == '__main__':
+    # Project path is parent directory
+    import os 
+    parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    os.sys.path.insert(0, parentdir)
+    run()

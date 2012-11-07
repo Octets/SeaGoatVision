@@ -11,9 +11,9 @@ from google.protobuf import descriptor_pb2
 
 
 DESCRIPTOR = descriptor.FileDescriptor(
-  name='vServer.proto',
+  name='server.proto',
   package='protobuf.socketrpc',
-  serialized_pb='\n\rvServer.proto\x12\x12protobuf.socketrpc\"\x16\n\x14GetFilterListRequest\"(\n\x15GetFilterListResponse\x12\x0f\n\x07\x66ilters\x18\x01 \x03(\t2v\n\x0e\x43ommandService\x12\x64\n\rGetFilterList\x12(.protobuf.socketrpc.GetFilterListRequest\x1a).protobuf.socketrpc.GetFilterListResponseB\x1e\n\tcom.capraB\x0cVServerProtoH\x01\x90\x01\x01')
+  serialized_pb='\n\x0cserver.proto\x12\x12protobuf.socketrpc\"\x16\n\x14GetFilterListRequest\"(\n\x15GetFilterListResponse\x12\x0f\n\x07\x66ilters\x18\x01 \x03(\t2v\n\x0e\x43ommandService\x12\x64\n\rGetFilterList\x12(.protobuf.socketrpc.GetFilterListRequest\x1a).protobuf.socketrpc.GetFilterListResponseB\x1e\n\tcom.capraB\x0cVServerProtoH\x01\x90\x01\x01')
 
 
 
@@ -34,8 +34,8 @@ _GETFILTERLISTREQUEST = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=37,
-  serialized_end=59,
+  serialized_start=36,
+  serialized_end=58,
 )
 
 
@@ -62,8 +62,8 @@ _GETFILTERLISTRESPONSE = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=61,
-  serialized_end=101,
+  serialized_start=60,
+  serialized_end=100,
 )
 
 DESCRIPTOR.message_types_by_name['GetFilterListRequest'] = _GETFILTERLISTREQUEST
@@ -88,8 +88,8 @@ _COMMANDSERVICE = descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=103,
-  serialized_end=221,
+  serialized_start=102,
+  serialized_end=220,
   methods=[
   descriptor.MethodDescriptor(
     name='GetFilterList',

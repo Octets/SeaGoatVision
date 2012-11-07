@@ -28,7 +28,7 @@ import cmd
 
 # Import required RPC modules
 from protobuf.socketrpc import RpcService
-from vProto import vServer_pb2
+from CapraVision.proto import server_pb2
 
 # Configure logging
 import logging
@@ -49,13 +49,13 @@ class VCmd(cmd.Cmd):
         port = 8090
         
         # Create a new service instance
-        self.service = RpcService(vServer_pb2.CommandService_Stub, port, hostname)
+        self.service = RpcService(server_pb2.CommandService_Stub, port, hostname)
     
     ####################################################################################################
     # List of command
     ####################################################################################################
     def do_getFilter(self, line):
-        request = vServer_pb2.GetFilterListRequest()
+        request = server_pb2.GetFilterListRequest()
         # Make an synchronous call
         try:
             log.info('Making synchronous call')

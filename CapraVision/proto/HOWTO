@@ -15,9 +15,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-PROTONAME=vServer
+To generate the compiled code for protobuf, do commande on this repertory : 
+make
 
-all: build
+The file server_pb2.py will be generate from server.proto
+Use this file in your python code.
 
-build: 
-	protoc --python_out=. $(PROTONAME).proto

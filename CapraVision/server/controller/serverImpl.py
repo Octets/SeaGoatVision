@@ -18,31 +18,32 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Description : Start the Vision Server
+Description : Server Service implementation using vServer_pb2, generate by .proto file
 Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
 
-def run():
-    # Import required RPC modules
-    import protobuf.socketrpc.server as server
-    from controller import serverImpl as impl
+# Import required RPC modules
+from CapraVision.proto import server_pb2
 
-    # Create and register the service
-    # Note that this is an instantiation of the implementation class,
-    # *not* the class defined in the proto file.
-    server_service = impl.ServerImpl()
-    server = server.SocketRpcServer(8090)
-    server.registerService(server_service)
+# Import CapraVision library
+from CapraVision.server.filters import utils
 
-    # Start the server
-    print 'Serving on port 8090'
-    server.run()
-
-if __name__ == '__main__':
-    # Project path is parent directory
-    import os 
-    parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    os.sys.path.insert(0, parentdir)
-    run()
+class ServerImpl(server_pb2.CommandService):
+    def __init__(self, *args, **kwargs):
+        server_pb2.CommandService.__init__(self, *args, **kwargs)
     
+    def GetFilterList(self, controller, request, done):
+        print "Get Filter List"
+        
+        # Create a reply
+        response = server_pb2.GetFilterListResponse()
+        filters = utils.load_filters()
+        for sFilter in filters.keys():
+            response.filters.append(sFilter)
+        
+        print "Response : %s" % (response)
+        
+        # We're done, call the run method of the done callback
+        done.run(response)
+        
