@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import copy
-from CapraVision.client.gui.utils import *
+from CapraVision.client.gtk.utils import *
 
 class WinRemoveGrass:
     

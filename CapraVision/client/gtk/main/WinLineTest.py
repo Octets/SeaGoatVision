@@ -23,7 +23,7 @@ import cv2
 import numpy as np
 
 from CapraVision.client.analysis.linetest import LineTest
-from CapraVision.client.gui.utils import *
+from CapraVision.client.gtk.utils import *
 from CapraVision.core import filterchain
 
 class WinLineTest:

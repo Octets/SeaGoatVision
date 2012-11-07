@@ -19,7 +19,7 @@
 
 from gi.repository import GObject
 
-from CapraVision.client.gui.utils import *
+from CapraVision.client.gtk.utils import *
 
 from CapraVision.core import filterchain
 from CapraVision.core import mainloop

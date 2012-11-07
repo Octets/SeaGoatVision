@@ -17,14 +17,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import CapraVision.client.gui.filters.WinColorLevel
+import CapraVision.client.gtk.filters.WinColorLevel
 
 from gi.repository import Gtk, GObject
-import CapraVision.client.gui.main
+import CapraVision.client.gtk.main
 
 if __name__ == '__main__':
     GObject.threads_init()
-    w = CapraVision.client.gui.main.WinFilterChain()
+    w = CapraVision.client.gtk.main.WinFilterChain()
     w.window.show_all()
     Gtk.main()
     
