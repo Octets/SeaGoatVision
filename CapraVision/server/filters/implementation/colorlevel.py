@@ -17,18 +17,26 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import cv2
+from CapraVision.server.filters.filter import Filter
 
-from CapraVision.filters.filter import Filter
-
-class Blur(Filter):
-    """Smoothes an image using the normalized box filter"""
+class ColorLeve(Filter):
+    """Determine the value in % a color will have.
+        0% = Nothing
+        50% = Half the original value.
+        100% = Original
+        Example: With 50% Blue and the following pixel (100, 100, 100) give (50, 100, 100)"""
     def __init__(self):
         Filter.__init__(self)
-        self.kernel_width = 3
-        self.kernel_height = 3
-    
+        self.red = 100
+        self.green = 100
+        self.blue = 100
+        
     def execute(self, image):
-        return cv2.blur(image, (int(self.kernel_width), 
-                                int(self.kernel_height)))
-    
+        if self.red <> 100:
+            image[:,:, 2] *= (self.red/100)
+        #image[:,:, 1] *= ((image[:,:, 0])/2)
+        if self.green <> 100:
+            image[:,:, 1] *= (self.green/100)
+        if self.blue <> 100:
+            image[:,:, 0] *= (self.blue/100) 
+        return image

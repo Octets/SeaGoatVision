@@ -1,5 +1,5 @@
 
-from CapraVision.filters.filter import Filter
+from CapraVision.server.filters.filter import Filter
 
 class ServerTest(Filter):
     """Send a example line"""

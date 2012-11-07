@@ -24,7 +24,7 @@ import numpy as np
 
 from CapraVision.client.analysis.linetest import LineTest
 from CapraVision.client.gtk.utils import *
-from CapraVision.core import filterchain
+from CapraVision.server.core import filterchain
 
 class WinLineTest:
     

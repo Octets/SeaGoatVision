@@ -17,31 +17,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import cv2
-import cv2.cv as cv
-import numpy as np
+from CapraVision.server.filters.filter import Filter
 
-from CapraVision.filters.filter import Filter
-
-class Exec(Filter):
-    """Create and edit a filter on the fly for testing purposes"""
+class Noop(Filter):
+    """Do nothing"""
     
     def __init__(self):
         Filter.__init__(self)
-        self.code = ""
-        self._ccode = None
-        
-    def set_code(self, code):
-        self.code = code
-        self._ccode = compile(code, '<string>', 'exec')
-        
-    def configure(self):
-        self.set_code(self.code)
-        
+    
     def execute(self, image):
-        try:
-            if self._ccode is not None:
-                exec self._ccode
-        except Exception, e:
-            print e
         return image

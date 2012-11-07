@@ -20,7 +20,7 @@
 import cv2
 import cv2.cv as cv
 
-from CapraVision.filters.filter import Filter
+from CapraVision.server.filters.filter import Filter
 
 class BGR2HSV(Filter):
     """Convert to Hue Saturation Brightness/Value"""

@@ -29,7 +29,7 @@ import StringIO
 import sys
 import numpy
 
-from CapraVision.filters.implementation import BGR2RGB
+from CapraVision.server.filters.implementation import BGR2RGB
  
 def map_filter_to_ui(filter):
     return map_object_to_ui(filter, filters)

@@ -19,7 +19,7 @@
 
 from CapraVision.client.gtk.utils import *
 
-from CapraVision import filters
+from CapraVision.server import filters
 
 class WinFilterSel:
     """Allow the user to select a filter to add to the filterchain"""

@@ -1,7 +1,7 @@
 
 import cv2
 
-from CapraVision.filters.filter import Filter
+from CapraVision.server.filters.filter import Filter
 
 class RemoveObstacle(Filter):
     """Remove obstacles from an image"""

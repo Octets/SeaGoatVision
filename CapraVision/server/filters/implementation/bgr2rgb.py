@@ -17,13 +17,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.filters.filter import Filter
+import cv2
+import cv2.cv as cv
 
-class Noop(Filter):
-    """Do nothing"""
-    
-    def __init__(self):
-        Filter.__init__(self)
+from CapraVision.server.filters.filter import Filter
+
+class BGR2RGB(Filter):
+    """Convert to RGB.  Useful for interacting with other libraries"""
     
     def execute(self, image):
+        Filter.__init__(self)
+        image = cv2.cvtColor(image, cv.CV_BGR2RGB)
         return image

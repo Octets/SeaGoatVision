@@ -19,7 +19,7 @@
 
 """Contains the FilterChain class and helper functions to work with the filter chain."""
 
-import CapraVision.filters
+import CapraVision.server.filters
 
 import ConfigParser
 import inspect

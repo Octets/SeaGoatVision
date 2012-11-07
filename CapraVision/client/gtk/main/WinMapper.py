@@ -25,7 +25,7 @@ import cairo
 import cv2
 import numpy as np
 
-from CapraVision import imageproviders
+from CapraVision.server import imageproviders
 
 class WinMapper:
     """Tool to identify lines in images

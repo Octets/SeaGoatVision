@@ -21,7 +21,7 @@ import cv2
 import cv2.cv as cv
 import numpy as np
 
-from CapraVision.filters.filter import Filter
+from CapraVision.server.filters.filter import Filter
 
 class HoughTransform(Filter):
     """Apply a Canny filter to the image then

@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import inspect
-import CapraVision.filters.implementation
+import CapraVision.server.filters.implementation
 
 def load_filters():
     return {name : filter 

@@ -21,10 +21,10 @@ from gi.repository import GObject
 
 from CapraVision.client.gtk.utils import *
 
-from CapraVision.core import filterchain
-from CapraVision.core import mainloop
+from CapraVision.server.core import filterchain
+from CapraVision.server.core import mainloop
 
-from CapraVision import imageproviders
+from CapraVision.server import imageproviders
 
 class WinViewer():
     """Show the source after being processed by the filter fchain.

@@ -17,17 +17,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import cv2 
-import cv2.cv as cv
+import cv2
 
-from CapraVision.filters.filter import Filter
+from CapraVision.server.filters.filter import Filter
 
-class YUV2BGR(Filter):
-    """Convert from YUV to BGR"""
-    
+class GaussianBlur(Filter):
+    """Smoothes an image using a Gaussian filter"""
     def __init__(self):
         Filter.__init__(self)
+        self.kernel_height = 3
+        self.kernel_width = 3
+        self.sigma_x = 3
+        self.sigma_y = 3
     
     def execute(self, image):
-        image = cv2.cvtColor(image, cv.CV_YCrCb2BGR)
-        return image
+        return cv2.GaussianBlur(image, (self.kernel_height, self.kernel_width), 
+                     sigmaX = self.sigma_x, sigmaY = self.sigma_y)
+        
+    

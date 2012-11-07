@@ -22,7 +22,7 @@ import cv2.cv as cv
 import math
 import numpy as np
 
-from CapraVision.filters.filter import Filter
+from CapraVision.server.filters.filter import Filter
 
 class LineOrientation(Filter):
     """Port of the old line detection code"""

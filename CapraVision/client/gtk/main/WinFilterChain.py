@@ -19,9 +19,9 @@
 
 from CapraVision.client.gtk.utils import *
 
-from CapraVision.core import filterchain
+from CapraVision.server.core import filterchain
 
-from CapraVision import filters
+from CapraVision.server import filters
 
 from WinFilterSel import WinFilterSel
 from WinLineTest import WinLineTest

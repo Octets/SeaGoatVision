@@ -18,20 +18,15 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
+import cv2.cv as cv
 
-from CapraVision.filters.filter import Filter
+from CapraVision.server.filters.filter import Filter
 
-class GaussianBlur(Filter):
-    """Smoothes an image using a Gaussian filter"""
-    def __init__(self):
-        Filter.__init__(self)
-        self.kernel_height = 3
-        self.kernel_width = 3
-        self.sigma_x = 3
-        self.sigma_y = 3
+class BGR2Grayscale(Filter):
+    """Convert to grayscale then convert back to BGR"""
     
     def execute(self, image):
-        return cv2.GaussianBlur(image, (self.kernel_height, self.kernel_width), 
-                     sigmaX = self.sigma_x, sigmaY = self.sigma_y)
-        
-    
+        Filter.__init__(self)
+        image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
+        image = cv2.cvtColor(image, cv.CV_GRAY2BGR)
+        return image

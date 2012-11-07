@@ -19,7 +19,7 @@
 
 import numpy as np
 
-from CapraVision.filters.filter import Filter
+from CapraVision.server.filters.filter import Filter
 
 class ColorThreshold(Filter):
     """Apply a binary threshold on the three channels of the images

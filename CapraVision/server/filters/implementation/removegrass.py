@@ -20,7 +20,7 @@
 import cv2
 import numpy as np
 
-from CapraVision.filters.filter import Filter
+from CapraVision.server.filters.filter import Filter
 
 class RemoveGrass(Filter):
     """Remove grass from an image"""

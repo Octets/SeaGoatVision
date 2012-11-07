@@ -18,15 +18,17 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-import cv2.cv as cv
 
-from CapraVision.filters.filter import Filter
+from CapraVision.server.filters.filter import Filter
 
-class BGR2Grayscale(Filter):
-    """Convert to grayscale then convert back to BGR"""
+class Blur(Filter):
+    """Smoothes an image using the normalized box filter"""
+    def __init__(self):
+        Filter.__init__(self)
+        self.kernel_width = 3
+        self.kernel_height = 3
     
     def execute(self, image):
-        Filter.__init__(self)
-        image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
-        image = cv2.cvtColor(image, cv.CV_GRAY2BGR)
-        return image
+        return cv2.blur(image, (int(self.kernel_width), 
+                                int(self.kernel_height)))
+    
