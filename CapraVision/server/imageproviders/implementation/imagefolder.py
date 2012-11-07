@@ -29,7 +29,7 @@ class ImageFolder:
         self.return_file_name = False
         
     def read_folder(self, folder):
-        self.file_names = CapraVision.imageproviders.utils.find_all_images(folder)
+        self.file_names = CapraVision.server.imageproviders.utils.find_all_images(folder)
         self.folder_name = folder
         self.position = 0
         

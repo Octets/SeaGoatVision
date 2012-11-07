@@ -176,7 +176,6 @@ class LineTest:
         """Execute the test"""
         self.precisions = {}
         self.noises = {}
-        S
         for file_name, image in self.testable_images.items():
             filtered, map = self.get_test_images(file_name)
             self.precisions[file_name] = self.find_precision(filtered, map)

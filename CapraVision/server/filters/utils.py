@@ -22,7 +22,7 @@ import CapraVision.server.filters.implementation
 
 def load_filters():
     return {name : filter 
-            for name, filter in vars(CapraVision.filters.implementation).items() 
+            for name, filter in vars(CapraVision.server.filters.implementation).items() 
                 if inspect.isclass(filter)}
 
 def create_filter(filter_name):

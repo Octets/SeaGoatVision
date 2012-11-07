@@ -49,7 +49,7 @@ def read(file_name):
     cfg = ConfigParser.ConfigParser()
     cfg.read(file_name)
     for section in cfg.sections():
-        filter = CapraVision.filters.create_filter(section) 
+        filter = CapraVision.server.filters.create_filter(section) 
         for member in filter.__dict__:
             if member[0] == '_':
                 continue
