@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+from CapraVision.server.filters.dataextract import DataExtractor
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
@@ -126,11 +127,13 @@ class FilterChain:
             
     def add_filter_output_observer(self, output):
         for f in self.filters:
-            f.add_output_observer(output)
+            if isinstance(f, DataExtractor):
+                f.add_output_observer(output)
             
     def remove_filter_output_observer(self, output):
         for f in self.filters:
-            f.remove_output_observer(output)
+            if isinstance(f, DataExtractor):
+                f.remove_output_observer(output)
     
     def execute(self, image):
         for f in self.filters:
