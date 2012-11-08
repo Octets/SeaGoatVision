@@ -23,6 +23,8 @@ import cv2
 import numpy as np
 
 from CapraVision.client.analysis.linetest import LineTest
+from CapraVision.client.analysis.parameval import ParameterEvaluation
+
 from CapraVision.client.gtk.utils import *
 from CapraVision.server.core import filterchain
 
@@ -143,8 +145,23 @@ class WinLineTest:
                 self.fill_image_list(self.test.testable_images)
             
     def on_btnExecParams_clicked(self, widget):
-        pass
-    
+        folder = self.txtTestFolder.get_text()
+        chain = self.txtFilterchain.get_text()
+        if (self.validate_folder(folder) and 
+            self.validate_filterchain(chain)):
+            index = self.cboParams.get_active()
+            if index > 0:
+                fname, pname, _, _ = self.paramsListStore[index]
+                peval = ParameterEvaluation(
+                                            folder, 
+                                            self.chain, 
+                                            fname, 
+                                            pname, 
+                                            self.spnFrom.get_value(), 
+                                            self.spnTo.get_value())
+                peval.launch()
+                self.imgGraphEval.set_from_pixbuf(
+                                    numpy_to_pixbuf(peval.create_graphic()))
     def on_btnClear_clicked(self, widget):
         self.txtFilterchain.set_text('')
         self.txtTestFolder.set_text('')

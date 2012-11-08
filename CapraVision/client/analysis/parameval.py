@@ -17,6 +17,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import cv2
+#import matplotlib.pyplot as plt
+import tempfile
+
 import linetest
 
 class ParameterEvaluation:
@@ -56,5 +60,16 @@ class ParameterEvaluation:
                     return f
             return None
         
-    
+    def create_graphic(self):
+        plt.clf()
+        plt.plot(self.precisions, self.noises, '+b')
+        plt.xlabel('Precision (%)')
+        plt.ylabel('Noise (%)')
+        
+        ntf = tempfile.NamedTemporaryFile(suffix='.png')
+        plt.savefig(ntf.file)
+        ntf.flush()
+        image = cv2.imread(ntf.name)
+        ntf.close()
+        return image
     
