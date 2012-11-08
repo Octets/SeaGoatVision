@@ -22,14 +22,13 @@
 import CapraVision.server.filters
 
 import ConfigParser
-import inspect
 
 def params_list(chain):
     flist = []
-    for filter in chain.filters:
-        fname = filter.__class__.__name__
+    for filtre in chain.filters:
+        fname = filtre.__class__.__name__
         params = []
-        for name, value in filter.__dict__.items():
+        for name, value in filtre.__dict__.items():
             if name[0] == '_':
                 continue
             params.append((name, value))
@@ -44,27 +43,27 @@ def isnumeric(string):
         return False
     
 def read(file_name):
-    """Open a filter chain file and load its content in a new filter chain."""
+    """Open a filtre chain file and load its content in a new filtre chain."""
     new_chain = FilterChain()
     cfg = ConfigParser.ConfigParser()
     cfg.read(file_name)
     for section in cfg.sections():
-        filter = CapraVision.server.filters.create_filter(section) 
-        for member in filter.__dict__:
+        filtre = CapraVision.server.filters.create_filter(section) 
+        for member in filtre.__dict__:
             if member[0] == '_':
                 continue
             val = cfg.get(section, member)
             if val == "True" or val == "False":
-                filter.__dict__[member] = cfg.getboolean(section, member)
+                filtre.__dict__[member] = cfg.getboolean(section, member)
             elif isnumeric(val):
-                filter.__dict__[member] = cfg.getfloat(section, member)
+                filtre.__dict__[member] = cfg.getfloat(section, member)
             else:
                 if isinstance(val, str):
                     val = '\n'.join([line[1:-1] for line in str.splitlines(val)])
-                filter.__dict__[member] = val
-        if hasattr(filter, 'configure'):
-            filter.configure()
-        new_chain.add_filter(filter)
+                filtre.__dict__[member] = val
+        if hasattr(filtre, 'configure'):
+            filtre.configure()
+        new_chain.add_filter(filtre)
     return new_chain
 
 def write(file_name, chain):
@@ -89,24 +88,24 @@ class FilterChain:
         self.image_observers = [] 
         self.filter_observers = []
     
-    def add_filter(self, filter):
-        self.filters.append(filter)
+    def add_filter(self, filtre):
+        self.filters.append(filtre)
         self.notify_filter_observers()
         
-    def remove_filter(self, filter):
-        self.filters.remove(filter)
+    def remove_filter(self, filtre):
+        self.filters.remove(filtre)
         self.notify_filter_observers()
         
-    def move_filter_up(self, filter):
-        i = self.filters.index(filter)
+    def move_filter_up(self, filtre):
+        i = self.filters.index(filtre)
         if i > 0:
-            self.filters[i], self.filters[i-1] = self.filters[i-1], filter
+            self.filters[i], self.filters[i-1] = self.filters[i-1], filtre
             self.notify_filter_observers()
         
-    def move_filter_down(self, filter):
-        i = self.filters.index(filter)
+    def move_filter_down(self, filtre):
+        i = self.filters.index(filtre)
         if i < len(self.filters) - 1:
-            self.filters[i], self.filters[i+1] = self.filters[i+1], filter
+            self.filters[i], self.filters[i+1] = self.filters[i+1], filtre
             self.notify_filter_observers()
     
     def add_image_observer(self, observer):

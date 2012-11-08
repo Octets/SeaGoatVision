@@ -1,23 +1,23 @@
 import cv2
-from pylab import *
+import pylab
 
 blue, green, red = cv2.split(cv2.imread('/home/benoit/testtt/test.png'))
 
-f = file('/home/benoit/testtt/test.png.map', 'r')
+f = file('/home/benoit/testtt/test.png.mapping', 'r')
 s = f.read()
 f.close()
-map = fromstring(s, bool).reshape(480, 640)
-#map = np.invert(map)
+mapping = pylab.np.fromstring(s, bool).reshape(480, 640)
+#mapping = np.invert(mapping)
 
-b = blue[map].flatten()
-g = green[map].flatten()
-r = red[map].flatten()
+b = blue[mapping].flatten()
+g = green[mapping].flatten()
+r = red[mapping].flatten()
 
-x = arange(1, b.size + 1)
+x = pylab.arange(1, b.size + 1)
 print b.size
 print x.size
 
-plot(x, b, 'b.', label='Blue channel')
+pylab.plot(x, b, 'b.', label='Blue channel')
 #plot(x, g, 'g.', label='Green channel')
 #plot(x, r, 'r.', label='Red channel')
-show()
+pylab.show()

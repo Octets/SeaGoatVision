@@ -1,11 +1,11 @@
 
-from CapraVision.server.filters.filter import Filter
+from CapraVision.server.filters.dataextract import DataExtractor
 
-class ServerTest(Filter):
+class ServerTest(DataExtractor):
     """Send a example line"""
     
     def __init__(self):
-        Filter.__init__(self)
+        DataExtractor.__init__(self)
     
     def execute(self, image):
         self.notify_output_observers("LineOrientation: x1=0 y1=0 x2=100 y2=100 \n")

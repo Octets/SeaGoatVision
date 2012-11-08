@@ -18,7 +18,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-import cv2.cv as cv
 
 global captures 
 captures = {}

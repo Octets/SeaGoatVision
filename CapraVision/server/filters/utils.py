@@ -21,13 +21,13 @@ import inspect
 import CapraVision.server.filters.implementation
 
 def load_filters():
-    return {name : filter 
-            for name, filter in vars(CapraVision.server.filters.implementation).items() 
-                if inspect.isclass(filter)}
+    return {name : filtre 
+            for name, filtre in vars(CapraVision.server.filters.implementation).items() 
+                if inspect.isclass(filtre)}
 
 def create_filter(filter_name):
-    for name, filter in load_filters().items():
+    for name, filtre in load_filters().items():
         if name == filter_name:
-             return filter()
+            return filtre()
     return None
         

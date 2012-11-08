@@ -17,13 +17,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.server.filters.filter import Filter
-
-class Noop(Filter):
+class Noop:
     """Do nothing"""
-    
-    def __init__(self):
-        Filter.__init__(self)
     
     def execute(self, image):
         return image

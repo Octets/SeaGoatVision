@@ -61,13 +61,13 @@ class ParameterEvaluation:
             return None
         
     def create_graphic(self):
-        plt.clf()
-        plt.plot(self.precisions, self.noises, '+b')
-        plt.xlabel('Precision (%)')
-        plt.ylabel('Noise (%)')
+        #plt.clf()
+        #plt.plot(self.precisions, self.noises, '+b')
+        #plt.xlabel('Precision (%)')
+        #plt.ylabel('Noise (%)')
         
         ntf = tempfile.NamedTemporaryFile(suffix='.png')
-        plt.savefig(ntf.file)
+        #plt.savefig(ntf.file)
         ntf.flush()
         image = cv2.imread(ntf.name)
         ntf.close()

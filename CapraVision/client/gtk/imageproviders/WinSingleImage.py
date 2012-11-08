@@ -33,8 +33,8 @@ class WinSingleImage(Gtk.Window):
                                     Gtk.STOCK_OK, Gtk.ResponseType.OK))
         ff = Gtk.FileFilter()
         ff.set_name("Images")
-        for format in supported_image_formats():
-            ff.add_pattern("*%(ext)s" % {"ext" : format})
+        for imageformat in supported_image_formats():
+            ff.add_pattern("*%(ext)s" % {"ext" : imageformat})
         self.dialog.set_filter(ff)
 
         self.window = self

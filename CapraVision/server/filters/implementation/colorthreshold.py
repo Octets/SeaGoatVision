@@ -19,15 +19,12 @@
 
 import numpy as np
 
-from CapraVision.server.filters.filter import Filter
-
-class ColorThreshold(Filter):
+class ColorThreshold:
     """Apply a binary threshold on the three channels of the images
         Each channel have a minimum and a maximum value.
         Everything within this threshold is white (255, 255, 255)
         Everything else is black (0, 0, 0)"""
     def __init__(self):
-        Filter.__init__(self)
         self.shift_hue_plane = False
         self.bluemin = 20.0
         self.bluemax = 256.0

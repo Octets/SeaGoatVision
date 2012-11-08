@@ -26,23 +26,21 @@ import imageproviders
 import inspect
 import os
 import StringIO
-import sys
-import numpy
 
-from CapraVision.server.filters.implementation import BGR2RGB
+from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
  
-def map_filter_to_ui(filter):
-    return map_object_to_ui(filter, filters)
+def map_filter_to_ui(filtre):
+    return map_object_to_ui(filtre, filters)
 
 def map_source_to_ui(source):
     return map_object_to_ui(source, imageproviders)
 
-def map_object_to_ui(object, module):
-    """Returns the appropriate window class to configure the object"""
+def map_object_to_ui(obj, module):
+    """Returns the appropriate window class to configure the obj"""
 
     for win in vars(module).values():
         if inspect.isclass(win):
-            if win.__name__ == 'Win' + object.__class__.__name__:
+            if win.__name__ == 'Win' + obj.__class__.__name__:
                 return win
     return None
 
@@ -50,15 +48,15 @@ def tree_selected_index(treeview):
     sel = treeview.get_selection()
     if sel is None:
         return -1
-    (model, iter) = sel.get_selected()
-    if iter is None:
+    (model, iterator) = sel.get_selected()
+    if iterator is None:
         return -1
-    path = model.get_path(iter)
+    path = model.get_path(iterator)
     return path.get_indices()[0]
 
 def tree_row_selected(treeview):
-    (model, iter) = treeview.get_selection().get_selected()
-    return iter is not None
+    _, iterator = treeview.get_selection().get_selected()
+    return iterator is not None
 
 def numpy_to_pixbuf(image):
     bgr2rgb = BGR2RGB()
@@ -94,4 +92,4 @@ class WindowState:
         ExistingModified = File exists and the user made modifications
     """
     Empty, Create, Show, Modified = range(4)
-     
+    

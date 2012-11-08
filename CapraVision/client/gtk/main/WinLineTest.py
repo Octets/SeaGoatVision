@@ -19,13 +19,14 @@
 
 from gi.repository import Gtk
 
-import cv2
-import numpy as np
-
 from CapraVision.client.analysis.linetest import LineTest
 from CapraVision.client.analysis.parameval import ParameterEvaluation
 
-from CapraVision.client.gtk.utils import *
+from CapraVision.client.gtk.utils import get_ui
+from CapraVision.client.gtk.utils import numpy_to_pixbuf
+from CapraVision.client.gtk.utils import tree_selected_index
+from CapraVision.client.gtk.utils import win_name
+
 from CapraVision.server.core import filterchain
 
 class WinLineTest:

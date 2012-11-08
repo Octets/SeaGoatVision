@@ -21,13 +21,10 @@ import cv2
 import cv2.cv as cv
 import numpy as np
 
-from CapraVision.server.filters.filter import Filter
-
-class HoughTransform(Filter):
+class HoughTransform:
     """Apply a Canny filter to the image then
     finds lines in a binary image using the standard Hough transform"""
     def __init__(self):
-        Filter.__init__(self)
         self.canny1 = 50
         self.canny2 = 200
         self.rho = 1

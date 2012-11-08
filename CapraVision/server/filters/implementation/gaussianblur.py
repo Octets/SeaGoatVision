@@ -19,12 +19,9 @@
 
 import cv2
 
-from CapraVision.server.filters.filter import Filter
-
-class GaussianBlur(Filter):
+class GaussianBlur:
     """Smoothes an image using a Gaussian filter"""
     def __init__(self):
-        Filter.__init__(self)
         self.kernel_height = 3
         self.kernel_width = 3
         self.sigma_x = 3

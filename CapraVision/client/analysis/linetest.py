@@ -18,7 +18,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from CapraVision.server.imageproviders.implementation.imagefolder import ImageFolder
-from CapraVision.server.core import filterchain
 
 import cv2
 import cv2.cv as cv
@@ -77,10 +76,10 @@ class LineTest:
         Args:
             file_name: the complete path to the image in the test folder."""
         image = self.testable_images[file_name]
-        filtered, map = self.get_test_images(file_name)
-        detected = (filtered * map)
-        undetected = (np.invert(detected) * map)
-        noise = self.remove_line(filtered, map)
+        filtered, mapping = self.get_test_images(file_name)
+        detected = (filtered * mapping)
+        undetected = (np.invert(detected) * mapping)
+        noise = self.remove_line(filtered, mapping)
 
         ret_image = np.zeros(image.shape, np.uint8)
         ret_image[:,:,0] = undetected
@@ -114,16 +113,16 @@ class LineTest:
                 min_dist = dist
         return min_dist
 
-    def find_noise(self, filtered, map):
+    def find_noise(self, filtered, mapping):
         """Returns the percentage of noise in the image
         Args:
             filtered: the filtered image from the filterchain
-            map: the array containing the line information"""
-        filtered = self.remove_line(filtered, map)
+            mapping: the array containing the line information"""
+        filtered = self.remove_line(filtered, mapping)
         cnt_filtered, _ = cv2.findContours(filtered, 
                                            cv2.RETR_TREE, 
                                            cv2.CHAIN_APPROX_SIMPLE)
-        cnt_map, _ = cv2.findContours(map, 
+        cnt_map, _ = cv2.findContours(mapping, 
                                    cv2.RETR_TREE,
                                    cv2.CHAIN_APPROX_SIMPLE)
         noise = 0
@@ -134,14 +133,14 @@ class LineTest:
             
         return noise / self.max_noise(cnt_map, filtered.shape)
     
-    def find_precision(self, filtered, map):
+    def find_precision(self, filtered, mapping):
         """Returns the precision of the line detection
         Args:
             filtered: the filtered image from the filterchain
-            map: the array containing the line information"""
-        detected = (filtered * map)
-        undetected = (np.invert(detected) * map)
-        sum_map = np.count_nonzero(map)
+            mapping: the array containing the line information"""
+        detected = (filtered * mapping)
+        undetected = (np.invert(detected) * mapping)
+        sum_map = np.count_nonzero(mapping)
         sum_undetected = np.count_nonzero(undetected)
         return (sum_map - sum_undetected) / float(sum_map)
     
@@ -156,7 +155,7 @@ class LineTest:
         return testable_images
     
     def get_test_images(self, file_name):
-        """Create the image and its map from the file name.
+        """Create the image and its mapping from the file name.
         Args:
             file_name: complete path to an image in the test folder
         Returns:
@@ -167,28 +166,28 @@ class LineTest:
         filtered = self.fchain.execute(image)
         filtered = self.make_binary_array(filtered)
         
-        map = np.fromfile(file_name + '.map', dtype=np.uint8)
-        map = map.reshape(filtered.shape)
+        mapping = np.fromfile(file_name + '.mapping', dtype=np.uint8)
+        mapping = mapping.reshape(filtered.shape)
 
-        return (filtered, map)
+        return (filtered, mapping)
 
     def launch(self):
         """Execute the test"""
         self.precisions = {}
         self.noises = {}
-        for file_name, image in self.testable_images.items():
-            filtered, map = self.get_test_images(file_name)
-            self.precisions[file_name] = self.find_precision(filtered, map)
-            self.noises[file_name] = self.find_noise(filtered, map)
+        for file_name, _ in self.testable_images.items():
+            filtered, mapping = self.get_test_images(file_name)
+            self.precisions[file_name] = self.find_precision(filtered, mapping)
+            self.noises[file_name] = self.find_noise(filtered, mapping)
                 
     def make_binary_array(self, filtered):
         """Convert a filtered image to binary
         pixel = 0 -> 0
         pixel > 0 -> 255"""
         gray = cv2.cvtColor(filtered, cv.CV_BGR2GRAY)
-        bin = np.zeros(gray.shape, dtype=np.uint8)
-        bin[gray > 0] = 255
-        return bin
+        binary = np.zeros(gray.shape, dtype=np.uint8)
+        binary[gray > 0] = 255
+        return binary
                         
     def max_noise(self, cnt_map, image_size):
         """Returns the max noise value for the image.
@@ -206,9 +205,9 @@ class LineTest:
         """Returns the original image scaled to 320x240"""
         return cv2.resize(self.testable_images[file_name], (320, 240))
 
-    def remove_line(self, filtered, map):
-        """Remove the line from a filtered image using the map"""
-        detected = (filtered * map)
+    def remove_line(self, filtered, mapping):
+        """Remove the line from a filtered image using the mapping"""
+        detected = (filtered * mapping)
         return (filtered & np.invert(detected))
     
     def total_images(self):

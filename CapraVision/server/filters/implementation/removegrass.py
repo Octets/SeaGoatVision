@@ -20,13 +20,10 @@
 import cv2
 import numpy as np
 
-from CapraVision.server.filters.filter import Filter
-
-class RemoveGrass(Filter):
+class RemoveGrass:
     """Remove grass from an image"""
     
     def __init__(self):
-        Filter.__init__(self)
         self.threshold = 100
         self.technique = 0
         
@@ -59,7 +56,7 @@ class RemoveGrass(Filter):
         return image
         
     def enhance_grass(self, image):
-        blue, green, red = cv2.split(image)
+        blue, green, _ = cv2.split(image)
         image[:,:,0] = np.subtract(blue, green / 2)
         return image
     

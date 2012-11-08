@@ -22,13 +22,13 @@ import cv2.cv as cv
 import math
 import numpy as np
 
-from CapraVision.server.filters.filter import Filter
+from CapraVision.server.filters.dataextract import DataExtractor
 
-class LineOrientation(Filter):
+class LineOrientation(DataExtractor):
     """Port of the old line detection code"""
     
     def __init__(self):
-        Filter.__init__(self)
+        DataExtractor.__init__(self)
         self.area_min = 300
         self.area_max = 35000
     
@@ -39,7 +39,7 @@ class LineOrientation(Filter):
         image_morphology = cv2.morphologyEx(
                     image_threshold, cv2.MORPH_CLOSE, self._kernel, iterations=1)
                 
-        contours, hierarchy = cv2.findContours(
+        contours, _ = cv2.findContours(
                                             image_morphology, 
                                             cv2.RETR_TREE, 
                                             cv2.CHAIN_APPROX_SIMPLE)
@@ -64,7 +64,6 @@ class LineOrientation(Filter):
         lines = []
         for contour in contours:
             approx = cv2.approxPolyDP(contour, 0, False)
-                                      #cv2.arcLength(contour, False), False)
             area = np.abs(cv2.contourArea(contour))
             
             if self.area_min < area < self.area_max:

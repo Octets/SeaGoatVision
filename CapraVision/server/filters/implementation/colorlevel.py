@@ -17,16 +17,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.server.filters.filter import Filter
-
-class ColorLeve(Filter):
+class ColorLevel:
     """Determine the value in % a color will have.
         0% = Nothing
         50% = Half the original value.
         100% = Original
         Example: With 50% Blue and the following pixel (100, 100, 100) give (50, 100, 100)"""
+
     def __init__(self):
-        Filter.__init__(self)
         self.red = 100
         self.green = 100
         self.blue = 100

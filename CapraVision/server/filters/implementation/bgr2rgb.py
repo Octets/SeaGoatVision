@@ -20,12 +20,9 @@
 import cv2
 import cv2.cv as cv
 
-from CapraVision.server.filters.filter import Filter
-
-class BGR2RGB(Filter):
+class BGR2RGB:
     """Convert to RGB.  Useful for interacting with other libraries"""
     
     def execute(self, image):
-        Filter.__init__(self)
         image = cv2.cvtColor(image, cv.CV_BGR2RGB)
         return image

@@ -20,14 +20,9 @@
 import cv2 
 import cv2.cv as cv
 
-from CapraVision.server.filters.filter import Filter
-
-class YUV2BGR(Filter):
+class YUV2BGR:
     """Convert from YUV to BGR"""
-    
-    def __init__(self):
-        Filter.__init__(self)
-    
+        
     def execute(self, image):
         image = cv2.cvtColor(image, cv.CV_YCrCb2BGR)
         return image

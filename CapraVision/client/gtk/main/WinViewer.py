@@ -19,9 +19,11 @@
 
 from gi.repository import GObject
 
-from CapraVision.client.gtk.utils import *
+from CapraVision.client.gtk.utils import get_ui
+from CapraVision.client.gtk.utils import map_source_to_ui
+from CapraVision.client.gtk.utils import numpy_to_pixbuf
+from CapraVision.client.gtk.utils import win_name
 
-from CapraVision.server.core import filterchain
 from CapraVision.server.core import mainloop
 
 from CapraVision.server import imageproviders
@@ -63,8 +65,8 @@ class WinViewer():
         self.win_list.append(win.window)
 
     #This method is the observer of the FilterChain class.
-    def chain_observer(self, filter, output):
-        if filter is self.filter:
+    def chain_observer(self, filtre, output):
+        if filtre is self.filter:
             GObject.idle_add(self.update_image, output)
 
     def change_source(self, new_source):
@@ -86,8 +88,8 @@ class WinViewer():
         count = len(self.filterChainListStore)
         
         self.filterChainListStore.clear()
-        for filter in self.fchain.filters:
-            self.filterChainListStore.append([filter.__class__.__name__]) 
+        for filtre in self.fchain.filters:
+            self.filterChainListStore.append([filtre.__class__.__name__]) 
         if (old_filter is not None and 
                             old_filter in self.fchain.filters and 
                             count >= len(self.filterChainListStore)):

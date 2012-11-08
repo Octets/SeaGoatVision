@@ -20,13 +20,8 @@
 import cv2
 import cv2.cv as cv
 
-from CapraVision.server.filters.filter import Filter
-
-class ConvexHull(Filter):
-    
-    def __init__(self):
-        Filter.__init__(self)
-    
+class ConvexHull:
+        
     def execute(self, image):
         gray = cv2.cvtColor(image, cv.CV_BGR2GRAY)
         cnt, _ = cv2.findContours(gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)

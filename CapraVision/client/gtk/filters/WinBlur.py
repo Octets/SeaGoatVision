@@ -18,7 +18,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import copy
-from CapraVision.client.gtk.utils import *
+
+from gi.repository import Gtk
+
+from CapraVision.client.gtk.utils import get_ui
+from CapraVision.client.gtk.utils import win_name
 
 class WinBlur:
     

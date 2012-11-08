@@ -2,7 +2,7 @@
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
-#    This file is part of CapraVision.
+#    This filename is part of CapraVision.
 #    
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -28,6 +28,6 @@ Sources should implement the iterator protocol:
 import os
 
 for f in os.listdir(os.path.dirname(__file__)):
-    file, _ = os.path.splitext(f)
-    code = 'from %(module)s import *' % {'module' : file} 
+    filename, _ = os.path.splitext(f)
+    code = 'from %(module)s import *' % {'module' : filename} 
     exec code

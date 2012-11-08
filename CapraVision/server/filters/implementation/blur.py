@@ -19,12 +19,9 @@
 
 import cv2
 
-from CapraVision.server.filters.filter import Filter
-
-class Blur(Filter):
+class Blur:
     """Smoothes an image using the normalized box filter"""
     def __init__(self):
-        Filter.__init__(self)
         self.kernel_width = 3
         self.kernel_height = 3
     

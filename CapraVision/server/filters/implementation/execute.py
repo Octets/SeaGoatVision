@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-
+#
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
@@ -17,17 +17,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import cv2
-import cv2.cv as cv
-import numpy as np
+# These are necessary for the executed code.
+import cv2 #@UnusedImport
+import cv2.cv as cv #@UnusedImport
+import numpy as np #@UnusedImport
 
-from CapraVision.server.filters.filter import Filter
-
-class Exec(Filter):
+class Exec:
     """Create and edit a filter on the fly for testing purposes"""
     
     def __init__(self):
-        Filter.__init__(self)
         self.code = ""
         self._ccode = None
         

@@ -2,7 +2,7 @@
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
-#    This file is part of CapraVision.
+#    This filename is part of CapraVision.
 #    
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ class SingleImage:
     def __iter__(self):
         return self
     
-    def set_image(self, file):
-        self.file = file
+    def set_image(self, filename):
+        self.file = filename
         self.image = cv2.imread(self.file)
         
     def next(self):

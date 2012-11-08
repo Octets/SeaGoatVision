@@ -20,7 +20,9 @@
 from gi.repository import GtkSource
 
 import copy
-from CapraVision.client.gtk.utils import *
+
+from CapraVision.client.gtk.utils import get_ui
+from CapraVision.client.gtk.utils import win_name
 
 class WinExec:
     

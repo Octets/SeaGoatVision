@@ -2,7 +2,7 @@
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
-#    This file is part of CapraVision.
+#    This filename is part of CapraVision.
 #    
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 
 import inspect
 import os
-import sys
 import threading
 
 import cv2
@@ -50,22 +49,22 @@ def find_all_images(folder):
         Find all files that are images in all subdirectories.
         Returns a list of those files"""
     images = []
-    for root, subfolders, files in os.walk(folder):
-        for file in files:
-            ext = os.path.splitext(file)[1]
+    for root, _, files in os.walk(folder):
+        for filename in files:
+            ext = os.path.splitext(filename)[1]
             if ext in supported_image_formats():
-                images.append(os.path.join(root,file))
+                images.append(os.path.join(root,filename))
     list.sort(images)
     return images
 
 def create_image_as_png(file_name):
-    """Receive a file name as parameter.
-        The file is loaded and saved as a png.
-        The old file is not modified."""
+    """Receive a filename name as parameter.
+        The filename is loaded and saved as a png.
+        The old filename is not modified."""
     if os.path.splitext(file_name)[1] == '.png':
         return
     img = cv2.imread(file_name)
-    new_file_name, ext = os.path.splitext(file_name)
+    new_file_name, _ = os.path.splitext(file_name)
     cv2.imwrite(new_file_name + '.png', img)
     
 def make_source_thread_safe(source):

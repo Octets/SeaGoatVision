@@ -2,7 +2,7 @@
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
-#    This file is part of CapraVision.
+#    This filename is part of CapraVision.
 #    
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,13 +17,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.client.gtk.utils import *
-
-from gi.repository import Gtk, Gdk, GObject, GdkPixbuf
-import cairo
+import os
 
 import cv2
 import numpy as np
+
+from gi.repository import Gtk, Gdk
+import cairo
+
+from CapraVision.client.gtk.utils import get_ui
+from CapraVision.client.gtk.utils import numpy_to_pixbuf
+from CapraVision.client.gtk.utils import tree_selected_index
+from CapraVision.client.gtk.utils import win_name
 
 from CapraVision.server import imageproviders
 
@@ -266,7 +271,7 @@ class WinMapper:
         return True
     
     def on_drwImage_motion_notify_event(self, widget, event):
-        (window, x, y, state) = event.window.get_pointer()
+        _, x, y, state = event.window.get_pointer()
         if (state & Gdk.ModifierType.BUTTON1_MASK 
                 and self.pixbuf_image is not None):
             self.draw(widget, x, y)    

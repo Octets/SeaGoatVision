@@ -17,17 +17,22 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.client.gtk.utils import *
+from CapraVision.client.gtk.utils import get_ui
+from CapraVision.client.gtk.utils import map_filter_to_ui
+from CapraVision.client.gtk.utils import tree_row_selected
+from CapraVision.client.gtk.utils import tree_selected_index
+from CapraVision.client.gtk.utils import win_name
+from CapraVision.client.gtk.utils import WindowState
 
 from CapraVision.server.core import filterchain
-
-from CapraVision.server import filters
+from CapraVision.server.tcp_server import Server
 
 from WinFilterSel import WinFilterSel
 from WinLineTest import WinLineTest
 from WinMapper import WinMapper
 from WinViewer import WinViewer
-from CapraVision.server.tcp_server import Server
+
+from gi.repository import Gtk
 
 class WinFilterChain:
     """Main window
@@ -73,7 +78,6 @@ class WinFilterChain:
         self.btnView.set_sensitive(tools_enabled)
 
     def del_current_row(self):
-        (model, iter) = self.lstFilters.get_selection().get_selected()
         self.fchain.remove_filter(self.selected_filter())
         
     def filter_modif_callback(self):
@@ -161,10 +165,10 @@ class WinFilterChain:
             return False
 
     def selected_filter(self):
-        (model, iter) = self.lstFilters.get_selection().get_selected()
-        if iter is None:
+        model, iterator = self.lstFilters.get_selection().get_selected()
+        if iterator is None:
             return None
-        path = model.get_path(iter)
+        path = model.get_path(iterator)
         return self.fchain.filters[path.get_indices()[0]]
     
     def set_state_create(self):
@@ -189,19 +193,19 @@ class WinFilterChain:
         self.window.set_title(self.WINDOW_TITLE)
         self.change_state()
 
-    def show_config(self, filter):
-        cls = map_filter_to_ui(filter)
+    def show_config(self, filtre):
+        cls = map_filter_to_ui(filtre)
         if cls is not None:
-            win = cls(filter, self.filter_modif_callback)
+            win = cls(filtre, self.filter_modif_callback)
             self.add_window_to_list(win)
             win.window.connect('destroy', self.on_window_destroy)
             win.window.show_all()
     
     def show_filter_chain(self):
         self.filterChainListStore.clear()
-        for filter in self.fchain.filters:
+        for filtre in self.fchain.filters:
             self.filterChainListStore.append(
-                        [filter.__class__.__name__, filter.__doc__]) 
+                        [filtre.__class__.__name__, filtre.__doc__]) 
 
     def use_new_chain(self, chain):
         if chain is None:
@@ -280,19 +284,19 @@ class WinFilterChain:
             self.show_config(self.selected_filter())
                     
     def on_btnUp_clicked(self, widget):
-        filter = self.selected_filter()
-        if filter is not None:
+        filtre = self.selected_filter()
+        if filtre is not None:
             index = tree_selected_index(self.lstFilters)
             if index > 0:
-                self.fchain.move_filter_up(filter)
+                self.fchain.move_filter_up(filtre)
                 self.lstFilters.set_cursor(index - 1)
     
     def on_btnDown_clicked(self, widget):
-        filter = self.selected_filter()
-        if filter is not None:
+        filtre = self.selected_filter()
+        if filtre is not None:
             index = tree_selected_index(self.lstFilters)
             if index < len(self.fchain.filters) - 1:
-                self.fchain.move_filter_down(filter)
+                self.fchain.move_filter_down(filtre)
                 self.lstFilters.set_cursor(index + 1)
                     
     def on_btnTools_clicked(self, widget):
