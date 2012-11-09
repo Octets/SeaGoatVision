@@ -18,7 +18,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-#import matplotlib.pyplot as plt
+import numpy as np
+import os
+import subprocess
 import tempfile
 
 import linetest
@@ -46,7 +48,7 @@ class ParameterEvaluation:
         
     def launch(self):
         test = linetest.LineTest(self.test_folder, self.chain)
-        for i in xrange(self.minval, self.maxval):
+        for i in xrange(int(self.minval), int(self.maxval)):
             setattr(self.filter, self.pname, i)
             if hasattr(self.filter, 'configure'):
                 self.filter.configure()
@@ -56,20 +58,25 @@ class ParameterEvaluation:
             
     def filter_to_use(self):
             for f in self.chain.filters:
-                if f.__name__ == self.fname:
+                if f.__class__.__name__ == self.fname:
                     return f
             return None
         
+    def save_data(self):
+        tmp = tempfile.NamedTemporaryFile()
+        data = np.append(self.precisions.values(), self.noises.values())
+        np.save(tmp.file, data)
+        tmp.file.flush()
+        return tmp
+    
     def create_graphic(self):
-        #plt.clf()
-        #plt.plot(self.precisions, self.noises, '+b')
-        #plt.xlabel('Precision (%)')
-        #plt.ylabel('Noise (%)')
-        
-        ntf = tempfile.NamedTemporaryFile(suffix='.png')
-        #plt.savefig(ntf.file)
-        ntf.flush()
-        image = cv2.imread(ntf.name)
-        ntf.close()
-        return image
+        data_file = self.save_data()
+        proc = subprocess.Popen(('python', 'plot.py', data_file.name), 
+                                stdout=subprocess.PIPE)
+        image_file = proc.stdout.readline()[:-1]
+        print image_file
+        data_file.close()
+        img = cv2.imread(image_file)
+        os.remove(image_file)
+        return cv2.resize(img, (420, 340))
     

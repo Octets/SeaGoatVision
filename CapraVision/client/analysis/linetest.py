@@ -166,7 +166,7 @@ class LineTest:
         filtered = self.fchain.execute(image)
         filtered = self.make_binary_array(filtered)
         
-        mapping = np.fromfile(file_name + '.mapping', dtype=np.uint8)
+        mapping = np.fromfile(file_name + '.map', dtype=np.uint8)
         mapping = mapping.reshape(filtered.shape)
 
         return (filtered, mapping)
