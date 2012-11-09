@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
@@ -15,14 +17,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Description : Generate pb2 file 
-# Authors: Mathieu Benoit (mathben963@gmail.com)
-# Date : October 2012
 
+"""
+Description : This is the facade to communicate with module of vision server
+Authors: Mathieu Benoit (mathben963@gmail.com)
+Date : October 2012
+"""
 
-PROTONAME=server
+# Import CapraVision library
+from CapraVision.server.filters import utils
 
-all: build
-
-build: 
-	protoc --python_out=. $(PROTONAME).proto
+class FacadeServer():
+    
+    def getFilter(self):
+        return utils.load_filters().keys()

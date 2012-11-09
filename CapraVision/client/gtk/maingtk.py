@@ -17,6 +17,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Description : Open gtk 
+Authors: Benoit Paquet
+Date : October 2012
+"""
 
 def run():
     from gi.repository import Gtk, GObject

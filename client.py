@@ -17,6 +17,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Description : launch vision client. Can choose multiple client 
+Authors: Mathieu Benoit (mathben963@gmail.com)
+Date : October 2012
+"""
+
 import argparse
 
 def runGtk():

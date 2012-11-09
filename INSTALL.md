@@ -14,7 +14,7 @@ Until OpenCV 2.4 is fully supported, the preferred way is to compile OpenCV manu
 
 A. Install dependencies
 
- sudo apt-get install glade python python-numpy python-opencv
+ sudo apt-get install glade python python-numpy python-opencv protobuf-python
 
 B. Install OpenCV 2.4
 

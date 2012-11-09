@@ -26,23 +26,19 @@ Date : October 2012
 # Import required RPC modules
 from CapraVision.proto import server_pb2
 
-# Import CapraVision library
-from CapraVision.server.filters import utils
+import facadeServer
 
-class ServerImpl(server_pb2.CommandService):
+class ProtobufServerImpl(server_pb2.CommandService):
     def __init__(self, *args, **kwargs):
         server_pb2.CommandService.__init__(self, *args, **kwargs)
+        
+        self.facadeServer = facadeServer.FacadeServer()
     
     def GetFilterList(self, controller, request, done):
-        print "Get Filter List"
-        
         # Create a reply
         response = server_pb2.GetFilterListResponse()
-        filters = utils.load_filters()
-        for sFilter in filters.keys():
-            response.filters.append(sFilter)
-        
-        print "Response : %s" % (response)
+        for filter in self.facadeServer.getFilter():
+            response.filters.append(filter) 
         
         # We're done, call the run method of the done callback
         done.run(response)

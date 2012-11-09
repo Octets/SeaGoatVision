@@ -26,12 +26,12 @@ Date : October 2012
 def run():
     # Import required RPC modules
     import protobuf.socketrpc.server as server
-    from controller import serverImpl as impl
+    from controller import protobufServerImpl as impl
 
     # Create and register the service
     # Note that this is an instantiation of the implementation class,
     # *not* the class defined in the proto file.
-    server_service = impl.ServerImpl()
+    server_service = impl.ProtobufServerImpl()
     server = server.SocketRpcServer(8090)
     server.registerService(server_service)
 

@@ -23,50 +23,31 @@ Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
 
+from CapraVision.client.controller import facadeClient
 # SOURCE of this code about the commande line : http://www.doughellmann.com/PyMOTW/cmd/
 import cmd
-
-# Import required RPC modules
-from protobuf.socketrpc import RpcService
-from CapraVision.proto import server_pb2
 
 # Configure logging
 import logging
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
-# The callback is for asynchronous call to RpcService
-def callback(request, response):
-    """Define a simple async callback."""
-    log.info('Asynchronous response :' + response.__str__())
-    
 class VCmd(cmd.Cmd):
     def __init__(self, completekey='tab', stdin=None, stdout=None):
         cmd.Cmd.__init__(self, completekey=completekey, stdin=stdin, stdout=stdout)
+        self.facade = facadeClient.FacadeClient("protobuf")
+        #self.facade = facadeClient.FacadeClient("sharedMemory")
         
-        # Server details
-        hostname = 'localhost'
-        port = 8090
-        
-        # Create a new service instance
-        self.service = RpcService(server_pb2.CommandService_Stub, port, hostname)
-    
     ####################################################################################################
     # List of command
     ####################################################################################################
     def do_getFilter(self, line):
-        request = server_pb2.GetFilterListRequest()
-        # Make an synchronous call
-        try:
-            log.info('Making synchronous call')
-            response = self.service.GetFilterList(request, timeout=10000)
-            log.info('Synchronous response: ' + response.__str__())
+        lstFilter = self.facade.getFilter()
+        if lstFilter is not None:
+            print("Nombre de ligne %s, tableau : %s" % (len(lstFilter), lstFilter))
+        else:
+            print("No filterlist")
             
-            print("Nombre de ligne %s, tableau : %s" % (len(response.filters), response.filters))
-            
-        except Exception, ex:
-            log.exception(ex)
-    
     def do_EOF(self, line):
         # Redo last command
         return True
