@@ -86,7 +86,7 @@ class LineTest:
         ret_image[:,:,1] = detected 
         ret_image[:,:,2] = noise | undetected 
         
-        return cv2.resize(ret_image, (320, 240))
+        return cv2.resize(ret_image, (400, 300))
     
     def find_dist_between_blob_and_line(self, cf, cnt_map):
         """Returns the minimum distance between a blob and a line.
@@ -131,8 +131,12 @@ class LineTest:
             area = np.abs(cv2.contourArea(cf))
             noise += dist * area
             
-        return noise / self.max_noise(cnt_map, filtered.shape)
-    
+        total_noise = noise / self.max_noise(cnt_map, filtered.shape)
+        if total_noise > 1:
+            return 1.0
+        else:
+            return total_noise
+        
     def find_precision(self, filtered, mapping):
         """Returns the precision of the line detection
         Args:
@@ -203,7 +207,7 @@ class LineTest:
 
     def original_image(self, file_name):
         """Returns the original image scaled to 320x240"""
-        return cv2.resize(self.testable_images[file_name], (320, 240))
+        return cv2.resize(self.testable_images[file_name], (400, 300))
 
     def remove_line(self, filtered, mapping):
         """Remove the line from a filtered image using the mapping"""

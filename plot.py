@@ -23,15 +23,23 @@ import tempfile
 import matplotlib.pyplot as plt
 
 def create_graphic(data_file):
-    data = np.fromfile(data_file)
-    logging.error(len(data))
+    data = np.fromfile(data_file, np.float16)
     data = data.reshape((2, len(data) / 2))
-    precisions = data[:, 0]
-    noises = data[:, 1]
+    import logging
+    logging.basicConfig(filename='/home/benoit/errorz.txt')
+    precisions = data[0, :]
+    noises = data[1, :]
+    logging.error(precisions)
+    logging.error('hello!')
+    logging.error(noises)
     plt.clf()
-    plt.plot(precisions, noises, '+b')
-    plt.xlabel('Precision (%)')
-    plt.ylabel('Noise (%)')
+    plt.plot(noises, precisions, '.b')
+    plt.xlabel('Noise (%)')
+    plt.ylabel('Precision (%)')
+    #plt.xlim(0, np.max(precisions))
+    #plt.ylim(0, np.max(noises))
+    plt.xlim(0, 100)
+    plt.ylim(0, 100)
     ntf = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
     plt.savefig(ntf.file)
     ntf.flush()
@@ -40,21 +48,8 @@ def create_graphic(data_file):
     return file_name
 
 if __name__ == '__main__':
-    import logging
-    logging.basicConfig(filename='/home/benoit/error.txt')
     data_file = sys.argv[1] 
-    f = open('/home/benoit/test22.txt', 'w')
-    f.write('ohai!')
-    f.flush()
-    try:
-        image_file = create_graphic(data_file)
-    except Exception, e:
-        logging.exception(data_file)
-    f.write(data_file)
-    f.write(image_file)
-    f.flush()
-    f.close()
-
+    image_file = create_graphic(data_file)
     print image_file
     sys.stdout.flush()
     

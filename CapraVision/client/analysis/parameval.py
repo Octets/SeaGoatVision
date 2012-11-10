@@ -43,19 +43,25 @@ class ParameterEvaluation:
         self.filter = self.filter_to_use()
         self.minval = minval
         self.maxval = maxval
-        self.precisions = {}
-        self.noises = {}
+        self.precisions = np.zeros(maxval - minval, dtype=np.float16)
+        self.noises = np.zeros(maxval - minval, dtype=np.float16)
         
     def launch(self):
         test = linetest.LineTest(self.test_folder, self.chain)
+        orig_val = getattr(self.filter, self.pname)
         for i in xrange(int(self.minval), int(self.maxval)):
+            idx = i - self.minval
             setattr(self.filter, self.pname, i)
             if hasattr(self.filter, 'configure'):
                 self.filter.configure()
             test.launch()
-            self.precisions[i] = test.avg_precision()
-            self.noises[i] = test.avg_noise()
-            
+            self.precisions[idx] = round(test.avg_precision() * 100.0, 2)
+            self.noises[idx] = round(test.avg_noise() * 100.0, 2)
+
+        setattr(self.filter, self.pname, orig_val)
+        if hasattr(self.filter, 'configure'):
+            self.filter.configure()
+
     def filter_to_use(self):
             for f in self.chain.filters:
                 if f.__class__.__name__ == self.fname:
@@ -64,8 +70,8 @@ class ParameterEvaluation:
         
     def save_data(self):
         tmp = tempfile.NamedTemporaryFile()
-        data = np.append(self.precisions.values(), self.noises.values())
-        np.save(tmp.file, data)
+        data = np.append(self.precisions, self.noises)
+        tmp.file.write(data.tostring())
         tmp.file.flush()
         return tmp
     
@@ -78,5 +84,6 @@ class ParameterEvaluation:
         data_file.close()
         img = cv2.imread(image_file)
         os.remove(image_file)
-        return cv2.resize(img, (420, 340))
+        #return img
+        return cv2.resize(img, (600, 450))
     

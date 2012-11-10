@@ -32,7 +32,9 @@ from CapraVision.server.core import filterchain
 class WinLineTest:
     
     def __init__(self):
-        ui = get_ui(self, 'imageListStore', 'paramsListStore')
+        ui = get_ui(self, 'imageListStore', 
+                    'paramsListStore', 
+                    'paramvaluesListStore')
         self.window = ui.get_object(win_name(self))
         self.imageListStore = ui.get_object('imageListStore')
         self.txtFilterchain = ui.get_object('txtFilterchain')
@@ -45,6 +47,8 @@ class WinLineTest:
         self.imgExample = ui.get_object('imgExample')
         
         self.paramsListStore = ui.get_object('paramsListStore')
+        self.paramvaluesListStore = ui.get_object('paramvaluesListStore')
+         
         self.cboParams = ui.get_object('cboParams')
         self.spnFrom = ui.get_object('spnFrom')
         self.spnFrom.set_adjustment(self.create_adj(0))
@@ -54,6 +58,7 @@ class WinLineTest:
         self.lblBestNoise = ui.get_object('lblBestNoise')
         self.lblOverallBest = ui.get_object('lblOverallBest')
         self.imgGraphEval = ui.get_object('imgGraphEval')
+        self.lblValue = ui.get_object('lblValue')
         
         self.test = None
         self.chain = None
@@ -102,7 +107,7 @@ class WinLineTest:
         if len(images) > 0:
             self.lstImage.set_cursor(0)
         
-    def fill_paramsListStore(self, chain):
+    def fill_filterchain_info_parameval(self, chain):
         self.paramsListStore.clear()
         for fname, params in filterchain.params_list(chain):
             for name, value in params:
@@ -111,6 +116,15 @@ class WinLineTest:
                                 [fname, name, fname + ' - ' + name, value])
         self.cboParams.set_active(0)
         
+    def fill_values_list(self, precisions, noises):
+        self.paramvaluesListStore.clear()
+        for i in xrange(int(self.spnFrom.get_value()), 
+                        int(self.spnTo.get_value())):
+            idx = i - int(self.spnFrom.get_value())
+            self.paramvaluesListStore.append((i, 
+                                            str(round(noises[idx], 2)), 
+                                            str(round(precisions[idx], 2))))
+            
     def validate_folder(self, folder):
         if folder == '':
             self.msg_on_no_test_folder()
@@ -151,7 +165,7 @@ class WinLineTest:
         if (self.validate_folder(folder) and 
             self.validate_filterchain(chain)):
             index = self.cboParams.get_active()
-            if index > 0:
+            if index >= 0:
                 fname, pname, _, _ = self.paramsListStore[index]
                 peval = ParameterEvaluation(
                                             folder, 
@@ -163,6 +177,8 @@ class WinLineTest:
                 peval.launch()
                 self.imgGraphEval.set_from_pixbuf(
                                     numpy_to_pixbuf(peval.create_graphic()))
+                self.fill_values_list(peval.precisions, peval.noises)
+                
     def on_btnClear_clicked(self, widget):
         self.txtFilterchain.set_text('')
         self.txtTestFolder.set_text('')
@@ -187,7 +203,7 @@ class WinLineTest:
         if response == Gtk.ResponseType.OK:
             self.txtFilterchain.set_text(dialog.get_filename())
             self.chain = filterchain.read(self.txtFilterchain.get_text())
-            self.fill_paramsListStore(self.chain)
+            self.fill_filterchain_info_parameval(self.chain)
         dialog.destroy()
 
     def on_btnOpenTestFolder_clicked(self, widget):
@@ -200,6 +216,12 @@ class WinLineTest:
             self.txtTestFolder.set_text(dialog.get_filename())
         dialog.destroy()
 
+    def on_cboParams_changed(self, widget):
+        index = self.cboParams.get_active()
+        if index >= 0:
+            value = self.paramsListStore[index][3]
+            self.lblValue.set_text(str(int(value)))
+    
     def on_lstImage_cursor_changed(self, widget):
         index = tree_selected_index(self.lstImage)
         if index >= 0:
