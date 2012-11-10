@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
@@ -18,23 +18,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Description : Open gtk 
-Authors: Benoit Paquet
+Description : Run the vision server
+Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
 
-def run():
-    from gi.repository import Gtk, GObject
-    import CapraVision.client.gtk.main
-    GObject.threads_init()
-    w = CapraVision.client.gtk.main.WinFilterChain()
-    w.window.show_all()
-    Gtk.main()
-
 if __name__ == '__main__':
-    # Project path is parent directory
-    import os 
-    parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-    os.sys.path.insert(0, parentdir)
+    from CapraVision.server.mainserver import run
     run()
-    
+
