@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WinFilterChain</class>
+ <widget class="QDockWidget" name="WinFilterChain">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>783</width>
+    <height>362</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WinFilterChain</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QToolButton" name="toolButton">
+        <property name="text">
+         <string>Create new</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/document-new.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/document-new.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_2">
+        <property name="text">
+         <string>Open</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-open.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-open.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_3">
+        <property name="text">
+         <string>Save</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-save.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-save.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_4">
+        <property name="text">
+         <string>Save as</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-save-as.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-save-as.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_5">
+        <property name="text">
+         <string>Preview</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/player_play.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/player_play.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_6">
+        <property name="text">
+         <string>Add</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/add.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/add.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_7">
+        <property name="text">
+         <string>Remove</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/remove.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/remove.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_8">
+        <property name="text">
+         <string>Edit</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/document-new.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/document-new.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_9">
+        <property name="text">
+         <string>Up</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/up.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/up.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_10">
+        <property name="text">
+         <string>Down</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/down.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/down.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_11">
+        <property name="text">
+         <string>Tools</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-execute.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-execute.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextUnderIcon</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Filter chain:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QListWidget" name="listWidget"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
