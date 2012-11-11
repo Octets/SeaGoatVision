@@ -17,4 +17,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import main
+#from Server import filters
+from PySide import QtGui
+class WinFilter(QtGui.QDockWidget):
+    def __init__(self,filter):
+        super(WinFilter,self).__init__()
+        self.filter=filter
+        attr = getattr(filter, names)
+        for att in attr:
+            print att
+            
+        
+    #def constructWidget(self,widget):
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
