@@ -146,8 +146,11 @@ class LineTest:
         undetected = (np.invert(detected) * mapping)
         sum_map = np.count_nonzero(mapping)
         sum_undetected = np.count_nonzero(undetected)
-        return (sum_map - sum_undetected) / float(sum_map)
-    
+        if sum_map == 0:
+            return 0
+        else:
+            return (sum_map - sum_undetected) / float(sum_map)
+        
     def find_testable_images(self, image_folder):
         """Find all the images that have a mapping file associated with them
         Args:

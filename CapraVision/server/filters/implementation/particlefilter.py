@@ -21,6 +21,9 @@ import cv2
 import numpy as np
 
 class ParticleFilter:
+    """Remove small particles from the image.
+        The image is first converted to grayscale and is then eroded and 
+        the remaining blobs are filtered according to the area of the blobs."""
     
     def __init__(self):
         self.kernel_height = 10
@@ -31,8 +34,8 @@ class ParticleFilter:
     def configure(self):
         self._kernel = cv2.getStructuringElement(
                                                  cv2.MORPH_CROSS, 
-                                                 (self.kernel_width, 
-                                                  self.kernel_height))
+                                                 (int(self.kernel_width), 
+                                                  int(self.kernel_height)))
             
     def execute(self, image):
         image = cv2.erode(image, self._kernel)
