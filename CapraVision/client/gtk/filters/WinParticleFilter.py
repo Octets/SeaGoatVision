@@ -61,10 +61,12 @@ class WinParticleFilter():
 
     def on_spnHeight_value_changed(self, widget):
         self.filtre.kernel_height = self.spnHeight.get_value()
-    
+        self.filtre.configure()
+        
     def on_spnWidth_value_changed(self, widget):
         self.filtre.kernel_width = self.spnWidth.get_value()
-    
+        self.filtre.configure()
+        
     def on_spnAreaMin_value_changed(self, widget):
         self.filtre.area_min = self.spnAreaMin.get_value()
     

@@ -38,9 +38,9 @@ class WinMorphology():
         self.spnKernelHeight = ui.get_object('spnKernelHeight')
         self.spnKernelHeight.set_adjustment(self.create_adj())
         self.spnAnchorX = ui.get_object('spnAnchorX')
-        self.spnAnchorX.set_adjustment(self.create_adj())
+        self.spnAnchorX.set_adjustment(self.create_adj_anchor())
         self.spnAnchorY = ui.get_object('spnAnchorY')
-        self.spnAnchorY.set_adjustment(self.create_adj())
+        self.spnAnchorY.set_adjustment(self.create_adj_anchor())
         self.spnIterations = ui.get_object('spnIterations')
         self.spnIterations.set_adjustment(self.create_adj())
         self.init_window()
@@ -54,6 +54,39 @@ class WinMorphology():
     def create_adj(self):
         return Gtk.Adjustment(1, 1, 255, 1, 10, 0)
 
+    def create_adj_anchor(self):
+        return Gtk.Adjustment(1, -1, 255, 1, 10, 0)
+    
     def on_btnOK_clicked(self, widget):
-        pass
+        self.cb()
+        self.window.destroy()
+    
+    def on_btnCancel_clicked(self, widget):
+        self.filtre.kernel_width = self.filtre_init.kernel_width
+        self.filtre.kernel_height = self.filtre_init.kernel_height
+        self.filtre.anchor_x = self.filtre_init.anchor_x
+        self.filtre.anchor_y = self.filtre_init.anchor_y
+        self.filtre.iterations = self.filtre_init.iterations
+        self.filtre.configure()
+        self.init_window()
+    
+    def on_spnKernelWidth_value_changed(self, widget):
+        self.filtre.kernel_width = self.spnKernelWidth.get_value()
+        self.filtre.configure()
+    
+    def on_spnKernelHeight_value_changed(self, widget):
+        self.filtre.kernel_height = self.spnKernelHeight.get_value()
+        self.filtre.configure()
+    
+    def on_spnAnchorX_value_changed(self, widget):
+        self.filtre.anchor_x = self.spnAnchorX.get_value()
+        self.filtre.configure()
+    
+    def on_spnAnchorY_value_changed(self, widget):
+        self.filtre.anchor_y = self.spnAnchorY.get_value()
+        self.filtre.configure()
+        
+    def on_spnIterations_value_changed(self, widget):
+        self.filtre.iterations = self.spnIterations.get_value()
+        self.filtre.configure()
     
