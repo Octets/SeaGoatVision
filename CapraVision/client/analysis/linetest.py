@@ -24,7 +24,9 @@ import cv2.cv as cv
 import math
 import numpy as np
 import os
+import subprocess
 import sys
+import tempfile
 
 class LineTest:
     """This class test the precision of the detection of lines of a filterchain.
@@ -64,6 +66,18 @@ class LineTest:
         s = sum(self.precisions.values())
         return s / c
     
+    def create_graphic(self):
+        data_file = self.save_data()
+        proc = subprocess.Popen(('python', 'plot.py', data_file.name), 
+                                stdout=subprocess.PIPE)
+        image_file = proc.stdout.readline()[:-1]
+        print image_file
+        data_file.close()
+        img = cv2.imread(image_file)
+        os.remove(image_file)
+        #return img
+        return cv2.resize(img, (600, 450))
+
     def create_image_folder_source(self, test_folder):
         image_folder = ImageFolder()
         image_folder.return_file_name = True
@@ -217,6 +231,13 @@ class LineTest:
         detected = (filtered * mapping)
         return (filtered & np.invert(detected))
     
+    def save_data(self):
+        tmp = tempfile.NamedTemporaryFile()
+        data = np.append(self.precisions, self.noises)
+        tmp.file.write(data.tostring())
+        tmp.file.flush()
+        return tmp
+
     def total_images(self):
         """Returns the amount of testable images in the test folder"""
         return len(self.testable_images)
