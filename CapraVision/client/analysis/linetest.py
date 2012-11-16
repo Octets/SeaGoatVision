@@ -75,8 +75,7 @@ class LineTest:
         data_file.close()
         img = cv2.imread(image_file)
         os.remove(image_file)
-        #return img
-        return cv2.resize(img, (600, 450))
+        return img
 
     def create_image_folder_source(self, test_folder):
         image_folder = ImageFolder()
@@ -232,8 +231,14 @@ class LineTest:
         return (filtered & np.invert(detected))
     
     def save_data(self):
+        precisions = np.zeros(len(self.precisions), dtype=np.float16)
+        noises = np.zeros(len(self.noises), dtype=np.float16)
+        for x in xrange(0, len(self.precisions)):
+            precisions[x] = round(self.precisions.values()[x] * 100.0, 2)
+            noises[x] = round(self.noises.values()[x] * 100.0, 2)
+            
         tmp = tempfile.NamedTemporaryFile()
-        data = np.append(self.precisions, self.noises)
+        data = np.append(precisions, noises)
         tmp.file.write(data.tostring())
         tmp.file.flush()
         return tmp

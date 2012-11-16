@@ -45,6 +45,7 @@ class WinLineTest:
         self.lstImage = ui.get_object('lstImage')
         self.imgOriginal = ui.get_object('imgOriginal')
         self.imgExample = ui.get_object('imgExample')
+        self.imgGraphPrecision = ui.get_object('imgGraphPrecision')
         
         self.paramsListStore = ui.get_object('paramsListStore')
         self.paramvaluesListStore = ui.get_object('paramvaluesListStore')
@@ -106,7 +107,7 @@ class WinLineTest:
             self.imageListStore.append([images.keys()[i], i])
         if len(images) > 0:
             self.lstImage.set_cursor(0)
-        
+    
     def fill_filterchain_info_parameval(self, chain):
         self.paramsListStore.clear()
         for fname, params in filterchain.params_list(chain):
@@ -158,7 +159,9 @@ class WinLineTest:
                 self.test.launch()
                 self.fill_labels(self.test)
                 self.fill_image_list(self.test.testable_images)
-            
+                self.imgGraphPrecision.set_from_pixbuf(
+                                numpy_to_pixbuf(self.test.create_graphic()))
+                
     def on_btnExecParams_clicked(self, widget):
         folder = self.txtTestFolder.get_text()
         chain = self.txtFilterchain.get_text()
