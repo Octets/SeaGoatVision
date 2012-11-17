@@ -17,8 +17,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.client.gtk.utils import get_ui 
-from CapraVision.client.gtk.utils import win_name
+from CapraVision.client.gtk import get_ui 
+from CapraVision.client.gtk import win_name
 
 from CapraVision.server import filters
 

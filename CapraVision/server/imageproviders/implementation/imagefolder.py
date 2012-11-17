@@ -27,6 +27,7 @@ class ImageFolder:
         self.file_names = []
         self.position = 0
         self.return_file_name = False
+        self.auto_increment = True
         
     def read_folder(self, folder):
         self.file_names = CapraVision.server.imageproviders.utils.find_all_images(folder)
@@ -43,7 +44,8 @@ class ImageFolder:
         else:
             image = self.load_image(self.position)
             file_name = self.file_names[self.position]
-            self.position += 1
+            if self.auto_increment:
+                self.position += 1
             if self.return_file_name:
                 return (file_name, image)
             else:

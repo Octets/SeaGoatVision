@@ -17,12 +17,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.client.gtk.utils import get_ui
-from CapraVision.client.gtk.utils import map_filter_to_ui
-from CapraVision.client.gtk.utils import tree_row_selected
-from CapraVision.client.gtk.utils import tree_selected_index
-from CapraVision.client.gtk.utils import win_name
-from CapraVision.client.gtk.utils import WindowState
+from CapraVision.client.gtk.filters import map_filter_to_ui
+from CapraVision.client.gtk import get_ui
+from CapraVision.client.gtk import tree_row_selected
+from CapraVision.client.gtk import tree_selected_index
+from CapraVision.client.gtk import win_name
+from CapraVision.client.gtk import WindowState
 
 from CapraVision.server.core import filterchain
 from CapraVision.server.tcp_server import Server

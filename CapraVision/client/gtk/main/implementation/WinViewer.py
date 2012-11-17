@@ -19,17 +19,17 @@
 
 from gi.repository import GObject
 
-from CapraVision.client.gtk.utils import get_ui
-from CapraVision.client.gtk.utils import map_source_to_ui
-from CapraVision.client.gtk.utils import numpy_to_pixbuf
-from CapraVision.client.gtk.utils import win_name
+from CapraVision.client.gtk import get_ui
+from CapraVision.client.gtk import numpy_to_pixbuf
+from CapraVision.client.gtk import win_name
+from CapraVision.client.gtk.imageproviders import map_source_to_ui
 
 from CapraVision.server.core import mainloop
 
 from CapraVision.server import imageproviders
 
 class WinViewer():
-    """Show the source after being processed by the filter fchain.
+    """Show the source after being processed by the filterchain.
     The window receives a filter in its constructor.  
     This is the last executed filter on the source.
     """

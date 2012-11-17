@@ -20,30 +20,11 @@
 from gi.repository import Gtk, GdkPixbuf
 import Image
 
-import filters
-import imageproviders
-
-import inspect
 import os
 import StringIO
 
 from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
  
-def map_filter_to_ui(filtre):
-    return map_object_to_ui(filtre, filters)
-
-def map_source_to_ui(source):
-    return map_object_to_ui(source, imageproviders)
-
-def map_object_to_ui(obj, module):
-    """Returns the appropriate window class to configure the obj"""
-
-    for win in vars(module).values():
-        if inspect.isclass(win):
-            if win.__name__ == 'Win' + obj.__class__.__name__:
-                return win
-    return None
-
 def tree_selected_index(treeview):
     sel = treeview.get_selection()
     if sel is None:

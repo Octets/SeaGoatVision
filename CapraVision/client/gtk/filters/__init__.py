@@ -16,15 +16,6 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""Contains the user interfaces to configure the filters.
 
-To add a new ui, the constructor must receive the filter to configure
-and the name must be as follow: WinFilterName
-"""
-
-import os
-
-for f in os.listdir(os.path.dirname(__file__)):
-    filename, _ = os.path.splitext(f)
-    code = 'from %(module)s import *' % {'module' : filename} 
-    exec code
+from implementation import *
+from utils import *

@@ -17,15 +17,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import copy
 
 from gi.repository import Gtk
 
-from CapraVision.client.gtk.utils import get_ui
-from CapraVision.client.gtk.utils import win_name
+from CapraVision.client.gtk import get_ui
+from CapraVision.client.gtk import win_name
 
-class WinCanny:
+class WinRemoveObstacle:
     
     def __init__(self, filtre, cb):
         self.filtre = filtre
@@ -34,31 +33,36 @@ class WinCanny:
         
         ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
-        self.spnThreshold1 = ui.get_object('spnThreshold1')
-        self.spnThreshold1.set_adjustment(self.create_adj())
-        self.spnThreshold2 = ui.get_object('spnThreshold2')
-        self.spnThreshold2.set_adjustment(self.create_adj())
-        self.init_window()
+        self.spnThreshold =ui.get_object('spnThreshold')
+        self.spnThreshold.set_adjustment(self.create_adj())
+        self.spnVBlur = ui.get_object('spnVBlur')
+        self.spnVBlur.set_adjustment(self.create_adj())
+        self.spnHBlur = ui.get_object('spnHBlur')
+        self.spnHBlur.set_adjustment(self.create_adj())
         
-    def create_adj(self):
-        return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
+        self.init_window()
 
     def init_window(self):
-        self.spnThreshold1.set_value(self.filtre_init.threshold1)
-        self.spnThreshold2.set_value(self.filtre_init.threshold2)
+        self.spnThreshold.set_value(self.filtre_init.threshold)
+        self.spnHBlur.set_value(self.filtre_init.horizontal_blur)
+        self.spnVBlur.set_value(self.filtre_init.vertical_blur)
         
+    def create_adj(self):
+        return Gtk.Adjustment(1, 0, 255, 1, 1, 0)
+
+    def on_btnCancel_clicked(self, widget):
+        self.init_window()
+    
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
     
-    def on_btnCancel_clicked(self, widget):
-        self.filtre.threshold1 = self.filtre_init.threshold1
-        self.filtre.threshold2 = self.filtre_init.threshold2
+    def on_spnThreshold_value_changed(self, widget):
+        self.filtre.threshold = int(self.spnThreshold.get_value())
     
-    def on_spnThreshold1_value_changed(self, widget):
-        self.filtre.threshold1 = self.spnThreshold1.get_value()
-    
-    def on_spnThreshold2_value_changed(self, widget):
-        self.filtre.threshold2 = self.spnThreshold2.get_value()
-    
+    def on_spnVBlur_value_changed(self, widget):
+        self.filtre.vertical_blur = int(self.spnVBlur.get_value())
+        
+    def on_spnHBlur_value_changed(self, widget):
+        self.filtre.horizontal_blur = int(self.spnHBlur.get_value())
     
