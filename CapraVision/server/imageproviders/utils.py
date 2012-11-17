@@ -96,10 +96,7 @@ class ThreadSafeSourceWrapper:
         
     def __getattr__(self, name):
         return getattr(self.source, name)
-    
-    def __setattr(self, name, value):
-        setattr(self.source, name, value)
-        
+                
     def __iter__(self):
         return self
     
