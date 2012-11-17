@@ -17,6 +17,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import cv2
+
 from gi.repository import GObject
 
 from CapraVision.client.gtk import get_ui
@@ -45,14 +47,25 @@ class WinViewer():
         self.thread = None
         self.source = None
         self.filter = None
+        self.size = 1.0
+        self.image_shape = (320, 240, 0)
         
-        ui = get_ui(self, 'sourcesListStore', 'filterChainListStore')
+        ui = get_ui(self, 'sourcesListStore', 
+                    'filterChainListStore', 
+                    'sizeListStore')
+        
         self.window = ui.get_object(win_name(self))
         self.cboFilter = ui.get_object('cboFilter')
         self.sourcesListStore = ui.get_object('sourcesListStore') 
         self.filterChainListStore = ui.get_object('filterChainListStore')
+        self.sizeListStore = ui.get_object('sizeListStore')
         self.imgSource = ui.get_object('imgSource')
         self.cboSource = ui.get_object('cboSource')
+        self.scwImage = ui.get_object('scwImage')
+        self.vptImage = ui.get_object('vptImage')
+        self.spnSize = ui.get_object('spnSize')
+        self.cboSize = ui.get_object('cboSize')
+        self.cboSize.set_active(5) # 100%
         
         self.sourcesListStore.append(['None'])
         for name in self.source_list.keys():
@@ -68,6 +81,21 @@ class WinViewer():
     def chain_observer(self, filtre, output):
         if filtre is self.filter:
             GObject.idle_add(self.update_image, output)
+
+    def change_display_size(self):
+        index = self.cboSize.get_active()
+        if index > 0:
+            new_size = self.sizeListStore[index][1] / 100.0
+            height, width, _ = self.image_shape
+            width = width * new_size
+            height = height * new_size
+            self.window.resize(10, 10)
+            if width <= 640 and height <= 480:
+                self.scwImage.set_size_request(width + 16, height + 16)
+            else:
+                self.scwImage.set_size_request(640 + 16, 480 + 16)
+                
+            self.size = new_size
 
     def change_source(self, new_source):
         if self.thread <> None:
@@ -118,6 +146,13 @@ class WinViewer():
         
     def update_image(self, image):
         if image <> None:
+            if self.image_shape <> image.shape:
+                self.image_shape = image.shape
+                self.change_display_size()
+            if self.size <> 1.0:
+                image = cv2.resize(image, 
+                    (int(image.shape[1] * self.size), 
+                     int(image.shape[0] * self.size)))
             self.imgSource.set_from_pixbuf(numpy_to_pixbuf(image))
                 
     def on_btnConfigure_clicked(self, widget):
@@ -138,6 +173,9 @@ class WinViewer():
         else:
             self.filter = None
 
+    def on_cboSize_changed(self, widget):
+        self.change_display_size()
+                
     def on_window_destroy(self, widget):
         self.win_list.remove(widget)
 
