@@ -30,16 +30,12 @@ class WinViewer():
     The window receives a filter in its constructor.  
     This is the last executed filter on the source.
     """
-    def __init__(self, fchain, server, thread):
+    def __init__(self, fchain):
         self.fchain = fchain
-        self.server = server
         fchain.add_image_observer(self.chain_observer)
         fchain.add_filter_observer(self.filters_changed_observer)
-        fchain.add_filter_output_observer(server.send)
         
         self.win_list = []
-        self.thread = thread
-        self.thread.add_observer(self.thread_observer)
 
         self.filter = None
         self.size = 1.0
@@ -69,7 +65,8 @@ class WinViewer():
     #This method is the observer of the FilterChain class.
     def chain_observer(self, filtre, output):
         if filtre is self.filter:
-            GObject.idle_add(self.update_image, output.copy())
+            if output is not None:
+                GObject.idle_add(self.update_image, output.copy())
 
     def change_display_size(self):
         index = self.cboSize.get_active()
@@ -107,10 +104,7 @@ class WinViewer():
         if len(self.fchain.filters) > 0:
             self.filter = self.fchain.filters[-1]
             self.cboFilter.set_active(len(self.fchain.filters)-1)
-                                    
-    def thread_observer(self, image):
-        self.fchain.execute(image)
-        
+                                            
     def update_image(self, image):
         if image <> None:
             if self.image_shape <> image.shape:
@@ -137,6 +131,5 @@ class WinViewer():
         self.win_list.remove(widget)
 
     def on_WinViewer_destroy(self, widget):
-        self.thread.remove_observer(self.thread_observer)
         self.fchain.remove_filter_observer(self.filters_changed_observer)
         self.fchain.remove_image_observer(self.chain_observer)

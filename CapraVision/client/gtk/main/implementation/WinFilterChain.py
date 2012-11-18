@@ -51,9 +51,14 @@ class WinFilterChain:
         self.server = Server()
         self.server.start("127.0.0.1", 5030)
         
+        self.fchain = None
         self.source = None
+        self.source_window = None
+        
         self.thread = mainloop.MainLoop()
-
+        self.thread.add_observer(self.thread_observer)
+        self.thread_running = self.thread.is_running()
+        
         ui = get_ui(self, 
                     'filterChainListStore', 
                     'sourcesListStore',
@@ -66,6 +71,8 @@ class WinFilterChain:
         self.btnConfig = ui.get_object('btnConfig')
         self.btnUp = ui.get_object('btnUp')
         self.btnDown = ui.get_object('btnDown')
+        self.chkLoop = ui.get_object('chkLoop')
+        self.lblLoopState = ui.get_object('lblLoopState')
         self.txtFilterChain = ui.get_object('txtFilterChain')
         self.cboSource = ui.get_object('cboSource')
         self.spnFPS = ui.get_object('spnFPS')
@@ -96,12 +103,12 @@ class WinFilterChain:
         self.btnUp.set_sensitive(tools_enabled)
         self.btnView.set_sensitive(tools_enabled)
 
-    def change_source(self, new_source):
+    def start(self, new_source):
         if self.source <> None:
             imageproviders.close_source(self.source)
         if new_source <> None:
             self.source = imageproviders.create_source(new_source)
-            self.thread.change_source(self.source)
+            self.thread.start(self.source)
         else:
             self.source = None
 
@@ -235,9 +242,10 @@ class WinFilterChain:
     def show_source_config(self, source):
         cls = map_source_to_ui(source)
         if cls is not None:
+            if self.source_window is not None:
+                self.source_window.destroy()
             win = cls(source)
-            self.add_window_to_list(win)
-            win.window.connect('destroy', self.on_window_destroy)
+            self.source_window = win
             win.window.show_all()
 
     def show_filter_chain(self):
@@ -246,6 +254,18 @@ class WinFilterChain:
             self.filterChainListStore.append(
                         [filtre.__class__.__name__, filtre.__doc__]) 
 
+    def thread_observer(self, image):
+        if not self.thread.is_running() and self.thread_running:
+            self.lblLoopState.set_text('Stopped')
+            self.chkLoop.set_active(False)
+        elif self.thread.is_running() and not self.thread_running:
+            self.lblLoopState.set_text('Running')
+            self.chkLoop.set_active(True)
+        self.thread_running = self.thread.is_running()
+        
+        if self.fchain is not None and image is not None:
+            self.fchain.execute(image)
+                
     def use_new_chain(self, chain):
         if chain is None:
             return
@@ -253,6 +273,8 @@ class WinFilterChain:
             win.destroy()
         self.fchain = chain
         self.fchain.add_filter_observer(self.filters_changed_observer)
+        self.fchain.add_filter_output_observer(self.server.send)
+
         self.show_filter_chain()
                                                                                     
     def on_btnNew_clicked(self, widget):
@@ -301,7 +323,7 @@ class WinFilterChain:
         self.save_chain_as()
 
     def on_btnView_clicked(self, widget):
-        win = WinViewer(self.fchain, self.server, self.thread)
+        win = WinViewer(self.fchain)
         win.window.connect('destroy', self.on_window_destroy)
         self.add_window_to_list(win)
         win.window.show_all()
@@ -354,6 +376,7 @@ class WinFilterChain:
             elif result == Gtk.ResponseType.CANCEL:
                 return True
         self.server.stop()
+        self.thread.stop()
         Gtk.main_quit()
 
     def on_btnLineMapper_clicked(self, widget):
@@ -368,6 +391,12 @@ class WinFilterChain:
         win.window.connect('destroy', self.on_window_destroy)
         win.window.show_all()
     
+    def on_chkLoop_button_release_event(self, widget, data):
+        if self.chkLoop.get_active():
+            self.thread.stop()
+        else:
+            self.thread.start(self.source)
+    
     def on_btnSource_clicked(self, widget):
         self.show_source_config(self.source)
 
@@ -378,5 +407,9 @@ class WinFilterChain:
         index = self.cboSource.get_active()
         source = None
         if index > 0:
+            if self.source_window is not None:
+                self.source_window.window.destroy()
+                self.source_window = None
+            
             source = self.source_list[self.sourcesListStore[index][0]]
-        self.change_source(source)
+        self.start(source)

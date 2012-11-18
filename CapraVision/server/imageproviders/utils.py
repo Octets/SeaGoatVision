@@ -16,10 +16,11 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""Contains helper classes to work with the sources"""
+"""Contains helper classes to work with the imageproviders"""
 
 import inspect
 import os
+import subprocess
 import threading
 
 import cv2
@@ -71,7 +72,9 @@ def make_source_thread_safe(source):
     return ThreadSafeSourceWrapper(source)
         
 def supported_image_formats():
-    return [
+    """Standard image formats supported by OpenCV"""
+    
+    return (
             '.bmp', 
             '.jpeg', 
             '.jpg', 
@@ -81,7 +84,30 @@ def supported_image_formats():
             '.ppm', 
             '.tiff', 
             '.tif'
-            ]
+            )
+
+def supported_video_formats():
+    return ffmpeg_video_formats()
+
+def ffmpeg_video_formats():
+    """Finds all supported video formats of ffmpeg"""
+    
+    p = subprocess.Popen(('ffmpeg', '-formats'), stdout=subprocess.PIPE)
+    lines = p.stdout.readlines()
+
+    supported = []
+    formats = False
+    for line in lines:
+        if formats:
+            exts = line[4:].split(' ')[0].split(',')
+            for ext in exts:
+                if ext == 'mkvtimestamp_v2':
+                    supported.append('.mkv')
+                else:
+                    supported.append('.' + ext)
+        if line == ' --\n':
+            formats = True
+    return supported
 
 class ThreadSafeSourceWrapper:
     """This is a wrapper around the sources to make it thread-safe.

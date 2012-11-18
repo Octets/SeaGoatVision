@@ -18,11 +18,9 @@
             <property name="show_arrow">False</property>
             <child>
               <object class="GtkToolButton" id="btnNew">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Create new</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Create new</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-new</property>
@@ -35,11 +33,9 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnOpen">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Open filterchain</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Open</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-open</property>
@@ -52,11 +48,9 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnSave">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Save</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Save</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-save</property>
@@ -69,11 +63,9 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnSaveAs">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Save As</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Save As</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-save-as</property>
@@ -86,10 +78,8 @@
             </child>
             <child>
               <object class="GtkSeparatorToolItem" id="sep1">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -98,14 +88,12 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnView">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Preview filterchain</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Preview</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-media-play</property>
+                <property name="stock_id">gtk-execute</property>
                 <signal name="clicked" handler="on_btnView_clicked" swapped="no"/>
               </object>
               <packing>
@@ -115,10 +103,8 @@
             </child>
             <child>
               <object class="GtkSeparatorToolItem" id="sep2">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -127,11 +113,9 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnAdd">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Add new filter</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Add</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-add</property>
@@ -144,11 +128,9 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnRemove">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Remove selected filter</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Remove</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-remove</property>
@@ -161,11 +143,9 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnConfig">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Edit selected filter</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-edit</property>
@@ -178,11 +158,9 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnUp">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Move selected filter up</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Up</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-go-up</property>
@@ -195,11 +173,9 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnDown">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Move selected filter down</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Down</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-go-down</property>
@@ -280,6 +256,9 @@
                         <property name="headers_clickable">False</property>
                         <property name="tooltip_column">1</property>
                         <signal name="button-press-event" handler="on_lstFilters_button_press_event" swapped="no"/>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="treeview-selection1"/>
+                        </child>
                         <child>
                           <object class="GtkTreeViewColumn" id="colName">
                             <property name="title" translatable="yes">Name</property>
@@ -312,6 +291,8 @@
                   <object class="GtkGrid" id="grid2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="row_spacing">3</property>
+                    <property name="column_spacing">3</property>
                     <child>
                       <object class="GtkLabel" id="label1">
                         <property name="visible">True</property>
@@ -357,6 +338,7 @@
                       <object class="GtkBox" id="box4">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="spacing">3</property>
                         <child>
                           <object class="GtkComboBox" id="cboSource">
                             <property name="width_request">130</property>
@@ -380,11 +362,9 @@
                         <child>
                           <object class="GtkButton" id="btnSource">
                             <property name="label" translatable="yes">...</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="use_action_appearance">False</property>
                             <signal name="clicked" handler="on_btnSource_clicked" swapped="no"/>
                           </object>
                           <packing>
@@ -397,6 +377,58 @@
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="top_attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Loop :</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">2</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="box1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="spacing">3</property>
+                        <property name="homogeneous">True</property>
+                        <child>
+                          <object class="GtkLabel" id="lblLoopState">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Running</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSwitch" id="chkLoop">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="active">True</property>
+                            <signal name="button-release-event" handler="on_chkLoop_button_release_event" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">2</property>
                         <property name="width">1</property>
                         <property name="height">1</property>
                       </packing>
@@ -417,11 +449,9 @@
                     <child>
                       <object class="GtkButton" id="btnLineMapper">
                         <property name="label" translatable="yes">Line Mapping</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_btnLineMapper_clicked" swapped="no"/>
                       </object>
                       <packing>
@@ -433,11 +463,9 @@
                     <child>
                       <object class="GtkButton" id="btnLineTest">
                         <property name="label" translatable="yes">Line Testing</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_btnLineTest_clicked" swapped="no"/>
                       </object>
                       <packing>

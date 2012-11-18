@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from gi.repository import Gtk
+
 from CapraVision.server.imageproviders.utils import supported_image_formats
 
 class WinSingleImage(Gtk.Window):

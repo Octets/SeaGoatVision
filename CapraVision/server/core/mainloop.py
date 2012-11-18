@@ -32,24 +32,29 @@ class MainLoop:
         
     def remove_observer(self, observer):
         self.observers.remove(observer)
-        if len(self.observers) == 0:
-            self.thread.stop()
             
     def notify_observers(self, image):
         for observer in self.observers:
             observer(image)
 
-    def change_source(self, source):
-        if self.thread is not None:
-            self.thread.stop()
+    def start(self, source):
+        self.stop()
         self.thread = ThreadMainLoop(source, self.sleep_time, self.notify_observers)
         self.thread.start()
-        
+
+    def stop(self):
+        if self.thread is not None:
+            self.thread.stop()
+            self.thread = None
+            
     def change_sleep_time(self, sleep_time):
         self.sleep_time = sleep_time
         if self.thread is not None:
-            self.thread.sleep_time = sleep_time
-        
+            self.thread.sleep_time = sleep_time        
+    
+    def is_running(self):
+        return self.thread is not None and self.thread.running
+    
 class ThreadMainLoop(threading.Thread):
     """Main thread to process the images.
     
@@ -78,6 +83,7 @@ class ThreadMainLoop(threading.Thread):
             if self.sleep_time >= 0:
                 time.sleep(self.sleep_time)
         self.running = False
-                    
+        self.observer(None)
+        
     def stop(self):
         self.running = False

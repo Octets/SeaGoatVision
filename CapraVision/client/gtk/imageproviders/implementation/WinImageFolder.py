@@ -33,11 +33,11 @@ class WinImageFolder:
         
         ui = get_ui(self, 'imageListStore')
         self.window = ui.get_object(win_name(self))
+        self.chkAutoPlay = ui.get_object('chkAutoPlay')
         self.txtFolder = ui.get_object('txtFolder')
         self.hscPosition = ui.get_object('hscPosition')
         self.lstImages = ui.get_object('lstImages')
         self.imageListStore = ui.get_object('imageListStore')
-        
         
         if self.source.folder_name == '':
             self.open_folder()
@@ -85,10 +85,13 @@ class WinImageFolder:
     def on_btnLast_clicked(self, widget):
         position = len(self.imageListStore) - 1
         self.lstImages.set_cursor(position)
-    
-    def on_btnPlay_clicked(self, widget):
-        pass
-    
+            
+    def on_chkAutoPlay_activate(self, widget):
+        self.source.set_auto_increment(self.chkAutoPlay.get_active())
+        
+    def on_chkAutoPlay_button_release_event(self, widget, data):
+        self.source.set_auto_increment(not self.chkAutoPlay.get_active())
+                
     def on_lstImage_cursor_changed(self, widget):
         index = tree_selected_index(self.lstImages)
         if index >= 0:
