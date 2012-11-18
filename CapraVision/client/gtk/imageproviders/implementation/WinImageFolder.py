@@ -38,8 +38,15 @@ class WinImageFolder:
         self.lstImages = ui.get_object('lstImages')
         self.imageListStore = ui.get_object('imageListStore')
         
-        self.fill_image_list(self.source.file_names)
         
+        if self.source.folder_name == '':
+            self.open_folder()
+        else:
+            pos = self.source.position
+            self.txtFolder.set_text(self.source.folder_name)
+            self.fill_image_list(self.source.file_names)
+            self.lstImages.set_cursor(pos)
+            
     def fill_image_list(self, images):
         self.imageListStore.clear()
         for i in xrange(len(images)):
@@ -47,7 +54,7 @@ class WinImageFolder:
         if len(images) > 0:
             self.lstImages.set_cursor(0)
 
-    def on_btnOpen_clicked(self, widget):
+    def open_folder(self):
         dialog = Gtk.FileChooserDialog("Choose an image folder", None,
                                    Gtk.FileChooserAction.SELECT_FOLDER,
                                    (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -59,6 +66,9 @@ class WinImageFolder:
             self.fill_image_list(self.source.file_names)
         dialog.destroy()
 
+    def on_btnOpen_clicked(self, widget):
+        self.open_folder()
+        
     def on_btnFirst_clicked(self, widget):
         self.lstImages.set_cursor(0)
     

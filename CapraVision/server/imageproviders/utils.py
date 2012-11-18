@@ -104,7 +104,8 @@ class ThreadSafeSourceWrapper:
         return self.thread_safe_call(self.source.next)
     
     def close(self):
-        return self.thread_safe_call(self.source.close)
+        if hasattr(self.source, 'close'):
+            return self.thread_safe_call(self.source.close)
     
     def thread_safe_call(self, method):
         """

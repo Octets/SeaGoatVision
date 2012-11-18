@@ -138,7 +138,7 @@ class FilterChain:
     
     def execute(self, image):
         for f in self.filters:
-            image = f.execute(image.copy())
+            image = f.execute(image)
             for observer in self.image_observers:
                 observer(f, image)
         return image

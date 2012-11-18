@@ -69,11 +69,11 @@ class WinViewer():
     #This method is the observer of the FilterChain class.
     def chain_observer(self, filtre, output):
         if filtre is self.filter:
-            GObject.idle_add(self.update_image, output)
+            GObject.idle_add(self.update_image, output.copy())
 
     def change_display_size(self):
         index = self.cboSize.get_active()
-        if index > 0:
+        if index >= 0:
             new_size = self.sizeListStore[index][1] / 100.0
             height, width, _ = self.image_shape
             width = width * new_size
