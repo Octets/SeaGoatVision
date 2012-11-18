@@ -17,14 +17,19 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.client.gtk.filters import map_filter_to_ui
 from CapraVision.client.gtk import get_ui
 from CapraVision.client.gtk import tree_row_selected
 from CapraVision.client.gtk import tree_selected_index
 from CapraVision.client.gtk import win_name
 from CapraVision.client.gtk import WindowState
 
+from CapraVision.client.gtk.filters import map_filter_to_ui
+from CapraVision.client.gtk.imageproviders import map_source_to_ui
+
+from CapraVision.server import imageproviders
 from CapraVision.server.core import filterchain
+from CapraVision.server.core import mainloop
+
 from CapraVision.server.tcp_server import Server
 
 from WinFilterSel import WinFilterSel
@@ -42,7 +47,16 @@ class WinFilterChain:
     WINDOW_TITLE = "Capra Vision"
 
     def __init__(self):
-        ui = get_ui(self, 'filterChainListStore', 
+        self.source_list = imageproviders.load_sources()
+        self.server = Server()
+        self.server.start("127.0.0.1", 5030)
+        
+        self.source = None
+        self.thread = mainloop.MainLoop()
+
+        ui = get_ui(self, 
+                    'filterChainListStore', 
+                    'sourcesListStore',
                     'imgOpen', 'imgNew', 'imgUp', 'imgDown')
         self.window = ui.get_object(win_name(self))
         self.lstFilters = ui.get_object('lstFilters')
@@ -53,17 +67,22 @@ class WinFilterChain:
         self.btnUp = ui.get_object('btnUp')
         self.btnDown = ui.get_object('btnDown')
         self.txtFilterChain = ui.get_object('txtFilterChain')
-        self.menuTools = ui.get_object('menuTools')
+        self.cboSource = ui.get_object('cboSource')
+        self.spnFPS = ui.get_object('spnFPS')
+        self.spnFPS.set_adjustment(self.create_adj())
+        self.spnFPS.set_value(30)
         
         self.win_list = []
         
+        self.sourcesListStore = ui.get_object('sourcesListStore') 
         self.filterChainListStore = ui.get_object('filterChainListStore')
         self.set_state_empty()
         self.change_state()
         
-        self.server = Server()
-        self.server.start("127.0.0.1", 5030)
-        
+        self.sourcesListStore.append(['None'])
+        for name in self.source_list.keys():
+            self.sourcesListStore.append([name])
+        self.cboSource.set_active(1)
 
     def add_window_to_list(self, win):
         self.win_list.append(win.window)
@@ -76,6 +95,18 @@ class WinFilterChain:
         self.btnRemove.set_sensitive(tools_enabled)
         self.btnUp.set_sensitive(tools_enabled)
         self.btnView.set_sensitive(tools_enabled)
+
+    def change_source(self, new_source):
+        if self.source <> None:
+            imageproviders.close_source(self.source)
+        if new_source <> None:
+            self.source = imageproviders.create_source(new_source)
+            self.thread.change_source(self.source)
+        else:
+            self.source = None
+
+    def create_adj(self):
+        return Gtk.Adjustment(1, 1, 60, 1, 10, 0)
 
     def del_current_row(self):
         self.fchain.remove_filter(self.selected_filter())
@@ -193,7 +224,7 @@ class WinFilterChain:
         self.window.set_title(self.WINDOW_TITLE)
         self.change_state()
 
-    def show_config(self, filtre):
+    def show_filter_config(self, filtre):
         cls = map_filter_to_ui(filtre)
         if cls is not None:
             win = cls(filtre, self.filter_modif_callback)
@@ -201,6 +232,14 @@ class WinFilterChain:
             win.window.connect('destroy', self.on_window_destroy)
             win.window.show_all()
     
+    def show_source_config(self, source):
+        cls = map_source_to_ui(source)
+        if cls is not None:
+            win = cls(source)
+            self.add_window_to_list(win)
+            win.window.connect('destroy', self.on_window_destroy)
+            win.window.show_all()
+
     def show_filter_chain(self):
         self.filterChainListStore.clear()
         for filtre in self.fchain.filters:
@@ -262,7 +301,7 @@ class WinFilterChain:
         self.save_chain_as()
 
     def on_btnView_clicked(self, widget):
-        win = WinViewer(self.fchain, self.server)
+        win = WinViewer(self.fchain, self.server, self.thread)
         win.window.connect('destroy', self.on_window_destroy)
         self.add_window_to_list(win)
         win.window.show_all()
@@ -281,7 +320,7 @@ class WinFilterChain:
                     
     def on_btnConfig_clicked(self, widget):
         if tree_row_selected(self.lstFilters):
-            self.show_config(self.selected_filter())
+            self.show_filter_config(self.selected_filter())
                     
     def on_btnUp_clicked(self, widget):
         filtre = self.selected_filter()
@@ -299,13 +338,9 @@ class WinFilterChain:
                 self.fchain.move_filter_down(filtre)
                 self.lstFilters.set_cursor(index + 1)
                     
-    def on_btnTools_clicked(self, widget):
-        self.menuTools.popup(None, None, None, None, 0, 
-                             Gtk.get_current_event_time())
-
     def on_lstFilters_button_press_event(self, widget, event):
         if event.get_click_count()[1] == 2L:
-            self.show_config(self.selected_filter())
+            self.show_filter_config(self.selected_filter())
 
     def on_window_destroy(self, widget):
         self.win_list.remove(widget)
@@ -321,15 +356,27 @@ class WinFilterChain:
         self.server.stop()
         Gtk.main_quit()
 
-    def on_toolLineMapper_activate(self, widget):
+    def on_btnLineMapper_clicked(self, widget):
         win = WinMapper()
         self.add_window_to_list(win)
         win.window.connect('destroy', self.on_window_destroy)
         win.window.show_all()
         
-    def on_toolLineTest_activate(self, widget):
+    def on_btnLineTest_clicked(self, widget):
         win = WinLineTest()
         self.add_window_to_list(win)
         win.window.connect('destroy', self.on_window_destroy)
         win.window.show_all()
     
+    def on_btnSource_clicked(self, widget):
+        self.show_source_config(self.source)
+
+    def on_spnFPS_value_changed(self, widget):
+        self.thread.change_sleep_time(1.0 / self.spnFPS.get_value())
+    
+    def on_cboSource_changed(self, widget):
+        index = self.cboSource.get_active()
+        source = None
+        if index > 0:
+            source = self.source_list[self.sourcesListStore[index][0]]
+        self.change_source(source)
