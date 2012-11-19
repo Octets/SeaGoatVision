@@ -27,6 +27,7 @@ class Movie:
         self.observers = []
         self.isplaying = True
         self.file_name = ''
+        self.last_image = None
         
     def add_observer(self, observer):
         self.observers.append(observer)
@@ -82,16 +83,18 @@ class Movie:
         return self
     
     def next(self):
-        if self.video is None or not self.isplaying or not self.video.isOpened():
+        if self.video is None or not self.video.isOpened():
             return None
+        elif not self.isplaying:
+            return self.last_image.copy()
         
-        run, image = self.video.read()
+        run, self.last_image = self.video.read()
         if run == False:
             raise StopIteration
 
         self.notify_observers()
 
-        return image
+        return self.last_image.copy()
         
     def close(self):
         if self.video is not None:

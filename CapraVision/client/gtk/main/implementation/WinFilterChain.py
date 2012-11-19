@@ -243,7 +243,7 @@ class WinFilterChain:
         cls = map_source_to_ui(source)
         if cls is not None:
             if self.source_window is not None:
-                self.source_window.destroy()
+                self.source_window.window.destroy()
             win = cls(source)
             self.source_window = win
             win.window.show_all()
