@@ -21,11 +21,11 @@ import copy
 
 from gi.repository import Gtk
 
-from CapraVision.client.gtk.utils import get_ui
-from CapraVision.client.gtk.utils import win_name
+from CapraVision.client.gtk import get_ui
+from CapraVision.client.gtk import win_name
 
-class WinParticleFilter():
-
+class WinBlur:
+    
     def __init__(self, filtre, cb):
         self.filtre = filtre
         self.filtre_init = copy.copy(filtre)
@@ -33,38 +33,31 @@ class WinParticleFilter():
         
         ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
-        self.spnWidth = ui.get_object('spnWidth')
-        self.spnWidth.set_adjustment(self.create_adj())
         self.spnHeight = ui.get_object('spnHeight')
         self.spnHeight.set_adjustment(self.create_adj())
-        self.spnAreaMin = ui.get_object('spnAreaMin')
-        self.spnAreaMin.set_adjustment(self.create_adj())
+        self.spnWidth = ui.get_object('spnWidth')
+        self.spnWidth.set_adjustment(self.create_adj())
         self.init_window()
-        
-    def init_window(self):
-        self.spnWidth.set_value(self.filtre_init.kernel_width)
-        self.spnHeight.set_value(self.filtre_init.kernel_height)
-        self.spnAreaMin.set_value(self.filtre_init.area_min)
         
     def create_adj(self):
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
+
+    def init_window(self):
+        self.spnHeight.set_value(self.filtre_init.kernel_height)
+        self.spnWidth.set_value(self.filtre_init.kernel_width)
         
-    def on_btnCancel_clicked(self, widget):
-        self.filtre.kernel_width = self.filtre_init.kernel_width
-        self.filtre.kernel_height = self.filtre_init.kernel_height
-        self.filtre.area_min = self.filtre_init.area_min
-        self.init_window()
-    
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
-
+    
+    def on_btnCancel_clicked(self, widget):
+        self.filtre.kernel_height = self.filtre_init.kernel_height
+        self.filtre.kernel_width = self.filtre_init.kernel_width
+        self.init_window()
+    
     def on_spnHeight_value_changed(self, widget):
-        self.filtre.kernel_height = self.spnHeight.get_value()
+        self.filtre.kernel_height = int(self.spnHeight.get_value())
     
     def on_spnWidth_value_changed(self, widget):
-        self.filtre.kernel_width = self.spnWidth.get_value()
-    
-    def on_spnAreaMin_value_changed(self, widget):
-        self.filtre.area_min = self.spnAreaMin.get_value()
+        self.filtre.kernel_width = int(self.spnWidth.get_value())
     

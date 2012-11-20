@@ -63,7 +63,7 @@ class WinViewer():
         if filter is self.filter:
             GObject.idle_add(self.update_image, output)
 
-    def change_source(self, new_source):
+    def start(self, new_source):
         if self.thread <> None:
             self.thread.stop()
             self.thread = None
@@ -122,7 +122,7 @@ class WinViewer():
         source = None
         if index > 0:
             source = self.source_list[self.sourcesListStore[index][0]]
-        self.change_source(source)
+        self.start(source)
     
     def on_cboFilter_changed(self, widget):
         index = self.cboFilter.get_active()

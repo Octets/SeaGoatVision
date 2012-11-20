@@ -25,13 +25,8 @@ import matplotlib.pyplot as plt
 def create_graphic(data_file):
     data = np.fromfile(data_file, np.float16)
     data = data.reshape((2, len(data) / 2))
-    import logging
-    logging.basicConfig(filename='/home/benoit/errorz.txt')
     precisions = data[0, :]
     noises = data[1, :]
-    logging.error(precisions)
-    logging.error('hello!')
-    logging.error(noises)
     plt.clf()
     plt.plot(noises, precisions, '.b')
     plt.xlabel('Noise (%)')

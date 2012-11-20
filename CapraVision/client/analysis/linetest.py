@@ -24,7 +24,9 @@ import cv2.cv as cv
 import math
 import numpy as np
 import os
+import subprocess
 import sys
+import tempfile
 
 class LineTest:
     """This class test the precision of the detection of lines of a filterchain.
@@ -64,6 +66,17 @@ class LineTest:
         s = sum(self.precisions.values())
         return s / c
     
+    def create_graphic(self):
+        data_file = self.save_data()
+        proc = subprocess.Popen(('python', 'plot.py', data_file.name), 
+                                stdout=subprocess.PIPE)
+        image_file = proc.stdout.readline()[:-1]
+        print image_file
+        data_file.close()
+        img = cv2.imread(image_file)
+        os.remove(image_file)
+        return img
+
     def create_image_folder_source(self, test_folder):
         image_folder = ImageFolder()
         image_folder.return_file_name = True
@@ -146,8 +159,11 @@ class LineTest:
         undetected = (np.invert(detected) * mapping)
         sum_map = np.count_nonzero(mapping)
         sum_undetected = np.count_nonzero(undetected)
-        return (sum_map - sum_undetected) / float(sum_map)
-    
+        if sum_map == 0:
+            return 0
+        else:
+            return (sum_map - sum_undetected) / float(sum_map)
+        
     def find_testable_images(self, image_folder):
         """Find all the images that have a mapping file associated with them
         Args:
@@ -214,6 +230,19 @@ class LineTest:
         detected = (filtered * mapping)
         return (filtered & np.invert(detected))
     
+    def save_data(self):
+        precisions = np.zeros(len(self.precisions), dtype=np.float16)
+        noises = np.zeros(len(self.noises), dtype=np.float16)
+        for x in xrange(0, len(self.precisions)):
+            precisions[x] = round(self.precisions.values()[x] * 100.0, 2)
+            noises[x] = round(self.noises.values()[x] * 100.0, 2)
+            
+        tmp = tempfile.NamedTemporaryFile()
+        data = np.append(precisions, noises)
+        tmp.file.write(data.tostring())
+        tmp.file.flush()
+        return tmp
+
     def total_images(self):
         """Returns the amount of testable images in the test folder"""
         return len(self.testable_images)

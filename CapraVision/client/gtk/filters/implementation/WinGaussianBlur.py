@@ -21,10 +21,10 @@ import copy
 
 from gi.repository import Gtk
 
-from CapraVision.client.gtk.utils import get_ui
-from CapraVision.client.gtk.utils import win_name
+from CapraVision.client.gtk import get_ui
+from CapraVision.client.gtk import win_name
 
-class WinBlur:
+class WinGaussianBlur:
     
     def __init__(self, filtre, cb):
         self.filtre = filtre
@@ -34,18 +34,26 @@ class WinBlur:
         ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
         self.spnHeight = ui.get_object('spnHeight')
-        self.spnHeight.set_adjustment(self.create_adj())
+        self.spnHeight.set_adjustment(self.create_adj_kernel())
         self.spnWidth = ui.get_object('spnWidth')
-        self.spnWidth.set_adjustment(self.create_adj())
-        self.init_window()
-        
-    def create_adj(self):
+        self.spnWidth.set_adjustment(self.create_adj_kernel())
+        self.spnX = ui.get_object('spnX')
+        self.spnX.set_adjustment(self.create_adj_sigma())
+        self.spnY = ui.get_object('spnY')
+        self.spnY.set_adjustment(self.create_adj_sigma())
+    
+    def create_adj_kernel(self):
+        return Gtk.Adjustment(1, 1, 65535, 2, 10, 0)
+    
+    def create_adj_sigma(self):
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
-
+    
     def init_window(self):
         self.spnHeight.set_value(self.filtre_init.kernel_height)
         self.spnWidth.set_value(self.filtre_init.kernel_width)
-        
+        self.spnX.set_value(self.filtre_init.sigma_x)
+        self.spnY.set_value(self.filtre_init.sigma_y)
+    
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
@@ -53,6 +61,8 @@ class WinBlur:
     def on_btnCancel_clicked(self, widget):
         self.filtre.kernel_height = self.filtre_init.kernel_height
         self.filtre.kernel_width = self.filtre_init.kernel_width
+        self.filtre.sigma_x = self.filtre_init.sigma_x
+        self.filtre.sigma_y = self.filtre_init.sigma_y
         self.init_window()
     
     def on_spnHeight_value_changed(self, widget):
@@ -60,4 +70,10 @@ class WinBlur:
     
     def on_spnWidth_value_changed(self, widget):
         self.filtre.kernel_width = int(self.spnWidth.get_value())
+    
+    def on_spnX_value_changed(self, widget):
+        self.filtre.sigma_x = int(self.spnX.get_value())
+    
+    def on_spnY_value_changed(self, widget):
+        self.filtre.sigma_y = int(self.spnY.get_value())
     

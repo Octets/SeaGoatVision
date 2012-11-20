@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-from CapraVision.server.filters.dataextract import DataExtractor
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
@@ -21,6 +20,8 @@ from CapraVision.server.filters.dataextract import DataExtractor
 """Contains the FilterChain class and helper functions to work with the filter chain."""
 
 import CapraVision.server.filters
+
+from CapraVision.server.filters.dataextract import DataExtractor
 
 import ConfigParser
 
@@ -137,7 +138,7 @@ class FilterChain:
     
     def execute(self, image):
         for f in self.filters:
-            image = f.execute(image.copy())
+            image = f.execute(image)
             for observer in self.image_observers:
                 observer(f, image)
         return image

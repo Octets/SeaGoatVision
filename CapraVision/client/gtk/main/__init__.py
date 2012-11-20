@@ -17,9 +17,5 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-
-for f in os.listdir(os.path.dirname(__file__)):
-    filename, _ = os.path.splitext(f)
-    code = 'from %(module)s import *' % {'module' : filename} 
-    exec code
+from implementation import *
+from utils import *

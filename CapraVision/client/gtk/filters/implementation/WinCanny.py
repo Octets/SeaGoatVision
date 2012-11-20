@@ -17,47 +17,48 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import copy
 
 from gi.repository import Gtk
 
-from CapraVision.client.gtk.utils import get_ui
-from CapraVision.client.gtk.utils import win_name
+from CapraVision.client.gtk import get_ui
+from CapraVision.client.gtk import win_name
 
-class WinRemoveGrass:
+class WinCanny:
     
     def __init__(self, filtre, cb):
         self.filtre = filtre
         self.filtre_init = copy.copy(filtre)
         self.cb = cb
         
-        ui = get_ui(self, 'lstTechnique')
+        ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
-        self.lstTechnique = ui.get_object('lstTechnique')
-        self.cboTechnique = ui.get_object('cboTechnique')
-        self.spnThreshold = ui.get_object('spnThreshold')
-        self.spnThreshold.set_adjustment(self.create_adj())
+        self.spnThreshold1 = ui.get_object('spnThreshold1')
+        self.spnThreshold1.set_adjustment(self.create_adj())
+        self.spnThreshold2 = ui.get_object('spnThreshold2')
+        self.spnThreshold2.set_adjustment(self.create_adj())
         self.init_window()
-        
-    def init_window(self):
-        self.cboTechnique.set_active(self.filtre_init.technique)
-        self.spnThreshold.set_value(self.filtre_init.threshold)
         
     def create_adj(self):
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
 
-    def on_btnCancel_clicked(self, widget):
-        self.filtre.technique = self.filtre_init.technique
-        self.filtre.threshold = self.filtre_init.threshold
-        self.init_window()
-    
+    def init_window(self):
+        self.spnThreshold1.set_value(self.filtre_init.threshold1)
+        self.spnThreshold2.set_value(self.filtre_init.threshold2)
+        
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
     
-    def on_spnThreshold_value_changed(self, widget):
-        self.filtre.threshold = self.spnThreshold.get_value()
+    def on_btnCancel_clicked(self, widget):
+        self.filtre.threshold1 = self.filtre_init.threshold1
+        self.filtre.threshold2 = self.filtre_init.threshold2
     
-    def on_cboTechnique_changed(self, widget):
-        self.filtre.technique = self.cboTechnique.get_active()
+    def on_spnThreshold1_value_changed(self, widget):
+        self.filtre.threshold1 = self.spnThreshold1.get_value()
+    
+    def on_spnThreshold2_value_changed(self, widget):
+        self.filtre.threshold2 = self.spnThreshold2.get_value()
+    
     

@@ -21,36 +21,34 @@ import copy
 
 from gi.repository import Gtk
 
-from CapraVision.client.gtk.utils import get_ui
-from CapraVision.client.gtk.utils import win_name
+from CapraVision.client.gtk import get_ui
+from CapraVision.client.gtk import win_name
 
-class WinRemoveObstacle:
+class WinRemoveGrass:
     
     def __init__(self, filtre, cb):
         self.filtre = filtre
         self.filtre_init = copy.copy(filtre)
         self.cb = cb
         
-        ui = get_ui(self)
+        ui = get_ui(self, 'lstTechnique')
         self.window = ui.get_object(win_name(self))
-        self.spnThreshold =ui.get_object('spnThreshold')
+        self.lstTechnique = ui.get_object('lstTechnique')
+        self.cboTechnique = ui.get_object('cboTechnique')
+        self.spnThreshold = ui.get_object('spnThreshold')
         self.spnThreshold.set_adjustment(self.create_adj())
-        self.spnVBlur = ui.get_object('spnVBlur')
-        self.spnVBlur.set_adjustment(self.create_adj())
-        self.spnHBlur = ui.get_object('spnHBlur')
-        self.spnHBlur.set_adjustment(self.create_adj())
-        
         self.init_window()
-
+        
     def init_window(self):
+        self.cboTechnique.set_active(self.filtre_init.technique)
         self.spnThreshold.set_value(self.filtre_init.threshold)
-        self.spnHBlur.set_value(self.filtre_init.horizontal_blur)
-        self.spnVBlur.set_value(self.filtre_init.vertical_blur)
         
     def create_adj(self):
-        return Gtk.Adjustment(1, 0, 255, 1, 1, 0)
+        return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
 
     def on_btnCancel_clicked(self, widget):
+        self.filtre.technique = self.filtre_init.technique
+        self.filtre.threshold = self.filtre_init.threshold
         self.init_window()
     
     def on_btnOK_clicked(self, widget):
@@ -58,11 +56,8 @@ class WinRemoveObstacle:
         self.window.destroy()
     
     def on_spnThreshold_value_changed(self, widget):
-        self.filtre.threshold = int(self.spnThreshold.get_value())
+        self.filtre.threshold = self.spnThreshold.get_value()
     
-    def on_spnVBlur_value_changed(self, widget):
-        self.filtre.vertical_blur = int(self.spnVBlur.get_value())
-        
-    def on_spnHBlur_value_changed(self, widget):
-        self.filtre.horizontal_blur = int(self.spnHBlur.get_value())
+    def on_cboTechnique_changed(self, widget):
+        self.filtre.technique = self.cboTechnique.get_active()
     

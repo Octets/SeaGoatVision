@@ -17,4 +17,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils import *
+import cv2
+import cv2.cv as cv
+import numpy as np
+
+class Canny:
+    """Apply a canny filter to the image"""
+    
+    def __init__(self):
+        self.threshold1 = 10
+        self.threshold2 = 100
+    
+    def execute(self, image):
+        gray = cv2.cvtColor(image, cv.CV_BGR2GRAY)
+        gray = cv2.Canny(gray, self.threshold1, self.threshold2)
+        image[:, :, 0] = gray
+        image[:, :, 1] = gray
+        image[:, :, 2] = gray
+        return image
