@@ -16,7 +16,11 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+"""
+Description : launch qt client 
+Authors: Junior Gregoire (junior.gregoire@gmail.com)
+Date : November 2012
+"""
 import os 
 parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.sys.path.insert(0, parentdir)

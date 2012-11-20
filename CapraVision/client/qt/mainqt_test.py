@@ -16,19 +16,34 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
+Description : launch test for qt client. Can choose multiple client 
+Authors: Junior Gregoire (junior.gregoire@gmail.com)
+Date : November 2012
+"""
+import os 
+parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.sys.path.insert(0, parentdir)
 
-import cv2
-from CapraVision.server.filters.parameter import Parameter
+#import gui.filters.WinColorLevel
 
-class Blur:
-    """Smoothes an image using the normalized box filter"""
-    def __init__(self):
-        
-        self.kernel_width = Parameter("width",1,10,3)
-        self.kernel_height = Parameter("height",1,10,3)
-        self.parameters = [self.kernel_height,self.kernel_width]
+from PySide.QtGui import QApplication  
+from PySide import QtCore
+from PySide import QtUiTools
+
+import qt.main
+
+from qt.tests.test_winfilter import TestWinFilter
+#import gui.sources
+import sys
+
+def run():   
+    app = QApplication(sys.argv)
     
-    def execute(self, image):
-        return cv2.blur(image, (int(self.kernel_width.currentValue), 
-                                int(self.kernel_height.currentValue)))
+    test = TestWinFilter()
+    test.test()
+    app.exec_()
+    
+if __name__ == '__main__':
+    run()
     

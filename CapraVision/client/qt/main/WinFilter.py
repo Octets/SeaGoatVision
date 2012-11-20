@@ -19,18 +19,59 @@
 
 #from Server import filters
 from PySide import QtGui
-class WinFilter(QtGui.QDockWidget):
+from PySide import QtCore
+from CapraVision.server.filters.parameter import Parameter
+
+class WinFilter(QtGui.QWidget):
     def __init__(self,filter):
         super(WinFilter,self).__init__()
         self.filter=filter
-        attr = getattr(filter, names)
-        for att in attr:
-            print att
+        self.construct_widget(filter)        
+        
+    def get_filter_attr(self,filter):
+        widgetList = []
+        for parameter in filter.parameters:
+            widgetList.append(self.get_integer_slider(parameter))
+        return widgetList           
             
         
-    #def constructWidget(self,widget):
+    def construct_widget(self,filter):
+        self.setWindowTitle(filter.__class__.__name__)
+        layout = QtGui.QVBoxLayout()
         
+        for widget in self.get_filter_attr(filter):
+            layout.addWidget(widget)
+            
+        self.executeButton = QtGui.QPushButton()
+        self.executeButton.clicked.connect(self.execute)
+        self.executeButton.setText("Execute")
+        layout.addWidget(self.executeButton)
+       
+        self.setLayout(layout)
     
+    def get_integer_slider(self,parameter):
+        groupBox = QtGui.QGroupBox()
+        print parameter.name
+        groupBox.setTitle(parameter.name)
+        
+       
+        slider = QtGui.QSlider()
+        
+        slider.setBaseSize(100,100)
+        slider.setMinimum(parameter.minValue)
+        slider.setMaximum(parameter.maxValue)
+        slider.setTickInterval(1)
+        slider.setValue(parameter.currentValue)
+        slider.setTickPosition(QtGui.QSlider.TicksBothSides)
+        slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(slider)
+        groupBox.setLayout(layout)
+        
+        return groupBox
+    
+    def execute(self):
+        print("execute")
     
     
     

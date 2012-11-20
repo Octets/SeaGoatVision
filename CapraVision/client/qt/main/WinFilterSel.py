@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from CapraVision.client.qt.utils import *
+from CapraVision.server import filters
 from PySide import QtGui
 
 #from server import filters
@@ -26,22 +27,10 @@ class WinFilterSel:
     """Allow the user to select a filter to add to the filterchain"""
     
     def __init__(self):
-        self.ui = get_ui(self);
-       
-        
-        """
-        self.filter_list = filters.load_filters()
-        ui = get_ui(self, 'filtersListStore')
-        self.window = ui.get_object(win_name(self))
-        self.filtersListStore = ui.get_object('filtersListStore')
-        self.lstFilters = ui.get_object('lstFilters')
-
-        self.window.set_modal(True)
-        for name, filter in self.filter_list.items():
-            self.filtersListStore.append([name, filter.__doc__])
-        self.filtersListStore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
-        
-        self.selected_filter = None"""
+        self.ui = get_ui(self); 
+        self.filters = filters.load_filters()
+        for filter in self.filters:
+            self.ui.filterListWidget.addItem(filter)  
         
     def get_selected_filter(self):
         (model, iter) = self.lstFilters.get_selection().get_selected()

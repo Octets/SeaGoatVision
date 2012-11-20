@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>470</width>
-    <height>311</height>
+    <width>454</width>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,23 +16,12 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTableWidget" name="filterTableWidget">
-      <column>
-       <property name="text">
-        <string>Filter</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Description</string>
-       </property>
-      </column>
-     </widget>
+     <widget class="QListWidget" name="filterListWidget"/>
     </item>
     <item>
-     <widget class="QDialogButtonBox" name="buttonBox">
-      <property name="standardButtons">
-       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     <widget class="QPushButton" name="addFilterButton">
+      <property name="text">
+       <string>Add filter</string>
       </property>
      </widget>
     </item>

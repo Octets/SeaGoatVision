@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from CapraVision.client.qt.utils import *
+from CapraVision.server.core import filterchain
 
 #from CapraVision import chain
 #from CapraVision import sources
@@ -40,8 +41,12 @@ class WinFilterChain(QtGui.QMainWindow):
 
     def __init__(self,*args):
         super(WinFilterChain,self).__init__()
-        self.myWidget = get_ui(self,*args);
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.TopDockWidgetArea,self.myWidget)
+        self.filterchain = None
+        self.filename = None
+        self.ui = get_ui(self,*args)
+        self.ui.saveButton.clicked.connect(self.save_chain)
+        self.ui.saveAsButton.clicked.connect(self.save_chain_as)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.TopDockWidgetArea,self.ui)
         
         self.addDockWidget(QtCore.Qt.DockWidgetArea.TopDockWidgetArea,WinFilterSel().ui)
        
@@ -116,38 +121,23 @@ class WinFilterChain(QtGui.QMainWindow):
         result = dialog.run()
         dialog.destroy()
         return result
-
+    """
     def save_chain(self):
-        if self.state == WindowState.Empty:
-            return True
-        elif self.state == WindowState.Create:
-            return self.save_chain_as()
+        if self.filename == None:
+            self.save_chain_as()
+        if self.filterchain is not None:
+            filterchain.write(self.filename,self.filterchain)
         else:
-            chain.write(self.txtFilterChain.get_text(), self.chain)
-            self.set_state_show()
-            return True
-
-    def save_chain_as(self):
-        if self.state == WindowState.Empty:
-            return True
-        dialog = Gtk.FileChooserDialog("Save filterchain", None,
-                                   Gtk.FileChooserAction.SAVE,
-                                   (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                    Gtk.STOCK_OK, Gtk.ResponseType.OK))
-        response = dialog.run()
-        fname = dialog.get_filename()
-        dialog.destroy()
+            QtGui.QMessageBox.warning(self.ui,"filterchain","filterchain is null.")
         
-        if response == Gtk.ResponseType.OK:
-            if not fname.endswith('.filterchain'):
-                fname += '.filterchain'
-            chain.write(fname, self.chain)
-            self.txtFilterChain.set_text(fname)
-            self.set_state_show()
-            return True
-        else:
-            return False
-
+    def save_chain_as(self):
+        filename = QtGui.QFileDialog.getSaveFileName()[0]
+        if len(filename)>0:
+            self.filename = filename
+            self.save_chain()
+            
+            
+    """
     def selected_filter(self):
         (model, iter) = self.lstFilters.get_selection().get_selected()
         if iter is None:

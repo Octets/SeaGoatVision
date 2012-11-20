@@ -16,6 +16,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from CapraVision.server.filters.parameter import  Parameter
 
 class ColorLevel:
     """Determine the value in % a color will have.
@@ -25,16 +26,16 @@ class ColorLevel:
         Example: With 50% Blue and the following pixel (100, 100, 100) give (50, 100, 100)"""
 
     def __init__(self):
-        self.red = 100
-        self.green = 100
-        self.blue = 100
+        self.red = Parameter("red",0,255,100)
+        self.green = Parameter("green",0,255,100)
+        self.blue = Parameter("blue",0,255,100)
         
     def execute(self, image):
         if self.red <> 100:
-            image[:,:, 2] *= (self.red/100)
+            image[:,:, 2] *= (self.red.currentValue/100)
         #image[:,:, 1] *= ((image[:,:, 0])/2)
         if self.green <> 100:
-            image[:,:, 1] *= (self.green/100)
+            image[:,:, 1] *= (self.green.currentValue/100)
         if self.blue <> 100:
-            image[:,:, 0] *= (self.blue/100) 
+            image[:,:, 0] *= (self.blue.currentValue/100) 
         return image
