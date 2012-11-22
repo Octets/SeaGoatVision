@@ -27,6 +27,7 @@ from CapraVision.client.gtk.filters import map_filter_to_ui
 from CapraVision.client.gtk.imageproviders import map_source_to_ui
 
 from CapraVision.server import imageproviders
+from CapraVision.server import filters
 from CapraVision.server.core import filterchain
 from CapraVision.server.core import mainloop
 
@@ -331,7 +332,7 @@ class WinFilterChain:
     def on_btnAdd_clicked(self, widget):
         win = WinFilterSel()
         if win.window.run() == Gtk.ResponseType.OK:
-            self.fchain.add_filter(win.selected_filter())
+            self.fchain.add_filter(filters.create_filter(win.selected_filter))
             self.set_state_modified()
         win.window.destroy()
             

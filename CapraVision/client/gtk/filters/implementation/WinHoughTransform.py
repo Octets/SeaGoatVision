@@ -48,44 +48,44 @@ class WinHoughTransform:
         self.init_window()
         
     def init_window(self):
-        self.spnCanny1.set_value(self.filtre_init.canny1)
-        self.spnCanny2.set_value(self.filtre_init.canny2)
-        self.spnRho.set_value(self.filtre_init.rho)
-        self.spnTheta.set_value(self.filtre_init.theta)
-        self.spnThreshold.set_value(self.filtre_init.threshold)
-        self.spnLineSize.set_value(self.filtre_init.line_size)
+        self.spnCanny1.set_value(self.filtre_init.get_canny1())
+        self.spnCanny2.set_value(self.filtre_init.get_canny2())
+        self.spnRho.set_value(self.filtre_init.get_rho())
+        self.spnTheta.set_value(self.filtre_init.get_theta())
+        self.spnThreshold.set_value(self.filtre_init.get_threshold())
+        self.spnLineSize.set_value(self.filtre_init.get_line_size())
         
     def create_adj(self):
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
 
     def on_spnCanny1_value_changed(self, widget):
-        self.filtre.canny1 = int(self.spnCanny1.get_value())
+        self.filtre.set_canny1(int(self.spnCanny1.get_value()))
     
     def on_spnCanny2_value_changed(self, widget):
-        self.filtre.canny2 = int(self.spnCanny2.get_value())
+        self.filtre.set_canny2(int(self.spnCanny2.get_value()))
     
     def on_spnRho_value_changed(self, widget):
-        self.filtre.rho = int(self.spnRho.get_value())
+        self.filtre.set_rho(int(self.spnRho.get_value()))
     
     def on_spnTheta_value_changed(self, widget):
-        self.filtre.theta = int(self.spnTheta.get_value())
+        self.filtre.set_theta(int(self.spnTheta.get_value()))
     
     def on_spnThreshold_value_changed(self, widget):
-        self.filtre.threshold = int(self.spnThreshold.get_value())
+        self.filtre.set_threshold(int(self.spnThreshold.get_value()))
     
     def on_spnLineSize_value_changed(self, widget):
-        self.filtre.line_size = int(self.spnLineSize.get_value())
+        self.filtre.set_line_size(int(self.spnLineSize.get_value()))
         
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
     
     def on_btnCancel_clicked(self, widget):
-        self.filtre.canny1 = self.filtre_init.canny1
-        self.filtre.canny2 = self.filtre_init.canny2
-        self.filtre.rho = self.filtre_init.rho
-        self.filtre.theta = self.filtre_init.theta
-        self.filtre.threshold = self.filtre_init.threshold
-        self.filtre.line_size = self.filtre_init.line_size
+        self.filtre.set_canny1(self.filtre_init.get_canny1())
+        self.filtre.set_canny2(self.filtre_init.get_canny2())
+        self.filtre.set_rho(self.filtre_init.get_rho())
+        self.filtre.set_theta(self.filtre_init.get_theta())
+        self.filtre.set_threshold(self.filtre_init.get_threshold())
+        self.filtre.set_line_size(self.filtre_init.get_line_size())
         self.init_window()
     

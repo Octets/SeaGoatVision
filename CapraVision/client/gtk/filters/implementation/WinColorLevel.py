@@ -38,27 +38,27 @@ class WinColorLevel:
         
     def init_window(self):
         self.hscRed.set_range(0, 100)
-        self.hscRed.set_value(self.filtre.red)
+        self.hscRed.set_value(self.filtre.get_red())
         self.hscGreen.set_range(0, 100)
-        self.hscGreen.set_value(self.filtre.green)
+        self.hscGreen.set_value(self.filtre.get_green())
         self.hscBlue.set_range(0, 100)
-        self.hscBlue.set_value(self.filtre.blue)
+        self.hscBlue.set_value(self.filtre.get_blue())
         
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
     
     def on_btnCancel_clicked(self, widget):
-        self.filtre.red = self.filtre_init.red
-        self.filtre.green = self.filtre_init.green
-        self.filtre.blue = self.filtre_init.blue
+        self.filtre.set_red(self.filtre_init.get_red())
+        self.filtre.set_green(self.filtre_init.get_green())
+        self.filtre.set_blue(self.filtre_init.get_blue())
         self.init_window()
         
     def on_hscRed_value_changed(self, widget):
-        self.filtre.red = self.hscRed.get_value()
+        self.filtre.set_red(self.hscRed.get_value())
         
     def on_hscGreen_value_changed(self, widget):
-        self.filtre.green = self.hscGreen.get_value()
+        self.filtre.set_green(self.hscGreen.get_value())
 
     def on_hscBlue_value_changed(self, widget):
-        self.filtre.blue = self.hscBlue.get_value()
+        self.filtre.set_blue(self.hscBlue.get_value())

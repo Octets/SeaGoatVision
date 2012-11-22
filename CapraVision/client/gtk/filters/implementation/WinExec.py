@@ -62,15 +62,15 @@ class WinExec:
         self.init_window()
         
     def init_window(self):
-        self.txtCurrent.get_buffer().set_text(self.filtre.code)
-        self.txtWorking.get_buffer().set_text(self.filtre.code)
+        self.txtCurrent.get_buffer().set_text(self.filtre.get_code())
+        self.txtWorking.get_buffer().set_text(self.filtre.get_code())
         
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
         
     def on_btnCancel_clicked(self, widget):
-        self.filtre.code = self.filtre_init.code
+        self.filtre.set_code(self.filtre_init.get_code())
         self.init_window()
 
     def on_btnApply_clicked(self, widget):

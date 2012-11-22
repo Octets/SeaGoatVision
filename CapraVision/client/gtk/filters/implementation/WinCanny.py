@@ -44,21 +44,21 @@ class WinCanny:
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
 
     def init_window(self):
-        self.spnThreshold1.set_value(self.filtre_init.threshold1)
-        self.spnThreshold2.set_value(self.filtre_init.threshold2)
+        self.spnThreshold1.set_value(self.filtre_init.get_threshold1())
+        self.spnThreshold2.set_value(self.filtre_init.get_threshold2())
         
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
     
     def on_btnCancel_clicked(self, widget):
-        self.filtre.threshold1 = self.filtre_init.threshold1
-        self.filtre.threshold2 = self.filtre_init.threshold2
+        self.filtre.set_threshold1(self.filtre_init.get_threshold1())
+        self.filtre.set_threshold2(self.filtre_init.get_threshold2())
     
     def on_spnThreshold1_value_changed(self, widget):
-        self.filtre.threshold1 = self.spnThreshold1.get_value()
+        self.filtre.set_threshold1(self.spnThreshold1.get_value())
     
     def on_spnThreshold2_value_changed(self, widget):
-        self.filtre.threshold2 = self.spnThreshold2.get_value()
+        self.filtre.set_threshold2(self.spnThreshold2.get_value())
     
     

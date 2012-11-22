@@ -41,52 +41,52 @@ class WinColorThreshold:
         
     def init_window(self):
         self.hscRedMin.set_range(0, 255)
-        self.hscRedMin.set_value(self.filtre.redmin)
+        self.hscRedMin.set_value(self.filtre.get_redmin())
         self.hscRedMax.set_range(0, 255)
-        self.hscRedMax.set_value(self.filtre.redmax)
+        self.hscRedMax.set_value(self.filtre.get_redmax())
         self.hscGreenMin.set_range(0, 255)
-        self.hscGreenMin.set_value(self.filtre.greenmin)
+        self.hscGreenMin.set_value(self.filtre.get_greenmin())
         self.hscGreenMax.set_range(0, 255)
-        self.hscGreenMax.set_value(self.filtre.greenmax)
+        self.hscGreenMax.set_value(self.filtre.get_greenmax())
         self.hscBlueMin.set_range(0, 255)
-        self.hscBlueMin.set_value(self.filtre.bluemin)
+        self.hscBlueMin.set_value(self.filtre.get_bluemin())
         self.hscBlueMax.set_range(0, 255)
-        self.hscBlueMax.set_value(self.filtre.bluemax)
+        self.hscBlueMax.set_value(self.filtre.get_bluemax())
         
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
         
     def on_btnCancel_clicked(self, widget):
-        self.filtre.redmin = self.filtre_init.redmin
-        self.filtre.redmax = self.filtre_init.redmax
-        self.filtre.greenmin = self.filtre_init.greenmin
-        self.filtre.greenmax = self.filtre_init.greenmax
-        self.filtre.bluemin = self.filtre_init.bluemin
-        self.filtre.bluemax = self.filtre_init.bluemax
+        self.filtre.set_redmin(self.filtre_init.get_redmin())
+        self.filtre.set_redmax(self.filtre_init.get_redmax())
+        self.filtre.set_greenmin(self.filtre_init.get_greenmin())
+        self.filtre.set_greenmax(self.filtre_init.get_greenmax())
+        self.filtre.set_bluemin(self.filtre_init.get_bluemin())
+        self.filtre.set_bluemax(self.filtre_init.get_bluemax())
         
         self.init_window()
         
     def on_hscRedMin_value_changed(self, widget):
-        self.filtre.redmin = self.hscRedMin.get_value()
+        self.filtre.set_redmin(self.hscRedMin.get_value())
         self.filtre.configure()
         
     def on_hscRedMax_value_changed(self, widget):
-        self.filtre.redmax = self.hscRedMax.get_value()
+        self.filtre.set_redmax(self.hscRedMax.get_value())
         self.filtre.configure()
         
     def on_hscGreenMin_value_changed(self, widget):
-        self.filtre.greenmin = self.hscGreenMin.get_value()
+        self.filtre.set_greenmin(self.hscGreenMin.get_value())
         self.filtre.configure()
 
     def on_hscGreenMax_value_changed(self, widget):
-        self.filtre.greenmax = self.hscGreenMax.get_value()
+        self.filtre.set_greenmax(self.hscGreenMax.get_value())
         self.filtre.configure()
 
     def on_hscBlueMin_value_changed(self, widget):
-        self.filtre.bluemin = self.hscBlueMin.get_value()
+        self.filtre.set_bluemin(self.hscBlueMin.get_value())
         self.filtre.configure()
 
     def on_hscBlueMax_value_changed(self, widget):
-        self.filtre.bluemax = self.hscBlueMax.get_value()
+        self.filtre.set_bluemax(self.hscBlueMax.get_value())
         self.filtre.configure()

@@ -19,7 +19,7 @@
 
 """Contains the FilterChain class and helper functions to work with the filter chain."""
 
-import CapraVision.server.filters
+from CapraVision.server import filters
 
 from CapraVision.server.filters.dataextract import DataExtractor
 
@@ -29,11 +29,7 @@ def params_list(chain):
     flist = []
     for filtre in chain.filters:
         fname = filtre.__class__.__name__
-        params = []
-        for name, value in filtre.__dict__.items():
-            if name[0] == '_':
-                continue
-            params.append((name, value))
+        params = filters.list_params_from_filter(filtre)
         flist.append((fname, params))
     return flist
 
@@ -50,7 +46,7 @@ def read(file_name):
     cfg = ConfigParser.ConfigParser()
     cfg.read(file_name)
     for section in cfg.sections():
-        filtre = CapraVision.server.filters.create_filter(section) 
+        filtre = filters.create_filter(section) 
         for member in filtre.__dict__:
             if member[0] == '_':
                 continue
