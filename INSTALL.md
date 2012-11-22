@@ -19,6 +19,9 @@ A. Install dependencies
     Compilation proto : 
  sudo apt-get install protobuf-compiler
 
+    Client qt :
+ sudo apt-get install python-pyside PyQt4
+
 B. Install OpenCV 2.4
 
  1. Install required OpenCV dependencies

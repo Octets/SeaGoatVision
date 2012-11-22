@@ -17,9 +17,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os 
-parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-os.sys.path.insert(0, parentdir)
+"""
+Description : Open gtk 
+Authors: 
+Date : October 2012
+"""
 
 #import gui.filters.WinColorLevel
 
@@ -27,16 +29,20 @@ from PySide.QtGui import QApplication
 from PySide import QtCore
 from PySide import QtUiTools
 
-import qt.main
+import main
 #import gui.sources
 import sys
 
 def run():
     app = QApplication(sys.argv)
-    win = qt.main.WinFilterChain()
+    win = main.WinFilterChain()
     win.show()
     app.exec_()
-    
+
 if __name__ == '__main__':
+    # Project path is parent directory
+    import os 
+    parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    os.sys.path.insert(0, parentdir)
     run()
     
