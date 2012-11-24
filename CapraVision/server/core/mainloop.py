@@ -37,7 +37,7 @@ class MainLoop:
         for observer in self.observers:
             observer(image)
 
-    def start(self, source):
+    def start(self, source=None):
         self.stop()
         self.thread = ThreadMainLoop(source, self.sleep_time, self.notify_observers)
         self.thread.start()

@@ -24,6 +24,7 @@ from CapraVision.server import filters
 from CapraVision.server.filters.dataextract import DataExtractor
 
 import ConfigParser
+import types
 
 def params_list(chain):
     flist = []
@@ -48,7 +49,8 @@ def read(file_name):
     for section in cfg.sections():
         filtre = filters.create_filter(section) 
         for member in filtre.__dict__:
-            if member[0] == '_':
+            if (member[0] == '_' or 
+                isinstance(getattr(filtre, member), types.MethodType)):
                 continue
             val = cfg.get(section, member)
             if val == "True" or val == "False":
@@ -85,6 +87,22 @@ class FilterChain:
         self.filters = []
         self.image_observers = [] 
         self.filter_observers = []
+        self.filter_output_observers = []
+        
+    def count(self):
+        return len(self.filters)
+    
+    def get_image_observers(self):
+        return self.image_observers
+    
+    def get_filter_observers(self):
+        return self.filter_observers
+    
+    def get_filter_output_observers(self):
+        return self.filter_output_observers
+    
+    def __getitem__(self, index):
+        return self.filters[index]
     
     def add_filter(self, filtre):
         self.filters.append(filtre)
@@ -123,11 +141,13 @@ class FilterChain:
             observer()
             
     def add_filter_output_observer(self, output):
+        self.filter_output_observers.append(output)
         for f in self.filters:
             if isinstance(f, DataExtractor):
                 f.add_output_observer(output)
             
     def remove_filter_output_observer(self, output):
+        self.filter_output_observers.remove(output)
         for f in self.filters:
             if isinstance(f, DataExtractor):
                 f.remove_output_observer(output)

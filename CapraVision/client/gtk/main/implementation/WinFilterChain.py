@@ -28,10 +28,6 @@ from CapraVision.client.gtk.imageproviders import map_source_to_ui
 
 from CapraVision.server import imageproviders
 from CapraVision.server import filters
-from CapraVision.server.core import filterchain
-from CapraVision.server.core import mainloop
-
-from CapraVision.server.tcp_server import Server
 
 from WinFilterSel import WinFilterSel
 from WinLineTest import WinLineTest
@@ -47,18 +43,13 @@ class WinFilterChain:
     
     WINDOW_TITLE = "Capra Vision"
 
-    def __init__(self):
+    def __init__(self, manager):
+        self.manager = manager
+        self.manager.add_filter_observer(self.filters_changed_observer)
+        self.manager.add_thread_observer(self.thread_observer)
         self.source_list = imageproviders.load_sources()
-        self.server = Server()
-        self.server.start("127.0.0.1", 5030)
-        
-        self.fchain = None
-        self.source = None
         self.source_window = None
-        
-        self.thread = mainloop.MainLoop()
-        self.thread.add_observer(self.thread_observer)
-        self.thread_running = self.thread.is_running()
+        self.thread_running = self.manager.is_thread_running()
         
         ui = get_ui(self, 
                     'filterChainListStore', 
@@ -91,7 +82,7 @@ class WinFilterChain:
         for name in self.source_list.keys():
             self.sourcesListStore.append([name])
         self.cboSource.set_active(1)
-
+    
     def add_window_to_list(self, win):
         self.win_list.append(win.window)
         
@@ -104,20 +95,11 @@ class WinFilterChain:
         self.btnUp.set_sensitive(tools_enabled)
         self.btnView.set_sensitive(tools_enabled)
 
-    def start(self, new_source):
-        if self.source <> None:
-            imageproviders.close_source(self.source)
-        if new_source <> None:
-            self.source = imageproviders.create_source(new_source)
-            self.thread.start(self.source)
-        else:
-            self.source = None
-
     def create_adj(self):
         return Gtk.Adjustment(1, 1, 60, 1, 10, 0)
 
     def del_current_row(self):
-        self.fchain.remove_filter(self.selected_filter())
+        self.manager.remove_filter(self.selected_filter())
         
     def filter_modif_callback(self):
         self.set_state_modified()
@@ -178,7 +160,7 @@ class WinFilterChain:
         elif self.state == WindowState.Create:
             return self.save_chain_as()
         else:
-            filterchain.write(self.txtFilterChain.get_text(), self.fchain)
+            self.manager.save_chain(self.txtFilterChain.get_text())
             self.set_state_show()
             return True
 
@@ -196,7 +178,7 @@ class WinFilterChain:
         if response == Gtk.ResponseType.OK:
             if not fname.endswith('.filterchain'):
                 fname += '.filterchain'
-            filterchain.write(fname, self.fchain)
+            self.manager.save_chain(fname)
             self.txtFilterChain.set_text(fname)
             self.set_state_show()
             return True
@@ -208,7 +190,7 @@ class WinFilterChain:
         if iterator is None:
             return None
         path = model.get_path(iterator)
-        return self.fchain.filters[path.get_indices()[0]]
+        return self.manager.get_filter_from_index(path.get_indices()[0])
     
     def set_state_create(self):
         self.state = WindowState.Create
@@ -251,31 +233,22 @@ class WinFilterChain:
 
     def show_filter_chain(self):
         self.filterChainListStore.clear()
-        for filtre in self.fchain.filters:
+        for filtre in self.manager:
             self.filterChainListStore.append(
                         [filtre.__class__.__name__, filtre.__doc__]) 
 
     def thread_observer(self, image):
-        if not self.thread.is_running() and self.thread_running:
+        if not self.manager.is_thread_running() and self.thread_running:
             self.lblLoopState.set_text('Stopped')
             self.chkLoop.set_active(False)
-        elif self.thread.is_running() and not self.thread_running:
+        elif self.manager.is_thread_running() and not self.thread_running:
             self.lblLoopState.set_text('Running')
             self.chkLoop.set_active(True)
-        self.thread_running = self.thread.is_running()
-        
-        if self.fchain is not None and image is not None:
-            self.fchain.execute(image)
-                
-    def use_new_chain(self, chain):
-        if chain is None:
-            return
+        self.thread_running = self.manager.is_thread_running()
+                        
+    def use_new_chain(self):
         for win in list(self.win_list):
             win.destroy()
-        self.fchain = chain
-        self.fchain.add_filter_observer(self.filters_changed_observer)
-        self.fchain.add_filter_output_observer(self.server.send)
-
         self.show_filter_chain()
                                                                                     
     def on_btnNew_clicked(self, widget):
@@ -288,7 +261,8 @@ class WinFilterChain:
                 pass
             elif result == Gtk.ResponseType.CANCEL:
                 return
-        self.use_new_chain(filterchain.FilterChain())
+        self.manager.create_new_chain()
+        self.use_new_chain()
         self.set_state_create()
 
     def on_btnOpen_clicked(self, widget):
@@ -310,9 +284,9 @@ class WinFilterChain:
         dialog.set_filter(ff)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            c = filterchain.read(dialog.get_filename())
-            if c is not None:
-                self.use_new_chain(c)
+            self.manager.load_chain(dialog.get_filename())
+            if self.manager.chain_exists():
+                self.use_new_chain()
                 self.txtFilterChain.set_text(dialog.get_filename())
                 self.set_state_show()
         dialog.destroy()
@@ -324,7 +298,7 @@ class WinFilterChain:
         self.save_chain_as()
 
     def on_btnView_clicked(self, widget):
-        win = WinViewer(self.fchain)
+        win = WinViewer(self.manager.get_chain())
         win.window.connect('destroy', self.on_window_destroy)
         self.add_window_to_list(win)
         win.window.show_all()
@@ -332,7 +306,7 @@ class WinFilterChain:
     def on_btnAdd_clicked(self, widget):
         win = WinFilterSel()
         if win.window.run() == Gtk.ResponseType.OK:
-            self.fchain.add_filter(filters.create_filter(win.selected_filter))
+            self.manager.add_filter(filters.create_filter(win.selected_filter))
             self.set_state_modified()
         win.window.destroy()
             
@@ -340,7 +314,8 @@ class WinFilterChain:
         if (tree_row_selected(self.lstFilters) and 
                             self.msg_warn_del_row() == Gtk.ResponseType.YES):
             self.del_current_row()
-                    
+            self.set_state_modified()
+            
     def on_btnConfig_clicked(self, widget):
         if tree_row_selected(self.lstFilters):
             self.show_filter_config(self.selected_filter())
@@ -350,17 +325,19 @@ class WinFilterChain:
         if filtre is not None:
             index = tree_selected_index(self.lstFilters)
             if index > 0:
-                self.fchain.move_filter_up(filtre)
+                self.manager.move_filter_up(filtre)
                 self.lstFilters.set_cursor(index - 1)
-    
+                self.set_state_modified()
+                
     def on_btnDown_clicked(self, widget):
         filtre = self.selected_filter()
         if filtre is not None:
             index = tree_selected_index(self.lstFilters)
-            if index < len(self.fchain.filters) - 1:
-                self.fchain.move_filter_down(filtre)
+            if index < self.manager.count_filters() - 1:
+                self.manager.move_filter_down(filtre)
                 self.lstFilters.set_cursor(index + 1)
-                    
+                self.set_state_modified()
+                
     def on_lstFilters_button_press_event(self, widget, event):
         if event.get_click_count()[1] == 2L:
             self.show_filter_config(self.selected_filter())
@@ -376,8 +353,6 @@ class WinFilterChain:
                     Gtk.main_quit()
             elif result == Gtk.ResponseType.CANCEL:
                 return True
-        self.server.stop()
-        self.thread.stop()
         Gtk.main_quit()
 
     def on_btnLineMapper_clicked(self, widget):
@@ -394,15 +369,15 @@ class WinFilterChain:
     
     def on_chkLoop_button_release_event(self, widget, data):
         if self.chkLoop.get_active():
-            self.thread.stop()
+            self.manager.stop_thread()
         else:
-            self.thread.start(self.source)
+            self.manager.start_thread()
     
     def on_btnSource_clicked(self, widget):
-        self.show_source_config(self.source)
+        self.show_source_config(self.manager.get_source())
 
     def on_spnFPS_value_changed(self, widget):
-        self.thread.change_sleep_time(1.0 / self.spnFPS.get_value())
+        self.manager.change_sleep_time(1.0 / self.spnFPS.get_value())
     
     def on_cboSource_changed(self, widget):
         index = self.cboSource.get_active()
@@ -413,4 +388,4 @@ class WinFilterChain:
                 self.source_window = None
             
             source = self.source_list[self.sourcesListStore[index][0]]
-        self.start(source)
+        self.manager.change_source(source)
