@@ -23,14 +23,27 @@ Authors: Benoit Paquet
 Date : October 2012
 """
 
+from CapraVision.server.core.mainloop import MainLoop
+from CapraVision.server.core.manager import VisionManager
+from CapraVision.server.tcp_server import Server
+
 def run():
+    thread = MainLoop()
+    server = Server()
+    server.start("127.0.0.1", 5030)
+    c = VisionManager(thread)
+    c.add_filter_output_observer(server.send)
+
     from gi.repository import Gtk, GObject
     import CapraVision.client.gtk.main
     GObject.threads_init()
-    w = CapraVision.client.gtk.main.WinFilterChain()
+    w = CapraVision.client.gtk.main.WinFilterChain(c)
     w.window.show_all()
     Gtk.main()
 
+    server.stop()
+    thread.stop()
+    
 if __name__ == '__main__':
     # Project path is parent directory
     import os 

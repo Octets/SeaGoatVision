@@ -33,7 +33,10 @@ class SingleImage:
         self.image = cv2.imread(self.file)
         
     def next(self):
-        return self.image 
+        if self.image is None:
+            return None
+        else:
+            return self.image.copy()
     
     def close(self):
         pass
