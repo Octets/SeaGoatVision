@@ -1,5 +1,7 @@
 
 from scipy import weave
+import cv
+import numpy
 
 class ScipyExample:
     """Example on how to use scipy.weave inside filters.
@@ -10,22 +12,28 @@ class ScipyExample:
         pass
 
     def execute(self, image):
-        code = """
-            int rows = Nimage[0];
-            int cols = Nimage[1];
-            int depth = Nimage[2];   
-            for (int i=0; i < rows; i++)
-            {
-                for (int j=0; j < cols; j++)
-                {
-                    for (int k=0; k< depth; ++k)
-                    {
-                        image[(i*cols + j)*depth + k] /= 5;
-                    }
-                }
-            }
-            """
-        
-        weave.inline(code, ['image'])
-        return image
+        img1 = cv.fromarray(image)
+        weave.inline(
+        """
+        cv::Mat mat(get_cvmat(img1));
+        //printf("addr %d %d\\n",  mat.rows, mat.cols);
+        cv::circle(mat, cv::Point(mat.rows/2, mat.cols/2), mat.cols/4, cv::Scalar(255, 0, 0), -1);
+        """,
+        arg_names = ['img1'],
+        include_dirs = ['/usr/include/opencv'],
+        headers = ['<cv.h>', '<cxcore.h>'],
+        #libraries = ['ml', 'cvaux', 'highgui', 'cv', 'cxcore'],
+        extra_objects = ["`pkg-config --cflags --libs opencv`"],
+        support_code = """
+        struct cvmat_t {
+                PyObject_HEAD
+                CvMat *a;
+                PyObject *data;
+                size_t offset;
+        };
+        CvMat *get_cvmat(PyObject *o) { return ((cvmat_t*)o)->a; }
+        """
+        )
+        img1 = numpy.asarray(img1)
+        return img1
 
