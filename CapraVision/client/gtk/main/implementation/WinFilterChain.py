@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -40,7 +40,7 @@ class WinFilterChain:
     """Main window
     Allow the user to create, edit and test filter chains
     """
-    
+
     WINDOW_TITLE = "Capra Vision"
 
     def __init__(self, manager):
@@ -50,9 +50,9 @@ class WinFilterChain:
         self.source_list = imageproviders.load_sources()
         self.source_window = None
         self.thread_running = self.manager.is_thread_running()
-        
-        ui = get_ui(self, 
-                    'filterChainListStore', 
+
+        ui = get_ui(self,
+                    'filterChainListStore',
                     'sourcesListStore',
                     'imgOpen', 'imgNew', 'imgUp', 'imgDown')
         self.window = ui.get_object(win_name(self))
@@ -70,22 +70,22 @@ class WinFilterChain:
         self.spnFPS = ui.get_object('spnFPS')
         self.spnFPS.set_adjustment(self.create_adj())
         self.spnFPS.set_value(30)
-        
+
         self.win_list = []
-        
-        self.sourcesListStore = ui.get_object('sourcesListStore') 
+
+        self.sourcesListStore = ui.get_object('sourcesListStore')
         self.filterChainListStore = ui.get_object('filterChainListStore')
         self.set_state_empty()
         self.change_state()
-        
+
         self.sourcesListStore.append(['None'])
         for name in self.source_list.keys():
             self.sourcesListStore.append([name])
         self.cboSource.set_active(1)
-    
+
     def add_window_to_list(self, win):
         self.win_list.append(win.window)
-        
+
     def change_state(self):
         tools_enabled = self.state <> WindowState.Empty
         self.btnAdd.set_sensitive(tools_enabled)
@@ -100,10 +100,10 @@ class WinFilterChain:
 
     def del_current_row(self):
         self.manager.remove_filter(self.selected_filter())
-        
+
     def filter_modif_callback(self):
         self.set_state_modified()
-        
+
     def filters_changed_observer(self):
         self.show_filter_chain()
 
@@ -112,16 +112,16 @@ class WinFilterChain:
             self.state == WindowState.Modified)
 
     def msg_confirm_create_new(self):
-        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
-                                   Gtk.ButtonsType.YES_NO, 
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING,
+                                   Gtk.ButtonsType.YES_NO,
                                    "Create new filterchain?")
         result = dialog.run()
         dialog.destroy()
         return result
-        
+
     def msg_confirm_save_before_closing(self):
-        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
-                                   None, 
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING,
+                                   None,
                                    "Save changes?")
         dialog.add_button('Close without saving', Gtk.ResponseType.CLOSE)
         dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
@@ -131,10 +131,10 @@ class WinFilterChain:
         result = dialog.run()
         dialog.destroy()
         return result
-    
+
     def msg_confirm_save_before_new(self):
-        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
-                                   None, 
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING,
+                                   None,
                                    "Save changes?")
         dialog.add_button(Gtk.STOCK_NO, Gtk.ResponseType.NO)
         dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
@@ -146,7 +146,7 @@ class WinFilterChain:
         return result
 
     def msg_warn_del_row(self):
-        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING, 
+        dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING,
                             Gtk.ButtonsType.YES_NO, "Delete selected filter")
         dialog.format_secondary_text(
                                 "Do you want to remove the selected filter?")
@@ -174,7 +174,7 @@ class WinFilterChain:
         response = dialog.run()
         fname = dialog.get_filename()
         dialog.destroy()
-        
+
         if response == Gtk.ResponseType.OK:
             if not fname.endswith('.filterchain'):
                 fname += '.filterchain'
@@ -191,7 +191,7 @@ class WinFilterChain:
             return None
         path = model.get_path(iterator)
         return self.manager.get_filter_from_index(path.get_indices()[0])
-    
+
     def set_state_create(self):
         self.state = WindowState.Create
         self.window.set_title(self.WINDOW_TITLE + " *")
@@ -208,7 +208,7 @@ class WinFilterChain:
             self.state = WindowState.Modified
             self.window.set_title(self.WINDOW_TITLE + " *")
             self.change_state()
-                            
+
     def set_state_show(self):
         self.state = WindowState.Show
         self.window.set_title(self.WINDOW_TITLE)
@@ -221,7 +221,7 @@ class WinFilterChain:
             self.add_window_to_list(win)
             win.window.connect('destroy', self.on_window_destroy)
             win.window.show_all()
-    
+
     def show_source_config(self, source):
         cls = map_source_to_ui(source)
         if cls is not None:
@@ -235,7 +235,7 @@ class WinFilterChain:
         self.filterChainListStore.clear()
         for filtre in self.manager:
             self.filterChainListStore.append(
-                        [filtre.__class__.__name__, filtre.__doc__]) 
+                        [filtre.__class__.__name__, filtre.__doc__])
 
     def thread_observer(self, image):
         if not self.manager.is_thread_running() and self.thread_running:
@@ -245,12 +245,12 @@ class WinFilterChain:
             self.lblLoopState.set_text('Running')
             self.chkLoop.set_active(True)
         self.thread_running = self.manager.is_thread_running()
-                        
+
     def use_new_chain(self):
         for win in list(self.win_list):
             win.destroy()
         self.show_filter_chain()
-                                                                                    
+
     def on_btnNew_clicked(self, widget):
         if self.state == WindowState.Show:
             if self.msg_confirm_create_new() == Gtk.ResponseType.NO:
@@ -280,7 +280,7 @@ class WinFilterChain:
         ff = Gtk.FileFilter()
         ff.set_name('Filterchain')
         ff.add_pattern('*.filterchain')
-    
+
         dialog.set_filter(ff)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -290,10 +290,10 @@ class WinFilterChain:
                 self.txtFilterChain.set_text(dialog.get_filename())
                 self.set_state_show()
         dialog.destroy()
-            
+
     def on_btnSave_clicked(self, widget):
         self.save_chain()
-        
+
     def on_btnSaveAs_clicked(self, widget):
         self.save_chain_as()
 
@@ -309,17 +309,21 @@ class WinFilterChain:
             self.manager.add_filter(filters.create_filter(win.selected_filter))
             self.set_state_modified()
         win.window.destroy()
-            
+
     def on_btnRemove_clicked(self, widget):
-        if (tree_row_selected(self.lstFilters) and 
+        if (tree_row_selected(self.lstFilters) and
                             self.msg_warn_del_row() == Gtk.ResponseType.YES):
             self.del_current_row()
             self.set_state_modified()
-            
+
     def on_btnConfig_clicked(self, widget):
         if tree_row_selected(self.lstFilters):
             self.show_filter_config(self.selected_filter())
-                    
+
+    def on_btnReload_clicked(self, widget):
+        self.manager.reload_filter(self.selected_filter())
+        self.set_state_modified()
+
     def on_btnUp_clicked(self, widget):
         filtre = self.selected_filter()
         if filtre is not None:
@@ -328,7 +332,7 @@ class WinFilterChain:
                 self.manager.move_filter_up(filtre)
                 self.lstFilters.set_cursor(index - 1)
                 self.set_state_modified()
-                
+
     def on_btnDown_clicked(self, widget):
         filtre = self.selected_filter()
         if filtre is not None:
@@ -337,7 +341,7 @@ class WinFilterChain:
                 self.manager.move_filter_down(filtre)
                 self.lstFilters.set_cursor(index + 1)
                 self.set_state_modified()
-                
+
     def on_lstFilters_button_press_event(self, widget, event):
         if event.get_click_count()[1] == 2L:
             self.show_filter_config(self.selected_filter())
@@ -360,25 +364,25 @@ class WinFilterChain:
         self.add_window_to_list(win)
         win.window.connect('destroy', self.on_window_destroy)
         win.window.show_all()
-        
+
     def on_btnLineTest_clicked(self, widget):
         win = WinLineTest()
         self.add_window_to_list(win)
         win.window.connect('destroy', self.on_window_destroy)
         win.window.show_all()
-    
+
     def on_chkLoop_button_release_event(self, widget, data):
         if self.chkLoop.get_active():
             self.manager.stop_thread()
         else:
             self.manager.start_thread()
-    
+
     def on_btnSource_clicked(self, widget):
         self.show_source_config(self.manager.get_source())
 
     def on_spnFPS_value_changed(self, widget):
         self.manager.change_sleep_time(1.0 / self.spnFPS.get_value())
-    
+
     def on_cboSource_changed(self, widget):
         index = self.cboSource.get_active()
         source = None
@@ -386,6 +390,6 @@ class WinFilterChain:
             if self.source_window is not None:
                 self.source_window.window.destroy()
                 self.source_window = None
-            
+
             source = self.source_list[self.sourcesListStore[index][0]]
         self.manager.change_source(source)

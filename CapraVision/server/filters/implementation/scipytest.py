@@ -20,7 +20,7 @@ class ScipyExample:
                 {
                     for (int k=0; k< depth; ++k)
                     {
-                        image[(i*cols + j)*depth + k] /= 2;
+                        image[(i*cols + j)*depth + k] /= 5;
                     }
                 }
             }
@@ -28,5 +28,4 @@ class ScipyExample:
         
         weave.inline(code, ['image'])
         return image
-    
-            
+

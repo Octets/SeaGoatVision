@@ -35,17 +35,15 @@ def add_getters_setters(filtre):
     params = list_params_from_filter(filtre)
     for param, _ in params:
         if not hasattr(filtre, 'get_' + param):
-            filtre.__dict__['get_' + param] = types.MethodType(
-                                        create_getter(param), filtre)
+            filtre.__dict__['get_' + param] = types.MethodType(create_getter(param), filtre)
         if not hasattr(filtre, 'set_' + param):
-            filtre.__dict__['set_' + param] = types.MethodType(
-                                        create_setter(param), filtre)
+            filtre.__dict__['set_' + param] = types.MethodType(create_setter(param), filtre)
     return filtre
 
 def load_filters():
-    return {name : filtre 
-            for name, filtre in vars(CapraVision.server.filters.implementation).items() 
-                if inspect.isclass(filtre)}
+    return {name: filtre 
+        for name, filtre in vars(CapraVision.server.filters.implementation).items()
+            if inspect.isclass(filtre)}
 
 def create_filter(filter_name):
     for name, filtre in load_filters().items():
