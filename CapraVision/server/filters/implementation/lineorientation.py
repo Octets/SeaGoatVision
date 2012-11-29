@@ -23,14 +23,15 @@ import math
 import numpy as np
 
 from CapraVision.server.filters import dataextract
+from CapraVision.server.filters.parameter import  Parameter
 
 class LineOrientation(dataextract.DataExtractor):
     """Port of the old line detection code"""
     
     def __init__(self):
         dataextract.DataExtractor.__init__(self)
-        self.area_min = 300
-        self.area_max = 35000
+        self.area_min = Parameter("Area Min",1,100000,300)
+        self.area_max = Parameter("Area Max",1,100000,35000)
     
         self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3), (0,0))
                 
@@ -66,7 +67,7 @@ class LineOrientation(dataextract.DataExtractor):
             approx = cv2.approxPolyDP(contour, 0, False)
             area = np.abs(cv2.contourArea(contour))
             
-            if self.area_min < area < self.area_max:
+            if self.area_min.get_current_value() < area < self.area_max.get_current_value():
                 line_values = cv2.fitLine(approx, cv.CV_DIST_L2, 0, 0.01, 0.01)
                 rect = cv2.boundingRect(approx)
                 t = math.sqrt((rect[2]**2 + rect[3]**2) / 2.0)

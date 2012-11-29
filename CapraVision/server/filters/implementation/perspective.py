@@ -19,27 +19,29 @@
 
 import cv2
 import numpy as np
+from CapraVision.server.filters.parameter import  Parameter
+
 
 class Perspective:
     """Wrap perspective"""
     def __init__(self):
-        self.topleftx = 0
-        self.toplefty = 0
-        self.bottomleftx = 100
-        self.bottomlefty = 480
-        self.toprightx = 640
-        self.toprighty = 0
-        self.bottomrightx = 540
-        self.bottomrighty = 480
+        self.topleftx = Parameter("Top Left X",0,640,0)
+        self.toplefty = Parameter("Top Left TY",0,480,0)
+        self.bottomleftx = Parameter("Bottom Left X",0,640,100)
+        self.bottomlefty = Parameter("Bottom Left Y",0,480,480)
+        self.toprightx = Parameter("Top Right X",0,640,640)
+        self.toprighty = Parameter("Top Right Y",0,480,0)
+        self.bottomrightx = Parameter("Bottom Right X",0,640,540)
+        self.bottomrighty = Parameter("Bottom Right Y",0,480,480)
         
         self.mmat = None
         self.configure()
         
     def configure(self):
-        c1 = np.array([[self.topleftx, self.toplefty], 
-                       [self.bottomleftx, self.bottomlefty], 
-                       [self.toprightx, self.toprighty], 
-                       [self.bottomrightx, self.bottomrighty]], 
+        c1 = np.array([[self.topleftx.get_current_value(), self.toplefty.get_current_value()], 
+                       [self.bottomleftx.get_current_value(), self.bottomlefty.get_current_value()], 
+                       [self.toprightx.get_current_value(), self.toprighty.get_current_value()], 
+                       [self.bottomrightx.get_current_value(), self.bottomrighty.get_current_value()]], 
                       np.float32)
         c2 = np.array([[0, 0], [0, 480], [640, 0], [640, 480]], np.float32)
         self.mmat = cv2.getPerspectiveTransform(c2, c1)

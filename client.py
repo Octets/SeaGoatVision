@@ -30,7 +30,8 @@ def runGtk():
     run()
 
 def runQt():
-    print("Not supported")
+    from CapraVision.client.qt.mainqt import run
+    run()
 
 def runCli():
     from CapraVision.client.cli.cli import run

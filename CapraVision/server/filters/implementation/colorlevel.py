@@ -32,10 +32,10 @@ class ColorLevel:
         
     def execute(self, image):
         if self.red <> 100:
-            image[:,:, 2] *= (self.red.currentValue/100)
+            image[:,:, 2] *= (self.red.get_current_value()/100)
         #image[:,:, 1] *= ((image[:,:, 0])/2)
         if self.green <> 100:
-            image[:,:, 1] *= (self.green.currentValue/100)
+            image[:,:, 1] *= (self.green.get_current_value()/100)
         if self.blue <> 100:
-            image[:,:, 0] *= (self.blue.currentValue/100) 
+            image[:,:, 0] *= (self.blue.get_current_value()/100) 
         return image

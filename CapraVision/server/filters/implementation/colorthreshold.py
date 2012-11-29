@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
+from CapraVision.server.filters.parameter import  Parameter
 
 class ColorThreshold:
     """Apply a binary threshold on the three channels of the images
@@ -25,13 +26,13 @@ class ColorThreshold:
         Everything within this threshold is white (255, 255, 255)
         Everything else is black (0, 0, 0)"""
     def __init__(self):
-        self.shift_hue_plane = False
-        self.bluemin = 20.0
-        self.bluemax = 256.0
-        self.greenmin = 20.0
-        self.greenmax = 256.0
-        self.redmin = 20.0
-        self.redmax = 256.0
+        self.shift_hue_plane = Parameter("Shift Hue Plane",True,False,False)
+        self.bluemin = Parameter("Blue Min",1,256,20.0)
+        self.bluemax = Parameter("Blue Max",1,256,256.0)
+        self.greenmin = Parameter("Green Min",1,256,20.0)
+        self.greenmax = Parameter("Green Max",1,256,256.0)
+        self.redmin = Parameter("Red Min",1,256,20.0)
+        self.redmax = Parameter("Red Max",1,256,256.0)
         self._barray = None
         self._garray = None
         self._rarray = None
@@ -39,13 +40,13 @@ class ColorThreshold:
     
     def configure(self):
         self._barray = np.array(
-                        [self.get_binary_value(self.bluemin, self.bluemax, x) 
+                        [self.get_binary_value(self.bluemin.get_current_value(), self.bluemax.get_current_value(), x) 
                             for x in range(0, 256)], dtype=np.float32)
         self._garray = np.array(
-                        [self.get_binary_value(self.greenmin, self.greenmax, x) 
+                        [self.get_binary_value(self.greenmin.get_current_value(), self.greenmax.get_current_value(), x) 
                             for x in range(0, 256)], dtype=np.float32)
         self._rarray = np.array(
-                        [self.get_binary_value(self.redmin, self.redmax, x) 
+                        [self.get_binary_value(self.redmin.get_current_value(), self.redmax.get_current_value(), x) 
                             for x in range(0, 256)], dtype=np.float32)
         
     def execute(self, image):

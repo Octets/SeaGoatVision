@@ -20,21 +20,22 @@
 import cv2
 import cv2.cv as cv
 import numpy as np
+from CapraVision.server.filters.parameter import  Parameter
 
 class HoughTransform:
     """Apply a Canny filter to the image then
     finds lines in a binary image using the standard Hough transform"""
     def __init__(self):
-        self.canny1 = 50
-        self.canny2 = 200
-        self.rho = 1
-        self.theta = 180
-        self.threshold = 100
-        self.line_size = 1000
+        self.canny1 = Parameter("Canny1",1,256,50)
+        self.canny2 = Parameter("Canny2",1,256,200)
+        self.rho = Parameter("Rho",1,256,1)
+        self.theta = Parameter("Theta",0,360,180)
+        self.threshold = Parameter("Threshold",1,256,100)
+        self.line_size = Parameter("Line Size",1,2000,1000)
             
     def execute(self, image):
-        edges = cv2.Canny(image, self.canny1, self.canny2)
-        lines = cv2.HoughLines(edges, self.rho, cv.CV_PI / self.theta, self.threshold)
+        edges = cv2.Canny(image, self.canny1.get_current_value(), self.canny2.get_current_value())
+        lines = cv2.HoughLines(edges, self.rho.get_current_value(), cv.CV_PI / self.theta.get_current_value(), self.threshold.get_current_value())
         if lines is None:
             return image
         rho = lines[:, :, 0]
@@ -45,10 +46,10 @@ class HoughTransform:
         y0 = b * rho
 
         size = lines.shape[1]        
-        pt1x = np.round(x0 + self.line_size * -b).astype(np.int)
-        pt1y = np.round(y0 + self.line_size * a).astype(np.int)
-        pt2x = np.round(x0 - self.line_size * -b).astype(np.int)
-        pt2y = np.round(y0 - self.line_size * a).astype(np.int)
+        pt1x = np.round(x0 + self.line_size.get_current_value() * -b).astype(np.int)
+        pt1y = np.round(y0 + self.line_size.get_current_value() * a).astype(np.int)
+        pt2x = np.round(x0 - self.line_size.get_current_value() * -b).astype(np.int)
+        pt2y = np.round(y0 - self.line_size.get_current_value() * a).astype(np.int)
         
         for i in xrange(size):
             cv2.line(image, 

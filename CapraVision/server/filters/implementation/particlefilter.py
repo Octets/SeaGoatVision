@@ -19,6 +19,7 @@
 
 import cv2
 import numpy as np
+from CapraVision.server.filters.parameter import  Parameter
 
 class ParticleFilter:
     """Remove small particles from the image.
@@ -26,16 +27,16 @@ class ParticleFilter:
         the remaining blobs are filtered according to the area of the blobs."""
     
     def __init__(self):
-        self.kernel_height = 10
-        self.kernel_width = 10
-        self.area_min = 3200
+        self.kernel_height = Parameter("Kernel Height",1,256,10)
+        self.kernel_width = Parameter("Kernel Width",1,256,10)
+        self.area_min = Parameter("Area Min",1,None,3200)
         self.configure()
         
     def configure(self):
         self._kernel = cv2.getStructuringElement(
                                                  cv2.MORPH_CROSS, 
-                                                 (int(self.kernel_width), 
-                                                  int(self.kernel_height)))
+                                                 (int(self.kernel_width.get_current_value()), 
+                                                  int(self.kernel_height.get_current_value())))
             
     def execute(self, image):
         image = cv2.erode(image, self._kernel)
@@ -48,7 +49,7 @@ class ParticleFilter:
         image = np.zeros(image.shape, np.uint8)
         for contour in contours:
             area = np.abs(cv2.contourArea(contour))
-            if area > self.area_min:
+            if area > self.area_min.get_current_value():
                 cv2.drawContours(image, 
                                  [contour], 
                                  -1, 

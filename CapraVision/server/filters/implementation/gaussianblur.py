@@ -18,17 +18,18 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
+from CapraVision.server.filters.parameter import  Parameter
 
 class GaussianBlur:
     """Smoothes an image using a Gaussian filter"""
     def __init__(self):
-        self.kernel_height = 3
-        self.kernel_width = 3
-        self.sigma_x = 3
-        self.sigma_y = 3
+        self.kernel_height = Parameter("Kernel Height",1,256,3)
+        self.kernel_width = Parameter("Kernel Width",1,256,3)
+        self.sigma_x = Parameter("Sigma X",1,256,3)
+        self.sigma_y = Parameter("Sigma Y",1,256,3)
     
     def execute(self, image):
-        return cv2.GaussianBlur(image, (self.kernel_height, self.kernel_width), 
-                     sigmaX = self.sigma_x, sigmaY = self.sigma_y)
+        return cv2.GaussianBlur(image, (self.kernel_height.get_current_value(), self.kernel_width.get_current_value()), 
+                     sigmaX = self.sigma_x.get_current_value(), sigmaY = self.sigma_y.get_current_value())
         
     

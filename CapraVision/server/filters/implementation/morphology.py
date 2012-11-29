@@ -19,15 +19,16 @@
 
 import cv2
 import cv2.cv as cv
+from CapraVision.server.filters.parameter import  Parameter
 
 class Morphology:
     
     def __init__(self):
-        self.kernel_width = 3
-        self.kernel_height = 3
-        self.anchor_x = -1
-        self.anchor_y = -1
-        self.iterations = 1
+        self.kernel_width = Parameter("Kernel Width",1,256,3)
+        self.kernel_height = Parameter("Kernel Height",1,256,3)
+        self.anchor_x = Parameter("Anchor X",None,None,-1)
+        self.anchor_y = Parameter("Anchor Y",None,None,-1)
+        self.iterations = Parameter("Iteration,",1,None,1)
         self.configure()
         
     def configure(self):
