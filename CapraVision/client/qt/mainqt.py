@@ -37,7 +37,7 @@ import sys
 
 def run():
     app = QApplication(sys.argv)
-    win = qt.main.WinFilterChain()
+    win = qt.main.WinMain()
     win.show()
     app.exec_()
     

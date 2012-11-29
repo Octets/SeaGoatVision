@@ -23,6 +23,7 @@ from CapraVision.client.qt.utils import *
 class WinExec:
     
     def __init__(self):
+        
         #self.filtre = filtre
         #self.filtre_init = copy.copy(filtre)
         #self.cb = cb

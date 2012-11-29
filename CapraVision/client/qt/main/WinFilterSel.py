@@ -20,32 +20,25 @@
 from CapraVision.client.qt.utils import *
 from CapraVision.server import filters
 from PySide import QtGui
+from PySide import QtCore
 
 #from server import filters
 
-class WinFilterSel:
+class WinFilterSel(QtCore.QObject):
     """Allow the user to select a filter to add to the filterchain"""
-    
+    onAddFilter = QtCore.Signal(object)
     def __init__(self):
+        super(WinFilterSel, self).__init__()
         self.ui = get_ui(self); 
         self.filters = filters.load_filters()
-        for filter in self.filters:
-            self.ui.filterListWidget.addItem(filter)  
         
-    def get_selected_filter(self):
-        (model, iter) = self.lstFilters.get_selection().get_selected()
-        filter_name = self.filtersListStore.get_value(iter, 0)
-        return self.filter_list[filter_name]
-    
-    def on_btnOK_clicked(self, widget):
-        self.selected_filter = self.get_selected_filter()
-        self.window.destroy()
-    
-    def on_btnCancel_clicked(self, widget):
-        self.window.destroy()
-    
-    def on_lstFilters_button_press_event(self, widget, event):
-        if event.get_click_count()[1] == 2L:
-            self.selected_filter = self.get_selected_filter()
-            self.window.response(Gtk.ResponseType.OK)
-            self.window.destroy()
+        
+        self.ui.addFilterButton.clicked.connect(self._addFilter)
+        
+        for name, filter in self.filters.items():
+            self.ui.filterListWidget.addItem(name)  
+        
+    def _addFilter(self):
+        filter = filters.create_filter(self.ui.filterListWidget.currentItem().text())
+        print filter.__class__.__name__
+        self.onAddFilter.emit(filter)

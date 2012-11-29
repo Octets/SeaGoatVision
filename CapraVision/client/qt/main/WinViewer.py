@@ -29,31 +29,9 @@ class WinViewer():
     The window receives a filter in its constructor.  
     This is the last executed filter on the source.
     """
-    def __init__(self, filterchain):
-        """self.source_list = sources.load_sources()
-        self.chain = filterchain
-        filterchain.add_image_observer(self.chain_observer)
-        filterchain.add_filter_observer(self.filters_changed_observer)
-        
-        self.win_list = []
-        self.thread = None
-        self.source = None
-        self.filter = None"""
-        
+    def __init__(self):        
         self.ui = get_ui(self, 'sourcesListStore', 'filterChainListStore')
-        """self.window = ui.get_object(win_name(self))
-        self.cboFilter = ui.get_object('cboFilter')
-        self.sourcesListStore = ui.get_object('sourcesListStore') 
-        self.filterChainListStore = ui.get_object('filterChainListStore')
-        self.imgSource = ui.get_object('imgSource')
-        self.cboSource = ui.get_object('cboSource')
         
-        self.sourcesListStore.append(['None'])
-        for name in self.source_list.keys():
-            self.sourcesListStore.append([name])
-        self.fill_filters_source()
-        self.cboSource.set_active(1)
-        self.set_default_filter()"""
 
     def add_window_to_list(self, win):
         self.win_list.append(win.window)
