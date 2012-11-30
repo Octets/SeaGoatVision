@@ -42,9 +42,9 @@ class WinParticleFilter():
         self.init_window()
         
     def init_window(self):
-        self.spnWidth.set_value(self.filtre_init.kernel_width)
-        self.spnHeight.set_value(self.filtre_init.kernel_height)
-        self.spnAreaMin.set_value(self.filtre_init.area_min)
+        self.spnWidth.set_value(self.filtre_init.kernel_width.get_current_value())
+        self.spnHeight.set_value(self.filtre_init.kernel_height.get_current_value())
+        self.spnAreaMin.set_value(self.filtre_init.area_min.get_current_value())
         
     def create_adj(self):
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
@@ -60,13 +60,13 @@ class WinParticleFilter():
         self.window.destroy()
 
     def on_spnHeight_value_changed(self, widget):
-        self.filtre.kernel_height = self.spnHeight.get_value()
+        self.filtre.kernel_height.set_current_value(self.spnHeight.get_value())
         self.filtre.configure()
         
     def on_spnWidth_value_changed(self, widget):
-        self.filtre.kernel_width = self.spnWidth.get_value()
+        self.filtre.kernel_width.set_current_value(self.spnWidth.get_value())
         self.filtre.configure()
         
     def on_spnAreaMin_value_changed(self, widget):
-        self.filtre.area_min = self.spnAreaMin.get_value()
+        self.filtre.area_min.set_current_value(self.spnAreaMin.get_value())
     

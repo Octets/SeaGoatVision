@@ -41,8 +41,8 @@ class WinLineOrientation:
         self.init_window()
         
     def init_window(self):
-        self.spnMin.set_value(self.filtre_init.area_min)
-        self.spnMax.set_value(self.filtre_init.area_max)
+        self.spnMin.set_value(self.filtre_init.area_min.get_current_value())
+        self.spnMax.set_value(self.filtre_init.area_max.get_current_value())
     
     def create_adj(self):
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
@@ -57,8 +57,8 @@ class WinLineOrientation:
         self.window.destroy()
     
     def on_spnMin_value_changed(self, widget):
-        self.filtre.area_min = self.spnMin.get_value()
+        self.filtre.area_min.set_current_value(self.spnMin.get_value())
     
     def on_spnMax_value_changed(self, widget):
-        self.filtre.area_max = self.spnMax.get_value()
+        self.filtre.area_max.set_current_value(self.spnMax.get_value())
     

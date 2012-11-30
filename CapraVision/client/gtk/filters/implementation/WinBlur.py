@@ -52,7 +52,7 @@ class WinBlur:
     
     def on_btnCancel_clicked(self, widget):
         self.filtre.kernel_height.set_current_value(self.filtre_init.kernel_height.get_current_value())
-        self.filtre.kernel_width.set_current_value(self.filtre_init.kernel_width.get_current_value))
+        self.filtre.kernel_width.set_current_value(self.filtre_init.kernel_width.get_current_value())
         self.init_window()
     
     def on_spnHeight_value_changed(self, widget):

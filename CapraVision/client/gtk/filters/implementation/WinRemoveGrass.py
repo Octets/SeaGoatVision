@@ -40,8 +40,8 @@ class WinRemoveGrass:
         self.init_window()
         
     def init_window(self):
-        self.cboTechnique.set_active(self.filtre_init.technique)
-        self.spnThreshold.set_value(self.filtre_init.threshold)
+        self.cboTechnique.set_active(self.filtre_init.technique.get_current_value())
+        self.spnThreshold.set_value(self.filtre_init.threshold.get_current_value())
         
     def create_adj(self):
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
@@ -56,8 +56,8 @@ class WinRemoveGrass:
         self.window.destroy()
     
     def on_spnThreshold_value_changed(self, widget):
-        self.filtre.threshold = self.spnThreshold.get_value()
+        self.filtre.threshold.set_current_value(self.spnThreshold.get_value())
     
     def on_cboTechnique_changed(self, widget):
-        self.filtre.technique = self.cboTechnique.get_active()
+        self.filtre.technique.set_current_value(self.cboTechnique.get_active())
     

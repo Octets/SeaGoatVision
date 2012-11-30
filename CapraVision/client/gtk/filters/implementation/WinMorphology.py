@@ -46,10 +46,10 @@ class WinMorphology():
         self.init_window()
         
     def init_window(self):
-        self.spnKernelWidth.set_value(self.filtre_init.kernel_width)
-        self.spnKernelHeight.set_value(self.filtre_init.kernel_height)
-        self.spnAnchorX.set_value(self.filtre_init.anchor_x)
-        self.spnAnchorY.set_value(self.filtre_init.anchor_y)
+        self.spnKernelWidth.set_value(self.filtre_init.kernel_width.get_current_value())
+        self.spnKernelHeight.set_value(self.filtre_init.kernel_height.get_current_value())
+        self.spnAnchorX.set_value(self.filtre_init.anchor_x.get_current_value())
+        self.spnAnchorY.set_value(self.filtre_init.anchor_y.get_current_value())
         
     def create_adj(self):
         return Gtk.Adjustment(1, 1, 255, 1, 10, 0)
@@ -71,22 +71,22 @@ class WinMorphology():
         self.init_window()
     
     def on_spnKernelWidth_value_changed(self, widget):
-        self.filtre.kernel_width = self.spnKernelWidth.get_value()
+        self.filtre.kernel_width.set_current_value(self.spnKernelWidth.get_value())
         self.filtre.configure()
     
     def on_spnKernelHeight_value_changed(self, widget):
-        self.filtre.kernel_height = self.spnKernelHeight.get_value()
+        self.filtre.kernel_height.set_current_value(self.spnKernelHeight.get_value())
         self.filtre.configure()
     
     def on_spnAnchorX_value_changed(self, widget):
-        self.filtre.anchor_x = self.spnAnchorX.get_value()
+        self.filtre.anchor_x.set_current_value(self.spnAnchorX.get_value())
         self.filtre.configure()
     
     def on_spnAnchorY_value_changed(self, widget):
-        self.filtre.anchor_y = self.spnAnchorY.get_value()
+        self.filtre.anchor_y.set_current_value(self.spnAnchorY.get_value())
         self.filtre.configure()
         
     def on_spnIterations_value_changed(self, widget):
-        self.filtre.iterations = self.spnIterations.get_value()
+        self.filtre.iterations.set_current_value(self.spnIterations.get_value())
         self.filtre.configure()
     

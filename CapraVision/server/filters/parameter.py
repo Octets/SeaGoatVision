@@ -1,9 +1,14 @@
+
+
 class Parameter:
-    def __init__(self,name, minValue,maxValue,currentValue):
+    INT,FLOAT,EVEN,ODD = range(4)
+    
+    def __init__(self,name, minValue,maxValue,currentValue,type=INT):
         self.name = name
         self.minValue = minValue
         self.maxValue = maxValue
         self.currentValue = currentValue
+        self.type = type
     
     def get_name(self):
         return self.name
@@ -19,3 +24,6 @@ class Parameter:
     
     def set_current_value(self,newValue):
         self.currentValue = newValue
+    
+    def get_type(self):
+        return self.type

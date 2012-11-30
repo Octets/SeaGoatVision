@@ -19,6 +19,7 @@
 
 from CapraVision.client.qt.utils import *
 from CapraVision.server.core import filterchain
+from CapraVision.server import imageproviders
 
 #from CapraVision import chain
 #from CapraVision import sources
@@ -33,17 +34,18 @@ from PySide import QtCore
 
 
 class WinFilterChain:
+    
     """Main window
     Allow the user to create, edit and test filter chains
     """
     
     WINDOW_TITLE = "Capra Vision"
 
-    def __init__(self):
-        
+    def __init__(self):        
         self.filterchain = None
         self.filename = None
         self.ui = get_ui(self,)
+        self.loadSources()
        
     def new_chain(self):
         self.filterchain = filterchain.FilterChain()
@@ -61,9 +63,7 @@ class WinFilterChain:
         filename = QtGui.QFileDialog.getSaveFileName()[0]
         if len(filename)>0:
             self.filename = filename
-            self.save_chain()
-    
-    
+            self.save_chain()     
     
     def add_filter(self,filter):
         if self.filterchain is not None:
@@ -77,6 +77,13 @@ class WinFilterChain:
         for filter in self.filterchain.filters:
             print filter.__class__
             self.ui.filterListWidget.addItem(filter.__class__.__name__)
+            
+    def loadSources(self):
+        self.ui.sourcesComboBox.clear()
+        self.sources = imageproviders.load_sources()
+        self.ui.sourcesComboBox.addItem("None")
+        for source in self.sources.keys():            
+            self.ui.sourcesComboBox.addItem(source)
             
             
 

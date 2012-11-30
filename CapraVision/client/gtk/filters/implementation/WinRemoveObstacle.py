@@ -43,9 +43,9 @@ class WinRemoveObstacle:
         self.init_window()
 
     def init_window(self):
-        self.spnThreshold.set_value(self.filtre_init.threshold)
-        self.spnHBlur.set_value(self.filtre_init.horizontal_blur)
-        self.spnVBlur.set_value(self.filtre_init.vertical_blur)
+        self.spnThreshold.set_value(self.filtre_init.threshold.get_current_value())
+        self.spnHBlur.set_value(self.filtre_init.horizontal_blur.get_current_value())
+        self.spnVBlur.set_value(self.filtre_init.vertical_blur.get_current_value())
         
     def create_adj(self):
         return Gtk.Adjustment(1, 0, 255, 1, 1, 0)
@@ -58,11 +58,11 @@ class WinRemoveObstacle:
         self.window.destroy()
     
     def on_spnThreshold_value_changed(self, widget):
-        self.filtre.threshold = int(self.spnThreshold.get_value())
+        self.filtre.threshold.set_current_value(int(self.spnThreshold.get_value()))
     
     def on_spnVBlur_value_changed(self, widget):
-        self.filtre.vertical_blur = int(self.spnVBlur.get_value())
+        self.filtre.vertical_blur.set_current_value(int(self.spnVBlur.get_value()))
         
     def on_spnHBlur_value_changed(self, widget):
-        self.filtre.horizontal_blur = int(self.spnHBlur.get_value())
+        self.filtre.horizontal_blur.set_current_value(int(self.spnHBlur.get_value()))
     

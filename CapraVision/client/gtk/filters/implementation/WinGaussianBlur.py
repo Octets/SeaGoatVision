@@ -49,10 +49,10 @@ class WinGaussianBlur:
         return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
     
     def init_window(self):
-        self.spnHeight.set_value(self.filtre_init.kernel_height)
-        self.spnWidth.set_value(self.filtre_init.kernel_width)
-        self.spnX.set_value(self.filtre_init.sigma_x)
-        self.spnY.set_value(self.filtre_init.sigma_y)
+        self.spnHeight.set_value(self.filtre_init.kernel_height.get_current_value())
+        self.spnWidth.set_value(self.filtre_init.kernel_width.get_current_value())
+        self.spnX.set_value(self.filtre_init.sigma_x.get_current_value())
+        self.spnY.set_value(self.filtre_init.sigma_y.get_current_value())
     
     def on_btnOK_clicked(self, widget):
         self.cb()
@@ -66,14 +66,14 @@ class WinGaussianBlur:
         self.init_window()
     
     def on_spnHeight_value_changed(self, widget):
-        self.filtre.kernel_height = int(self.spnHeight.get_value())
+        self.filtre.kernel_height.set_current_value(int(self.spnHeight.get_value()))
     
     def on_spnWidth_value_changed(self, widget):
-        self.filtre.kernel_width = int(self.spnWidth.get_value())
+        self.filtre.kernel_width.set_current_value(int(self.spnWidth.get_value()))
     
     def on_spnX_value_changed(self, widget):
-        self.filtre.sigma_x = int(self.spnX.get_value())
+        self.filtre.sigma_x.set_current_value(int(self.spnX.get_value()))
     
     def on_spnY_value_changed(self, widget):
-        self.filtre.sigma_y = int(self.spnY.get_value())
+        self.filtre.sigma_y.set_current_value(int(self.spnY.get_value()))
     

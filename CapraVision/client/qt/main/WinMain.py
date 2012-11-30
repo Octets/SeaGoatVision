@@ -31,6 +31,7 @@ from WinMapper import WinMapper
 from WinViewer import WinViewer
 from WinExec import WinExec
 from WinFilterChain import WinFilterChain
+from WinViewer import WinViewer
 from PySide import QtGui
 from PySide import QtCore
 
@@ -50,15 +51,14 @@ class WinMain(QtGui.QMainWindow):
         self.ui.createNewButton.clicked.connect(self.winFilterChain.new_chain)
         self.setCentralWidget(self.winFilterChain.ui)
         
-        self.winFilterSel = WinFilterSel()
-        #self.ui.addFilterButton.clicked.connect(self.addFilter)
+        self.winFilterSel = WinFilterSel()       
         
         self.winFilterSel.onAddFilter.connect(self.winFilterChain.add_filter)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilterSel.ui)
         
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,WinExec().ui)
         
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,WinViewer().ui)
+        self.ui.previewButton.clicked.connect(self.addPreview)
         
     def _addToolBar(self):
         self.ui = get_ui(self)
@@ -67,3 +67,9 @@ class WinMain(QtGui.QMainWindow):
         for widget in self.ui.children():
             if isinstance(widget, QtGui.QToolButton):
                 self.toolbar.addWidget(widget)
+            
+    def addPreview(self):
+        if self.winFilterChain.filterchain == None:
+            return
+        self.winViewer = WinViewer(self.winFilterChain.filterchain)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,self.winViewer.ui)

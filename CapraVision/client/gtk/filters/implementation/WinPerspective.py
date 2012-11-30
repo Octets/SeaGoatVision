@@ -45,21 +45,21 @@ class WinPerspective:
         
     def init_window(self):
         self.spnTopLeftX.set_adjustment(self.create_adj())
-        self.spnTopLeftX.set_value(self.filtre.topleftx)
+        self.spnTopLeftX.set_value(self.filtre.topleftx.get_current_value())
         self.spnTopLeftY.set_adjustment(self.create_adj())
-        self.spnTopLeftY.set_value(self.filtre.toplefty)
+        self.spnTopLeftY.set_value(self.filtre.toplefty.get_current_value())
         self.spnBottomLeftX.set_adjustment(self.create_adj())
-        self.spnBottomLeftX.set_value(self.filtre.bottomleftx)
+        self.spnBottomLeftX.set_value(self.filtre.bottomleftx.get_current_value())
         self.spnBottomLeftY.set_adjustment(self.create_adj())
-        self.spnBottomLeftY.set_value(self.filtre.bottomlefty)
+        self.spnBottomLeftY.set_value(self.filtre.bottomlefty.get_current_value())
         self.spnTopRightX.set_adjustment(self.create_adj())
-        self.spnTopRightX.set_value(self.filtre.toprightx)
+        self.spnTopRightX.set_value(self.filtre.toprightx.get_current_value())
         self.spnTopRightY.set_adjustment(self.create_adj())
-        self.spnTopRightY.set_value(self.filtre.toprighty)
+        self.spnTopRightY.set_value(self.filtre.toprighty.get_current_value())
         self.spnBottomRightX.set_adjustment(self.create_adj())
-        self.spnBottomRightX.set_value(self.filtre.bottomrightx)
+        self.spnBottomRightX.set_value(self.filtre.bottomrightx.get_current_value())
         self.spnBottomRightY.set_adjustment(self.create_adj())
-        self.spnBottomRightY.set_value(self.filtre.bottomrighty)
+        self.spnBottomRightY.set_value(self.filtre.bottomrighty.get_current_value())
         
     def create_adj(self):
         return Gtk.Adjustment(0.0, 0.0, 65535.0, 1, 10.0, 0.0)
@@ -80,33 +80,33 @@ class WinPerspective:
         self.init_window()
         
     def on_spnTopLeftX_value_changed(self, widget):
-        self.filtre.topleftx = self.spnTopLeftX.get_value()
+        self.filtre.topleftx.set_current_value(self.spnTopLeftX.get_value())
         self.filtre.configure()
         
     def on_spnTopLeftY_value_changed(self, widget):
-        self.filtre.toplefty = self.spnTopLeftY.get_value()
+        self.filtre.toplefty.set_current_value(self.spnTopLeftY.get_value())
         self.filtre.configure()
 
     def on_spnBottomLeftX_value_changed(self, widget):
-        self.filtre.bottomleftx = self.spnBottomLeftX.get_value()
+        self.filtre.bottomleftx.set_current_value(self.spnBottomLeftX.get_value())
         self.filtre.configure()
         
     def on_spnBottomLeftY_value_changed(self, widget):
-        self.filtre.bottomlefty = self.spnBottomLeftY.get_value()
+        self.filtre.bottomlefty.set_current_value(self.spnBottomLeftY.get_value())
         self.filtre.configure()
         
     def on_spnTopRightX_value_changed(self, widget):
-        self.filtre.toprightx = self.spnTopRightX.get_value()
+        self.filtre.toprightx.set_current_value(self.spnTopRightX.get_value())
         self.filtre.configure()
 
     def on_spnTopRightY_value_changed(self, widget):
-        self.filtre.toprighty = self.spnTopRightY.get_value()
+        self.filtre.toprighty.set_current_value(self.spnTopRightY.get_value())
         self.filtre.configure()
         
     def on_spnBottomRightX_value_changed(self, widget):
-        self.filtre.bottomrightx = self.spnBottomRightX.get_value()
+        self.filtre.bottomrightx.set_current_value(self.spnBottomRightX.get_value())
         self.filtre.configure()
 
     def on_spnBottomRightY_value_changed(self, widget):
-        self.filtre.bottomrighty = self.spnBottomRightY.get_value()
+        self.filtre.bottomrighty.set_current_value(self.spnBottomRightY.get_value())
         self.filtre.configure()

@@ -38,11 +38,11 @@ class WinColorLevel:
         
     def init_window(self):
         self.hscRed.set_range(0, 100)
-        self.hscRed.set_value(self.filtre.red)
+        self.hscRed.set_value(self.filtre.red.get_current_value())
         self.hscGreen.set_range(0, 100)
-        self.hscGreen.set_value(self.filtre.green)
+        self.hscGreen.set_value(self.filtre.green.get_current_value())
         self.hscBlue.set_range(0, 100)
-        self.hscBlue.set_value(self.filtre.blue)
+        self.hscBlue.set_value(self.filtre.blue.get_current_value())
         
     def on_btnOK_clicked(self, widget):
         self.cb()
@@ -55,10 +55,10 @@ class WinColorLevel:
         self.init_window()
         
     def on_hscRed_value_changed(self, widget):
-        self.filtre.red = self.hscRed.get_value()
+        self.filtre.red.set_current_value(self.hscRed.get_value())
         
     def on_hscGreen_value_changed(self, widget):
-        self.filtre.green = self.hscGreen.get_value()
+        self.filtre.green.set_current_value(self.hscGreen.get_value())
 
     def on_hscBlue_value_changed(self, widget):
-        self.filtre.blue = self.hscBlue.get_value()
+        self.filtre.blue.set_current_value(self.hscBlue.get_value())
