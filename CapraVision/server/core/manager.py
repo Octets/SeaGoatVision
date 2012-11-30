@@ -17,16 +17,24 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Description :
+Authors: Benoit Paquet
+Date : Novembre 2012
+"""
+
+from CapraVision.server.core.mainloop import MainLoop
 from CapraVision.server import imageproviders
 import filterchain
+from CapraVision.server.filters import utils
 
 class VisionManager:
 
-    def __init__(self, thread):
+    def __init__(self):
         self.chain = None
         self.create_new_chain()
         self.source = None
-        self.thread = thread
+        self.thread = MainLoop()
         self.thread.add_observer(self.thread_observer)
 
     def get_source(self):
@@ -52,6 +60,9 @@ class VisionManager:
 
     def get_filter_from_index(self, index):
         return self.chain.__getitem__(index)
+
+    def get_filter_list(self):
+        return utils.load_filters().keys()
 
     def count_filters(self):
         if self.chain is not None:
@@ -150,3 +161,10 @@ class VisionManager:
 
     def remove_thread_observer(self, observer):
         self.thread.remove_observer(observer)
+
+    def close_server(self):
+        self.stop_thread()
+
+    def is_connected(self):
+        return True
+

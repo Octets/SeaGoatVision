@@ -15,11 +15,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Description : This is the proto file. We use this file to generate server_pb2.py for protobuf service. 
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
-"""
+//Description : This is the proto file. We use this file to generate server_pb2.py for protobuf service. 
+//Authors: Mathieu Benoit (mathben963@gmail.com)
+//Date : October 2012
 
 package protobuf.socketrpc;
 
@@ -28,6 +26,22 @@ option java_outer_classname = "VServerProto";
 
 option py_generic_services = true;
 option optimize_for = SPEED;
+
+//############################################################
+//##################### GENERAL SECTION ######################
+//############################################################
+message StatusResponse
+{
+  required int32 status = 1;
+  optional string message = 2;
+}
+
+//############################################################
+//###################### ACTION SECTION ######################
+//############################################################
+message IsConnectedRequest
+{
+}
 
 //############################################################
 //###################### FILTER SECTION ###################### 
@@ -46,6 +60,7 @@ message GetFilterListResponse
 //#############################################################
 service CommandService 
 {
-  rpc GetFilterList(GetFilterListRequest) returns(GetFilterListResponse);
+  rpc get_filter_list(GetFilterListRequest) returns(GetFilterListResponse);
+  rpc is_connected(IsConnectedRequest) returns(StatusResponse);
 }
 

@@ -23,7 +23,7 @@ Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
 
-from CapraVision.client.controller import facadeClient
+from CapraVision.client.controller.controllerProtobuf import Controller
 # SOURCE of this code about the commande line : http://www.doughellmann.com/PyMOTW/cmd/
 import cmd
 
@@ -35,14 +35,13 @@ logging.basicConfig(level=logging.DEBUG)
 class VCmd(cmd.Cmd):
     def __init__(self, completekey='tab', stdin=None, stdout=None):
         cmd.Cmd.__init__(self, completekey=completekey, stdin=stdin, stdout=stdout)
-        self.facade = facadeClient.FacadeClient("protobuf")
-        #self.facade = facadeClient.FacadeClient("sharedMemory")
+        self.controller = Controller()
         
     ####################################################################################################
     # List of command
     ####################################################################################################
     def do_getFilter(self, line):
-        lstFilter = self.facade.getFilter()
+        lstFilter = self.controller.get_filter_list()
         if lstFilter is not None:
             print("Nombre de ligne %s, tableau : %s" % (len(lstFilter), lstFilter))
         else:

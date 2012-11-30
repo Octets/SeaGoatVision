@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -26,20 +26,118 @@ Date : October 2012
 # Import required RPC modules
 from CapraVision.proto import server_pb2
 
-import facadeServer
+# Import CapraVision library
+from CapraVision.server.core.manager import VisionManager
 
 class ProtobufServerImpl(server_pb2.CommandService):
     def __init__(self, *args, **kwargs):
         server_pb2.CommandService.__init__(self, *args, **kwargs)
-        
-        self.facadeServer = facadeServer.FacadeServer()
-    
-    def GetFilterList(self, controller, request, done):
+
+        self.manager = VisionManager()
+
+    def get_source(self, controller, request, done):
+        pass
+
+    def get_chain(self, controller, request, done):
+        pass
+
+    def get_thread(self, controller, request, done):
+        pass
+
+    def change_sleep_time(self, controller, request, done):
+        pass
+
+    def start_thread(self, controller, request, done):
+        self.manager.start_thread()
+
+    def stop_thread(self, controller, request, done):
+        self.manager.stop_thread()
+
+    def get_filter_from_index(self, controller, request, done):
+        pass
+
+    def get_filter_list(self, controller, request, done):
         # Create a reply
         response = server_pb2.GetFilterListResponse()
-        for filter in self.facadeServer.getFilter():
-            response.filters.append(filter) 
-        
+        for filter in self.manager.get_filter_list():
+            response.filters.append(filter)
+
         # We're done, call the run method of the done callback
         done.run(response)
+
+    def count_filters(self, controller, request, done):
+        pass
+
+    def create_new_chain(self, controller, request, done):
+        self.manager.create_new_chain()
+
+    def hook_new_chain(self, controller, request, done):
+        pass
+
+    def chain_exists(self, controller, request, done):
+        pass
+
+    def load_chain(self, controller, request, done):
+        pass
+
+    def save_chain(self, controller, request, done):
+        pass
+
+    def change_source(self, controller, request, done):
+        pass
+
+    def is_thread_running(self, controller, request, done):
+        pass
+
+    def thread_observer(self, controller, request, done):
+        pass
+
+    def add_filter(self, controller, request, done):
+        pass
+
+    def remove_filter(self, controller, request, done):
+        pass
+
+    def reload_filter(self, controller, request, done):
+        pass
+
+    def move_filter_up(self, controller, request, done):
+        pass
+
+    def move_filter_down(self, controller, request, done):
+        pass
+
+    def add_image_observer(self, controller, request, done):
+        pass
+
+    def remove_image_observer(self, controller, request, done):
+        pass
+
+    def add_filter_observer(self, controller, request, done):
+        pass
+
+    def remove_filter_observer(self, controller, request, done):
+        pass
+
+    def add_filter_output_observer(self, controller, request, done):
+        pass
+
+    def remove_filter_output_observer(self, controller, request, done):
+        pass
+
+    def add_thread_observer(self, controller, request, done):
+        pass
+
+    def remove_thread_observer(self, controller, request, done):
+        pass
+
+    def close_server(self, controller, request, done):
+        self.manager.close_server()
         
+    def is_connected(self, controller, request, done):
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        response.status = 0
+        # We're done, call the run method of the done callback
+        done.run(response)
+

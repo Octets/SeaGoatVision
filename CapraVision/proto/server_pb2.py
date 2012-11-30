@@ -13,9 +13,65 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = descriptor.FileDescriptor(
   name='server.proto',
   package='protobuf.socketrpc',
-  serialized_pb='\n\x0cserver.proto\x12\x12protobuf.socketrpc\"\x16\n\x14GetFilterListRequest\"(\n\x15GetFilterListResponse\x12\x0f\n\x07\x66ilters\x18\x01 \x03(\t2v\n\x0e\x43ommandService\x12\x64\n\rGetFilterList\x12(.protobuf.socketrpc.GetFilterListRequest\x1a).protobuf.socketrpc.GetFilterListResponseB\x1e\n\tcom.capraB\x0cVServerProtoH\x01\x90\x01\x01')
+  serialized_pb='\n\x0cserver.proto\x12\x12protobuf.socketrpc\"1\n\x0eStatusResponse\x12\x0e\n\x06status\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x14\n\x12IsConnectedRequest\"\x16\n\x14GetFilterListRequest\"(\n\x15GetFilterListResponse\x12\x0f\n\x07\x66ilters\x18\x01 \x03(\t2\xd4\x01\n\x0e\x43ommandService\x12\x66\n\x0fget_filter_list\x12(.protobuf.socketrpc.GetFilterListRequest\x1a).protobuf.socketrpc.GetFilterListResponse\x12Z\n\x0cis_connected\x12&.protobuf.socketrpc.IsConnectedRequest\x1a\".protobuf.socketrpc.StatusResponseB\x1e\n\tcom.capraB\x0cVServerProtoH\x01\x90\x01\x01')
 
 
+
+
+_STATUSRESPONSE = descriptor.Descriptor(
+  name='StatusResponse',
+  full_name='protobuf.socketrpc.StatusResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    descriptor.FieldDescriptor(
+      name='status', full_name='protobuf.socketrpc.StatusResponse.status', index=0,
+      number=1, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='message', full_name='protobuf.socketrpc.StatusResponse.message', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=36,
+  serialized_end=85,
+)
+
+
+_ISCONNECTEDREQUEST = descriptor.Descriptor(
+  name='IsConnectedRequest',
+  full_name='protobuf.socketrpc.IsConnectedRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=87,
+  serialized_end=107,
+)
 
 
 _GETFILTERLISTREQUEST = descriptor.Descriptor(
@@ -34,8 +90,8 @@ _GETFILTERLISTREQUEST = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=36,
-  serialized_end=58,
+  serialized_start=109,
+  serialized_end=131,
 )
 
 
@@ -62,12 +118,26 @@ _GETFILTERLISTRESPONSE = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=60,
-  serialized_end=100,
+  serialized_start=133,
+  serialized_end=173,
 )
 
+DESCRIPTOR.message_types_by_name['StatusResponse'] = _STATUSRESPONSE
+DESCRIPTOR.message_types_by_name['IsConnectedRequest'] = _ISCONNECTEDREQUEST
 DESCRIPTOR.message_types_by_name['GetFilterListRequest'] = _GETFILTERLISTREQUEST
 DESCRIPTOR.message_types_by_name['GetFilterListResponse'] = _GETFILTERLISTRESPONSE
+
+class StatusResponse(message.Message):
+  __metaclass__ = reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _STATUSRESPONSE
+  
+  # @@protoc_insertion_point(class_scope:protobuf.socketrpc.StatusResponse)
+
+class IsConnectedRequest(message.Message):
+  __metaclass__ = reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _ISCONNECTEDREQUEST
+  
+  # @@protoc_insertion_point(class_scope:protobuf.socketrpc.IsConnectedRequest)
 
 class GetFilterListRequest(message.Message):
   __metaclass__ = reflection.GeneratedProtocolMessageType
@@ -88,16 +158,25 @@ _COMMANDSERVICE = descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=102,
-  serialized_end=220,
+  serialized_start=176,
+  serialized_end=388,
   methods=[
   descriptor.MethodDescriptor(
-    name='GetFilterList',
-    full_name='protobuf.socketrpc.CommandService.GetFilterList',
+    name='get_filter_list',
+    full_name='protobuf.socketrpc.CommandService.get_filter_list',
     index=0,
     containing_service=None,
     input_type=_GETFILTERLISTREQUEST,
     output_type=_GETFILTERLISTRESPONSE,
+    options=None,
+  ),
+  descriptor.MethodDescriptor(
+    name='is_connected',
+    full_name='protobuf.socketrpc.CommandService.is_connected',
+    index=1,
+    containing_service=None,
+    input_type=_ISCONNECTEDREQUEST,
+    output_type=_STATUSRESPONSE,
     options=None,
   ),
 ])
