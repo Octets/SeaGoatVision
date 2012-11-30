@@ -124,7 +124,21 @@ class Controller():
         self.manager.remove_filter(filtre)
 
     def reload_filter(self, filtre=None):
-        self.manager.reload_filter(filtre)
+        """
+            Reload Filter.
+            Param : filtre - if None, reload all filter, else reload filter name
+        """
+        request = server_pb2.ReloadFilterRequest()
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.get_filter_list(request, timeout=10000)
+            returnValue = response.status == 0
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue
 
     def move_filter_up(self, filtre):
         self.manager.move_filter_up(filtre)

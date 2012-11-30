@@ -43,8 +43,14 @@ message IsConnectedRequest
 {
 }
 
+message ReloadFilterRequest
+{
+  repeated string filterName = 1;
+}
+
+
 //############################################################
-//###################### FILTER SECTION ###################### 
+//######################## GET SECTION ####################### 
 //############################################################
 message GetFilterListRequest
 {
@@ -55,6 +61,10 @@ message GetFilterListResponse
   repeated string filters = 1;
 }
 
+//############################################################
+//######################## SET SECTION ####################### 
+//############################################################
+
 //#############################################################
 //###################### SERVICE SECTION ###################### 
 //#############################################################
@@ -62,5 +72,6 @@ service CommandService
 {
   rpc get_filter_list(GetFilterListRequest) returns(GetFilterListResponse);
   rpc is_connected(IsConnectedRequest) returns(StatusResponse);
+  rpc reload_filter(ReloadFilterRequest) returns(StatusResponse);
 }
 

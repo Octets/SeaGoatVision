@@ -99,7 +99,13 @@ class ProtobufServerImpl(server_pb2.CommandService):
         pass
 
     def reload_filter(self, controller, request, done):
-        pass
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        self.manager.reload_filter()
+        
+        response.status = 0
+        # We're done, call the run method of the done callback
+        done.run(response)
 
     def move_filter_up(self, controller, request, done):
         pass
