@@ -30,10 +30,10 @@ from CapraVision.client.controller.controllerProtobuf import Controller
 
 def run():
     # Protobuf
-    c = Controller()
+    #c = Controller()
 
     # Directly connected to the vision server
-    #c = VisionManager()
+    c = VisionManager()
     
     if not c.is_connected():
         print("Vision server is not accessible.")
