@@ -31,9 +31,6 @@ import logging
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
-# Import CapraVision library - temporaire, remove me
-from CapraVision.server.core.manager import VisionManager
-
 # The callback is for asynchronous call to RpcService
 def callback(request, response):
     """Define a simple async callback."""
@@ -48,31 +45,29 @@ class Controller():
         # Create a new service instance
         self.service = RpcService(server_pb2.CommandService_Stub, port, hostname)
 
-        self.manager = VisionManager()
-
     def get_source(self):
-        return self.manager.get_source()
+        pass
 
     def get_chain(self):
-        return self.manager.get_chain()
+        pass
 
     def get_thread(self):
-        return self.manager.get_thread()
+        pass
 
     def change_sleep_time(self, sleep_time):
-        self.manager.change_sleep_time(sleep_time)
+        pass
 
     def start_thread(self):
-        self.manager.start_thread()
+        pass
 
     def stop_thread(self):
-        self.manager.stop_thread()
+        pass
 
     def __getitem__(self, index):
-        return self.manager.get_filter_from_index(index)
+        pass
 
     def get_filter_from_index(self, index):
-        return self.manager.get_filter_from_index(index)
+        pass
 
     def get_filter_list(self):
         """
@@ -89,39 +84,73 @@ class Controller():
             log.exception(ex)
 
         return returnValue
+    
+    def get_filter_list_from_filterchain(self):
+        """
+            Return list of filter from filterchain
+        """
+        request = server_pb2.GetFilterListFromFilterChainRequest()
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.get_filter_list_from_filterchain(request, timeout=10000)
+            returnValue = response.filters
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue
 
     def count_filters(self):
-        return self.manager.count_filters()
+        pass
 
     def create_new_chain(self):
-        self.manager.create_new_chain()
+        pass
 
     def hook_new_chain(self, new_chain):
-        self.manager.hook_new_chain(new_chain)
+        pass
 
     def chain_exists(self):
-        self.manager.chain_exists()
+        pass
 
     def load_chain(self, file_name):
-        self.manager.load_chain(file_name)
+        """
+            load Filter.
+            Param : file_name - path of filter to load into server
+        """
+        request = server_pb2.LoadChainRequest()
+        request.filterName = file_name
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.load_chain(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+            else:
+                returnValue = False
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue
 
     def save_chain(self, file_name):
-        self.manager.save_chain(file_name)
+        pass
 
     def change_source(self, new_source):
-        self.manager.change_source(new_source)
+        pass
 
     def is_thread_running(self):
-        return self.manager.is_thread_running()
+        pass
 
     def thread_observer(self, image):
-        self.manager.thread_observer(image)
+        pass
 
     def add_filter(self, filtre):
-        self.manager.add_filter(filtre)
+        pass
 
     def remove_filter(self, filtre):
-        self.manager.remove_filter(filtre)
+        pass
 
     def reload_filter(self, filtre=None):
         """
@@ -129,11 +158,19 @@ class Controller():
             Param : filtre - if None, reload all filter, else reload filter name
         """
         request = server_pb2.ReloadFilterRequest()
+        if type(filtre) is list:
+            for item in filtre:
+                request.filterName.append(item)
+        elif type(filtre) is str:
+            request.filterName = [filtre]
+        elif filtre is not None:
+            raise Exception("filtre is wrong type : %s" % type(filtre))
+        
         # Make an synchronous call
         returnValue = None
         try:
-            response = self.service.get_filter_list(request, timeout=10000)
-            returnValue = response.status == 0
+            response = self.service.reload_filter(request, timeout=10000)
+            returnValue = not response.status
 
         except Exception, ex:
             log.exception(ex)
@@ -141,37 +178,37 @@ class Controller():
         return returnValue
 
     def move_filter_up(self, filtre):
-        self.manager.move_filter_up(filtre)
+        pass
 
     def move_filter_down(self, filtre):
-        self.manager.move_filter_down(filtre)
+        pass
 
     def add_image_observer(self, observer):
-        self.manager.add_image_observer(observer)
+        pass
 
     def remove_image_observer(self, observer):
-        self.manager.remove_image_observer(observer)
+        pass
 
     def add_filter_observer(self, observer):
-        self.manager.add_filter_observer(observer)
+        pass
 
     def remove_filter_observer(self, observer):
-        self.manager.remove_filter_observer(observer)
+        pass
 
     def add_filter_output_observer(self, output):
-        self.manager.add_filter_output_observer(output)
+        pass
 
     def remove_filter_output_observer(self, output):
-        self.manager.remove_filter_output_observer(output)
+        pass
 
     def add_thread_observer(self, observer):
-        self.manager.add_thread_observer(observer)
+        pass
 
     def remove_thread_observer(self, observer):
-        self.manager.remove_thread_observer(observer)
+        pass
 
     def close_server(self):
-        self.manager.close_server()
+        pass
 
     def is_connected(self):
         print("Try connection")

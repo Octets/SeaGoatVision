@@ -61,6 +61,9 @@ class VisionManager:
     def get_filter_from_index(self, index):
         return self.chain.__getitem__(index)
 
+    def get_filter_list_from_filterchain(self):
+        return self.chain.get_filter_list()
+
     def get_filter_list(self):
         return utils.load_filters().keys()
 
@@ -87,10 +90,14 @@ class VisionManager:
         return self.chain is not None
 
     def load_chain(self, file_name):
+        """
+            return if chain is correctly loading.
+        """
         new_chain = filterchain.read(file_name)
         if new_chain is not None and self.chain is not None:
             self.hook_new_chain(new_chain)
         self.chain = new_chain
+        return self.chain_exists()
 
     def save_chain(self, file_name):
         filterchain.write(file_name, self.chain)
@@ -167,4 +174,5 @@ class VisionManager:
 
     def is_connected(self):
         return True
+    
 

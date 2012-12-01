@@ -25,13 +25,11 @@ Date : October 2012
 
 # Import required RPC modules
 from CapraVision.proto import server_pb2
-
-# Import CapraVision library
 from CapraVision.server.core.manager import VisionManager
 
 class ProtobufServerImpl(server_pb2.CommandService):
-    def __init__(self, *args, **kwargs):
-        server_pb2.CommandService.__init__(self, *args, **kwargs)
+    def __init__(self, * args, ** kwargs):
+        server_pb2.CommandService.__init__(self, * args, ** kwargs)
 
         self.manager = VisionManager()
 
@@ -48,19 +46,32 @@ class ProtobufServerImpl(server_pb2.CommandService):
         pass
 
     def start_thread(self, controller, request, done):
-        self.manager.start_thread()
+        pass
 
     def stop_thread(self, controller, request, done):
-        self.manager.stop_thread()
+        oass
 
     def get_filter_from_index(self, controller, request, done):
         pass
 
     def get_filter_list(self, controller, request, done):
+        print("get_filter_list request %s" % request)
+
         # Create a reply
         response = server_pb2.GetFilterListResponse()
         for filter in self.manager.get_filter_list():
             response.filters.append(filter)
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+    def get_filter_list_from_filterchain(self, controller, request, done):
+        print("get_filter_list_from_filterchain request %s" % request)
+
+        # Create a reply
+        response = server_pb2.GetFilterListFromFilterChainResponse()
+        for item in self.manager.get_filter_list_from_filterchain():
+            response.filters.add(name=item.name, doc=item.doc)
 
         # We're done, call the run method of the done callback
         done.run(response)
@@ -78,7 +89,18 @@ class ProtobufServerImpl(server_pb2.CommandService):
         pass
 
     def load_chain(self, controller, request, done):
-        pass
+        print("load_chain request %s" % request)
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            response.status = int(not self.manager.load_chain(request.filterName))
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
 
     def save_chain(self, controller, request, done):
         pass
@@ -99,11 +121,17 @@ class ProtobufServerImpl(server_pb2.CommandService):
         pass
 
     def reload_filter(self, controller, request, done):
+        print("reload_filter request %s" % request)
+
         # Create a reply
         response = server_pb2.StatusResponse()
-        self.manager.reload_filter()
-        
-        response.status = 0
+        try:
+            self.manager.reload_filter(request.filterName)
+            response.status = 0
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
         # We're done, call the run method of the done callback
         done.run(response)
 
@@ -139,8 +167,10 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
     def close_server(self, controller, request, done):
         self.manager.close_server()
-        
+
     def is_connected(self, controller, request, done):
+        print("is_connected request %s" % request)
+
         # Create a reply
         response = server_pb2.StatusResponse()
         response.status = 0

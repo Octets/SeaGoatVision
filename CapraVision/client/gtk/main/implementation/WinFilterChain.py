@@ -214,10 +214,10 @@ class WinFilterChain:
         self.window.set_title(self.WINDOW_TITLE)
         self.change_state()
 
-    def show_filter_config(self, filtre):
-        cls = map_filter_to_ui(filtre)
+    def show_filter_config(self, filter):
+        cls = map_filter_to_ui(filter)
         if cls is not None:
-            win = cls(filtre, self.filter_modif_callback)
+            win = cls(filter, self.filter_modif_callback)
             self.add_window_to_list(win)
             win.window.connect('destroy', self.on_window_destroy)
             win.window.show_all()
@@ -233,9 +233,8 @@ class WinFilterChain:
 
     def show_filter_chain(self):
         self.filterChainListStore.clear()
-        for filtre in self.manager:
-            self.filterChainListStore.append(
-                        [filtre.__class__.__name__, filtre.__doc__])
+        for filter in self.manager.get_filter_list_from_filterchain():
+            self.filterChainListStore.append([filter.name, filter.doc])
 
     def thread_observer(self, image):
         if not self.manager.is_thread_running() and self.thread_running:
@@ -284,8 +283,7 @@ class WinFilterChain:
         dialog.set_filter(ff)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.manager.load_chain(dialog.get_filename())
-            if self.manager.chain_exists():
+            if self.manager.load_chain(dialog.get_filename()):
                 self.use_new_chain()
                 self.txtFilterChain.set_text(dialog.get_filename())
                 self.set_state_show()
@@ -325,20 +323,20 @@ class WinFilterChain:
         self.set_state_modified()
 
     def on_btnUp_clicked(self, widget):
-        filtre = self.selected_filter()
-        if filtre is not None:
+        filter = self.selected_filter()
+        if filter is not None:
             index = tree_selected_index(self.lstFilters)
             if index > 0:
-                self.manager.move_filter_up(filtre)
+                self.manager.move_filter_up(filter)
                 self.lstFilters.set_cursor(index - 1)
                 self.set_state_modified()
 
     def on_btnDown_clicked(self, widget):
-        filtre = self.selected_filter()
-        if filtre is not None:
+        filter = self.selected_filter()
+        if filter is not None:
             index = tree_selected_index(self.lstFilters)
             if index < self.manager.count_filters() - 1:
-                self.manager.move_filter_down(filtre)
+                self.manager.move_filter_down(filter)
                 self.lstFilters.set_cursor(index + 1)
                 self.set_state_modified()
 

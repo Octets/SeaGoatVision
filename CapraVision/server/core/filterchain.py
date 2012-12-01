@@ -106,6 +106,16 @@ class FilterChain:
     def get_filter_output_observers(self):
         return self.filter_output_observers
 
+    def get_filter_list(self):
+        class Filter: pass
+        retValue = []
+        for item in self.filters:
+            filter = Filter()
+            setattr(filter, "name", item.__class__.__name__)
+            setattr(filter, "doc", item.__doc__)
+            retValue.append(filter)
+        return retValue
+
     def __getitem__(self, index):
         return self.filters[index]
 
