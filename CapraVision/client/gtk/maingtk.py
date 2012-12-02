@@ -26,11 +26,11 @@ Date : October 2012
 from CapraVision.server.core.manager import VisionManager
 from CapraVision.server.tcp_server import Server
 
-from CapraVision.client.controller.controllerProtobuf import Controller
+from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
 
 def run():
     # Protobuf
-    #c = Controller()
+    #c = ControllerProtobuf()
 
     # Directly connected to the vision server
     c = VisionManager()

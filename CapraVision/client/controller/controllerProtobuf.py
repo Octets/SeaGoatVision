@@ -36,7 +36,7 @@ def callback(request, response):
     """Define a simple async callback."""
     log.info('Asynchronous response :' + response.__str__())
 
-class Controller():
+class ControllerProtobuf():
     def __init__(self):
         # Server details
         hostname = 'localhost'
@@ -45,12 +45,35 @@ class Controller():
         # Create a new service instance
         self.service = RpcService(server_pb2.CommandService_Stub, port, hostname)
 
+    ##########################################################################
+    ################################ CLIENT ##################################
+    ##########################################################################
+    def is_connected(self):
+        print("Try connection")
+        request = server_pb2.IsConnectedRequest()
+        # Make an synchronous call
+        response = None
+        try:
+            response = self.service.is_connected(request, timeout=10000) is not None
+            if response:
+                print("Connection sucessful")
+        except Exception, ex:
+            log.exception(ex)
+
+        return response
+    
+    ##########################################################################
+    ################################ SOURCE ##################################
+    ##########################################################################
     def get_source(self):
         pass
-
-    def get_chain(self):
+    
+    def change_source(self, new_source):
         pass
 
+    ##########################################################################
+    ############################### THREAD  ##################################
+    ##########################################################################
     def get_thread(self):
         pass
 
@@ -63,28 +86,30 @@ class Controller():
     def stop_thread(self):
         pass
 
-    def __getitem__(self, index):
+    def is_thread_running(self):
+        pass
+
+    def thread_observer(self, image):
+        pass
+    
+    def add_thread_observer(self, observer):
+        pass
+
+    def remove_thread_observer(self, observer):
+        pass
+
+    def close_server(self):
+        pass
+    
+    ##########################################################################
+    ############################ FILTERCHAIN  ################################
+    ##########################################################################
+    def get_chain(self):
         pass
 
     def get_filter_from_index(self, index):
         pass
 
-    def get_filter_list(self):
-        """
-            Return list of filter
-        """
-        request = server_pb2.GetFilterListRequest()
-        # Make an synchronous call
-        returnValue = None
-        try:
-            response = self.service.get_filter_list(request, timeout=10000)
-            returnValue = response.filters
-
-        except Exception, ex:
-            log.exception(ex)
-
-        return returnValue
-    
     def get_filter_list_from_filterchain(self):
         """
             Return list of filter from filterchain
@@ -136,16 +161,7 @@ class Controller():
 
     def save_chain(self, file_name):
         pass
-
-    def change_source(self, new_source):
-        pass
-
-    def is_thread_running(self):
-        pass
-
-    def thread_observer(self, image):
-        pass
-
+    
     def add_filter(self, filtre):
         pass
 
@@ -201,26 +217,24 @@ class Controller():
     def remove_filter_output_observer(self, output):
         pass
 
-    def add_thread_observer(self, observer):
-        pass
-
-    def remove_thread_observer(self, observer):
-        pass
-
-    def close_server(self):
-        pass
-
-    def is_connected(self):
-        print("Try connection")
-        request = server_pb2.IsConnectedRequest()
+    ##########################################################################
+    ############################### FILTER  ##################################
+    ##########################################################################
+    def get_filter_list(self):
+        """
+            Return list of filter
+        """
+        request = server_pb2.GetFilterListRequest()
         # Make an synchronous call
-        response = None
+        returnValue = None
         try:
-            response = self.service.is_connected(request, timeout=10000) is not None
-            if response:
-                print("Connection sucessful")
+            response = self.service.get_filter_list(request, timeout=10000)
+            returnValue = response.filters
+
         except Exception, ex:
             log.exception(ex)
 
-        return response
+        return returnValue
+
+
     

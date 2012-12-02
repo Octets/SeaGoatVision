@@ -25,20 +25,35 @@ Date : October 2012
 
 # Import required RPC modules
 from CapraVision.proto import server_pb2
-from CapraVision.server.core.manager import VisionManager
 
 class ProtobufServerImpl(server_pb2.CommandService):
     def __init__(self, * args, ** kwargs):
         server_pb2.CommandService.__init__(self, * args, ** kwargs)
 
-        self.manager = VisionManager()
+    ##########################################################################
+    ################################ CLIENT ##################################
+    ##########################################################################
+    def is_connected(self, controller, request, done):
+        print("is_connected request %s" % request)
 
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        response.status = 0
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+    ##########################################################################
+    ################################ SOURCE ##################################
+    ##########################################################################
     def get_source(self, controller, request, done):
         pass
-
-    def get_chain(self, controller, request, done):
+    
+    def change_source(self, controller, request, done):
         pass
 
+    ##########################################################################
+    ############################### THREAD  ##################################
+    ##########################################################################
     def get_thread(self, controller, request, done):
         pass
 
@@ -49,21 +64,31 @@ class ProtobufServerImpl(server_pb2.CommandService):
         pass
 
     def stop_thread(self, controller, request, done):
-        oass
+        pass
+    
+    def is_thread_running(self, controller, request, done):
+        pass
+
+    def thread_observer(self, controller, request, done):
+        pass
+
+    def add_thread_observer(self, controller, request, done):
+        pass
+
+    def remove_thread_observer(self, controller, request, done):
+        pass
+
+    def close_server(self, controller, request, done):
+        pass
+    
+    ##########################################################################
+    ############################ FILTERCHAIN  ################################
+    ##########################################################################
+    def get_chain(self, controller, request, done):
+        pass
 
     def get_filter_from_index(self, controller, request, done):
         pass
-
-    def get_filter_list(self, controller, request, done):
-        print("get_filter_list request %s" % request)
-
-        # Create a reply
-        response = server_pb2.GetFilterListResponse()
-        for filter in self.manager.get_filter_list():
-            response.filters.append(filter)
-
-        # We're done, call the run method of the done callback
-        done.run(response)
 
     def get_filter_list_from_filterchain(self, controller, request, done):
         print("get_filter_list_from_filterchain request %s" % request)
@@ -103,15 +128,6 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def save_chain(self, controller, request, done):
-        pass
-
-    def change_source(self, controller, request, done):
-        pass
-
-    def is_thread_running(self, controller, request, done):
-        pass
-
-    def thread_observer(self, controller, request, done):
         pass
 
     def add_filter(self, controller, request, done):
@@ -159,21 +175,16 @@ class ProtobufServerImpl(server_pb2.CommandService):
     def remove_filter_output_observer(self, controller, request, done):
         pass
 
-    def add_thread_observer(self, controller, request, done):
-        pass
-
-    def remove_thread_observer(self, controller, request, done):
-        pass
-
-    def close_server(self, controller, request, done):
-        self.manager.close_server()
-
-    def is_connected(self, controller, request, done):
-        print("is_connected request %s" % request)
+    ##########################################################################
+    ############################### FILTER  ##################################
+    ##########################################################################
+    def get_filter_list(self, controller, request, done):
+        print("get_filter_list request %s" % request)
 
         # Create a reply
-        response = server_pb2.StatusResponse()
-        response.status = 0
+        response = server_pb2.GetFilterListResponse()
+        for filter in self.manager.get_filter_list():
+            response.filters.append(filter)
+
         # We're done, call the run method of the done callback
         done.run(response)
-

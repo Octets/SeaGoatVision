@@ -36,13 +36,31 @@ class VisionManager:
         self.source = None
         self.thread = MainLoop()
         self.thread.add_observer(self.thread_observer)
-
+    
+    ##########################################################################
+    ################################ CLIENT ##################################
+    ##########################################################################
+    def is_connected(self):
+        return True
+    
+    ##########################################################################
+    ################################ SOURCE ##################################
+    ##########################################################################
     def get_source(self):
         return self.source
 
-    def get_chain(self):
-        return self.chain
+    def change_source(self, new_source):
+        if self.source <> None:
+            imageproviders.close_source(self.source)
+        if new_source <> None:
+            self.source = imageproviders.create_source(new_source)
+            self.thread.start(self.source)
+        else:
+            self.source = None
 
+    ##########################################################################
+    ############################### THREAD  ##################################
+    ##########################################################################
     def get_thread(self):
         return self.thread
 
@@ -55,17 +73,33 @@ class VisionManager:
     def stop_thread(self):
         self.thread.stop()
 
-    def __getitem__(self, index):
-        return self.chain.__getitem__(index)
+    def is_thread_running(self):
+        return self.thread.is_running()
+
+    def thread_observer(self, image):
+        if self.chain is not None and image is not None:
+            self.chain.execute(image)
+
+    def add_thread_observer(self, observer):
+        self.thread.add_observer(observer)
+
+    def remove_thread_observer(self, observer):
+        self.thread.remove_observer(observer)
+
+    def close_server(self):
+        self.stop_thread()
+        
+    ##########################################################################
+    ############################ FILTERCHAIN  ################################
+    ##########################################################################
+    def get_chain(self):
+        return self.chain
 
     def get_filter_from_index(self, index):
         return self.chain.__getitem__(index)
 
     def get_filter_list_from_filterchain(self):
         return self.chain.get_filter_list()
-
-    def get_filter_list(self):
-        return utils.load_filters().keys()
 
     def count_filters(self):
         if self.chain is not None:
@@ -101,23 +135,7 @@ class VisionManager:
 
     def save_chain(self, file_name):
         filterchain.write(file_name, self.chain)
-
-    def change_source(self, new_source):
-        if self.source <> None:
-            imageproviders.close_source(self.source)
-        if new_source <> None:
-            self.source = imageproviders.create_source(new_source)
-            self.thread.start(self.source)
-        else:
-            self.source = None
-
-    def is_thread_running(self):
-        return self.thread.is_running()
-
-    def thread_observer(self, image):
-        if self.chain is not None and image is not None:
-            self.chain.execute(image)
-
+        
     def add_filter(self, filtre):
         if self.chain is not None:
             self.chain.add_filter(filtre)
@@ -162,17 +180,10 @@ class VisionManager:
     def remove_filter_output_observer(self, output):
         if self.chain is not None:
             self.chain.remove_filter_output_observer(output)
-
-    def add_thread_observer(self, observer):
-        self.thread.add_observer(observer)
-
-    def remove_thread_observer(self, observer):
-        self.thread.remove_observer(observer)
-
-    def close_server(self):
-        self.stop_thread()
-
-    def is_connected(self):
-        return True
-    
+            
+    ##########################################################################
+    ############################### FILTER  ##################################
+    ##########################################################################
+    def get_filter_list(self):
+        return utils.load_filters().keys()
 

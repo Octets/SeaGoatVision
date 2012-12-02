@@ -43,13 +43,13 @@ class WinFilterChain:
 
     WINDOW_TITLE = "Capra Vision"
 
-    def __init__(self, manager):
-        self.manager = manager
-        self.manager.add_filter_observer(self.filters_changed_observer)
-        self.manager.add_thread_observer(self.thread_observer)
+    def __init__(self, controller):
+        self.controler = controller
+        self.controler.add_filter_observer(self.filters_changed_observer)
+        self.controler.add_thread_observer(self.thread_observer)
         self.source_list = imageproviders.load_sources()
         self.source_window = None
-        self.thread_running = self.manager.is_thread_running()
+        self.thread_running = self.controler.is_thread_running()
 
         ui = get_ui(self,
                     'filterChainListStore',
@@ -99,7 +99,7 @@ class WinFilterChain:
         return Gtk.Adjustment(1, 1, 60, 1, 10, 0)
 
     def del_current_row(self):
-        self.manager.remove_filter(self.selected_filter())
+        self.controler.remove_filter(self.selected_filter())
 
     def filter_modif_callback(self):
         self.set_state_modified()
@@ -160,7 +160,7 @@ class WinFilterChain:
         elif self.state == WindowState.Create:
             return self.save_chain_as()
         else:
-            self.manager.save_chain(self.txtFilterChain.get_text())
+            self.controler.save_chain(self.txtFilterChain.get_text())
             self.set_state_show()
             return True
 
@@ -178,7 +178,7 @@ class WinFilterChain:
         if response == Gtk.ResponseType.OK:
             if not fname.endswith('.filterchain'):
                 fname += '.filterchain'
-            self.manager.save_chain(fname)
+            self.controler.save_chain(fname)
             self.txtFilterChain.set_text(fname)
             self.set_state_show()
             return True
@@ -190,7 +190,7 @@ class WinFilterChain:
         if iterator is None:
             return None
         path = model.get_path(iterator)
-        return self.manager.get_filter_from_index(path.get_indices()[0])
+        return self.controler.get_filter_from_index(path.get_indices()[0])
 
     def set_state_create(self):
         self.state = WindowState.Create
@@ -233,17 +233,17 @@ class WinFilterChain:
 
     def show_filter_chain(self):
         self.filterChainListStore.clear()
-        for filter in self.manager.get_filter_list_from_filterchain():
+        for filter in self.controler.get_filter_list_from_filterchain():
             self.filterChainListStore.append([filter.name, filter.doc])
 
     def thread_observer(self, image):
-        if not self.manager.is_thread_running() and self.thread_running:
+        if not self.controler.is_thread_running() and self.thread_running:
             self.lblLoopState.set_text('Stopped')
             self.chkLoop.set_active(False)
-        elif self.manager.is_thread_running() and not self.thread_running:
+        elif self.controler.is_thread_running() and not self.thread_running:
             self.lblLoopState.set_text('Running')
             self.chkLoop.set_active(True)
-        self.thread_running = self.manager.is_thread_running()
+        self.thread_running = self.controler.is_thread_running()
 
     def use_new_chain(self):
         for win in list(self.win_list):
@@ -260,7 +260,7 @@ class WinFilterChain:
                 pass
             elif result == Gtk.ResponseType.CANCEL:
                 return
-        self.manager.create_new_chain()
+        self.controler.create_new_chain()
         self.use_new_chain()
         self.set_state_create()
 
@@ -283,7 +283,7 @@ class WinFilterChain:
         dialog.set_filter(ff)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            if self.manager.load_chain(dialog.get_filename()):
+            if self.controler.load_chain(dialog.get_filename()):
                 self.use_new_chain()
                 self.txtFilterChain.set_text(dialog.get_filename())
                 self.set_state_show()
@@ -296,7 +296,7 @@ class WinFilterChain:
         self.save_chain_as()
 
     def on_btnView_clicked(self, widget):
-        win = WinViewer(self.manager.get_chain())
+        win = WinViewer(self.controler.get_chain())
         win.window.connect('destroy', self.on_window_destroy)
         self.add_window_to_list(win)
         win.window.show_all()
@@ -304,7 +304,7 @@ class WinFilterChain:
     def on_btnAdd_clicked(self, widget):
         win = WinFilterSel()
         if win.window.run() == Gtk.ResponseType.OK:
-            self.manager.add_filter(filters.create_filter(win.selected_filter))
+            self.controler.add_filter(filters.create_filter(win.selected_filter))
             self.set_state_modified()
         win.window.destroy()
 
@@ -319,7 +319,7 @@ class WinFilterChain:
             self.show_filter_config(self.selected_filter())
 
     def on_btnReload_clicked(self, widget):
-        self.manager.reload_filter(self.selected_filter())
+        self.controler.reload_filter(self.selected_filter())
         self.set_state_modified()
 
     def on_btnUp_clicked(self, widget):
@@ -327,7 +327,7 @@ class WinFilterChain:
         if filter is not None:
             index = tree_selected_index(self.lstFilters)
             if index > 0:
-                self.manager.move_filter_up(filter)
+                self.controler.move_filter_up(filter)
                 self.lstFilters.set_cursor(index - 1)
                 self.set_state_modified()
 
@@ -335,8 +335,8 @@ class WinFilterChain:
         filter = self.selected_filter()
         if filter is not None:
             index = tree_selected_index(self.lstFilters)
-            if index < self.manager.count_filters() - 1:
-                self.manager.move_filter_down(filter)
+            if index < self.controler.count_filters() - 1:
+                self.controler.move_filter_down(filter)
                 self.lstFilters.set_cursor(index + 1)
                 self.set_state_modified()
 
@@ -371,15 +371,15 @@ class WinFilterChain:
 
     def on_chkLoop_button_release_event(self, widget, data):
         if self.chkLoop.get_active():
-            self.manager.stop_thread()
+            self.controler.stop_thread()
         else:
-            self.manager.start_thread()
+            self.controler.start_thread()
 
     def on_btnSource_clicked(self, widget):
-        self.show_source_config(self.manager.get_source())
+        self.show_source_config(self.controler.get_source())
 
     def on_spnFPS_value_changed(self, widget):
-        self.manager.change_sleep_time(1.0 / self.spnFPS.get_value())
+        self.controler.change_sleep_time(1.0 / self.spnFPS.get_value())
 
     def on_cboSource_changed(self, widget):
         index = self.cboSource.get_active()
@@ -390,4 +390,4 @@ class WinFilterChain:
                 self.source_window = None
 
             source = self.source_list[self.sourcesListStore[index][0]]
-        self.manager.change_source(source)
+        self.controler.change_source(source)
