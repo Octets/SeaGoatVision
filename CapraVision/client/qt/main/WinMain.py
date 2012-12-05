@@ -59,6 +59,8 @@ class WinMain(QtGui.QMainWindow):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,WinExec().ui)
         
         self.ui.previewButton.clicked.connect(self.addPreview)
+        self.ui.upButton.clicked.connect(self.winFilterChain.moveUpSelectedFilter)
+        self.ui.downButton.clicked.connect(self.winFilterChain.moveDownSelectedFilter)
         
     def _addToolBar(self):
         self.ui = get_ui(self)
@@ -73,3 +75,5 @@ class WinMain(QtGui.QMainWindow):
             return
         self.winViewer = WinViewer(self.winFilterChain.filterchain)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,self.winViewer.ui)
+        
+    

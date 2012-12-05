@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>418</width>
-    <height>383</height>
+    <width>485</width>
+    <height>394</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -112,7 +112,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QLabel" name="SourceViewLabel">
+     <widget class="QLabel" name="imageLabel">
       <property name="minimumSize">
        <size>
         <width>400</width>
@@ -121,8 +121,8 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>475</width>
-        <height>107</height>
+        <width>16777215</width>
+        <height>16777215</height>
        </size>
       </property>
       <property name="text">

@@ -19,6 +19,7 @@
 
 from CapraVision.client.qt.utils import *
 from CapraVision.server.core import filterchain
+from CapraVision.server.core import mainloop
 from CapraVision.server import imageproviders
 
 #from CapraVision import chain
@@ -44,8 +45,14 @@ class WinFilterChain:
     def __init__(self):        
         self.filterchain = None
         self.filename = None
-        self.ui = get_ui(self,)
+        self.source = None
+        self.thread = mainloop.MainLoop()
+        self.thread.add_observer(self.thread_observer)
+        
+        self.ui = get_ui(self)
         self.loadSources()
+        self.ui.sourcesComboBox.currentIndexChanged[str].connect(self.startSource)
+        #self.ui.filepathButton.clicked.connect(self.getSourcesFilepath())
        
     def new_chain(self):
         self.filterchain = filterchain.FilterChain()
@@ -72,18 +79,61 @@ class WinFilterChain:
         else:
             QtGui.QMessageBox.warning(self.ui,"filterChain","filterchain is null.")
             
+           
+    def loadSources(self):
+        self.ui.sourcesComboBox.clear()
+        self.sources = imageproviders.load_sources()
+        self.ui.sourcesComboBox.addItem("None")
+        for source in self.sources.keys():            
+            self.ui.sourcesComboBox.addItem(source) 
+             
+    def getSourcesFilepath(self):
+        if self.sources == None:
+            return
+        filepath = QtGui.QFileDialog.getExistingDirectory()[0]
+        return filepath        
+    
+    def startSource(self,source):
+        if self.source <> None:
+            imageproviders.close_source(self.source)
+        self.source = imageproviders.create_source(self.sources[source])
+        self.thread.start(self.source)
+            
+    def thread_observer(self,image):
+        if self.filterchain <> None:
+           self.filterchain.execute(image) 
+           
     def updateFilterChain(self):
         self.ui.filterListWidget.clear()
         for filter in self.filterchain.filters:
             print filter.__class__
             self.ui.filterListWidget.addItem(filter.__class__.__name__)
             
-    def loadSources(self):
-        self.ui.sourcesComboBox.clear()
-        self.sources = imageproviders.load_sources()
-        self.ui.sourcesComboBox.addItem("None")
-        for source in self.sources.keys():            
-            self.ui.sourcesComboBox.addItem(source)
-            
-            
+    def _getSelectedFilter(self):
+        filterName = self.ui.filterListWidget.currentRow()
+        if filterName == "":
+            return None
+        return self.filterchain.filters[filterName]
+    
+    def moveUpSelectedFilter(self):
+        filter = self._getSelectedFilter()
+        if filter == None:
+            return
+        self.filterchain.move_filter_up(filter)
+    
+    def moveDownSelectedFilter(self):
+        filter = self._getSelectedFilter()
+        if filter == None:
+            return
+        self.filterchain.move_filter_down(filter)
+        
+    def deleteSelectedFilter(self):
+        filter = self._getSelectedFilter()
+        if filter == None:
+            return
+        self.filterchain.remove_filter(filter)
+    
+        
+           
+           
 

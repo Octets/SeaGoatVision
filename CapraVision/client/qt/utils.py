@@ -21,6 +21,7 @@ from PySide import QtUiTools
 from PySide import QtCore
 from PySide import QtGui
 import Image
+import ImageQt
 
 import sources
 
@@ -58,19 +59,20 @@ def tree_row_selected(treeview):
     (model, iter) = treeview.get_selection().get_selected()
     return iter is not None
 
-def numpy_to_pixbuf(image):
+def numpy_to_imageQt(image):
     bgr2rgb = BGR2RGB()
     image = bgr2rgb.execute(image)
     img = Image.fromarray(image)
-    buff = StringIO.StringIO()
+    imageQt = ImageQt.ImageQt(img)
+    """ buff = StringIO.StringIO()
     img.save(buff, 'ppm')
     contents = buff.getvalue()
     buff.close()
     loader = GdkPixbuf.PixbufLoader()
     loader.write(contents)
     pixbuf = loader.get_pixbuf()
-    loader.close()
-    return pixbuf
+    loader.close()"""
+    return imageQt
 
 def get_ui(widget, *args):
     #apply(QtGui.QMainWindow.__init__, (widget) + args)
