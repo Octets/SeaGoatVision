@@ -32,6 +32,7 @@ from WinViewer import WinViewer
 from WinExec import WinExec
 from WinFilterChain import WinFilterChain
 from WinViewer import WinViewer
+from WinFilter import WinFilter
 from PySide import QtGui
 from PySide import QtCore
 
@@ -51,10 +52,14 @@ class WinMain(QtGui.QMainWindow):
         self.ui.createNewButton.clicked.connect(self.winFilterChain.new_chain)
         self.setCentralWidget(self.winFilterChain.ui)
         
-        self.winFilterSel = WinFilterSel()       
-        
+        self.winFilterSel = WinFilterSel()         
         self.winFilterSel.onAddFilter.connect(self.winFilterChain.add_filter)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilterSel.ui)
+        
+        self.winFilter = WinFilter()
+        self.winFilter.show()
+        self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilter)
         
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,WinExec().ui)
         

@@ -34,15 +34,18 @@ from PySide import QtGui
 from PySide import QtCore
 
 
-class WinFilterChain:
+class WinFilterChain(QtCore.QObject):
     
     """Main window
     Allow the user to create, edit and test filter chains
     """
     
     WINDOW_TITLE = "Capra Vision"
-
-    def __init__(self):        
+    selectedFilterChanged = QtCore.Signal(object)
+    
+    def __init__(self):
+        super(WinFilterChain, self).__init__() 
+                
         self.filterchain = None
         self.filename = None
         self.source = None
@@ -52,6 +55,7 @@ class WinFilterChain:
         self.ui = get_ui(self)
         self.loadSources()
         self.ui.sourcesComboBox.currentIndexChanged[str].connect(self.startSource)
+        self.ui.filterListWidget.currentItemChanged.connect(self.onSelectedFilterchanged)
         #self.ui.filepathButton.clicked.connect(self.getSourcesFilepath())
        
     def new_chain(self):
@@ -132,6 +136,11 @@ class WinFilterChain:
         if filter == None:
             return
         self.filterchain.remove_filter(filter)
+    
+    def onSelectedFilterchanged(self):
+        filter = self._getSelectedFilter()
+        if filter <> None:
+            self.selectedFilterChanged.emit(filter)
     
         
            

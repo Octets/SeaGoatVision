@@ -25,8 +25,7 @@ class Blur:
     def __init__(self):
         
         self.kernel_width = Parameter("width",1,10,3)
-        self.kernel_height = Parameter("height",1,10,3)
-        self.parameters = [self.kernel_height,self.kernel_width]
+        self.kernel_height = Parameter("height",1,10,3)        
     
     def execute(self, image):
         return cv2.blur(image, (int(self.kernel_width.get_current_value()), 

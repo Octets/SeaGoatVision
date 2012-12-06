@@ -22,17 +22,28 @@ from PySide import QtGui
 from PySide import QtCore
 from CapraVision.server.filters.parameter import Parameter
 
-class WinFilter(QtGui.QWidget):
-    def __init__(self,filter):
+class WinFilter(QtGui.QDockWidget):
+    def __init__(self):
         super(WinFilter,self).__init__()
-        self.filter=filter
-        self.construct_widget(filter)        
+        self.setWidget(QtGui.QWidget())
+        #self.parameters = dict()
+              
         
     def get_filter_attr(self,filter):
         widgetList = []
-        for parameter in filter.parameters:
-            widgetList.append(self.get_integer_slider(parameter))
-        return widgetList           
+        for parameterName in dir(filter):
+            parameter = getattr(filter, parameterName)
+            if isinstance(parameter, Parameter):
+                widgetList.append(self.getWidget(parameter))
+        return widgetList
+    
+    def setFilter(self,filter):
+        #self.clear()
+        self.parameters.clear()
+        self.widget().destroy()
+        self.setWidget(QtGui.QWidget())
+        self.filter=filter
+        self.construct_widget(filter)             
             
         
     def construct_widget(self,filter):
@@ -47,16 +58,35 @@ class WinFilter(QtGui.QWidget):
         self.executeButton.setText("Execute")
         layout.addWidget(self.executeButton)
        
-        self.setLayout(layout)
+        self.widget().setLayout(layout)
     
-    def get_integer_slider(self,parameter):
+    def getWidget(self,parameter):
         groupBox = QtGui.QGroupBox()
-        print parameter.name
+        
         groupBox.setTitle(parameter.name)
         
-       
-        slider = QtGui.QSlider()
+        getWidget = {
+                  Parameter.INT : self.getIntegerWidget,
+                  Parameter.FLOAT : self.getFloatWidget,
+                  Parameter.EVEN : self.getEvenWidget,
+                  Parameter.ODD : self.getOddWidget,
+                  }
         
+        
+        
+        layout = getWidget[parameter.type](parameter)       
+        groupBox.setLayout(layout)
+        
+        return groupBox
+    
+    def getIntegerWidget(self,parameter):
+        
+        #self.parameters[parameter.name] = parameter.currentValue
+        
+        numberLabel = QtGui.QLabel()
+        numberLabel.setNum(parameter.currentValue)
+        
+        slider = QtGui.QSlider()        
         slider.setBaseSize(100,100)
         slider.setMinimum(parameter.minValue)
         slider.setMaximum(parameter.maxValue)
@@ -64,11 +94,23 @@ class WinFilter(QtGui.QWidget):
         slider.setValue(parameter.currentValue)
         slider.setTickPosition(QtGui.QSlider.TicksBothSides)
         slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(slider)
-        groupBox.setLayout(layout)
         
-        return groupBox
+        slider.valueChanged.connect(numberLabel.setNum)
+        
+        
+        layout = QtGui.QHBoxLayout()
+        layout.addWidget(slider)
+        layout.addWidget(numberLabel)
+        return layout
+    
+    def getFloatWidget(self,parameter):
+        print "float"
+    
+    def getEvenWidget(self,parameter):
+        print "even"
+    
+    def getOddWidget(self,parameter):
+        print "odd"
     
     def execute(self):
         print("execute")

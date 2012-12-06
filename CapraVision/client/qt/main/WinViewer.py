@@ -41,24 +41,27 @@ class WinViewer(QtCore.QObject):
         super(WinViewer, self).__init__()      
         self.ui = get_ui(self, 'sourcesListStore', 'filterChainListStore')
         self.filterchain = filterchain
+        self.filter = filterchain.filters[len(filterchain.filters)-1]
+        self.size = 1        
+        
         filterchain.add_filter_observer(self.updateFilters)
-        filterchain.add_image_observer(self.updateImage)
-        
-        #test image
-        img = QtGui.QImage("/home/novae/python.jpg")
-        self.pixmap = QtGui.QPixmap.fromImage(img)
-        
+        filterchain.add_image_observer(self.updateImage)        
+           
         self.newImage.connect(self.setPixmap)
+        self.ui.filterComboBox.currentIndexChanged.connect(self.changeFilter)
+        self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
+        self.updateFilters()        
         
     def updateFilters(self):
         self.ui.filterComboBox.clear()
         for filter in self.filterchain.filters:
             self.ui.filterComboBox.addItem(filter.__class__.__name__)
+    def changeFilter(self,index):
+        self.filter = self.filterchain.filters[index]
     
     def updateImage(self,f,image):
-        self.numpy_to_QImage(image)
-        #pixmap = 
-        #self.ui.imageLabel.setPixmap(QtGui.QPixmap.fromImage(qimage))   
+        if f == self.filter:
+            self.numpy_to_QImage(image)    
     
     def setPixmap(self,img):
         pix = QtGui.QPixmap.fromImage(img)
@@ -66,25 +69,22 @@ class WinViewer(QtCore.QObject):
     
     def numpy_to_QImage(self,image):
         bgr2rgb = BGR2RGB()
-        image = bgr2rgb.execute(image)
-        img = Image.fromarray(image)
+        imageRGB = bgr2rgb.execute(image)
+        img = Image.fromarray(imageRGB)
         buff = StringIO.StringIO()
         img.save(buff, 'ppm')
         data = buff.getvalue()
-        buff.close()
+        buff.close()        
+        qimage = QtGui.QImage.fromData(data)
+        if self.size <> 1.0:
+            shape = image.shape
+            qimage = qimage.scaled(shape[1]*self.size,shape[0]*self.size)          
+        self.newImage.emit(qimage)
+     
+    def setImageScale(self,textSize):
+        textSize = textSize[:-1]
+        self.size = float(textSize)/100 
        
-        #data = image.tostring()
-        img = QtGui.QImage.fromData(data)
-       
-
-        
-        #qimage = QtGui.QImage.fromData(data)
-        self.newImage.emit(img)
-        #pixmap = QtGui.QPixmap.fromImage(qimage)
-        #label = QtGui.QLabel()
-        #label.setPixmap(pixmap)
-        #label.show()
-        #return qimage
         
 
    
