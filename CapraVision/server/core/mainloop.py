@@ -17,8 +17,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import threading
 import time
+
+import threading
 
 class MainLoop:
     
@@ -37,7 +38,7 @@ class MainLoop:
         for observer in self.observers:
             observer(image)
 
-    def start(self, source):
+    def start(self, source=None):
         self.stop()
         self.thread = ThreadMainLoop(source, self.sleep_time, self.notify_observers)
         self.thread.start()

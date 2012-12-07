@@ -15,11 +15,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Description : This is the proto file. We use this file to generate server_pb2.py for protobuf service. 
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
-"""
+//Description : This is the proto file. We use this file to generate server_pb2.py for protobuf service. 
+//Authors: Mathieu Benoit (mathben963@gmail.com)
+//Date : October 2012
 
 package protobuf.socketrpc;
 
@@ -30,15 +28,57 @@ option py_generic_services = true;
 option optimize_for = SPEED;
 
 //############################################################
-//###################### FILTER SECTION ###################### 
+//##################### GENERAL SECTION ######################
 //############################################################
-message GetFilterListRequest
+message StatusResponse
+{
+  required int32 status = 1;
+  optional string message = 2;
+}
+
+//############################################################
+//###################### ACTION SECTION ######################
+//############################################################
+message IsConnectedRequest
 {
 }
 
+message ReloadFilterRequest
+{
+  repeated string filterName = 1;
+}
+
+message LoadChainRequest
+{
+  required string filterName = 1;
+}
+
+
+//############################################################
+//######################## GET SECTION ####################### 
+//############################################################
+message GetFilterListRequest{}
 message GetFilterListResponse
 {
-  repeated string filters = 1;
+    repeated string filters = 1;
+}
+
+message GetFilterListFromFilterChainRequest{}
+message GetFilterListFromFilterChainResponse
+{
+    repeated Filter filters = 1;
+}
+//############################################################
+//######################## SET SECTION ####################### 
+//############################################################
+
+//############################################################
+//################## CUSTOM MESSAGE SECTION ##################
+//############################################################
+message Filter
+{
+  required string name = 1;
+  optional string doc = 2;
 }
 
 //#############################################################
@@ -46,6 +86,10 @@ message GetFilterListResponse
 //#############################################################
 service CommandService 
 {
-  rpc GetFilterList(GetFilterListRequest) returns(GetFilterListResponse);
+  rpc get_filter_list(GetFilterListRequest) returns(GetFilterListResponse);
+  rpc get_filter_list_from_filterchain(GetFilterListFromFilterChainRequest) returns(GetFilterListFromFilterChainResponse);
+  rpc is_connected(IsConnectedRequest) returns(StatusResponse);
+  rpc reload_filter(ReloadFilterRequest) returns(StatusResponse);
+  rpc load_chain(LoadChainRequest) returns(StatusResponse);
 }
 
