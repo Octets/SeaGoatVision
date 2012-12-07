@@ -94,7 +94,14 @@ class WinFilterChain(QtCore.QObject):
     
     def add_filter(self,filter):
         if self.filterchain is not None:
-            self.filterchain.add_filter(filter)
+            self.filterchain.add_filter(filter)            
+        else:
+            QtGui.QMessageBox.warning(self.ui,"filterChain","filterchain is null.")
+    
+    def remove_filter(self):
+        if self.filterchain is not None:
+            filter = self._getSelectedFilter()
+            self.filterchain.remove_filter(filter)
             print filter
         else:
             QtGui.QMessageBox.warning(self.ui,"filterChain","filterchain is null.")

@@ -29,7 +29,6 @@ from CapraVision.server.tcp_server import Server
 from WinFilterSel import WinFilterSel
 from WinMapper import WinMapper
 from WinViewer import WinViewer
-from WinExec import WinExec
 from WinFilterChain import WinFilterChain
 from WinViewer import WinViewer
 from WinFilter import WinFilter
@@ -69,10 +68,10 @@ class WinMain(QtGui.QMainWindow):
         self.ui.upButton.clicked.connect(self.winFilterChain.moveUpSelectedFilter)
         self.ui.downButton.clicked.connect(self.winFilterChain.moveDownSelectedFilter)
         self.ui.openButton.clicked.connect(self.winFilterChain.open_chain)
+        self.ui.removeButton.clicked.connect(self.winFilterChain.remove_filter)
         
     def _addDockWidget(self):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilter)        
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,WinExec().ui)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilterSel.ui)
         
         

@@ -17,16 +17,27 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#from Server import filters
+
 from PySide import QtGui
 from PySide import QtCore
 from CapraVision.server.filters.parameter import Parameter
+
+class TempParameter:
+    def __init__(self,parameter):
+        self.parameter= parameter
+        self.tempValue = parameter.get_current_value()
+
+    def setTempValue(self,tempValue):
+        self.tempValue = tempValue            
+        
+    def execute(self):
+        self.parameter.set_current_value(self.tempValue)
 
 class WinFilter(QtGui.QDockWidget):
     def __init__(self):
         super(WinFilter,self).__init__()
         self.setWidget(QtGui.QWidget())
-        #self.parameters = dict()
+        self.tempParameters = []
               
         
     def get_filter_attr(self,filter):
@@ -39,7 +50,7 @@ class WinFilter(QtGui.QDockWidget):
     
     def setFilter(self,filter):
         #self.clear()
-        #self.parameters.clear()
+        del self.tempParameters[:]
         self.widget().destroy()
         self.setWidget(QtGui.QWidget())
         self.filter=filter
@@ -80,8 +91,8 @@ class WinFilter(QtGui.QDockWidget):
         return groupBox
     
     def getIntegerWidget(self,parameter):
-        
-        #self.parameters[parameter.name] = parameter.currentValue
+        tempParameter = TempParameter(parameter)
+        self.tempParameters.append(tempParameter)
         
         numberLabel = QtGui.QLabel()
         numberLabel.setNum(parameter.currentValue)
@@ -96,7 +107,7 @@ class WinFilter(QtGui.QDockWidget):
         slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
         
         slider.valueChanged.connect(numberLabel.setNum)
-        
+        slider.valueChanged.connect(tempParameter.setTempValue)
         
         layout = QtGui.QHBoxLayout()
         layout.addWidget(slider)
@@ -113,7 +124,11 @@ class WinFilter(QtGui.QDockWidget):
         print "odd"
     
     def execute(self):
-        print("execute")
+        for tempParameter in self.tempParameters:
+            tempParameter.execute()
+        if hasattr(self.filter, "configure"):
+            self.filter.configure()
+            print "conf"
     
     
     
