@@ -22,6 +22,7 @@
 import CapraVision.server.filters
 
 from CapraVision.server.filters.dataextract import DataExtractor
+from CapraVision.server.filters.parameter import Parameter
 
 import ConfigParser
 
@@ -30,10 +31,11 @@ def params_list(chain):
     for filtre in chain.filters:
         fname = filtre.__class__.__name__
         params = []
-        for name, value in filtre.__dict__.items():
-            if name[0] == '_':
+        for name in dir(filtre):
+            parameter = getattr(filtre, name)
+            if not isinstance(parameter, Parameter):
                 continue
-            params.append((name, value))
+            params.append((name, parameter.get_current_value()))
         flist.append((fname, params))
     return flist
 
@@ -52,17 +54,18 @@ def read(file_name):
     for section in cfg.sections():
         filtre = CapraVision.server.filters.create_filter(section) 
         for member in filtre.__dict__:
-            if member[0] == '_':
+            parameter = getattr(filtre,member)
+            if not isinstance(parameter, Parameter):
                 continue
             val = cfg.get(section, member)
             if val == "True" or val == "False":
-                filtre.__dict__[member] = cfg.getboolean(section, member)
+                parameter.set_current_value(cfg.getboolean(section, member))
             elif isnumeric(val):
-                filtre.__dict__[member] = cfg.getfloat(section, member)
+                parameter.set_current_value(cfg.getfloat(section, member))
             else:
                 if isinstance(val, str):
                     val = '\n'.join([line[1:-1] for line in str.splitlines(val)])
-                filtre.__dict__[member] = val
+                parameter.set_current_value(val)
         if hasattr(filtre, 'configure'):
             filtre.configure()
         new_chain.add_filter(filtre)

@@ -39,7 +39,7 @@ class WinFilter(QtGui.QDockWidget):
     
     def setFilter(self,filter):
         #self.clear()
-        self.parameters.clear()
+        #self.parameters.clear()
         self.widget().destroy()
         self.setWidget(QtGui.QWidget())
         self.filter=filter

@@ -57,24 +57,40 @@ class WinFilterChain(QtCore.QObject):
         self.ui.sourcesComboBox.currentIndexChanged[str].connect(self.startSource)
         self.ui.filterListWidget.currentItemChanged.connect(self.onSelectedFilterchanged)
         #self.ui.filepathButton.clicked.connect(self.getSourcesFilepath())
+    
+    def open_chain(self):
+        filename = QtGui.QFileDialog.getOpenFileName()[0]
+        if len(filename)>0:
+            self.filename = filename
+            self.filterchain = filterchain.read(filename)
+            self.filterchain.add_filter_observer(self.updateFilterChain)
+            self.ui.sourceNameLineEdit.setText(self.filename)
+            self.updateFilterChain()
        
     def new_chain(self):
+        self.filename = None
         self.filterchain = filterchain.FilterChain()
         self.filterchain.add_filter_observer(self.updateFilterChain)
+        self.updateFilterChain()
+        self.ui.sourceNameLineEdit.setText("<new>")
 
     def save_chain(self):
         if self.filename == None:
-            self.save_chain_as()
-        if self.filterchain is not None:
+            if not self.save_chain_as():
+                return
+        if self.filterchain is not None and self.filename is not None:
             filterchain.write(self.filename,self.filterchain)
         else:
             QtGui.QMessageBox.warning(self.ui,"filterchain","filterchain is null.")
         
     def save_chain_as(self):
-        filename = QtGui.QFileDialog.getSaveFileName()[0]
+        filename = QtGui.QFileDialog.getSaveFileName()[0]        
         if len(filename)>0:
             self.filename = filename
-            self.save_chain()     
+            self.ui.sourceNameLineEdit.setText(self.filename)
+            self.save_chain()
+            return True
+        return False     
     
     def add_filter(self,filter):
         if self.filterchain is not None:

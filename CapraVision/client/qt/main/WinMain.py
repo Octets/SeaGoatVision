@@ -41,31 +41,40 @@ class WinMain(QtGui.QMainWindow):
         super(WinMain,self).__init__()
         
         self.source_list = imageproviders.load_sources()
+        
+        #create and start server
         self.server = Server()
-        self.server.start("127.0.0.1", 5030)
+        self.server.start("127.0.0.1", 5030)        
         
-        self._addToolBar()
-        
+        #create dockWidgets
         self.winFilterChain = WinFilterChain()
+        self.winFilter = WinFilter()
+        self.winFilterSel = WinFilterSel()
+          
+        self.setCentralWidget(self.winFilterChain.ui)      
+         
+        #connect action between dock widgets       
+        self.winFilterSel.onAddFilter.connect(self.winFilterChain.add_filter)       
+        self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
+        
+        self._addToolBar() 
+        self._addDockWidget()
+        self._connectMainButtonsToWinFilterChain()         
+    
+    def _connectMainButtonsToWinFilterChain(self):
         self.ui.saveButton.clicked.connect(self.winFilterChain.save_chain)
         self.ui.saveAsButton.clicked.connect(self.winFilterChain.save_chain_as)
         self.ui.createNewButton.clicked.connect(self.winFilterChain.new_chain)
-        self.setCentralWidget(self.winFilterChain.ui)
-        
-        self.winFilterSel = WinFilterSel()         
-        self.winFilterSel.onAddFilter.connect(self.winFilterChain.add_filter)
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilterSel.ui)
-        
-        self.winFilter = WinFilter()
-        self.winFilter.show()
-        self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilter)
-        
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,WinExec().ui)
-        
         self.ui.previewButton.clicked.connect(self.addPreview)
         self.ui.upButton.clicked.connect(self.winFilterChain.moveUpSelectedFilter)
         self.ui.downButton.clicked.connect(self.winFilterChain.moveDownSelectedFilter)
+        self.ui.openButton.clicked.connect(self.winFilterChain.open_chain)
+        
+    def _addDockWidget(self):
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilter)        
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,WinExec().ui)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilterSel.ui)
+        
         
     def _addToolBar(self):
         self.ui = get_ui(self)
