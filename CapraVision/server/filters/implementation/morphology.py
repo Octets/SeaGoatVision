@@ -33,10 +33,10 @@ class Morphology:
         
     def configure(self):
         self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT, 
-                                                (int(self.kernel_width), 
-                                                 int(self.kernel_height)), 
-                                                (int(self.anchor_x), 
-                                                 int(self.anchor_y)))
+                                (int(self.kernel_width.get_current_value()), 
+                                int(self.kernel_height.get_current_value())), 
+                                (int(self.anchor_x.get_current_value()), 
+                                int(self.anchor_y.get_current_value())))
     
     def execute(self, image):
         image_threshold = cv2.cvtColor(image, cv.CV_BGR2GRAY)
@@ -44,7 +44,7 @@ class Morphology:
                 image_threshold, 
                 cv2.MORPH_CLOSE, 
                 self._kernel, 
-                iterations=int(self.iterations))
+                iterations=int(self.iterations.get_current_value()))
         image[:, :, 0] = image_morphology
         image[:, :, 1] = image_morphology
         image[:, :, 2] = image_morphology
