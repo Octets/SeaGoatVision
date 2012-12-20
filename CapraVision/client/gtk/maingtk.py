@@ -23,14 +23,41 @@ Authors: Benoit Paquet
 Date : October 2012
 """
 
+from CapraVision.server.core.manager import VisionManager
+from CapraVision.server.tcp_server import Server
+
+from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
+
 def run():
+    # Protobuf
+    #c = ControllerProtobuf()
+
+    # Directly connected to the vision server
+    c = VisionManager()
+    
+    if not c.is_connected():
+        print("Vision server is not accessible.")
+        return
+
+    server = Server()
+    server.start("127.0.0.1", 5030)
+
+    # add observer output for "server"
+    c.add_filter_output_observer(server.send)
+
     from gi.repository import Gtk, GObject
     import CapraVision.client.gtk.main
     GObject.threads_init()
-    w = CapraVision.client.gtk.main.WinFilterChain()
+
+    w = CapraVision.client.gtk.main.WinFilterChain(c)
+
     w.window.show_all()
     Gtk.main()
 
+    # Close connection
+    server.stop()
+    c.close_server()
+    
 if __name__ == '__main__':
     # Project path is parent directory
     import os 

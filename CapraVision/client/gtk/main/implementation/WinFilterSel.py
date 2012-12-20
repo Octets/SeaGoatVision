@@ -44,7 +44,8 @@ class WinFilterSel:
     def get_selected_filter(self):
         _, iterator = self.lstFilters.get_selection().get_selected()
         filter_name = self.filtersListStore.get_value(iterator, 0)
-        return self.filter_list[filter_name]
+        #return self.filter_list[filter_name]
+        return filter_name
     
     def on_btnOK_clicked(self, widget):
         self.selected_filter = self.get_selected_filter()
