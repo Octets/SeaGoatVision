@@ -56,7 +56,7 @@ class WinFilterChain(QtCore.QObject):
         self.loadSources()
         self.ui.sourcesComboBox.currentIndexChanged[str].connect(self.startSource)
         self.ui.filterListWidget.currentItemChanged.connect(self.onSelectedFilterchanged)
-        #self.ui.filepathButton.clicked.connect(self.getSourcesFilepath())
+        self.ui.sourcesButton.clicked.connect(self.getSourcesFilepath)
     
     def open_chain(self):
         filename = QtGui.QFileDialog.getOpenFileName()[0]
@@ -110,20 +110,23 @@ class WinFilterChain(QtCore.QObject):
     def loadSources(self):
         self.ui.sourcesComboBox.clear()
         self.sources = imageproviders.load_sources()
-        self.ui.sourcesComboBox.addItem("None")
+        self.ui.sourcesComboBox.addItem('None')
         for source in self.sources.keys():            
             self.ui.sourcesComboBox.addItem(source) 
              
     def getSourcesFilepath(self):
-        if self.sources == None:
+        if self.source == None:
             return
+        
         filepath = QtGui.QFileDialog.getExistingDirectory()[0]
         return filepath        
     
-    def startSource(self,source):
+    def startSource(self,sourceText):
         if self.source <> None:
             imageproviders.close_source(self.source)
-        self.source = imageproviders.create_source(self.sources[source])
+        if sourceText == 'None':
+            return
+        self.source = imageproviders.create_source(self.sources[sourceText])
         self.thread.start(self.source)
             
     def thread_observer(self,image):

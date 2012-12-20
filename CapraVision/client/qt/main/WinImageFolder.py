@@ -19,26 +19,37 @@
 
 from CapraVision.client.qt.utils import *
 from CapraVision.server import filters
-from PySide import QtGui
-from PySide import QtCore
 
-#from server import filters
-
-class WinFilterSel(QtCore.QObject):
-    """Allow the user to select a filter to add to the filterchain"""
-    onAddFilter = QtCore.Signal(object)
-    def __init__(self):
-        super(WinFilterSel, self).__init__()
+class WinImageImage:
+    def __init__(self,imageFolder,folderPath=None):
         self.ui = get_ui(self)
-        self.filters = filters.load_filters()
+        self.imageFolder = imageFolder
+        self.folderPath = folderPath;
         
+        if self.folderPath is not None:
+            self.updateImageList()
         
-        self.ui.addFilterButton.clicked.connect(self._addFilter)
-        
-        for name, filter in self.filters.items():
-            self.ui.filterListWidget.addItem(name)  
-        
-    def _addFilter(self):
-        filter = filters.create_filter(self.ui.filterListWidget.currentItem().text())
-        print filter.__class__.__name__
-        self.onAddFilter.emit(filter)
+    def updateImageList(self):
+        pass
+    
+    def openNewFolder(self):
+        pass
+    
+    def autoPlay(self):
+        pass
+    
+    def nextImage(self):
+        pass
+    
+    def firstImage(self):
+        pass
+    
+    def previousImage(self):
+        pass
+    
+    def lastImage(self):
+        pass
+    
+    
+    
+    
