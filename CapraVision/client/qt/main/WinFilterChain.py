@@ -57,16 +57,16 @@ class WinFilterChain(QtCore.QObject):
         self.ui.sourcesComboBox.currentIndexChanged[str].connect(self.startSource)
         self.ui.filterListWidget.currentItemChanged.connect(self.onSelectedFilterchanged)
         self.ui.sourcesButton.clicked.connect(self.getSourcesFilepath)
-    
+
     def open_chain(self):
-        filename = QtGui.QFileDialog.getOpenFileName()[0]
-        if len(filename)>0:
+        filename = QtGui.QFileDialog().getOpenFileName(filter="*.filterchain")[0]
+        if filename:
             self.filename = filename
             self.filterchain = filterchain.read(filename)
             self.filterchain.add_filter_observer(self.updateFilterChain)
             self.ui.sourceNameLineEdit.setText(self.filename)
             self.updateFilterChain()
-       
+
     def new_chain(self):
         self.filename = None
         self.filterchain = filterchain.FilterChain()

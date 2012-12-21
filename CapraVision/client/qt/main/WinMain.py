@@ -18,19 +18,19 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from CapraVision.client.qt.utils import *
-from CapraVision.server.core import filterchain
+#from CapraVision.server.core import filterchain
 
 from CapraVision.server import imageproviders
-from CapraVision.server.core import filterchain
-from CapraVision.server.core import mainloop
+#from CapraVision.server.core import filterchain
+#from CapraVision.server.core import mainloop
 
 from CapraVision.server.tcp_server import Server
 
 from WinFilterSel import WinFilterSel
-from WinMapper import WinMapper
+#from WinMapper import WinMapper
 from WinViewer import WinViewer
 from WinFilterChain import WinFilterChain
-from WinViewer import WinViewer
+#from WinViewer import WinViewer
 from WinFilter import WinFilter
 from PySide import QtGui
 from PySide import QtCore

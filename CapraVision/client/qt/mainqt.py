@@ -28,8 +28,8 @@ os.sys.path.insert(0, parentdir)
 #import gui.filters.WinColorLevel
 
 from PySide.QtGui import QApplication  
-from PySide import QtCore
-from PySide import QtUiTools
+#from PySide import QtCore
+#from PySide import QtUiTools
 
 import qt.main
 #import gui.sources
