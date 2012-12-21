@@ -24,7 +24,7 @@ from PySide import QtGui
 from PySide import QtCore
 from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
 import Image
-import numpy as np
+import time
 
 #from CapraVision.server.core.filterchain import chain
 #from server import sources
@@ -50,7 +50,10 @@ class WinViewer(QtCore.QObject):
         self.newImage.connect(self.setPixmap)
         self.ui.filterComboBox.currentIndexChanged.connect(self.changeFilter)
         self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
-        self.updateFilters()        
+        self.updateFilters()
+
+        self.lastSecondFps = None
+        self.fpsCount = 0
         
     def updateFilters(self):
         self.ui.filterComboBox.clear()
@@ -61,7 +64,22 @@ class WinViewer(QtCore.QObject):
     
     def updateImage(self,f,image):
         if f == self.filter:
-            self.numpy_to_QImage(image)    
+
+            #fps
+            iActualTime = time.time()
+            if self.lastSecondFps is None:
+                #Initiate fps
+                self.lastSecondFps = iActualTime
+                self.fpsCount = 1
+            elif iActualTime - self.lastSecondFps > 1.0:
+                self.ui.lbl_fps.setText("%d" % int(self.fpsCount))
+                #new set
+                self.lastSecondFps = iActualTime
+                self.fpsCount = 1
+            else:
+                self.fpsCount += 1
+
+            self.numpy_to_QImage(image)   
     
     def setPixmap(self,img):
         pix = QtGui.QPixmap.fromImage(img)
