@@ -20,6 +20,7 @@
 """
 Description :
 Authors: Benoit Paquet
+         Mathieu Benoit <mathben963@gmail.com>
 Date : Novembre 2012
 """
 
@@ -27,6 +28,7 @@ from CapraVision.server.core.mainloop import MainLoop
 from CapraVision.server import imageproviders
 import filterchain
 from CapraVision.server.filters import utils
+from configuration import Configuration
 
 class VisionManager:
 
@@ -36,6 +38,7 @@ class VisionManager:
         self.source = None
         self.thread = MainLoop()
         self.thread.add_observer(self.thread_observer)
+        self.configuration = Configuration()
     
     ##########################################################################
     ################################ CLIENT ##################################
@@ -88,7 +91,25 @@ class VisionManager:
 
     def close_server(self):
         self.stop_thread()
-        
+    
+    ##########################################################################
+    ########################## CONFIGURATION  ################################
+    ##########################################################################
+    def list_filterchain(self):
+        return self.configuration.list_filterchain()
+    
+    def upload_filterchain(self, filterchain_name, s_file_contain):
+        return self.configuration.upload_filterchain(filterchain_name, s_file_contain)
+    
+    def delete_filterchain(self, filterchain_name):
+        return self.configuration.delete_filterchain(filterchain_name)
+    
+    def get_filters_from_filterchain(self, filterchain_name):
+        return self.configuration.get_filters_from_filterchain(filterchain_name)
+    
+    def edit_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
+        return self.configuration.edit_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters)
+    
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################

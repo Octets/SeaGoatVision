@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>558</width>
-    <height>61</height>
+    <height>72</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,91 +19,6 @@
      <property name="spacing">
       <number>0</number>
      </property>
-     <item>
-      <widget class="QToolButton" name="createNewButton">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>75</weight>
-         <italic>false</italic>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Create new</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/document-new.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/document-new.png</iconset>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="openButton">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Open</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-open.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-open.png</iconset>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="saveButton">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Save</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-save.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-save.png</iconset>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="saveAsButton">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Save as</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-save-as.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-save-as.png</iconset>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QToolButton" name="previewButton">
        <property name="font">

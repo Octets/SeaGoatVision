@@ -36,7 +36,7 @@ from PySide import QtGui
 from PySide import QtCore
 
 class WinMain(QtGui.QMainWindow):
-    def __init__(self):
+    def __init__(self, controller):
         super(WinMain,self).__init__()
         
         self.source_list = imageproviders.load_sources()
@@ -46,7 +46,7 @@ class WinMain(QtGui.QMainWindow):
         self.server.start("127.0.0.1", 5030)        
         
         #create dockWidgets
-        self.winFilterChain = WinFilterChain()
+        self.winFilterChain = WinFilterChain(controller)
         self.winFilter = WinFilter()
         self.winFilterSel = WinFilterSel()
           
@@ -61,13 +61,13 @@ class WinMain(QtGui.QMainWindow):
         self._connectMainButtonsToWinFilterChain()         
     
     def _connectMainButtonsToWinFilterChain(self):
-        self.ui.saveButton.clicked.connect(self.winFilterChain.save_chain)
-        self.ui.saveAsButton.clicked.connect(self.winFilterChain.save_chain_as)
-        self.ui.createNewButton.clicked.connect(self.winFilterChain.new_chain)
+        #self.ui.saveButton.clicked.connect(self.winFilterChain.save_chain)
+        #self.ui.saveAsButton.clicked.connect(self.winFilterChain.save_chain_as)
+        #self.ui.createNewButton.clicked.connect(self.winFilterChain.new_chain)
         self.ui.previewButton.clicked.connect(self.addPreview)
         self.ui.upButton.clicked.connect(self.winFilterChain.moveUpSelectedFilter)
         self.ui.downButton.clicked.connect(self.winFilterChain.moveDownSelectedFilter)
-        self.ui.openButton.clicked.connect(self.winFilterChain.open_chain)
+        #self.ui.openButton.clicked.connect(self.winFilterChain.open_chain)
         self.ui.removeButton.clicked.connect(self.winFilterChain.remove_filter)
         
     def _addDockWidget(self):
@@ -84,7 +84,7 @@ class WinMain(QtGui.QMainWindow):
                 self.toolbar.addWidget(widget)
             
     def addPreview(self):
-        if self.winFilterChain.filterchain == None:
+        if not self.winFilterChain.filterchain:
             return
         self.winViewer = WinViewer(self.winFilterChain.filterchain)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,self.winViewer.ui)

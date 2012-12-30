@@ -22,14 +22,6 @@ from CapraVision.server.core import filterchain
 from CapraVision.server.core import mainloop
 from CapraVision.server import imageproviders
 
-#from CapraVision import chain
-#from CapraVision import sources
-#from CapraVision import filters
-
-from WinFilterSel import WinFilterSel
-from WinMapper import WinMapper
-from WinViewer import WinViewer
-from WinExec import WinExec
 from PySide import QtGui
 from PySide import QtCore
 
@@ -43,8 +35,10 @@ class WinFilterChain(QtCore.QObject):
     WINDOW_TITLE = "Capra Vision"
     selectedFilterChanged = QtCore.Signal(object)
     
-    def __init__(self):
-        super(WinFilterChain, self).__init__() 
+    def __init__(self, controller):
+        super(WinFilterChain, self).__init__()
+        
+        self.controller = controller
                 
         self.filterchain = None
         self.filename = None
@@ -56,8 +50,25 @@ class WinFilterChain(QtCore.QObject):
         self.loadSources()
         self.ui.sourcesComboBox.currentIndexChanged[str].connect(self.startSource)
         self.ui.filterListWidget.currentItemChanged.connect(self.onSelectedFilterchanged)
+        self.ui.filterchainListWidget.currentItemChanged.connect(self.onSelectedFilterchainChanged)
         self.ui.sourcesButton.clicked.connect(self.getSourcesFilepath)
-
+        self.ui.uploadButton.clicked.connect(self.upload)
+        self.ui.editButton.clicked.connect(self.edit)
+        self.ui.saveButton.clicked.connect(self.save)
+        self.ui.cancelButton.clicked.connect(self.cancel)
+        self.ui.deleteButton.clicked.connect(self.delete)
+        self.ui.copyButton.clicked.connect(self.copy)
+        self.ui.newButton.clicked.connect(self.new)
+        
+        self.updateFilterChainList()
+        
+        self._modeEdit(False)
+        
+        self._list_filterchain_is_selected(False)
+        
+    ######################################################################
+    ############################# EVENT  #################################
+    ######################################################################
     def open_chain(self):
         filename = QtGui.QFileDialog().getOpenFileName(filter="*.filterchain")[0]
         if filename:
@@ -106,6 +117,83 @@ class WinFilterChain(QtCore.QObject):
         else:
             QtGui.QMessageBox.warning(self.ui,"filterChain","filterchain is null.")
             
+    def upload(self):
+        # open a file, copy the contain to the controller
+        sExtension = ".filterchain"
+        filename = QtGui.QFileDialog().getOpenFileName(filter="*%s" % sExtension)[0]
+        if filename:
+            filterchain_name = filename[filename.rfind("/") + 1:-len(sExtension)]
+            if self._is_unique_filterchain_name(filterchain_name):
+                f = open(filename, 'r')
+                if f:
+                    s_contain = "".join(f.readlines())
+                    # if success, add the filter name on list widget
+                    if self.controller.upload_filterchain(filterchain_name, s_contain):
+                        self.ui.filterchainListWidget.addItem(filterchain_name)
+                else:
+                    print("Error, can't open the file : %s" % (filename))
+            else:
+                print("Error, this filtername already exist : %s" % filterchain_name)
+
+    def edit(self):
+        self._modeEdit(True)
+        
+    def cancel(self):
+        self.updateFilterChainList()
+        self._list_filterchain_is_selected(False)
+        print("Cancel changement.")
+        self._modeEdit(False)
+        
+    def save(self):
+        oldName = self.ui.filterchainListWidget.currentItem().text()
+        newName = self.ui.sourceNameLineEdit.text()
+        
+        lstFilter = self.get_listString_qList(self.ui.filterListWidget)
+        print(lstFilter)
+        
+        if self.controller.edit_filterchain(oldName, newName, lstFilter):
+            self.ui.filterchainListWidget.currentItem().setText(newName)
+            print("Editing success")
+        else:
+            print("Error with saving edit.")
+        
+        self._modeEdit(False)
+    
+    def delete(self):
+        self._modeEdit(True)
+        noLine = self.ui.filterchainListWidget.currentRow()
+        if noLine >= 0:
+            filterchain_name = self.ui.filterchainListWidget.item(noLine).text()
+            # security ask
+            response = QtGui.QMessageBox.question(self.ui.centralwidget,
+                                                  "Delete filterchain",
+                                                  "Do you want to delete filterchain \"%s\"" % filterchain_name,
+                                                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, QtGui.QMessageBox.No)
+            if response == QtGui.QMessageBox.Yes:
+                # delete the filterchain
+                self.controller.delete_filterchain(filterchain_name)
+                self.ui.filterchainListWidget.takeItem(noLine)
+                print("Delete %s" % filterchain_name)
+            else:
+                print("Cancel delete %s" % filterchain_name)
+        self._modeEdit(False)
+        
+    def copy(self):
+        self.edit()
+        
+    def new(self):
+        # find name of new filterchain
+        i = 1
+        filterchain_name = "new"
+        while not self._is_unique_filterchain_name(filterchain_name):
+            i += 1
+            filterchain_name = "new - %s" % i
+            
+        # add new line
+        self.ui.filterchainListWidget.addItem(filterchain_name)
+        self.ui.filterchainListWidget.setCurrentRow(self.ui.filterchainListWidget.count() - 1)
+        self.ui.sourceNameLineEdit.setText(filterchain_name)
+        self.edit()
            
     def loadSources(self):
         self.ui.sourcesComboBox.clear()
@@ -139,6 +227,18 @@ class WinFilterChain(QtCore.QObject):
             print filter.__class__
             self.ui.filterListWidget.addItem(filter.__class__.__name__)
             
+    def updateFiltersList(self, filterchain_name):
+        self.ui.filterListWidget.clear()
+        for filter in self.controller.get_filters_from_filterchain(filterchain_name):
+            self.ui.filterListWidget.addItem(filter.name)
+            
+    def updateFilterChainList(self):
+        self.ui.filterchainListWidget.clear()
+        self.ui.filterListWidget.clear()
+        self.ui.sourceNameLineEdit.clear()
+        for filterlist in self.controller.list_filterchain():
+            self.ui.filterchainListWidget.addItem(filterlist)
+            
     def _getSelectedFilter(self):
         filterName = self.ui.filterListWidget.currentRow()
         if filterName == "":
@@ -168,7 +268,47 @@ class WinFilterChain(QtCore.QObject):
         if filter <> None:
             self.selectedFilterChanged.emit(filter)
     
+    def onSelectedFilterchainChanged(self):
+        # only if filterchain list enabled
+        #if self.ui.filterchainListWidget.isEnabled():
+        filterchain_name = self._get_selected_filterchain_name()
+        if filterchain_name:
+            # set the filters section
+            self.ui.sourceNameLineEdit.setText(filterchain_name)
+            
+            self.updateFiltersList(filterchain_name)
+            
+            self._list_filterchain_is_selected(True)
+        else:
+            self._list_filterchain_is_selected(False)
+
+    ######################################################################
+    ####################### PRIVATE FUNCTION  ############################
+    ######################################################################
+    def _is_unique_filterchain_name(self, filterchain_name):
+        for noLine in range(self.ui.filterchainListWidget.count()):
+            if self.ui.filterchainListWidget.item(noLine).text() == filterchain_name:
+                return False
+        return True
+    
+    def _get_selected_filterchain_name(self):
+        noLine = self.ui.filterchainListWidget.currentRow()
+        if noLine >= 0:
+            return self.ui.filterchainListWidget.item(noLine).text()
+        return None
+    
+    def _modeEdit(self, status = True):
+        self.ui.frame_editing.setVisible(status)
+        self.ui.frame_edit.setEnabled(not status)
+        self.ui.sourceNameLineEdit.setReadOnly(not status)
+        self.ui.filterchainListWidget.setEnabled(not status)
         
-           
-           
+    def _list_filterchain_is_selected(self, isSelected = True):
+        self.ui.editButton.setEnabled(isSelected)
+        self.ui.copyButton.setEnabled(isSelected)
+        self.ui.deleteButton.setEnabled(isSelected)
+        
+    def get_listString_qList(self, ui):
+        return [ui.item(no).text() for no in range(ui.count())]
+        
 
