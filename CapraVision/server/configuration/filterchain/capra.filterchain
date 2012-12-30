@@ -1,0 +1,21 @@
+[Rectangle]
+x1 = 253.0
+x2 = 359.0
+y1 = 457.0
+y2 = 488.0
+
+[Blur]
+kernel_height = 5.0
+kernel_width = 5.0
+
+[BGR2HSV]
+
+[ColorThreshold]
+bluemax = 131.5
+bluemin = 96.0
+greenmax = 106.5
+greenmin = 36.3
+redmax = 255.0
+redmin = 147.7
+shift_hue_plane = False
+
