@@ -21,6 +21,9 @@
      </property>
      <item>
       <widget class="QToolButton" name="previewButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="font">
         <font>
          <pointsize>8</pointsize>
@@ -41,112 +44,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="addButton">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Add</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/add.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/add.png</iconset>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="removeButton">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Remove</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/remove.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/remove.png</iconset>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="editButton">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Edit</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/document-new.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/document-new.png</iconset>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="upButton">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Up</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/up.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/up.png</iconset>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="downButton">
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Down</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/down.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/down.png</iconset>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QToolButton" name="toolsButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="font">
         <font>
          <pointsize>8</pointsize>

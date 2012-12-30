@@ -39,6 +39,4 @@ class WinFilterSel(QtCore.QObject):
             self.ui.filterListWidget.addItem(name)  
         
     def _addFilter(self):
-        filter = filters.create_filter(self.ui.filterListWidget.currentItem().text())
-        print filter.__class__.__name__
-        self.onAddFilter.emit(filter)
+        self.onAddFilter.emit(self.ui.filterListWidget.currentItem().text())
