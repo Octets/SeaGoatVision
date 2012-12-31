@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# -*- coding: utf-8 -*-
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
@@ -45,7 +46,9 @@ class WinMain(QtGui.QMainWindow):
         self.winFilterSel.onAddFilter.connect(self.winFilterChain.add_filter)       
         self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
         
-        self._addToolBar() 
+        self.ui = get_ui(self)
+        
+        #self._addToolBar() 
         self._addDockWidget()
         self._connectMainButtonsToWinFilterChain()         
     
@@ -57,7 +60,6 @@ class WinMain(QtGui.QMainWindow):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilterSel.ui)
         
     def _addToolBar(self):
-        self.ui = get_ui(self)
         self.toolbar = QtGui.QToolBar()
         self.addToolBar(self.toolbar)
         for widget in self.ui.children():
