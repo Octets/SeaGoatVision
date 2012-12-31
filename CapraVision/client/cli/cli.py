@@ -22,6 +22,7 @@ Description : Run the command line interface to communicate with the CapraVision
 Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
+import sys
 
 def run():
     from vCmd import VCmd
@@ -33,4 +34,4 @@ if __name__ == '__main__':
     import os 
     parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     os.sys.path.insert(0, parentdir)
-    return run()
+    sys.exit(run())

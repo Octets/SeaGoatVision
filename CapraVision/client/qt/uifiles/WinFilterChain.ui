@@ -27,12 +27,12 @@
        <widget class="QFrame" name="frame_filter_edit">
         <property name="minimumSize">
          <size>
-          <width>60</width>
+          <width>54</width>
           <height>0</height>
          </size>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
+         <enum>Qt::RightToLeft</enum>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -45,7 +45,7 @@
           <rect>
            <x>0</x>
            <y>80</y>
-           <width>160</width>
+           <width>54</width>
            <height>158</height>
           </rect>
          </property>
@@ -55,6 +55,12 @@
           </property>
           <item>
            <widget class="QToolButton" name="upButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <pointsize>8</pointsize>
@@ -76,6 +82,12 @@
           </item>
           <item>
            <widget class="QToolButton" name="downButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <pointsize>8</pointsize>
@@ -97,6 +109,12 @@
           </item>
           <item>
            <widget class="QToolButton" name="removeButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <pointsize>8</pointsize>
@@ -228,6 +246,12 @@
             </item>
             <item>
              <widget class="QToolButton" name="editButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
@@ -288,6 +312,12 @@
             </item>
             <item>
              <widget class="QToolButton" name="uploadButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
@@ -333,8 +363,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>481</width>
-             <height>31</height>
+             <width>86</width>
+             <height>41</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_editing" stretch="0,0">
@@ -343,6 +373,12 @@
             </property>
             <item>
              <widget class="QToolButton" name="saveButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
@@ -361,6 +397,12 @@
             </item>
             <item>
              <widget class="QToolButton" name="cancelButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
