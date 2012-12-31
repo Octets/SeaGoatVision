@@ -22,7 +22,7 @@
      <item>
       <widget class="QToolButton" name="previewButton">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="font">
         <font>

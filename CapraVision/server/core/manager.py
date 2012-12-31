@@ -30,7 +30,7 @@ import filterchain
 from CapraVision.server.filters import utils
 from configuration import Configuration
 
-class VisionManager:
+class Manager:
 
     def __init__(self):
         self.chain = None

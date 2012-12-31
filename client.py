@@ -24,33 +24,27 @@ Date : October 2012
 """
 
 import argparse
-
-def runGtk():
-    from CapraVision.client.gtk.maingtk import run
-    run()
+import sys
 
 def runQt():
     from CapraVision.client.qt.mainqt import run
-    run()
+    return run()
 
 def runCli():
     from CapraVision.client.cli.cli import run
-    run()
+    return run()
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Open client for vision server.')
-    #parser.add_argument('string', metavar='interface name', type=str, default="gtk", help='cli, gtk or qt is supported.')
     parser.add_argument('interface', metavar='interface name', nargs='?', type=str, default="qt", help='cli, gtk or qt is supported.')
     
     args = parser.parse_args()
     
     sInterface = args.interface.lower()
-    if sInterface == "gtk":
-        runGtk()
-    elif sInterface == "qt":
-        runQt()
+    if sInterface == "qt":
+        sys.exit(runQt())
     elif sInterface == "cli":
-        runCli()
+        sys.exit(runCli())
     else:
         print("Interface not supported : %s" % sInterface)
     

@@ -23,7 +23,7 @@ Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
 
-from CapraVision.server.core.manager import VisionManager
+from CapraVision.server.core.manager import Manager
 from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
 # SOURCE of this code about the commande line : http://www.doughellmann.com/PyMOTW/cmd/
 import cmd
@@ -40,7 +40,7 @@ class VCmd(cmd.Cmd):
         #self.controller = ControllerProtobuf()
     
         # Directly connected to the vision server
-        self.controller = VisionManager()
+        self.controller = Manager()
         
         if not self.controller.is_connected():
             print("Vision server is not accessible.")

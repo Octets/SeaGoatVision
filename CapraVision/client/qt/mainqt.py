@@ -21,24 +21,14 @@ Description : launch qt client
 Authors: Junior Gregoire (junior.gregoire@gmail.com)
 Date : November 2012
 """
-import os 
-parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-os.sys.path.insert(0, parentdir)
-
-#import gui.filters.WinColorLevel
-
 from PySide.QtGui import QApplication  
-#from PySide import QtCore
-#from PySide import QtUiTools
 
-import qt.main
-#import gui.sources
+import main
 import sys
 
-from CapraVision.server.core.manager import VisionManager
+from CapraVision.server.core.manager import Manager
 #from CapraVision.server.tcp_server import Server
-
-from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
+#from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
 
 
 def run():
@@ -46,7 +36,7 @@ def run():
     #c = ControllerProtobuf()
 
     # Directly connected to the vision server
-    c = VisionManager()
+    c = Manager()
     
     if not c.is_connected():
         print("Vision server is not accessible.")
@@ -56,14 +46,19 @@ def run():
     #server.start("127.0.0.1", 5030)
     
     app = QApplication(sys.argv)
-    win = qt.main.WinMain(c)
+    win = main.WinMain(c)
     win.show()
-    app.exec_()
+    rint = app.exec_()
+    # close the server
+    win.winFilterChain.thread.stop()
+    
+    return rint
+
     
 if __name__ == '__main__':
     # Project path is parent directory
     import os 
     parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     os.sys.path.insert(0, parentdir)
-    run()
+    sys.exit(run())
     

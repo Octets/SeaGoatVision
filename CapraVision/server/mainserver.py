@@ -23,6 +23,8 @@ Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
 
+#to implement : http://effbot.org/zone/stupid-exceptions-keyboardinterrupt.htm
+
 def run():
     # Import required RPC modules
     import protobuf.socketrpc.server as server
