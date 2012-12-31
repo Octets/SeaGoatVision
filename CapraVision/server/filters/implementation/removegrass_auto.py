@@ -17,35 +17,31 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import cv2
 import numpy as np
-import sys
-import tempfile
-import matplotlib.pyplot as plt
 
-def create_graphic(data_file):
-    data = np.fromfile(data_file, np.float16)
-    data = data.reshape((2, len(data) / 2))
-    precisions = data[0, :]
-    noises = data[1, :]
-    plt.clf()
-    plt.plot(noises, precisions, '.b')
-    plt.xlabel('Rappel (%)')
-    plt.ylabel('Precision (%)')
-    #plt.xlim(0, np.max(precisions))
-    #plt.ylim(0, np.max(noises))
-    plt.xlim(0, 100)
-    plt.ylim(0, 100)
-    ntf = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
-    plt.savefig(ntf.file)
-    ntf.flush()
-    file_name = ntf.name
-    ntf.close()
-    return file_name
-
-if __name__ == '__main__':
-    data_file = sys.argv[1] 
-    image_file = create_graphic(data_file)
-    print image_file
-    sys.stdout.flush()
+class RemoveGrassAuto:
+    """"""
     
+    def __init__(self):
+        pass
+    
+    def execute(self, image):
+        #copy = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)
+        h, s, v = cv2.split(image)
+        image[(h > 12) & (h < 80)] = 0
+        return image
+    
+        blue, green, red = cv2.split(image)
+        new_blue = np.subtract(blue, green / 2)
+        black = blue < new_blue
+        new_blue[black] = 0
+        avg = np.average(green / 2)
+        threshold = new_blue < avg
+        blue[threshold] = 0
+        green[threshold] = 0
+        red[threshold] = 0
+        image = cv2.merge((blue, green, red))
+
+        return image
     

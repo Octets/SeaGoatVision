@@ -219,6 +219,19 @@ class WinLineTest:
             self.txtTestFolder.set_text(dialog.get_filename())
         dialog.destroy()
 
+    def on_btnSaveAsParams_clicked(self, widget):
+        pass
+    
+    def on_btnSaveAsPrecision_clicked(self, widget):
+        dialog = Gtk.FileChooserDialog("Choose an image folder", None,
+                                   Gtk.FileChooserAction.SELECT_FOLDER,
+                                   (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                    Gtk.STOCK_OK, Gtk.ResponseType.OK))    
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            self.test.dump_images(dialog.get_filename())
+        dialog.destroy()
+        
     def on_cboParams_changed(self, widget):
         index = self.cboParams.get_active()
         if index >= 0:

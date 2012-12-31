@@ -26,7 +26,7 @@ Date : October 2012
 from CapraVision.server.core.manager import VisionManager
 from CapraVision.server.tcp_server import Server
 
-from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
+#from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
 
 def run():
     # Protobuf
