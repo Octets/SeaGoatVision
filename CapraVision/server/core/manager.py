@@ -30,6 +30,7 @@ import filterchain
 from CapraVision.server.filters import utils
 from configuration import Configuration
 import time
+import numpy
 
 class Manager:
 
@@ -274,13 +275,30 @@ class Observer_image_provider():
         self.image = None
         self.isStopped = None
         self.sleep_time = 1 / 30.0
+        self.lastImage = None
     
     def observer(self, image):
         self.image = image
     
     def next(self):
-        while self.image is None and not self.isStopped:
-            time.sleep(self.sleep_time)
+        # check if the image is different of precedent
+        epsilon = 1e-6
+        diffArray = epsilon
+        while not self.isStopped:
+             #and (self.image is not None or diffArray <= epsilon)
+             if self.image is not None:
+                 if self.lastImage is None:
+                     # its the first picture
+                     break
+                 
+                 diffArray = self.image - self.lastImage
+                 max = numpy.max(numpy.abs(diffArray))
+                 if max > epsilon:
+                     # The picture is different
+                     break
+             time.sleep(self.sleep_time)
+            
+        self.lastImage = self.image
 
         return self.image
     
