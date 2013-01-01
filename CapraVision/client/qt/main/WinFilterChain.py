@@ -18,12 +18,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from CapraVision.client.qt.utils import *
-from CapraVision.server.core import mainloop
-from CapraVision.server import imageproviders
 
 from PySide import QtGui
 from PySide import QtCore
-
 
 class WinFilterChain(QtCore.QObject):
 
@@ -34,24 +31,15 @@ class WinFilterChain(QtCore.QObject):
     WINDOW_TITLE = "Capra Vision"
     selectedFilterChanged = QtCore.Signal(object)
 
-    def __init__(self, controller, qtWidgetFilterSelect):
+    def __init__(self, controller, qtWidgetFilterSelect, addPreviewCall):
         super(WinFilterChain, self).__init__()
 
         self.controller = controller
         self.qtWidgetFilterSelect = qtWidgetFilterSelect
 
-        self.filterchain = None
-        self.filename = None
-        self.source = None
-        self.thread = mainloop.MainLoop()
-        self.thread.add_observer(self.thread_observer)
-
         self.ui = get_ui(self)
-        self.loadSources()
-        self.ui.sourcesComboBox.currentIndexChanged[str].connect(self.startSource)
         self.ui.filterListWidget.currentItemChanged.connect(self.onSelectedFilterchanged)
         self.ui.filterchainListWidget.currentItemChanged.connect(self.onSelectedFilterchainChanged)
-        self.ui.sourcesButton.clicked.connect(self.getSourcesFilepath)
         self.ui.uploadButton.clicked.connect(self.upload)
         self.ui.editButton.clicked.connect(self.edit)
         self.ui.saveButton.clicked.connect(self.save)
@@ -62,6 +50,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.upButton.clicked.connect(self.moveUpSelectedFilter)
         self.ui.downButton.clicked.connect(self.moveDownSelectedFilter)
         self.ui.removeButton.clicked.connect(self.remove_filter)
+        self.ui.previewButton.clicked.connect(self.add_preview)
 
         self.updateFilterChainList()
 
@@ -70,10 +59,20 @@ class WinFilterChain(QtCore.QObject):
         self.ui.frame_filter_edit.setEnabled(False)
 
         self.lastRowFilterChainSelected = 0
+        
+        self.addPreviewCall = addPreviewCall
+        
+        self.updateSources()
 
     ######################################################################
     #############################  SIGNAL  ###############################
     ######################################################################
+    def add_preview(self):
+        source_name = self.ui.sourcesComboBox.currentText()
+        filterchain_name = self.ui.sourceNameLineEdit.text()
+        lst_filter = self._get_listString_qList(self.ui.filterListWidget)
+        self.addPreviewCall(self.controller, "Execution", source_name, filterchain_name, lst_filter)
+        
     def add_filter(self, filter_name):
         if filter_name:
             self.ui.filterListWidget.addItem(filter_name)
@@ -116,10 +115,10 @@ class WinFilterChain(QtCore.QObject):
         # validate new name
         newName = newName.strip()
         if newName != oldName and not self._is_unique_filterchain_name(newName):
-            response = QtGui.QMessageBox.warning(self.ui.centralwidget,
-                                                  "Wrong name",
-                                                  "The filtername \"%s\" already exist." % newName,
-                                                  QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
+            QtGui.QMessageBox.warning(self.ui.centralwidget,
+                                      "Wrong name",
+                                      "The filtername \"%s\" already exist." % newName,
+                                      QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
             return
         
         self.ui.sourceNameLineEdit.setText(newName)
@@ -230,31 +229,11 @@ class WinFilterChain(QtCore.QObject):
     ######################################################################
     ######################## SOURCE FUNCTION  ############################
     ######################################################################
-    def loadSources(self):
+    def updateSources(self):
         self.ui.sourcesComboBox.clear()
-        self.sources = imageproviders.load_sources()
         self.ui.sourcesComboBox.addItem('None')
-        for source in self.sources.keys():
+        for source in self.controller.get_source_list():
             self.ui.sourcesComboBox.addItem(source)
-
-    def getSourcesFilepath(self):
-        if self.source == None:
-            return
-
-        filepath = QtGui.QFileDialog.getExistingDirectory()[0]
-        return filepath
-
-    def startSource(self,sourceText):
-        if self.source <> None:
-            imageproviders.close_source(self.source)
-        if sourceText == 'None':
-            return
-        self.source = imageproviders.create_source(self.sources[sourceText])
-        self.thread.start(self.source)
-
-    def thread_observer(self,image):
-        if self.filterchain <> None:
-           self.filterchain.execute(image)
 
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################
@@ -280,15 +259,17 @@ class WinFilterChain(QtCore.QObject):
     def _modeEdit(self, status = True):
         self.ui.frame_editing.setVisible(status)
         self.ui.frame_filter_edit.setVisible(status)
+        self.qtWidgetFilterSelect.ui.addFilterButton.setEnabled(status)
         self.ui.frame_edit.setEnabled(not status)
         self.ui.sourceNameLineEdit.setReadOnly(not status)
         self.ui.filterchainListWidget.setEnabled(not status)
-        self.qtWidgetFilterSelect.ui.addFilterButton.setEnabled(status)
+        self.ui.previewButton.setEnabled(not status)
 
     def _list_filterchain_is_selected(self, isSelected = True):
         self.ui.editButton.setEnabled(isSelected)
         self.ui.copyButton.setEnabled(isSelected)
         self.ui.deleteButton.setEnabled(isSelected)
+        self.ui.previewButton.setEnabled(isSelected)
 
     def _get_listString_qList(self, ui):
         return [ui.item(no).text() for no in range(ui.count())]
@@ -299,6 +280,7 @@ class WinFilterChain(QtCore.QObject):
             noRow = ui.currentRow()
             newNoRow = noRow + nbLine
             if 0 <= newNoRow < ui.count():
+                # remove and add to move the item
                 item = ui.takeItem(noRow)
                 ui.insertItem(newNoRow, item)
                 ui.setCurrentRow(newNoRow)

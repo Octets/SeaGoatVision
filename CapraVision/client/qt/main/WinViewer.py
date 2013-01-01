@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#from gi.repository import GObject
+# from gi.repository import GObject
 
 from CapraVision.client.qt.utils import *
 from PySide import QtGui
@@ -25,9 +25,7 @@ from PySide import QtCore
 from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
 import Image
 import time
-
-#from CapraVision.server.core.filterchain import chain
-#from server import sources
+import threading
 
 class WinViewer(QtCore.QObject):
     """Show the source after being processed by the filter chain.
@@ -37,55 +35,75 @@ class WinViewer(QtCore.QObject):
     
     newImage = QtCore.Signal(QtGui.QImage)
     
-    def __init__(self,filterchain):  
-        super(WinViewer, self).__init__()      
+    def __init__(self, controller, execution_name, source_name, filterchain_name, lst_filter_str):  
+        super(WinViewer, self).__init__()   
         self.ui = get_ui(self, 'sourcesListStore', 'filterChainListStore')
-        self.filterchain = filterchain
-        self.filter = filterchain.filters[len(filterchain.filters)-1]
-        self.size = 1        
         
-        filterchain.add_filter_observer(self.updateFilters)
-        filterchain.add_image_observer(self.updateImage)        
+        self.controller = controller
+        self.execution_name = execution_name
+        
+        self.size = 1 
+        
+        # filterchain.add_filter_observer(self.updateFilters)
+        # filterchain.add_image_observer(self.updateImage)        
            
         self.newImage.connect(self.setPixmap)
-        self.ui.filterComboBox.currentIndexChanged.connect(self.changeFilter)
+        # self.ui.filterComboBox.currentIndexChanged.connect(self.changeFilter)
         self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
-        self.updateFilters()
+        # self.updateFilters()
 
         self.lastSecondFps = None
         self.fpsCount = 0
         
-    def updateFilters(self):
+        self._updateFilters(lst_filter_str)
+        
+        self.observer = self.controller.start_filterchain_execution(execution_name, source_name, filterchain_name)
+        
+        if not self.observer:
+            print("Error, we didn't receive observer from filterchain execution.")
+            self.thread = None
+        else:
+            self.thread = ThreadObserver(self)
+            self.thread.start()
+        
+    def quit(self):
+        if self.thread:
+            self.thread.stop()
+            self.controller.stop_filterchain_execution(self.execution_name)
+        
+    ######################################################################
+    ####################### PRIVATE FUNCTION  ############################
+    ######################################################################
+    def _updateFilters(self, lst_filter_str):
         self.ui.filterComboBox.clear()
-        for filter in self.filterchain.filters:
-            self.ui.filterComboBox.addItem(filter.__class__.__name__)
-    def changeFilter(self,index):
+        for sFilter in lst_filter_str:
+            self.ui.filterComboBox.addItem(sFilter)
+    
+    def _changeFilter(self, index):
         self.filter = self.filterchain.filters[index]
     
-    def updateImage(self,f,image):
-        if f == self.filter:
+    def updateImage(self, image):
+        # fps
+        iActualTime = time.time()
+        if self.lastSecondFps is None:
+            # Initiate fps
+            self.lastSecondFps = iActualTime
+            self.fpsCount = 1
+        elif iActualTime - self.lastSecondFps > 1.0:
+            self.ui.lbl_fps.setText("%d" % int(self.fpsCount))
+            # new set
+            self.lastSecondFps = iActualTime
+            self.fpsCount = 1
+        else:
+            self.fpsCount += 1
 
-            #fps
-            iActualTime = time.time()
-            if self.lastSecondFps is None:
-                #Initiate fps
-                self.lastSecondFps = iActualTime
-                self.fpsCount = 1
-            elif iActualTime - self.lastSecondFps > 1.0:
-                self.ui.lbl_fps.setText("%d" % int(self.fpsCount))
-                #new set
-                self.lastSecondFps = iActualTime
-                self.fpsCount = 1
-            else:
-                self.fpsCount += 1
-
-            self.numpy_to_QImage(image)   
+        self.numpy_to_QImage(image)   
     
-    def setPixmap(self,img):
+    def setPixmap(self, img):
         pix = QtGui.QPixmap.fromImage(img)
         self.ui.imageLabel.setPixmap(pix)
     
-    def numpy_to_QImage(self,image):
+    def numpy_to_QImage(self, image):
         bgr2rgb = BGR2RGB()
         imageRGB = bgr2rgb.execute(image)
         img = Image.fromarray(imageRGB)
@@ -96,14 +114,28 @@ class WinViewer(QtCore.QObject):
         qimage = QtGui.QImage.fromData(data)
         if self.size <> 1.0:
             shape = image.shape
-            qimage = qimage.scaled(shape[1]*self.size,shape[0]*self.size)          
+            qimage = qimage.scaled(shape[1] * self.size, shape[0] * self.size)          
         self.newImage.emit(qimage)
      
-    def setImageScale(self,textSize):
+    def setImageScale(self, textSize):
         textSize = textSize[:-1]
-        self.size = float(textSize)/100 
-       
+        self.size = float(textSize) / 100 
+            
+               
+class ThreadObserver(threading.Thread):
+    def __init__(self, winViewer):
+        threading.Thread.__init__(self)
+        self.winViewer = winViewer
+        self.isStopped = False
         
-
-   
+    def run(self):
+        while not self.isStopped:
+            image = self.winViewer.observer.next()
+            if image is not None:
+                self.winViewer.updateImage(image)
+            
+    def stop(self):
+        self.isStopped = True
+    
+    
     

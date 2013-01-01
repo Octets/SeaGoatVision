@@ -29,10 +29,12 @@ from CapraVision.server import imageproviders
 import filterchain
 from CapraVision.server.filters import utils
 from configuration import Configuration
+import time
 
 class Manager:
 
     def __init__(self):
+        self.dct_thread = {}
         self.chain = None
         self.create_new_chain()
         self.source = None
@@ -47,6 +49,59 @@ class Manager:
         return True
     
     ##########################################################################
+    ############################# SERVER STATE ###############################
+    ##########################################################################
+    def close(self):
+        # close all thread
+        for thread in self.dct_thread.values():
+            thread["thread"].quit()
+            thread["observer"].stop()
+        print("All thread is closed.")
+    
+    ##########################################################################
+    ######################## EXECUTION FILTER ################################
+    ##########################################################################
+    def start_filterchain_execution(self, execution_name, source_name, filterchain_name):
+        thread = self.dct_thread.get(execution_name, None)
+        
+        if thread:
+            # change this, return the actual thread
+            print("The execution %s is already created." % execution_name)
+            return None
+        
+        source = imageproviders.load_sources().get(source_name, None)
+        filterchain = self.configuration.get_filterchain(filterchain_name)
+
+        if not(source and filterchain):
+            print("Erreur with the source \"%s\" or the filterchain \"%s\". Maybe they dont exist." 
+                  % (source, filterchain))
+            return None
+        
+        source = source()
+        
+        thread = MainLoop()
+        observer = Observer_image_provider()
+        self.dct_thread[execution_name] = {"thread" : thread, "observer" : observer}
+        
+        thread.add_observer(observer.observer)
+        thread.start(source)
+        
+        return observer
+    
+    def stop_filterchain_execution(self, execution_name):
+        thread = self.dct_thread.get(execution_name, None)
+        
+        if not thread:
+            # change this, return the actual thread
+            print("The execution %s is already stopped." % execution_name)
+            return None
+        
+        thread["thread"].quit()
+        thread["observer"].stop()
+        del self.dct_thread[execution_name]
+        
+        
+    ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
     def get_source(self):
@@ -60,6 +115,9 @@ class Manager:
             self.thread.start(self.source)
         else:
             self.source = None
+            
+    def get_source_list(self):
+        return imageproviders.load_sources().keys()
 
     ##########################################################################
     ############################### THREAD  ##################################
@@ -208,3 +266,25 @@ class Manager:
     def get_filter_list(self):
         return utils.load_filters().keys()
 
+
+
+
+class Observer_image_provider():
+    def __init__(self):
+        self.image = None
+        self.isStopped = None
+        self.sleep_time = 1 / 30.0
+    
+    def observer(self, image):
+        self.image = image
+    
+    def next(self):
+        while self.image is None and not self.isStopped:
+            time.sleep(self.sleep_time)
+
+        return self.image
+    
+    def stop(self):
+        self.isStopped = True
+    
+     

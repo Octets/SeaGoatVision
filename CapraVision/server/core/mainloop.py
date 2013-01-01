@@ -56,6 +56,11 @@ class MainLoop:
     def is_running(self):
         return self.thread is not None and self.thread.running
     
+    def quit(self):
+        # clean all variable
+        self.stop()
+        self.observers = []
+    
 class ThreadMainLoop(threading.Thread):
     """Main thread to process the images.
     

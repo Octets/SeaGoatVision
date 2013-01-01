@@ -20,8 +20,6 @@
 
 from CapraVision.client.qt.utils import *
 
-from CapraVision.server import imageproviders
-
 from WinFilterSel import WinFilterSel
 from WinViewer import WinViewer
 from WinFilterChain import WinFilterChain
@@ -33,12 +31,12 @@ class WinMain(QtGui.QMainWindow):
     def __init__(self, controller):
         super(WinMain,self).__init__()
         
-        self.source_list = imageproviders.load_sources()
+        self.winViewer = None
         
         #create dockWidgets
         self.winFilter = WinFilter()
         self.winFilterSel = WinFilterSel()
-        self.winFilterChain = WinFilterChain(controller, self.winFilterSel)
+        self.winFilterChain = WinFilterChain(controller, self.winFilterSel, self.addPreview)
           
         self.setCentralWidget(self.winFilterChain.ui)      
          
@@ -50,15 +48,15 @@ class WinMain(QtGui.QMainWindow):
         
         #self._addToolBar() 
         self._addDockWidget()
-        self._connectMainButtonsToWinFilterChain()         
+        #self._connectMainButtonsToWinFilterChain()         
     
-    def _connectMainButtonsToWinFilterChain(self):
-        self.ui.previewButton.clicked.connect(self.addPreview)
+    #def _connectMainButtonsToWinFilterChain(self):
+    #    self.winFilterChain.ui.previewButton.clicked.connect(self.addPreview)
         
     def _addDockWidget(self):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilter)        
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilterSel.ui)
-        
+    
     def _addToolBar(self):
         self.toolbar = QtGui.QToolBar()
         self.addToolBar(self.toolbar)
@@ -66,10 +64,16 @@ class WinMain(QtGui.QMainWindow):
             if isinstance(widget, QtGui.QToolButton):
                 self.toolbar.addWidget(widget)
             
-    def addPreview(self):
-        if not self.winFilterChain.filterchain:
-            return
-        self.winViewer = WinViewer(self.winFilterChain.filterchain)
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea,self.winViewer.ui)
+    def addPreview(self, controller, execution_name, source_name, filterchain_name, lst_filter_str):
+        if self.winViewer:
+            self.winViewer.quit()
+            self.removeDockWidget(self.winViewer.ui)
+        
+        self.winViewer = WinViewer(controller, execution_name, source_name, filterchain_name, lst_filter_str)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winViewer.ui)
+        
+    def quit(self):
+        if self.winViewer:
+            self.winViewer.quit()
         
     

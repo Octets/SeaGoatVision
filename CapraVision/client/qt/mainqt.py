@@ -50,7 +50,8 @@ def run():
     win.show()
     rint = app.exec_()
     # close the server
-    win.winFilterChain.thread.stop()
+    win.quit()
+    c.close()
     
     return rint
 

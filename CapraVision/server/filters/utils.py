@@ -59,3 +59,9 @@ def list_params_from_filter(filtre):
             continue
         params.append((name, value))
     return params
+
+def get_filter_from_filterName(filter_name):
+    return load_filters().get(filter_name, None)
+    
+    
+    

@@ -50,7 +50,10 @@ class Configuration:
             return os.remove(self._get_filename(filterchain_name))
         except OSError:
             return -1
-        
+    
+    def get_filterchain(self, filterchain_name):
+        return filterchain.read(self._get_filename(filterchain_name))
+    
     def get_filters_from_filterchain(self, filterchain_name):
         o_filterchain = filterchain.read(self._get_filename(filterchain_name))
         return o_filterchain.get_filter_list()
