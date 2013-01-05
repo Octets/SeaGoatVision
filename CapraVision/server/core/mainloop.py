@@ -17,6 +17,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Description : Configuration manage all configuration file.
+Authors: Mathieu Benoit <mathben963@gmail.com>
+Date : December 2012
+"""
+
 import time
 
 import threading
@@ -71,7 +77,7 @@ class ThreadMainLoop(threading.Thread):
     """
     def __init__(self, source, sleep_time, observer):
         threading.Thread.__init__(self)
-        self.daemon = True
+        #self.daemon = True
         self.source = source
         self.running = False
         self.observer = observer

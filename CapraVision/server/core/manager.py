@@ -36,12 +36,13 @@ class Manager:
 
     def __init__(self):
         self.dct_thread = {}
+        self.configuration = Configuration()
+        
         self.chain = None
         self.create_new_chain()
         self.source = None
         self.thread = MainLoop()
         self.thread.add_observer(self.thread_observer)
-        self.configuration = Configuration()
     
     ##########################################################################
     ################################ CLIENT ##################################
@@ -84,7 +85,8 @@ class Manager:
         observer = Observer_image_provider()
         self.dct_thread[execution_name] = {"thread" : thread, "observer" : observer}
         
-        thread.add_observer(observer.observer)
+        filterchain.add_image_observer(observer.observer)
+        thread.add_observer(filterchain.execute)
         thread.start(source)
         
         return observer
@@ -273,19 +275,20 @@ class Manager:
 class Observer_image_provider():
     def __init__(self):
         self.image = None
-        self.isStopped = None
-        self.sleep_time = 1 / 30.0
         self.lastImage = None
+        self.isStopped = False
+        self.sleep_time = 1 / 30.0
+        self.sFilter = ""
     
-    def observer(self, image):
-        self.image = image
+    def observer(self, filter, image):
+        if self.sFilter == filter:
+            self.image = image
     
     def next(self):
         # check if the image is different of precedent
         epsilon = 1e-6
         diffArray = epsilon
         while not self.isStopped:
-             #and (self.image is not None or diffArray <= epsilon)
              if self.image is not None:
                  if self.lastImage is None:
                      # its the first picture
@@ -301,6 +304,10 @@ class Observer_image_provider():
         self.lastImage = self.image
 
         return self.image
+    
+    def set_filter_name(self, sFilter):
+        self.sFilter = sFilter
+        print("New filter : %s" % sFilter)
     
     def stop(self):
         self.isStopped = True

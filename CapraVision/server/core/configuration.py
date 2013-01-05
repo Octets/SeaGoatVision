@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Description :
+Description : Configuration manage all configuration file.
 Authors: Mathieu Benoit <mathben963@gmail.com>
 Date : December 2012
 """

@@ -42,13 +42,14 @@ class WinViewer(QtCore.QObject):
         self.controller = controller
         self.execution_name = execution_name
         
-        self.size = 1 
+        self.size = 1
+        self.thread = None
         
         # filterchain.add_filter_observer(self.updateFilters)
         # filterchain.add_image_observer(self.updateImage)        
            
         self.newImage.connect(self.setPixmap)
-        # self.ui.filterComboBox.currentIndexChanged.connect(self.changeFilter)
+        self.ui.filterComboBox.currentIndexChanged.connect(self._changeFilter)
         self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
         # self.updateFilters()
 
@@ -61,9 +62,9 @@ class WinViewer(QtCore.QObject):
         
         if not self.observer:
             print("Error, we didn't receive observer from filterchain execution.")
-            self.thread = None
         else:
             self.thread = ThreadObserver(self)
+            self._changeFilter()
             self.thread.start()
         
     def quit(self):
@@ -79,8 +80,9 @@ class WinViewer(QtCore.QObject):
         for sFilter in lst_filter_str:
             self.ui.filterComboBox.addItem(sFilter)
     
-    def _changeFilter(self, index):
-        self.filter = self.filterchain.filters[index]
+    def _changeFilter(self):
+        if self.thread:
+            self.thread.set_filter_name(self.ui.filterComboBox.currentText())
     
     def updateImage(self, image):
         # fps
@@ -133,7 +135,10 @@ class ThreadObserver(threading.Thread):
             image = self.winViewer.observer.next()
             if image is not None:
                 self.winViewer.updateImage(image)
-            
+    
+    def set_filter_name(self, sFilter):
+        self.winViewer.observer.set_filter_name(sFilter)
+    
     def stop(self):
         self.isStopped = True
     

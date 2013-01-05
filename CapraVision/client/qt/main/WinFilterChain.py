@@ -234,6 +234,9 @@ class WinFilterChain(QtCore.QObject):
         self.ui.sourcesComboBox.addItem('None')
         for source in self.controller.get_source_list():
             self.ui.sourcesComboBox.addItem(source)
+        
+        # I know the final item is the webcam
+        self.ui.sourcesComboBox.setCurrentIndex(self.ui.sourcesComboBox.count() - 1)
 
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################

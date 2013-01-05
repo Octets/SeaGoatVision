@@ -16,7 +16,11 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""Contains helper classes to work with the imageproviders"""
+"""
+Description : Contains helper classes to work with the imageproviders
+Authors: Benoit Paquet
+Date : October 2012
+"""
 
 import inspect
 import os

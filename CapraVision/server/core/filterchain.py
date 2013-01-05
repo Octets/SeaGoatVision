@@ -27,6 +27,8 @@ from CapraVision.server.filters.parameter import Parameter
 import ConfigParser
 import types
 
+import numpy as np
+
 def my_import(name):
     mod = __import__(name)
     components = name.split('.')
@@ -198,6 +200,7 @@ class FilterChain:
         for f in self.filters:
             image = f.execute(image)
             for observer in self.image_observers:
-                observer(f, image)
+                # copy the picture because the next filter will modify him
+                observer(f.__class__.__name__, np.copy(image))
         return image
 
