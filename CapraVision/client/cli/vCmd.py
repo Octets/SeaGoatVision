@@ -37,10 +37,10 @@ class VCmd(cmd.Cmd):
     def __init__(self, completekey='tab', stdin=None, stdout=None):
         cmd.Cmd.__init__(self, completekey=completekey, stdin=stdin, stdout=stdout)
         # Protobuf
-        #self.controller = ControllerProtobuf()
+        self.controller = ControllerProtobuf()
     
         # Directly connected to the vision server
-        self.controller = Manager()
+        #self.controller = Manager()
         
         if not self.controller.is_connected():
             print("Vision server is not accessible.")
@@ -49,6 +49,15 @@ class VCmd(cmd.Cmd):
     ####################################################################################################
     # List of command
     ####################################################################################################
+    def do_hello_world(self, line):
+        self.controller.hello_world()
+
+    def do_is_connected(self, line):
+        if self.controller.is_connected():
+            print("You are connected.")
+        else:
+            print("You are disconnected.")
+
     def do_get_filter_list(self, line):
         lstFilter = self.controller.get_filter_list()
         if lstFilter is not None:
@@ -56,10 +65,10 @@ class VCmd(cmd.Cmd):
         else:
             print("No filterlist")
             
-    def do_list_filterchain(self, line):
-        lstFilterChain = self.controller.list_filterchain()
+    def do_get_filterchain_list(self, line):
+        lstFilterChain = self.controller.get_filterchain_list()
         if lstFilterChain is not None:
-            print("Nombre de ligne %s, tableau : %s" % (len(lstFilterChain), lstFilterChain))
+            print("Nombre de ligne %s, tableau : %s" % (len(lstFilterChain), [item.name for item in lstFilterChain]))
         else:
             print("No lstFilterChain")
             

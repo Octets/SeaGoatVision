@@ -28,15 +28,15 @@ import sys
 
 from CapraVision.server.core.manager import Manager
 #from CapraVision.server.tcp_server import Server
-#from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
+from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
 
 
 def run():
     # Protobuf
-    #c = ControllerProtobuf()
+    c = ControllerProtobuf()
 
     # Directly connected to the vision server
-    c = Manager()
+    #c = Manager()
     
     if not c.is_connected():
         print("Vision server is not accessible.")

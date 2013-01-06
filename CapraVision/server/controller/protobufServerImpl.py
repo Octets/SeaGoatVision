@@ -25,11 +25,18 @@ Date : October 2012
 
 # Import required RPC modules
 from CapraVision.proto import server_pb2
+from CapraVision.server.core.manager import Manager
 
 class ProtobufServerImpl(server_pb2.CommandService):
     def __init__(self, * args, ** kwargs):
         server_pb2.CommandService.__init__(self, * args, ** kwargs)
+        self.manager = Manager()
 
+    def hello_world(self, controller, request, done):
+        print("Server receive hello world")
+        response = server_pb2.HelloWorldResponse()
+        done.run(response)
+        
     ##########################################################################
     ################################ CLIENT ##################################
     ##########################################################################
@@ -45,73 +52,50 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
-    def get_source(self, controller, request, done):
-        pass
-    
-    def change_source(self, controller, request, done):
-        pass
+    def get_source_list(self, controller, request, done):
+        print("get_source_list request %s" % request)
 
+        response = server_pb2.GetSourceListResponse()
+        for item in self.manager.get_source_list():
+            response.source.append(item)
+            
+        done.run(response)
+    
     ##########################################################################
     ############################### THREAD  ##################################
     ##########################################################################
-    def get_thread(self, controller, request, done):
-        pass
+   
+    ##########################################################################
+    ##########################  CONFIGURATION  ###############################
+    ##########################################################################
+    def get_filterchain_list(self, controller, request, done):
+        print("get_filterchain_list request %s" % request)
 
-    def change_sleep_time(self, controller, request, done):
-        pass
+        # Create a reply
+        response = server_pb2.GetFilterChainListResponse()
+        for item in self.manager.get_filterchain_list():
+            if item.doc:
+                response.filterchains.add(name=item.name, doc=item.doc)
+            else:
+                response.filterchains.add(name=item.name)
 
-    def start_thread(self, controller, request, done):
-        pass
-
-    def stop_thread(self, controller, request, done):
-        pass
-    
-    def is_thread_running(self, controller, request, done):
-        pass
-
-    def thread_observer(self, controller, request, done):
-        pass
-
-    def add_thread_observer(self, controller, request, done):
-        pass
-
-    def remove_thread_observer(self, controller, request, done):
-        pass
-
-    def close_server(self, controller, request, done):
-        pass
+        # We're done, call the run method of the done callback
+        done.run(response)
     
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################
-    def get_chain(self, controller, request, done):
-        pass
-
-    def get_filter_from_index(self, controller, request, done):
-        pass
-
     def get_filter_list_from_filterchain(self, controller, request, done):
         print("get_filter_list_from_filterchain request %s" % request)
 
         # Create a reply
         response = server_pb2.GetFilterListFromFilterChainResponse()
-        for item in self.manager.get_filter_list_from_filterchain():
+        for item in self.manager.get_filter_list_from_filterchain(request.filterchain_name):
             response.filters.add(name=item.name, doc=item.doc)
 
         # We're done, call the run method of the done callback
         done.run(response)
 
-    def count_filters(self, controller, request, done):
-        pass
-
-    def create_new_chain(self, controller, request, done):
-        self.manager.create_new_chain()
-
-    def hook_new_chain(self, controller, request, done):
-        pass
-
-    def chain_exists(self, controller, request, done):
-        pass
 
     def load_chain(self, controller, request, done):
         print("load_chain request %s" % request)
@@ -127,14 +111,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
-    def save_chain(self, controller, request, done):
-        pass
-
-    def add_filter(self, controller, request, done):
-        pass
-
-    def remove_filter(self, controller, request, done):
-        pass
+  
 
     def reload_filter(self, controller, request, done):
         print("reload_filter request %s" % request)
@@ -151,30 +128,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
-    def move_filter_up(self, controller, request, done):
-        pass
-
-    def move_filter_down(self, controller, request, done):
-        pass
-
-    def add_image_observer(self, controller, request, done):
-        pass
-
-    def remove_image_observer(self, controller, request, done):
-        pass
-
-    def add_filter_observer(self, controller, request, done):
-        pass
-
-    def remove_filter_observer(self, controller, request, done):
-        pass
-
-    def add_filter_output_observer(self, controller, request, done):
-        pass
-
-    def remove_filter_output_observer(self, controller, request, done):
-        pass
-
+  
     ##########################################################################
     ############################### FILTER  ##################################
     ##########################################################################

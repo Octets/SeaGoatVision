@@ -199,6 +199,9 @@ class SocketHandler(SocketServer.StreamRequestHandler):
         try:
             service.CallMethod(method, controller, proto_request, callback)
         except Exception, e:
+            # added by mathben
+            print("Exception : %s" % unicode(e))
+            
             raise error.RpcError(unicode(e))
 
         # Return an RPC response, with payload defined in the callback

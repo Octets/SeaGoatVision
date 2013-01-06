@@ -53,12 +53,7 @@ def create_filter(filter_name):
     return None
         
 def list_params_from_filter(filtre):
-    params = []
-    for name, value in filtre.__dict__.items():
-        if name[0] == '_':
-            continue
-        params.append((name, value))
-    return params
+    return [(name, value) for name, value in filtre.__dict__.items() if name[0] != '_']
 
 def get_filter_from_filterName(filter_name):
     return load_filters().get(filter_name, None)

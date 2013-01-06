@@ -156,8 +156,8 @@ class Manager:
     ##########################################################################
     ########################## CONFIGURATION  ################################
     ##########################################################################
-    def list_filterchain(self):
-        return self.configuration.list_filterchain()
+    def get_filterchain_list(self):
+        return self.configuration.get_filterchain_list()
     
     def upload_filterchain(self, filterchain_name, s_file_contain):
         return self.configuration.upload_filterchain(filterchain_name, s_file_contain)
@@ -165,7 +165,7 @@ class Manager:
     def delete_filterchain(self, filterchain_name):
         return self.configuration.delete_filterchain(filterchain_name)
     
-    def get_filters_from_filterchain(self, filterchain_name):
+    def get_filter_list_from_filterchain(self, filterchain_name):
         return self.configuration.get_filters_from_filterchain(filterchain_name)
     
     def edit_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
@@ -179,9 +179,6 @@ class Manager:
 
     def get_filter_from_index(self, index):
         return self.chain.__getitem__(index)
-
-    def get_filter_list_from_filterchain(self):
-        return self.chain.get_filter_list()
 
     def count_filters(self):
         if self.chain is not None:

@@ -195,15 +195,15 @@ class WinFilterChain(QtCore.QObject):
 
     def updateFiltersList(self, filterchain_name):
         self.ui.filterListWidget.clear()
-        for filter in self.controller.get_filters_from_filterchain(filterchain_name):
+        for filter in self.controller.get_filter_list_from_filterchain(filterchain_name):
             self.ui.filterListWidget.addItem(filter.name)
 
     def updateFilterChainList(self):
         self.ui.filterchainListWidget.clear()
         self.ui.filterListWidget.clear()
         self.ui.sourceNameLineEdit.clear()
-        for filterlist in self.controller.list_filterchain():
-            self.ui.filterchainListWidget.addItem(filterlist)
+        for filterlist in self.controller.get_filterchain_list():
+            self.ui.filterchainListWidget.addItem(filterlist.name)
 
     def moveUpSelectedFilter(self):
         self._move_curent_item_on_qtList(self.ui.filterListWidget, -1)

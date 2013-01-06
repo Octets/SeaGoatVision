@@ -33,8 +33,15 @@ class Configuration:
         self.dirFilterChain = "CapraVision/server/configuration/filterchain/"
         self.extFilterChain = ".filterchain"
     
-    def list_filterchain(self):
-        lstFilterChain = [files[:-len(self.extFilterChain)] for files in os.listdir(self.dirFilterChain) if files.endswith(self.extFilterChain)]
+    def get_filterchain_list(self):
+        class FilterChain: pass
+        lstFilterChain = []
+        for files in os.listdir(self.dirFilterChain):
+            if files.endswith(self.extFilterChain):
+                filterChain = FilterChain()
+                setattr(filterChain, "name", files[:-len(self.extFilterChain)])
+                setattr(filterChain, "doc", None)
+                lstFilterChain.append(filterChain)
         return lstFilterChain
 
     def upload_filterchain(self, filterchain_name, s_contain):

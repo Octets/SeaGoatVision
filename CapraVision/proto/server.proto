@@ -30,6 +30,9 @@ option optimize_for = SPEED;
 //############################################################
 //##################### GENERAL SECTION ######################
 //############################################################
+message HelloWorldRequest{}
+message HelloWorldResponse{}
+
 message StatusResponse
 {
   required int32 status = 1;
@@ -39,9 +42,7 @@ message StatusResponse
 //############################################################
 //###################### ACTION SECTION ######################
 //############################################################
-message IsConnectedRequest
-{
-}
+message IsConnectedRequest{}
 
 message ReloadFilterRequest
 {
@@ -60,13 +61,26 @@ message LoadChainRequest
 message GetFilterListRequest{}
 message GetFilterListResponse
 {
-    repeated string filters = 1;
+  repeated string filters = 1;
 }
 
-message GetFilterListFromFilterChainRequest{}
+message GetFilterListFromFilterChainRequest{
+  required string filterchain_name = 1;
+}
 message GetFilterListFromFilterChainResponse
 {
-    repeated Filter filters = 1;
+  repeated Filter filters = 1;
+}
+message GetFilterChainListRequest{}
+message GetFilterChainListResponse
+{
+  repeated FilterChain filterchains = 1;
+}
+
+message GetSourceListRequest{}
+message GetSourceListResponse
+{
+  repeated string source = 1;
 }
 //############################################################
 //######################## SET SECTION ####################### 
@@ -81,14 +95,26 @@ message Filter
   optional string doc = 2;
 }
 
+message FilterChain
+{
+  required string name = 1;
+  optional string doc = 2;
+}
+
 //#############################################################
 //###################### SERVICE SECTION ###################### 
 //#############################################################
 service CommandService 
 {
+  rpc hello_world(HelloWorldRequest) returns(HelloWorldResponse);
+  
   rpc get_filter_list(GetFilterListRequest) returns(GetFilterListResponse);
   rpc get_filter_list_from_filterchain(GetFilterListFromFilterChainRequest) returns(GetFilterListFromFilterChainResponse);
+  rpc get_filterchain_list(GetFilterChainListRequest) returns(GetFilterChainListResponse);
+  rpc get_source_list(GetSourceListRequest) returns(GetSourceListResponse);
+  
   rpc is_connected(IsConnectedRequest) returns(StatusResponse);
+  
   rpc reload_filter(ReloadFilterRequest) returns(StatusResponse);
   rpc load_chain(LoadChainRequest) returns(StatusResponse);
 }

@@ -45,6 +45,22 @@ class ControllerProtobuf():
         # Create a new service instance
         self.service = RpcService(server_pb2.CommandService_Stub, port, hostname)
 
+    def hello_world(self):
+        print("Begin hello world")
+        request = server_pb2.HelloWorldRequest()
+        # Make an synchronous call
+        response = None
+        try:
+            response = self.service.hello_world(request, timeout=10000) is not None
+            if response:
+                print("Recieve hello world :)")
+            else:
+                print("Wrong hello world :(")
+        except Exception, ex:
+            log.exception(ex)
+
+        return response
+    
     ##########################################################################
     ################################ CLIENT ##################################
     ##########################################################################
@@ -62,82 +78,87 @@ class ControllerProtobuf():
 
         return response
     
+    def close(self):
+        """
+            Close the socket connection.
+        """
+        print("Close connection.")
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
-    def get_source(self):
-        pass
-    
-    def change_source(self, new_source):
-        pass
+    def get_source_list(self):
+        """
+            Get the list for image provider.
+        """
+        request = server_pb2.GetSourceListRequest()
+        # Make an synchronous call
+        returnResponse = []
+        try:
+            response = self.service.get_source_list(request, timeout=10000)
+            if response:
+                returnResponse = response.source 
+            else:
+                print("No answer on get_source_list")
+        except Exception, ex:
+            log.exception(ex)
 
+        return returnResponse
+        
     ##########################################################################
     ############################### THREAD  ##################################
     ##########################################################################
-    def get_thread(self):
-        pass
-
-    def change_sleep_time(self, sleep_time):
-        pass
-
-    def start_thread(self):
-        pass
-
-    def stop_thread(self):
-        pass
-
-    def is_thread_running(self):
-        pass
-
-    def thread_observer(self, image):
-        pass
-    
-    def add_thread_observer(self, observer):
-        pass
-
-    def remove_thread_observer(self, observer):
-        pass
 
     def close_server(self):
-        pass
-    
-    ##########################################################################
-    ############################ FILTERCHAIN  ################################
-    ##########################################################################
-    def get_chain(self):
-        pass
-
-    def get_filter_from_index(self, index):
-        pass
-
-    def get_filter_list_from_filterchain(self):
         """
-            Return list of filter from filterchain
+            Send a signal to close the server.
         """
-        request = server_pb2.GetFilterListFromFilterChainRequest()
+        print("Ignore command close_server")
+        
+    ##########################################################################
+    ##########################  CONFIGURATION  ###############################
+    ##########################################################################
+    def get_filterchain_list(self):
+        """
+            Return list of filter from filterchain.
+        """
+        request = server_pb2.GetFilterChainListRequest()
         # Make an synchronous call
         returnValue = None
         try:
-            response = self.service.get_filter_list_from_filterchain(request, timeout=10000)
-            returnValue = response.filters
+            response = self.service.get_filterchain_list(request, timeout=10000)
+            if response:
+                returnValue = response.filterchains
+            else:
+                print("Error : protobuf, get_filterchain_list response is None")
 
         except Exception, ex:
             log.exception(ex)
 
         return returnValue
+    
+    def get_filter_list_from_filterchain(self, filterchain_name):
+        """
+            Return list of filter from filterchain.
+        """
+        request = server_pb2.GetFilterListFromFilterChainRequest()
+        request.filterchain_name = filterchain_name
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.get_filter_list_from_filterchain(request, timeout=10000)
+            if response:
+                returnValue = response.filters
+            else:
+                print("Error : protobuf, get_filterchain_list response is None")
 
-    def count_filters(self):
-        pass
+        except Exception, ex:
+            log.exception(ex)
 
-    def create_new_chain(self):
-        pass
-
-    def hook_new_chain(self, new_chain):
-        pass
-
-    def chain_exists(self):
-        pass
-
+        return returnValue
+    
+    ##########################################################################
+    ############################ FILTERCHAIN  ################################
+    ##########################################################################
     def load_chain(self, file_name):
         """
             load Filter.
@@ -159,14 +180,6 @@ class ControllerProtobuf():
 
         return returnValue
 
-    def save_chain(self, file_name):
-        pass
-    
-    def add_filter(self, filtre):
-        pass
-
-    def remove_filter(self, filtre):
-        pass
 
     def reload_filter(self, filtre=None):
         """
@@ -193,29 +206,6 @@ class ControllerProtobuf():
 
         return returnValue
 
-    def move_filter_up(self, filtre):
-        pass
-
-    def move_filter_down(self, filtre):
-        pass
-
-    def add_image_observer(self, observer):
-        pass
-
-    def remove_image_observer(self, observer):
-        pass
-
-    def add_filter_observer(self, observer):
-        pass
-
-    def remove_filter_observer(self, observer):
-        pass
-
-    def add_filter_output_observer(self, output):
-        pass
-
-    def remove_filter_output_observer(self, output):
-        pass
 
     ##########################################################################
     ############################### FILTER  ##################################
