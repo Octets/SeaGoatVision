@@ -33,16 +33,9 @@ import time
 import numpy
 
 class Manager:
-
     def __init__(self):
         self.dct_thread = {}
         self.configuration = Configuration()
-        
-        self.chain = None
-        self.create_new_chain()
-        self.source = None
-        self.thread = MainLoop()
-        self.thread.add_observer(self.thread_observer)
     
     ##########################################################################
     ################################ CLIENT ##################################
@@ -107,51 +100,12 @@ class Manager:
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
-    def get_source(self):
-        return self.source
-
-    def change_source(self, new_source):
-        if self.source <> None:
-            imageproviders.close_source(self.source)
-        if new_source <> None:
-            self.source = imageproviders.create_source(new_source)
-            self.thread.start(self.source)
-        else:
-            self.source = None
-            
     def get_source_list(self):
         return imageproviders.load_sources().keys()
 
     ##########################################################################
     ############################### THREAD  ##################################
     ##########################################################################
-    def get_thread(self):
-        return self.thread
-
-    def change_sleep_time(self, sleep_time):
-        self.thread.change_sleep_time(sleep_time)
-
-    def start_thread(self):
-        self.thread.start(self.source)
-
-    def stop_thread(self):
-        self.thread.stop()
-
-    def is_thread_running(self):
-        return self.thread.is_running()
-
-    def thread_observer(self, image):
-        if self.chain is not None and image is not None:
-            self.chain.execute(image)
-
-    def add_thread_observer(self, observer):
-        self.thread.add_observer(observer)
-
-    def remove_thread_observer(self, observer):
-        self.thread.remove_observer(observer)
-
-    def close_server(self):
-        self.stop_thread()
     
     ##########################################################################
     ########################## CONFIGURATION  ################################
@@ -174,34 +128,6 @@ class Manager:
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################
-    def get_chain(self):
-        return self.chain
-
-    def get_filter_from_index(self, index):
-        return self.chain.__getitem__(index)
-
-    def count_filters(self):
-        if self.chain is not None:
-            return self.chain.count()
-        return -1
-
-    def create_new_chain(self):
-        new_chain = filterchain.FilterChain()
-        if self.chain is not None:
-            self.hook_new_chain(new_chain)
-        self.chain = new_chain
-
-    def hook_new_chain(self, new_chain):
-        for o in self.chain.get_image_observers():
-            new_chain.add_image_observer(o)
-        for o in self.chain.get_filter_observers():
-            new_chain.add_filter_observer(o)
-        for o in self.chain.get_filter_output_observers():
-            new_chain.add_filter_output_observer(o)
-
-    def chain_exists(self):
-        return self.chain is not None
-
     def load_chain(self, file_name):
         """
             return if chain is correctly loading.
@@ -212,61 +138,17 @@ class Manager:
         self.chain = new_chain
         return self.chain_exists()
 
-    def save_chain(self, file_name):
-        filterchain.write(file_name, self.chain)
-        
-    def add_filter(self, filtre):
-        if self.chain is not None:
-            self.chain.add_filter(filtre)
-
-    def remove_filter(self, filtre):
-        if self.chain is not None:
-            self.chain.remove_filter(filtre)
-
     def reload_filter(self, filtre=None):
+        #NEED TO BE UPDATED
         # if filter is none, we reload all filters
         if self.chain is not None:
             self.chain.reload_filter(filtre)
 
-    def move_filter_up(self, filtre):
-        if self.chain is not None:
-            self.chain.move_filter_up(filtre)
-
-    def move_filter_down(self, filtre):
-        if self.chain is not None:
-            self.chain.move_filter_down(filtre)
-
-    def add_image_observer(self, observer):
-        if self.chain is not None:
-            self.chain.add_image_observer(observer)
-
-    def remove_image_observer(self, observer):
-        if self.chain is not None:
-            self.chain.remove_image_observer(observer)
-
-    def add_filter_observer(self, observer):
-        if self.chain is not None:
-            self.chain.add_filter_observer(observer)
-
-    def remove_filter_observer(self, observer):
-        if self.chain is not None:
-            self.chain.remove_filter_observer(observer)
-
-    def add_filter_output_observer(self, output):
-        if self.chain is not None:
-            self.chain.add_filter_output_observer(output)
-
-    def remove_filter_output_observer(self, output):
-        if self.chain is not None:
-            self.chain.remove_filter_output_observer(output)
-            
     ##########################################################################
     ############################### FILTER  ##################################
     ##########################################################################
     def get_filter_list(self):
         return utils.load_filters().keys()
-
-
 
 
 class Observer_image_provider():

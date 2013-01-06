@@ -111,7 +111,6 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
-  
 
     def reload_filter(self, controller, request, done):
         print("reload_filter request %s" % request)
