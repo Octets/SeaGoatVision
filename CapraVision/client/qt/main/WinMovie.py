@@ -37,5 +37,8 @@ class WinMovie:
     
     def track(self):
         pass
+    
+    def show(self):
+        self.ui.show()
         
     

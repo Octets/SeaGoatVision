@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from CapraVision.client.qt.main.WinMovie import WinMovie
 from CapraVision.client.qt.main.WinImageFolder import WinImageFolder
-
+from CapraVision.client.qt.main.WinSingleImage import WinSingleImage
 class WinSource:
     def __init__(self, source=None):
         self.source = source
@@ -33,11 +33,11 @@ class WinSource:
             return WinImageFolder(self.source)
         elif sourceName == "Movie":
             return WinMovie(self.source)
-        elif sourceName == "SimpleImage":
-            return None
+        elif sourceName == "SingleImage":
+            return WinSingleImage(self.source)
         else:
             return None
     
     def show(self):
         if self.sourceUi != None:
-            self.sourceUi.ui.show()
+            self.sourceUi.show()

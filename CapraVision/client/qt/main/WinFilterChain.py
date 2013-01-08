@@ -86,7 +86,7 @@ class WinFilterChain(QtCore.QObject):
             QtGui.QMessageBox.warning(self.ui,"filterchain","filterchain is null.")
         
     def save_chain_as(self):
-        filename = QtGui.QFileDialog.getSaveFileName()[0]        
+        filename = QtGui.QFileDialog.getSaveFileName(filter="*.filterchain")[0]        
         if len(filename)>0:
             self.filename = filename
             self.ui.sourceNameLineEdit.setText(self.filename)
