@@ -111,6 +111,11 @@ class ControllerProtobuf():
     ##########################################################################
     ##########################  CONFIGURATION  ###############################
     ##########################################################################
+        
+    
+    ##########################################################################
+    ############################ FILTERCHAIN  ################################
+    ##########################################################################
     def get_filterchain_list(self):
         """
             Return list of filter from filterchain.
@@ -150,9 +155,78 @@ class ControllerProtobuf():
 
         return returnValue
     
-    ##########################################################################
-    ############################ FILTERCHAIN  ################################
-    ##########################################################################
+    def delete_filterchain(self, filterchain_name):
+        """
+            deleter a filterchain
+            Param : str - filterchain name
+        """
+        request = server_pb2.DeleteFilterChainRequest()
+        request.filterchain_name = filterchain_name
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.delete_filterchain(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+            else:
+                returnValue = False
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue
+        
+    def upload_filterchain(self, filterchain_name, s_file_contain):
+        """
+            upload a filterchain
+            Param : str - filterchain name
+                    str - the filterchain file
+        """
+        request = server_pb2.UploadFilterChainRequest()
+        request.filterchain_name = filterchain_name
+        request.s_file_contain = s_file_contain
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.upload_filterchain(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+            else:
+                returnValue = False
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue
+        
+
+    def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
+        """
+            Edit or create a new filterchain
+            Param : str - old_filterchain name
+                    str - new_filterchain name
+                    list - the list in string of filters
+        """
+        request = server_pb2.ModifyFilterChainRequest()
+        request.old_filterchain_name = old_filterchain_name
+        request.new_filterchain_name = new_filterchain_name
+        for filter in lst_str_filters:
+            request.lst_str_filters.add().name = filter
+            
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.modify_filterchain(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+            else:
+                returnValue = False
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue
+        
     def load_chain(self, file_name):
         """
             load Filter.
@@ -174,7 +248,9 @@ class ControllerProtobuf():
 
         return returnValue
 
-
+    ##########################################################################
+    ############################### FILTER  ##################################
+    ##########################################################################
     def reload_filter(self, filtre=None):
         """
             Reload Filter.
@@ -199,11 +275,7 @@ class ControllerProtobuf():
             log.exception(ex)
 
         return returnValue
-
-
-    ##########################################################################
-    ############################### FILTER  ##################################
-    ##########################################################################
+    
     def get_filter_list(self):
         """
             Return list of filter

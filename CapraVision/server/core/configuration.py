@@ -65,7 +65,7 @@ class Configuration:
         o_filterchain = filterchain.read(self._get_filename(filterchain_name))
         return o_filterchain.get_filter_list()
 
-    def edit_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
+    def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
         # create new filterchain
         if self.create_filterchain(new_filterchain_name, lst_str_filters):
             # delete old filterchain

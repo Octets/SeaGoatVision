@@ -41,7 +41,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ################################ CLIENT ##################################
     ##########################################################################
     def is_connected(self, controller, request, done):
-        print("is_connected request %s" % request)
+        print("is_connected request %s" % str(request).replace("\n"," "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -53,7 +53,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ################################ SOURCE ##################################
     ##########################################################################
     def get_source_list(self, controller, request, done):
-        print("get_source_list request %s" % request)
+        print("get_source_list request %s" % str(request).replace("\n"," "))
 
         response = server_pb2.GetSourceListResponse()
         for item in self.manager.get_source_list():
@@ -69,7 +69,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ##########################  CONFIGURATION  ###############################
     ##########################################################################
     def get_filterchain_list(self, controller, request, done):
-        print("get_filterchain_list request %s" % request)
+        print("get_filterchain_list request %s" % str(request).replace("\n"," "))
 
         # Create a reply
         response = server_pb2.GetFilterChainListResponse()
@@ -82,11 +82,25 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
     
+    def delete_filterchain(self, controller, request, done):
+        print("delete_filterchain request %s" % str(request).replace("\n"," "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            response.status = int(not self.manager.load_chain(request.filterchain_name))
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+    
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################
     def get_filter_list_from_filterchain(self, controller, request, done):
-        print("get_filter_list_from_filterchain request %s" % request)
+        print("get_filter_list_from_filterchain request %s" % str(request).replace("\n"," "))
 
         # Create a reply
         response = server_pb2.GetFilterListFromFilterChainResponse()
@@ -98,7 +112,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
     def load_chain(self, controller, request, done):
-        print("load_chain request %s" % request)
+        print("load_chain request %s" % str(request).replace("\n"," "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -112,8 +126,54 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
 
+    def delete_filterchain(self, controller, request, done):
+        print("delete_filterchain request %s" % str(request).replace("\n"," "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            response.status = int(not self.manager.delete_filterchain(request.filterchain_name))
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+
+    def upload_filterchain(self, controller, request, done):
+        print("upload_filterchain request %s" % str(request).replace("\n"," "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            response.status = int(not self.manager.upload_filterchain(request.filterchain_name, request.s_file_contain))
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+
+    def modify_filterchain(self, controller, request, done):
+        print("modify_filterchain request %s" % str(request).replace("\n"," "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            lstStrFilter = [filter.name for filter in request.lst_str_filters]
+            response.status = int(not self.manager.modify_filterchain(request.old_filterchain_name, request.new_filterchain_name, lstStrFilter))
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+
     def reload_filter(self, controller, request, done):
-        print("reload_filter request %s" % request)
+        print("reload_filter request %s" % str(request).replace("\n"," "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -132,7 +192,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ############################### FILTER  ##################################
     ##########################################################################
     def get_filter_list(self, controller, request, done):
-        print("get_filter_list request %s" % request)
+        print("get_filter_list request %s" % str(request).replace("\n"," "))
 
         # Create a reply
         response = server_pb2.GetFilterListResponse()

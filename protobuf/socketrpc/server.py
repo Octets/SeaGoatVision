@@ -200,7 +200,7 @@ class SocketHandler(SocketServer.StreamRequestHandler):
             service.CallMethod(method, controller, proto_request, callback)
         except Exception, e:
             # added by mathben
-            print("Exception : %s" % unicode(e))
+            print("Exception type %s : %s" % (type(e).__name__, unicode(e)))
             
             raise error.RpcError(unicode(e))
 

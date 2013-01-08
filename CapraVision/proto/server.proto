@@ -54,6 +54,20 @@ message LoadChainRequest
   required string filterName = 1;
 }
 
+message DeleteFilterChainRequest{
+  required string filterchain_name = 1;
+}
+
+message UploadFilterChainRequest{
+  required string filterchain_name = 1;
+  required string s_file_contain = 2;
+}
+
+message ModifyFilterChainRequest{
+  required string old_filterchain_name = 1;
+  required string new_filterchain_name = 2;
+  repeated Filter lst_str_filters = 3;
+}
 
 //############################################################
 //######################## GET SECTION ####################### 
@@ -117,5 +131,8 @@ service CommandService
   
   rpc reload_filter(ReloadFilterRequest) returns(StatusResponse);
   rpc load_chain(LoadChainRequest) returns(StatusResponse);
+  rpc delete_filterchain(DeleteFilterChainRequest) returns(StatusResponse);
+  rpc upload_filterchain(UploadFilterChainRequest) returns(StatusResponse);
+  rpc modify_filterchain(ModifyFilterChainRequest) returns(StatusResponse);
 }
 

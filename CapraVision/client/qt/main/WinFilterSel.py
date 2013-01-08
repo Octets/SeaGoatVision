@@ -22,8 +22,6 @@ from CapraVision.server import filters
 from PySide import QtGui
 from PySide import QtCore
 
-#from server import filters
-
 class WinFilterSel(QtCore.QObject):
     """Allow the user to select a filter to add to the filterchain"""
     onAddFilter = QtCore.Signal(object)

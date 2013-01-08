@@ -125,13 +125,14 @@ class WinFilterChain(QtCore.QObject):
         
         lstFilter = self._get_listString_qList(self.ui.filterListWidget)
 
-        if self.controller.edit_filterchain(oldName, newName, lstFilter):
+        if self.controller.modify_filterchain(oldName, newName, lstFilter):
             self.ui.filterchainListWidget.currentItem().setText(newName)
             print("Editing success on filterchain %s" % newName)
+            self._modeEdit(False)
         else:
             print("Error with saving edit on filterchain %s." % newName)
+            self.cancel()
 
-        self._modeEdit(False)
 
     def delete(self):
         self._modeEdit(True)

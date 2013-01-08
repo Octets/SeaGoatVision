@@ -39,6 +39,7 @@ def run():
 
     # Start the server
     print 'Serving on port 8090'
+    print 'Waiting command'
     server.run()
 
 if __name__ == '__main__':

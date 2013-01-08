@@ -122,8 +122,8 @@ class Manager:
     def get_filter_list_from_filterchain(self, filterchain_name):
         return self.configuration.get_filters_from_filterchain(filterchain_name)
     
-    def edit_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
-        return self.configuration.edit_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters)
+    def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
+        return self.configuration.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters)
     
     ##########################################################################
     ############################ FILTERCHAIN  ################################
