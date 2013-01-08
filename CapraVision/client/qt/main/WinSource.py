@@ -16,40 +16,28 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from CapraVision.client.qt.main.WinMovie import WinMovie
+from CapraVision.client.qt.main.WinImageFolder import WinImageFolder
 
-from CapraVision.client.qt.utils import *
-from CapraVision.server import filters
-
-class WinImageFolder:
-    def __init__(self,imageFolder,folderPath=None):
-        self.ui = get_ui(self)
-        self.imageFolder = imageFolder
-        self.folderPath = folderPath;
-        
-        if self.folderPath is not None:
-            self.updateImageList()
-        
-    def updateImageList(self):
-        pass
+class WinSource:
+    def __init__(self, source=None):
+        self.source = source
+        self.sourceUi = None
     
-    def openNewFolder(self):
-        pass
+    def setSource(self,source):
+        self.source = source
+        self.sourceUi = self._getUi(source.__class__.__name__)
     
-    def autoPlay(self):
-        pass
+    def _getUi(self,sourceName):
+        if sourceName == "ImageFolder":
+            return WinImageFolder(self.source)
+        elif sourceName == "Movie":
+            return WinMovie(self.source)
+        elif sourceName == "SimpleImage":
+            return None
+        else:
+            return None
     
-    def nextImage(self):
-        pass
-    
-    def firstImage(self):
-        pass
-    
-    def previousImage(self):
-        pass
-    
-    def lastImage(self):
-        pass
-    
-    
-    
-    
+    def show(self):
+        if self.sourceUi != None:
+            self.sourceUi.ui.show()

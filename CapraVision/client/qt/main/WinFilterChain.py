@@ -30,6 +30,7 @@ from WinFilterSel import WinFilterSel
 from WinMapper import WinMapper
 from WinViewer import WinViewer
 from WinExec import WinExec
+from WinSource import WinSource
 from PySide import QtGui
 from PySide import QtCore
 
@@ -57,6 +58,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.sourcesComboBox.currentIndexChanged[str].connect(self.startSource)
         self.ui.filterListWidget.currentItemChanged.connect(self.onSelectedFilterchanged)
         self.ui.sourcesButton.clicked.connect(self.getSourcesFilepath)
+        self.winSource = WinSource()
 
     def open_chain(self):
         filename = QtGui.QFileDialog().getOpenFileName(filter="*.filterchain")[0]
@@ -117,9 +119,10 @@ class WinFilterChain(QtCore.QObject):
     def getSourcesFilepath(self):
         if self.source == None:
             return
+        self.winSource.show()
         
-        filepath = QtGui.QFileDialog.getExistingDirectory()[0]
-        return filepath        
+        #filepath = QtGui.QFileDialog.getExistingDirectory()[0]
+        #return filepath        
     
     def startSource(self,sourceText):
         if self.source <> None:
@@ -127,6 +130,7 @@ class WinFilterChain(QtCore.QObject):
         if sourceText == 'None':
             return
         self.source = imageproviders.create_source(self.sources[sourceText])
+        self.winSource.setSource(self.source)
         self.thread.start(self.source)
             
     def thread_observer(self,image):
