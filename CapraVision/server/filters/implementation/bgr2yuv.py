@@ -24,5 +24,5 @@ class BGR2YUV:
     """Convert to YUV (Luminance with two colors)"""
     
     def execute(self, image):
-        image = cv2.cvtColor(image, cv.CV_BGR2YCrCb)
+        cv2.cvtColor(image, cv.CV_BGR2YCrCb, image)
         return image
