@@ -24,5 +24,5 @@ class BGR2HSV:
     """Convert to Hue Saturation Brightness/Value"""
     
     def execute(self, image):
-        image = cv2.cvtColor(image, cv.CV_BGR2HSV)
+        cv2.cvtColor(image, cv.CV_BGR2HSV, image)
         return image
