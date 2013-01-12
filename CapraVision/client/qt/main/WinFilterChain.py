@@ -44,14 +44,13 @@ class WinFilterChain(QtCore.QObject):
     WINDOW_TITLE = "Capra Vision"
     selectedFilterChanged = QtCore.Signal(object)
     
-    def __init__(self):
+    def __init__(self,controller):
         super(WinFilterChain, self).__init__() 
-                
+        self.controller = controller        
         self.filterchain = None
-        self.filename = None
-        self.source = None
-        self.thread = mainloop.MainLoop()
-        self.thread.add_observer(self.thread_observer)
+        self.filename = None        
+        
+        self.controller.add_thread_observer(self.thread_observer)
         
         self.ui = get_ui(self)
         self.loadSources()
@@ -117,21 +116,16 @@ class WinFilterChain(QtCore.QObject):
             self.ui.sourcesComboBox.addItem(source) 
              
     def getSourcesFilepath(self):
-        if self.source == None:
-            return
         self.winSource.show()
         
         #filepath = QtGui.QFileDialog.getExistingDirectory()[0]
         #return filepath        
     
     def startSource(self,sourceText):
-        if self.source <> None:
-            imageproviders.close_source(self.source)
-        if sourceText == 'None':
-            return
-        self.source = imageproviders.create_source(self.sources[sourceText])
-        self.winSource.setSource(self.source)
-        self.thread.start(self.source)
+        if sourceText == "None":
+            return       
+        self.controller.change_source(self.sources[sourceText])
+        self.winSource.setSource(self.controller.get_source())
             
     def thread_observer(self,image):
         if self.filterchain <> None:

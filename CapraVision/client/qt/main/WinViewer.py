@@ -19,10 +19,12 @@
 
 #from gi.repository import GObject
 
-from CapraVision.client.qt.utils import *
+from CapraVision.client.qt.utils import get_ui
 from PySide import QtGui
 from PySide import QtCore
 from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
+from threading import Lock
+import StringIO
 import Image
 import time
 
@@ -42,7 +44,8 @@ class WinViewer(QtCore.QObject):
         self.ui = get_ui(self, 'sourcesListStore', 'filterChainListStore')
         self.filterchain = filterchain
         self.filter = filterchain.filters[len(filterchain.filters)-1]
-        self.size = 1        
+        self.size = 1   
+        self.lock = Lock()     
         
         filterchain.add_filter_observer(self.updateFilters)
         filterchain.add_image_observer(self.updateImage)        
@@ -98,6 +101,7 @@ class WinViewer(QtCore.QObject):
             shape = image.shape
             qimage = qimage.scaled(shape[1]*self.size,shape[0]*self.size)          
         self.newImage.emit(qimage)
+           
      
     def setImageScale(self,textSize):
         textSize = textSize[:-1]

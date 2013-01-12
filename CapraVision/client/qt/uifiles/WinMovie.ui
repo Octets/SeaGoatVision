@@ -26,7 +26,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../usr/share/icons/gnome/22x22/actions/document-open.png</normaloff>../../usr/share/icons/gnome/22x22/actions/document-open.png</iconset>
+         <normaloff>../../../../../../../../usr/share/icons/gnome/24x24/actions/document-open.png</normaloff>../../../../../../../../usr/share/icons/gnome/24x24/actions/document-open.png</iconset>
        </property>
       </widget>
      </item>
@@ -41,7 +41,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../usr/share/icons/gnome/22x22/actions/player_play.png</normaloff>../../usr/share/icons/gnome/22x22/actions/player_play.png</iconset>
+         <normaloff>../../../../../../../../usr/share/icons/gnome/24x24/actions/player_play.png</normaloff>../../../../../../../../usr/share/icons/gnome/24x24/actions/player_play.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -58,7 +58,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../usr/share/icons/gnome/22x22/actions/player_pause.png</normaloff>../../usr/share/icons/gnome/22x22/actions/player_pause.png</iconset>
+         <normaloff>../../../../../../../../usr/share/icons/gnome/24x24/actions/player_pause.png</normaloff>../../../../../../../../usr/share/icons/gnome/24x24/actions/player_pause.png</iconset>
        </property>
        <property name="iconSize">
         <size>
