@@ -30,6 +30,7 @@ from WinFilterSel import WinFilterSel
 from WinMapper import WinMapper
 from WinViewer import WinViewer
 from WinExec import WinExec
+from WinSource import WinSource
 from PySide import QtGui
 from PySide import QtCore
 
@@ -43,20 +44,20 @@ class WinFilterChain(QtCore.QObject):
     WINDOW_TITLE = "Capra Vision"
     selectedFilterChanged = QtCore.Signal(object)
     
-    def __init__(self):
+    def __init__(self,controller):
         super(WinFilterChain, self).__init__() 
-                
+        self.controller = controller        
         self.filterchain = None
-        self.filename = None
-        self.source = None
-        self.thread = mainloop.MainLoop()
-        self.thread.add_observer(self.thread_observer)
+        self.filename = None        
+        
+        self.controller.add_thread_observer(self.thread_observer)
         
         self.ui = get_ui(self)
         self.loadSources()
         self.ui.sourcesComboBox.currentIndexChanged[str].connect(self.startSource)
         self.ui.filterListWidget.currentItemChanged.connect(self.onSelectedFilterchanged)
         self.ui.sourcesButton.clicked.connect(self.getSourcesFilepath)
+        self.winSource = WinSource()
 
     def open_chain(self):
         filename = QtGui.QFileDialog().getOpenFileName(filter="*.filterchain")[0]
@@ -84,7 +85,7 @@ class WinFilterChain(QtCore.QObject):
             QtGui.QMessageBox.warning(self.ui,"filterchain","filterchain is null.")
         
     def save_chain_as(self):
-        filename = QtGui.QFileDialog.getSaveFileName()[0]        
+        filename = QtGui.QFileDialog.getSaveFileName(filter="*.filterchain")[0]        
         if len(filename)>0:
             self.filename = filename
             self.ui.sourceNameLineEdit.setText(self.filename)
@@ -115,19 +116,16 @@ class WinFilterChain(QtCore.QObject):
             self.ui.sourcesComboBox.addItem(source) 
              
     def getSourcesFilepath(self):
-        if self.source == None:
-            return
+        self.winSource.show()
         
-        filepath = QtGui.QFileDialog.getExistingDirectory()[0]
-        return filepath        
+        #filepath = QtGui.QFileDialog.getExistingDirectory()[0]
+        #return filepath        
     
     def startSource(self,sourceText):
-        if self.source <> None:
-            imageproviders.close_source(self.source)
-        if sourceText == 'None':
-            return
-        self.source = imageproviders.create_source(self.sources[sourceText])
-        self.thread.start(self.source)
+        if sourceText == "None":
+            return       
+        self.controller.change_source(self.sources[sourceText])
+        self.winSource.setSource(self.controller.get_source())
             
     def thread_observer(self,image):
         if self.filterchain <> None:

@@ -37,9 +37,7 @@ class RemoveGrass:
         blue[threshold] = 0
         green[threshold] = 0
         red[threshold] = 0
-        image[:,:,0] = blue
-        image[:,:,1] = green 
-        image[:,:,2] = red 
+        cv2.merge((blue, green, red), image)
         return image
     
     def add_green_to_blue(self, image):
@@ -51,9 +49,7 @@ class RemoveGrass:
         blue[threshold] = 0
         green[threshold] = 0
         red[threshold] = 0
-        image[:,:,0] = blue
-        image[:,:,1] = green
-        image[:,:,2] = red
+        cv2.merge((blue, green, red), image)
         return image
         
     def enhance_grass(self, image):

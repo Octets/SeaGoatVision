@@ -17,25 +17,40 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.client.qt.utils import *
-from CapraVision.server import filters
+from CapraVision.client.qt.utils import get_ui
+from CapraVision.server.imageproviders import supported_video_formats
+
+from PySide.QtGui import QFileDialog
 
 class WinMovie:
-    def __init__(self, movie, moviePath=None):
+    def __init__(self, movie):
         self.ui = get_ui(self)
-        self.movie = movie
-        self.moviePath = moviePath
+        self.movie = movie  
+        self.ui.openButton.clicked.connect(self.openNewMovie)
+        self.ui.playButton.clicked.connect(self.play)
+        self.ui.pauseButton.clicked.connect(self.pause)     
         
-    def openNewMovie(self):
-        pass
+    def openNewMovie(self): 
+        filename = QFileDialog.getOpenFileName(filter="Movie("+self._getVideoFormat()+")")[0]
+        if len(filename) > 0:
+            self.movie.open_video_file(filename)
+    
+    def _getVideoFormat(self):
+        rawFormats = supported_video_formats()
+        formats = " *".join(rawFormats)
+        return "*"+formats
+        
     
     def play(self):
-        pass
+        self.movie.play()
     
     def pause(self):
-        pass
+        self.movie.pause()
     
     def track(self):
         pass
+    
+    def show(self):
+        self.ui.show()
         
     

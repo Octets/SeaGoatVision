@@ -34,6 +34,7 @@ from WinFilterChain import WinFilterChain
 from WinFilter import WinFilter
 from PySide import QtGui
 from PySide import QtCore
+from CapraVision.server.core.manager import VisionManager
 
 class WinMain(QtGui.QMainWindow):
     def __init__(self):
@@ -41,12 +42,18 @@ class WinMain(QtGui.QMainWindow):
         
         self.source_list = imageproviders.load_sources()
         
+        c = VisionManager()
+    
+        if not c.is_connected():
+            print("Vision server is not accessible.")
+            return
+        
         #create and start server
         self.server = Server()
         self.server.start("127.0.0.1", 5030)        
         
         #create dockWidgets
-        self.winFilterChain = WinFilterChain()
+        self.winFilterChain = WinFilterChain(c)
         self.winFilter = WinFilter()
         self.winFilterSel = WinFilterSel()
           

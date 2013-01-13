@@ -16,10 +16,16 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from PySide.QtGui import QFileDialog
 
-import os
-
-for f in os.listdir(os.path.dirname(__file__)):
-    file, _ = os.path.splitext(f)
-    code = 'from %(module)s import *' % {'module' : file} 
-    exec code
+class WinSingleImage:
+    def __init__(self,simpleImage):
+        self.simpleImage = simpleImage
+    
+    def show(self):
+        filename = QFileDialog.getOpenFileName(filter="Images(*.png *.jpg *.xpm)")[0]
+        if len(filename) > 0:
+            self.setImage(filename)
+    
+    def setImage(self,filename):
+        self.simpleImage.set_image(filename)

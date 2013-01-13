@@ -19,36 +19,47 @@
 
 from CapraVision.client.qt.utils import *
 from CapraVision.server import filters
+from PySide.QtGui import QFileDialog
 
-class WinImageImage:
-    def __init__(self,imageFolder,folderPath=None):
+class WinImageFolder:
+    def __init__(self,imageFolder):
         self.ui = get_ui(self)
         self.imageFolder = imageFolder
-        self.folderPath = folderPath;
-        
-        if self.folderPath is not None:
-            self.updateImageList()
+        self.ui.openButton.clicked.connect(self.updateImageList)
+        self.ui.autoPlayCheckBox.stateChanged.connect(self.autoPlay)
+        self.ui.nextButton.clicked.connect(self.nextImage)
+        self.ui.previousButton.clicked.connect(self.previousImage)
+        self.ui.lastButton.clicked.connect(self.lastImage)
+        self.ui.firstButton.clicked.connect(self.firstImage)
         
     def updateImageList(self):
-        pass
+        folderPath = QFileDialog.getExistingDirectory()
+        if len(folderPath) > 0:
+            self.imageFolder.read_folder(folderPath)
+            self.imageFolder.load_image(0)
     
     def openNewFolder(self):
         pass
     
-    def autoPlay(self):
-        pass
+    def autoPlay(self,value):
+        self.imageFolder.set_auto_increment(value)
     
     def nextImage(self):
-        pass
+        self.imageFolder.next()
     
     def firstImage(self):
-        pass
+        self.imageFolder.set_position(0)
     
     def previousImage(self):
-        pass
+        previousPos = self.imageFolder.current_position()-1
+        self.imageFolder.set_position(previousPos)
     
     def lastImage(self):
-        pass
+        lastPos = self.imageFolder.total_images()-1
+        self.imageFolder.set_position(lastPos)
+        
+    def show(self):
+        self.ui.show()
     
     
     

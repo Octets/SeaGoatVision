@@ -26,7 +26,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../usr/share/icons/gnome/22x22/actions/document-open.png</normaloff>../../usr/share/icons/gnome/22x22/actions/document-open.png</iconset>
+         <normaloff>../../../../../../../../usr/share/icons/gnome/22x22/actions/document-open.png</normaloff>../../../../../../../../usr/share/icons/gnome/22x22/actions/document-open.png</iconset>
        </property>
       </widget>
      </item>
@@ -38,7 +38,7 @@
       <widget class="QToolButton" name="firstButton">
        <property name="icon">
         <iconset>
-         <normaloff>../../usr/share/icons/gnome/22x22/actions/go-first.png</normaloff>../../usr/share/icons/gnome/22x22/actions/go-first.png</iconset>
+         <normaloff>../../../../../../../../usr/share/icons/gnome/22x22/actions/go-first.png</normaloff>../../../../../../../../usr/share/icons/gnome/22x22/actions/go-first.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -55,7 +55,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../usr/share/icons/gnome/22x22/actions/go-previous.png</normaloff>../../usr/share/icons/gnome/22x22/actions/go-previous.png</iconset>
+         <normaloff>../../../../../../../../usr/share/icons/gnome/22x22/actions/go-previous.png</normaloff>../../../../../../../../usr/share/icons/gnome/22x22/actions/go-previous.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -72,7 +72,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../usr/share/icons/gnome/22x22/actions/go-next.png</normaloff>../../usr/share/icons/gnome/22x22/actions/go-next.png</iconset>
+         <normaloff>../../../../../../../../usr/share/icons/gnome/22x22/actions/go-next.png</normaloff>../../../../../../../../usr/share/icons/gnome/22x22/actions/go-next.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -89,7 +89,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../usr/share/icons/gnome/22x22/actions/go-last.png</normaloff>../../usr/share/icons/gnome/22x22/actions/go-last.png</iconset>
+         <normaloff>../../../../../../../../usr/share/icons/gnome/22x22/actions/go-last.png</normaloff>../../../../../../../../usr/share/icons/gnome/22x22/actions/go-last.png</iconset>
        </property>
        <property name="iconSize">
         <size>

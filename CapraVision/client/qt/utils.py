@@ -23,7 +23,8 @@ from PySide import QtGui
 import Image
 import ImageQt
 
-import sources
+from CapraVision.server.imageproviders import implementation as sources
+from CapraVision.server.filters import implementation as filters
 
 import inspect
 import os
