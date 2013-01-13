@@ -24,6 +24,6 @@ class BGR2Grayscale:
     """Convert to grayscale then convert back to BGR"""
     
     def execute(self, image):
-        cv2.cvtColor(image, cv.CV_BGR2GRAY, image)
-        cv2.cvtColor(image, cv.CV_GRAY2BGR, image)
+        image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
+        image = cv2.cvtColor(image, cv.CV_GRAY2BGR)
         return image

@@ -32,11 +32,8 @@ class Canny:
     def execute(self, image):
         gray = cv2.cvtColor(image, cv.CV_BGR2GRAY)
         
-        cv2.Canny(gray, 
-                  self.threshold1.get_current_value(), 
-                  self.threshold2.get_current_value(),
-                  gray)
-        cv2.merge((gray, gray, gray), image)
-
+        gray = cv2.Canny(gray, self.threshold1.get_current_value(), self.threshold2.get_current_value())
+        image[:, :, 0] = gray
+        image[:, :, 1] = gray
+        image[:, :, 2] = gray
         return image
-    

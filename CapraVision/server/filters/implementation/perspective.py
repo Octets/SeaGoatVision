@@ -47,5 +47,4 @@ class Perspective:
         self.mmat = cv2.getPerspectiveTransform(c2, c1)
         
     def execute(self, image):
-        cv2.warpPerspective(image, self.mmat, (640, 480), image)
-        return image
+        return cv2.warpPerspective(image, self.mmat, (640, 480))

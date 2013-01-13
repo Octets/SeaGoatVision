@@ -17,14 +17,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import cv2
-import cv2.cv as cv
+import os
 
-class BGR2HSV:
-    """Convert to Hue Saturation Brightness/Value"""
-    
-    def execute(self, image):
-        image = cv2.cvtColor(image, cv.CV_BGR2HSV)
-        return image
-
-                
+for f in os.listdir(os.path.dirname(__file__)):
+    file, _ = os.path.splitext(f)
+    code = 'from %(module)s import *' % {'module' : file} 
+    exec code

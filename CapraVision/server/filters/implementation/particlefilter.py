@@ -39,7 +39,7 @@ class ParticleFilter:
                                                   int(self.kernel_height.get_current_value())))
             
     def execute(self, image):
-        cv2.erode(image, self._kernel, image)
+        image = cv2.erode(image, self._kernel)
         gray = cv2.split(image)[0]
         contours, _ = cv2.findContours(
                                        gray, 
