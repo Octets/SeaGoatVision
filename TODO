@@ -34,9 +34,9 @@
  *** Milestone Sonia ***
  - Parallèlisme
  - Plusieurs sources en même temps (2 caméras)
- - Communication avec le serveur avancé
+ - Communication avec le serveur avancé - en cours
   + Changer filtres
   + Configuration caméra
- - Filtres C++
+ - Filtres C++ - Done
  - Migration des filtres existants
  - Arbre de filtres
