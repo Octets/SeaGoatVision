@@ -79,6 +79,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             if self.observer.get(request.execution_name, None):
                 response.status = int(not self.manager.stop_filterchain_execution(request.execution_name))
                 del self.observer[request.execution_name]
+                response.status = 0
             else:
                 response.status = 1
                 response.message = "This filterchain_execution is already close."
