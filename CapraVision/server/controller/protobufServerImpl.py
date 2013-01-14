@@ -26,22 +26,19 @@ Date : October 2012
 # Import required RPC modules
 from CapraVision.proto import server_pb2
 from CapraVision.server.core.manager import Manager
+import time
 
 class ProtobufServerImpl(server_pb2.CommandService):
     def __init__(self, * args, ** kwargs):
         server_pb2.CommandService.__init__(self, * args, ** kwargs)
         self.manager = Manager()
+        self.observer = {}
 
-    def hello_world(self, controller, request, done):
-        print("Server receive hello world")
-        response = server_pb2.HelloWorldResponse()
-        done.run(response)
-        
     ##########################################################################
     ################################ CLIENT ##################################
     ##########################################################################
     def is_connected(self, controller, request, done):
-        print("is_connected request %s" % str(request).replace("\n"," "))
+        print("is_connected request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -50,10 +47,98 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     ##########################################################################
+    ######################## EXECUTION FILTER ################################
+    ##########################################################################
+    def start_filterchain_execution(self, controller, request, done):
+        print("start_filterchain_execution request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            # dont start a filterchain execution if it already exist
+            if not self.observer.get(request.execution_name, None):
+                self.observer[request.execution_name] = self.manager.start_filterchain_execution(request.execution_name, request.source_name, request.filterchain_name)
+                response.status = 0
+            else:
+                response.status = 1
+                response.message = "This filterchain_execution already exist." 
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+    
+        
+    def stop_filterchain_execution(self, controller, request, done):
+        print("stop_filterchain_execution request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            if self.observer.get(request.execution_name, None):
+                response.status = int(not self.manager.stop_filterchain_execution(request.execution_name))
+                del self.observer[request.execution_name]
+            else:
+                response.status = 1
+                response.message = "This filterchain_execution is already close."
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+    def get_image(self, controller, request, done):
+        #print("get_image request %s" % str(request).replace("\n", " "))
+        
+        # Create a reply
+        response = server_pb2.GetImageResponse()
+        try:
+            if self.observer.get(request.execution_name, None):
+                aTime = time.time()
+                image = self.observer[request.execution_name].next()
+                bTime = time.time()
+                response.image = image.dumps()
+                cTime = time.time()
+                print("Acquisition time : %s, dumps time %s" % (bTime - aTime, cTime - bTime))
+            else:
+                print("get_image request on execution_name doesn't exist." % request.execution_name)
+        except Exception, e:
+            print "Exception: ", e
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+    ##########################################################################
+    ############################## OBSERVATOR ################################
+    ##########################################################################
+    def set_image_filter_observer(self, controller, request, done):
+        print("set_image_filter_observer request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            # dont start a filterchain execution if it already exist
+            observer = self.observer.get(request.execution_name, None) 
+            if observer:
+                observer.set_filter_name(request.filter_name)
+                response.status = 0
+            else:
+                response.status = 1
+                response.message = "This filterchain_execution doesn't exist." 
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+    
+    ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
     def get_source_list(self, controller, request, done):
-        print("get_source_list request %s" % str(request).replace("\n"," "))
+        print("get_source_list request %s" % str(request).replace("\n", " "))
 
         response = server_pb2.GetSourceListResponse()
         for item in self.manager.get_source_list():
@@ -69,7 +154,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ##########################  CONFIGURATION  ###############################
     ##########################################################################
     def get_filterchain_list(self, controller, request, done):
-        print("get_filterchain_list request %s" % str(request).replace("\n"," "))
+        print("get_filterchain_list request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetFilterChainListResponse()
@@ -83,7 +168,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
     
     def delete_filterchain(self, controller, request, done):
-        print("delete_filterchain request %s" % str(request).replace("\n"," "))
+        print("delete_filterchain request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -100,7 +185,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ############################ FILTERCHAIN  ################################
     ##########################################################################
     def get_filter_list_from_filterchain(self, controller, request, done):
-        print("get_filter_list_from_filterchain request %s" % str(request).replace("\n"," "))
+        print("get_filter_list_from_filterchain request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetFilterListFromFilterChainResponse()
@@ -112,7 +197,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
     def load_chain(self, controller, request, done):
-        print("load_chain request %s" % str(request).replace("\n"," "))
+        print("load_chain request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -127,7 +212,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
     def delete_filterchain(self, controller, request, done):
-        print("delete_filterchain request %s" % str(request).replace("\n"," "))
+        print("delete_filterchain request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -142,7 +227,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
     def upload_filterchain(self, controller, request, done):
-        print("upload_filterchain request %s" % str(request).replace("\n"," "))
+        print("upload_filterchain request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -157,7 +242,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
     def modify_filterchain(self, controller, request, done):
-        print("modify_filterchain request %s" % str(request).replace("\n"," "))
+        print("modify_filterchain request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -173,7 +258,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
     def reload_filter(self, controller, request, done):
-        print("reload_filter request %s" % str(request).replace("\n"," "))
+        print("reload_filter request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -192,7 +277,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ############################### FILTER  ##################################
     ##########################################################################
     def get_filter_list(self, controller, request, done):
-        print("get_filter_list request %s" % str(request).replace("\n"," "))
+        print("get_filter_list request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetFilterListResponse()

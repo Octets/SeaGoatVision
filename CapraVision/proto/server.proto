@@ -30,9 +30,6 @@ option optimize_for = SPEED;
 //############################################################
 //##################### GENERAL SECTION ######################
 //############################################################
-message HelloWorldRequest{}
-message HelloWorldResponse{}
-
 message StatusResponse
 {
   required int32 status = 1;
@@ -47,6 +44,18 @@ message IsConnectedRequest{}
 message ReloadFilterRequest
 {
   repeated string filterName = 1;
+}
+
+message StartFilterchainExecutionRequest
+{
+  required string execution_name = 1;
+  required string source_name = 2;
+  required string filterchain_name = 3;
+}
+
+message StopFilterchainExecutionRequest
+{
+  required string execution_name = 1;
 }
 
 message LoadChainRequest
@@ -96,9 +105,24 @@ message GetSourceListResponse
 {
   repeated string source = 1;
 }
+
+message GetImageRequest
+{
+  required string execution_name = 1;
+}
+message GetImageResponse
+{
+  //required Image image = 1;
+  required bytes image = 1;
+}
 //############################################################
 //######################## SET SECTION ####################### 
 //############################################################
+message SetImageFilterObserverRequest
+{
+  required string execution_name = 1;
+  required string filter_name = 2;
+}
 
 //############################################################
 //################## CUSTOM MESSAGE SECTION ##################
@@ -115,17 +139,33 @@ message FilterChain
   optional string doc = 2;
 }
 
+message Image
+{
+  repeated Line matrix = 1;
+
+}
+
+message Line
+{
+  repeated Rgb rgb = 1;  
+}
+
+message Rgb
+{
+  repeated uint32 color = 1;
+}
 //#############################################################
 //###################### SERVICE SECTION ###################### 
 //#############################################################
 service CommandService 
 {
-  rpc hello_world(HelloWorldRequest) returns(HelloWorldResponse);
-  
   rpc get_filter_list(GetFilterListRequest) returns(GetFilterListResponse);
   rpc get_filter_list_from_filterchain(GetFilterListFromFilterChainRequest) returns(GetFilterListFromFilterChainResponse);
   rpc get_filterchain_list(GetFilterChainListRequest) returns(GetFilterChainListResponse);
   rpc get_source_list(GetSourceListRequest) returns(GetSourceListResponse);
+  rpc get_image(GetImageRequest) returns(GetImageResponse);
+  
+  rpc set_image_filter_observer(SetImageFilterObserverRequest) returns(StatusResponse);
   
   rpc is_connected(IsConnectedRequest) returns(StatusResponse);
   
@@ -134,5 +174,7 @@ service CommandService
   rpc delete_filterchain(DeleteFilterChainRequest) returns(StatusResponse);
   rpc upload_filterchain(UploadFilterChainRequest) returns(StatusResponse);
   rpc modify_filterchain(ModifyFilterChainRequest) returns(StatusResponse);
+  rpc start_filterchain_execution(StartFilterchainExecutionRequest) returns(StatusResponse);
+  rpc stop_filterchain_execution(StopFilterchainExecutionRequest) returns(StatusResponse);
 }
 

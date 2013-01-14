@@ -19,6 +19,13 @@
 
 # from gi.repository import GObject
 
+"""
+Description : Windows to "view" a filterchain execution
+Authors: Mathieu Benoit (mathben963@gmail.com)
+         Junior Gregoire (junior.gregoire@gmail.com)
+Date : december 2012
+"""
+
 from CapraVision.client.qt.utils import *
 from PySide import QtGui
 from PySide import QtCore
@@ -41,6 +48,7 @@ class WinViewer(QtCore.QObject):
         
         self.controller = controller
         self.execution_name = execution_name
+        self.filterchain_name = filterchain_name
         
         self.size = 1
         self.thread = None
@@ -71,6 +79,7 @@ class WinViewer(QtCore.QObject):
         if self.thread:
             self.thread.stop()
             self.controller.stop_filterchain_execution(self.execution_name)
+        print("WinViewer %s quit." % (self.filterchain_name))
         
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################
@@ -141,6 +150,7 @@ class ThreadObserver(threading.Thread):
     
     def stop(self):
         self.isStopped = True
+        self.winViewer.observer.stop()
     
     
     

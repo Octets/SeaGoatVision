@@ -49,9 +49,6 @@ class VCmd(cmd.Cmd):
     ####################################################################################################
     # List of command
     ####################################################################################################
-    def do_hello_world(self, line):
-        self.controller.hello_world()
-
     def do_is_connected(self, line):
         if self.controller.is_connected():
             print("You are connected.")

@@ -25,6 +25,7 @@ Date : October 2012
 # Import required RPC modules
 from protobuf.socketrpc import RpcService
 from CapraVision.proto import server_pb2
+from observerSource import ObserverSource
 
 # Configure logging
 import logging
@@ -45,22 +46,6 @@ class ControllerProtobuf():
         # Create a new service instance
         self.service = RpcService(server_pb2.CommandService_Stub, port, hostname)
 
-    def hello_world(self):
-        print("Begin hello world")
-        request = server_pb2.HelloWorldRequest()
-        # Make an synchronous call
-        response = None
-        try:
-            response = self.service.hello_world(request, timeout=10000) is not None
-            if response:
-                print("Recieve hello world :)")
-            else:
-                print("Wrong hello world :(")
-        except Exception, ex:
-            log.exception(ex)
-
-        return response
-    
     ##########################################################################
     ################################ CLIENT ##################################
     ##########################################################################
@@ -83,6 +68,74 @@ class ControllerProtobuf():
             Close the socket connection.
         """
         print("Close connection.")
+        
+    ##########################################################################
+    ######################## EXECUTION FILTER ################################
+    ##########################################################################
+    def start_filterchain_execution(self, execution_name, source_name, filterchain_name):
+        """
+            Start a filterchain on the server.
+            Param : str - The unique execution name
+                    str - The unique source name
+                    str - The unique filterchain name
+        """
+        request = server_pb2.StartFilterchainExecutionRequest()
+        request.execution_name = execution_name
+        request.source_name = source_name
+        request.filterchain_name = filterchain_name
+
+        observer = None
+        
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.start_filterchain_execution(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with start_filterchain_execution : %s" % response.message)
+                    else:
+                        print("Error with start_filterchain_execution.")
+            else:
+                returnValue = False
+
+        except Exception, ex:
+            log.exception(ex)
+
+        if returnValue:
+            observer = ObserverSource(self.service, execution_name)
+            
+        return observer
+        
+    def stop_filterchain_execution(self, execution_name):
+        """
+            Stop a filterchain on the server.
+            Param : str - The unique execution name
+        """
+        request = server_pb2.StopFilterchainExecutionRequest()
+        request.execution_name = execution_name
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.stop_filterchain_execution(request, timeout=10000)
+
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with stop_filterchain_execution : %s" % response.message)
+                    else:
+                        print("Error with stop_filterchain_execution.")
+            else:
+                returnValue = False
+            
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue
+        
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
@@ -166,10 +219,17 @@ class ControllerProtobuf():
         returnValue = None
         try:
             response = self.service.delete_filterchain(request, timeout=10000)
+
             if response:
                 returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with start_filterchain_execution : %s" % response.message)
+                    else:
+                        print("Error with start_filterchain_execution.")
             else:
                 returnValue = False
+            
 
         except Exception, ex:
             log.exception(ex)
@@ -191,8 +251,14 @@ class ControllerProtobuf():
             response = self.service.upload_filterchain(request, timeout=10000)
             if response:
                 returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with upload_filterchain : %s" % response.message)
+                    else:
+                        print("Error with upload_filterchain.")
             else:
                 returnValue = False
+
 
         except Exception, ex:
             log.exception(ex)
@@ -219,8 +285,14 @@ class ControllerProtobuf():
             response = self.service.modify_filterchain(request, timeout=10000)
             if response:
                 returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with modify_filterchain : %s" % response.message)
+                    else:
+                        print("Error with modify_filterchain.")
             else:
                 returnValue = False
+
 
         except Exception, ex:
             log.exception(ex)
@@ -240,8 +312,14 @@ class ControllerProtobuf():
             response = self.service.load_chain(request, timeout=10000)
             if response:
                 returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with load_chain : %s" % response.message)
+                    else:
+                        print("Error with load_chain.")
             else:
                 returnValue = False
+
 
         except Exception, ex:
             log.exception(ex)
@@ -269,7 +347,16 @@ class ControllerProtobuf():
         returnValue = None
         try:
             response = self.service.reload_filter(request, timeout=10000)
-            returnValue = not response.status
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with reload_filter : %s" % response.message)
+                    else:
+                        print("Error with reload_filter.")
+            else:
+                returnValue = False
+
 
         except Exception, ex:
             log.exception(ex)
