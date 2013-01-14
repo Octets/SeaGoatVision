@@ -46,4 +46,3 @@ B. Install OpenCV 2.4
 
  More information is available here: http://opencv.willowgarage.com/wiki/InstallGuide
 
-
