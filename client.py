@@ -40,7 +40,7 @@ def runCli():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Open client for vision server.')
     #parser.add_argument('string', metavar='interface name', type=str, default="gtk", help='cli, gtk or qt is supported.')
-    parser.add_argument('interface', metavar='interface name', nargs='?', type=str, default="qt", help='cli, gtk or qt is supported.')
+    parser.add_argument('interface', metavar='interface name', nargs='?', type=str, default="gtk", help='cli, gtk or qt is supported.')
     
     args = parser.parse_args()
     
