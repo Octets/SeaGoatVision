@@ -32,7 +32,6 @@ from PySide import QtCore
 from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
 import Image
 import time
-import threading
 
 class WinViewer(QtCore.QObject):
     """Show the source after being processed by the filter chain.
@@ -50,6 +49,7 @@ class WinViewer(QtCore.QObject):
         self.execution_name = execution_name
         self.filterchain_name = filterchain_name
         
+        self.actualFilter = None
         self.size = 1
         self.thread = None
         
@@ -66,19 +66,13 @@ class WinViewer(QtCore.QObject):
         
         self._updateFilters(lst_filter_str)
         
-        self.observer = self.controller.start_filterchain_execution(execution_name, source_name, filterchain_name)
+        self.controller.start_filterchain_execution(execution_name, source_name, filterchain_name)
         
-        if not self.observer:
-            print("Error, we didn't receive observer from filterchain execution.")
-        else:
-            self.thread = ThreadObserver(self)
-            self._changeFilter()
-            self.thread.start()
+        self.actualFilter = self.ui.filterComboBox.currentText()
+        self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter)
         
     def quit(self):
-        if self.thread:
-            self.thread.stop()
-            self.controller.stop_filterchain_execution(self.execution_name)
+        #TODO stop the observer
         print("WinViewer %s quit." % (self.filterchain_name))
         
     ######################################################################
@@ -90,8 +84,10 @@ class WinViewer(QtCore.QObject):
             self.ui.filterComboBox.addItem(sFilter)
     
     def _changeFilter(self):
-        if self.thread:
-            self.thread.set_filter_name(self.ui.filterComboBox.currentText())
+        if self.actualFilter:
+            filter_name = self.ui.filterComboBox.currentText()
+            self.controller.add_image_observer(self.updateImage, self.execution_name, filter_name, self.actualFilter)
+            self.actualFilter = filter_name
     
     def updateImage(self, image):
         # fps
@@ -132,25 +128,3 @@ class WinViewer(QtCore.QObject):
         textSize = textSize[:-1]
         self.size = float(textSize) / 100 
             
-               
-class ThreadObserver(threading.Thread):
-    def __init__(self, winViewer):
-        threading.Thread.__init__(self)
-        self.winViewer = winViewer
-        self.isStopped = False
-        
-    def run(self):
-        while not self.isStopped:
-            image = self.winViewer.observer.next()
-            if image is not None:
-                self.winViewer.updateImage(image)
-    
-    def set_filter_name(self, sFilter):
-        self.winViewer.observer.set_filter_name(sFilter)
-    
-    def stop(self):
-        self.isStopped = True
-        self.winViewer.observer.stop()
-    
-    
-    

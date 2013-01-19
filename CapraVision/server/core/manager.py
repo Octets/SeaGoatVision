@@ -34,6 +34,10 @@ import numpy
 
 class Manager:
     def __init__(self):
+        """
+            Structure of dct_thread
+            {"execution_name" : {"thread" : ref, "filterchain" : ref}
+        """
         self.dct_thread = {}
         self.configuration = Configuration()
     
@@ -50,7 +54,6 @@ class Manager:
         # close all thread
         for thread in self.dct_thread.values():
             thread["thread"].quit()
-            thread["observer"].stop()
         print("All thread is closed.")
     
     ##########################################################################
@@ -75,14 +78,10 @@ class Manager:
         source = source()
         
         thread = MainLoop()
-        observer = Observer_image_provider()
-        self.dct_thread[execution_name] = {"thread" : thread, "observer" : observer}
-        
-        filterchain.add_image_observer(observer.observer)
         thread.add_observer(filterchain.execute)
         thread.start(source)
         
-        return observer
+        self.dct_thread[execution_name] = {"thread" : thread, "filterchain" : filterchain}
     
     def stop_filterchain_execution(self, execution_name):
         thread = self.dct_thread.get(execution_name, None)
@@ -93,9 +92,7 @@ class Manager:
             return None
         
         thread["thread"].quit()
-        thread["observer"].stop()
         del self.dct_thread[execution_name]
-        
         
     ##########################################################################
     ################################ SOURCE ##################################
@@ -106,6 +103,29 @@ class Manager:
     ##########################################################################
     ############################### THREAD  ##################################
     ##########################################################################
+    
+    ##########################################################################
+    #############################  OBSERVER  #################################
+    ##########################################################################
+    def add_image_observer(self, observer, execution_name, filter_name, filter_name_replaced = None):
+        """
+            Inform the server what filter we want to observe
+            Param : 
+                - ref, observer is a reference on method for callback
+                - string, execution_name to select an execution
+                - string, filter_name to select the filter
+                - string, filter_name_replaced to optimize request, it stop transmission
+        """
+        ret_value = False
+        if filter_name != filter_name_replaced:
+            dct_thread = self.dct_thread.get(execution_name, {})
+            if dct_thread:
+                ref = dct_thread.get("filterchain", None)
+                if ref:
+                    ret_value = ref.add_image_observer(observer, filter_name)
+                    if filter_name_replaced:
+                        ref.remove_image_observer(observer, filter_name_replaced)
+        return ret_value
     
     ##########################################################################
     ########################## CONFIGURATION  ################################
@@ -150,45 +170,5 @@ class Manager:
     def get_filter_list(self):
         return utils.load_filters().keys()
 
-
-class Observer_image_provider():
-    def __init__(self):
-        self.image = None
-        self.lastImage = None
-        self.isStopped = False
-        self.sleep_time = 1 / 30.0
-        self.sFilter = ""
-    
-    def observer(self, filter, image):
-        if self.sFilter == filter:
-            self.image = image
-    
-    def next(self):
-        # check if the image is different of precedent
-        epsilon = 1e-6
-        diffArray = epsilon
-        while not self.isStopped:
-             if self.image is not None:
-                 if self.lastImage is None:
-                     # its the first picture
-                     break
-                 
-                 diffArray = self.image - self.lastImage
-                 max = numpy.max(numpy.abs(diffArray))
-                 if max > epsilon:
-                     # The picture is different
-                     break
-             time.sleep(self.sleep_time)
-            
-        self.lastImage = self.image
-
-        return self.image
-    
-    def set_filter_name(self, sFilter):
-        self.sFilter = sFilter
-        print("New filter : %s" % sFilter)
-    
-    def stop(self):
-        self.isStopped = True
     
      

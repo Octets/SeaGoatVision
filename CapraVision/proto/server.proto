@@ -78,6 +78,12 @@ message ModifyFilterChainRequest{
   repeated Filter lst_str_filters = 3;
 }
 
+message AddImageObserverRequest
+{
+  required string execution_name = 1;
+  required string filter_name = 2;
+  optional string filter_name_replaced = 3;
+}
 //############################################################
 //######################## GET SECTION ####################### 
 //############################################################
@@ -106,24 +112,6 @@ message GetSourceListResponse
   repeated string source = 1;
 }
 
-message GetImageRequest
-{
-  required string execution_name = 1;
-}
-message GetImageResponse
-{
-  //required Image image = 1;
-  required bytes image = 1;
-}
-//############################################################
-//######################## SET SECTION ####################### 
-//############################################################
-message SetImageFilterObserverRequest
-{
-  required string execution_name = 1;
-  required string filter_name = 2;
-}
-
 //############################################################
 //################## CUSTOM MESSAGE SECTION ##################
 //############################################################
@@ -139,21 +127,6 @@ message FilterChain
   optional string doc = 2;
 }
 
-message Image
-{
-  repeated Line matrix = 1;
-
-}
-
-message Line
-{
-  repeated Rgb rgb = 1;  
-}
-
-message Rgb
-{
-  repeated uint32 color = 1;
-}
 //#############################################################
 //###################### SERVICE SECTION ###################### 
 //#############################################################
@@ -163,12 +136,10 @@ service CommandService
   rpc get_filter_list_from_filterchain(GetFilterListFromFilterChainRequest) returns(GetFilterListFromFilterChainResponse);
   rpc get_filterchain_list(GetFilterChainListRequest) returns(GetFilterChainListResponse);
   rpc get_source_list(GetSourceListRequest) returns(GetSourceListResponse);
-  rpc get_image(GetImageRequest) returns(GetImageResponse);
-  
-  rpc set_image_filter_observer(SetImageFilterObserverRequest) returns(StatusResponse);
   
   rpc is_connected(IsConnectedRequest) returns(StatusResponse);
   
+  rpc add_image_observer(AddImageObserverRequest) returns(StatusResponse);
   rpc reload_filter(ReloadFilterRequest) returns(StatusResponse);
   rpc load_chain(LoadChainRequest) returns(StatusResponse);
   rpc delete_filterchain(DeleteFilterChainRequest) returns(StatusResponse);

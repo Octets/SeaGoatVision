@@ -27,6 +27,7 @@ Date : October 2012
 from CapraVision.proto import server_pb2
 from CapraVision.server.core.manager import Manager
 import time
+import socket
 
 class ProtobufServerImpl(server_pb2.CommandService):
     def __init__(self, * args, ** kwargs):
@@ -90,44 +91,22 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
-    def get_image(self, controller, request, done):
-        #print("get_image request %s" % str(request).replace("\n", " "))
-        
-        # Create a reply
-        response = server_pb2.GetImageResponse()
-        try:
-            if self.observer.get(request.execution_name, None):
-                aTime = time.time()
-                image = self.observer[request.execution_name].next()
-                bTime = time.time()
-                response.image = image.dumps()
-                cTime = time.time()
-                print("Acquisition time : %s, dumps time %s" % (bTime - aTime, cTime - bTime))
-            else:
-                print("get_image request on execution_name doesn't exist." % request.execution_name)
-        except Exception, e:
-            print "Exception: ", e
-
-        # We're done, call the run method of the done callback
-        done.run(response)
-
     ##########################################################################
     ############################## OBSERVATOR ################################
     ##########################################################################
-    def set_image_filter_observer(self, controller, request, done):
-        print("set_image_filter_observer request %s" % str(request).replace("\n", " "))
+    def add_image_observer(self, controller, request, done):
+        print("add_image_observer request %s" % str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
             # dont start a filterchain execution if it already exist
-            observer = self.observer.get(request.execution_name, None) 
-            if observer:
-                observer.set_filter_name(request.filter_name)
+            observer = Observer()
+            if self.manager.add_image_observer(observer.observer, request.execution_name, request.filter_name):
                 response.status = 0
             else:
                 response.status = 1
-                response.message = "This filterchain_execution doesn't exist." 
+                response.message = "This add_image_observer can't add observer." 
         except Exception, e:
             print "Exception: ", e
             response.status = -1
@@ -273,7 +252,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
-  
+
     ##########################################################################
     ############################### FILTER  ##################################
     ##########################################################################
@@ -287,3 +266,17 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         # We're done, call the run method of the done callback
         done.run(response)
+
+    
+class Observer():
+    def __init__(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    
+    def observer(self, image):
+        data = image.dumps()
+        # print(len(data))
+        for i in range(29):
+            self.socket.sendto(data[i * 8192:(i + 1) * 8192], ("localhost", 5000))
+
+
+

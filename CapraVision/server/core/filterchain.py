@@ -100,15 +100,12 @@ class FilterChain:
     """
     def __init__(self):
         self.filters = []
-        self.image_observers = []
+        self.image_observers = {}
         self.filter_observers = []
         self.filter_output_observers = []
 
     def count(self):
         return len(self.filters)
-
-    def get_image_observers(self):
-        return self.image_observers
 
     def get_filter_observers(self):
         return self.filter_observers
@@ -168,11 +165,29 @@ class FilterChain:
             self.filters[i], self.filters[i + 1] = self.filters[i + 1], filtre
             self.notify_filter_observers()
 
-    def add_image_observer(self, observer):
-        self.image_observers.append(observer)
+    def add_image_observer(self, observer, filter_name):
+        lstObserver = self.image_observers.get(filter_name, [])
+        if lstObserver:
+            if observer in lstObserver:
+                print("This observer already observer the filter %s" % filter_name)
+                return False
+            else:
+                lstObserver.append(observer)
+        else:
+            self.image_observers[filter_name] = [observer]
+        return True
 
-    def remove_image_observer(self, observer):
-        self.image_observers.remove(observer)
+    def remove_image_observer(self, observer, filter_name):
+        lstObserver = self.image_observers.get(filter_name, [])
+        if lstObserver:
+            if observer in lstObserver:
+                lstObserver.remove(observer)
+                if not lstObserver:
+                    del self.image_observers[filter_name]
+                return True
+
+        print("This observer is not in observation list for fitler %s" % filter_name)
+        return False
 
     def add_filter_observer(self, observer):
         self.filter_observers.append(observer)
@@ -199,8 +214,9 @@ class FilterChain:
     def execute(self, image):
         for f in self.filters:
             image = f.execute(image)
-            for observer in self.image_observers:
+            lst_observer = self.image_observers.get(f.__class__.__name__, [])
+            for observer in lst_observer:
                 # copy the picture because the next filter will modify him
-                observer(f.__class__.__name__, np.copy(image))
+                observer(np.copy(image))
         return image
 

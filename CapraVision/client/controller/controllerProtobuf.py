@@ -25,7 +25,10 @@ Date : October 2012
 # Import required RPC modules
 from protobuf.socketrpc import RpcService
 from CapraVision.proto import server_pb2
-from observerSource import ObserverSource
+
+import socket
+import numpy as np
+import threading
 
 # Configure logging
 import logging
@@ -45,6 +48,10 @@ class ControllerProtobuf():
 
         # Create a new service instance
         self.service = RpcService(server_pb2.CommandService_Stub, port, hostname)
+        
+        self.observer = None
+        
+        self.socket = None
 
     ##########################################################################
     ################################ CLIENT ##################################
@@ -103,10 +110,7 @@ class ControllerProtobuf():
         except Exception, ex:
             log.exception(ex)
 
-        if returnValue:
-            observer = ObserverSource(self.service, execution_name)
-            
-        return observer
+        return returnValue
         
     def stop_filterchain_execution(self, execution_name):
         """
@@ -164,7 +168,46 @@ class ControllerProtobuf():
     ##########################################################################
     ##########################  CONFIGURATION  ###############################
     ##########################################################################
+
+    ##########################################################################
+    #############################  OBSERVER  #################################
+    ##########################################################################
+    def add_image_observer(self, observer, execution_name, filter_name, filter_name_replaced = None):
+        """
+            Inform the server what filter we want to observe
+            Param : 
+                - ref, observer is a reference on method for callback
+                - string, execution_name to select an execution
+                - string, filter_name to select the filter
+                - string, filter_name_replaced to optimize request, it stop transmission
+        """
+        self.observer = Observer(observer)
+        request = server_pb2.AddImageObserverRequest()
+        request.execution_name = execution_name
+        request.filter_name = filter_name
+        if filter_name_replaced:
+            request.execution_name = execution_name
+
+        self.observer.start()
         
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.add_image_observer(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with add_image_observer : %s" % response.message)
+                    else:
+                        print("Error with add_image_observer.")
+            else:
+                returnValue = False
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue   
     
     ##########################################################################
     ############################ FILTERCHAIN  ################################
@@ -379,5 +422,20 @@ class ControllerProtobuf():
 
         return returnValue
 
-
+class Observer(threading.Thread):
+    def __init__(self, observer):
+        threading.Thread.__init__(self)
+        self.observer = observer
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket.bind(("", 5000))
     
+    def run(self):
+        while 1:
+            data, address = self.socket.recvfrom(8192) # 262144
+            sData = data
+            for i in range(28):
+                data, address = self.socket.recvfrom(8192) # 262144
+                sData += data
+            
+            self.observer(np.loads(sData))
+            
