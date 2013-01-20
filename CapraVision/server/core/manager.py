@@ -41,6 +41,12 @@ class Manager:
         self.dct_thread = {}
         self.configuration = Configuration()
     
+    def __del__(self):
+        print("Close manager")
+        # close all thread
+        for thread in self.dct_thread.values():
+            thread["thread"].quit()
+    
     ##########################################################################
     ################################ CLIENT ##################################
     ##########################################################################
@@ -50,11 +56,6 @@ class Manager:
     ##########################################################################
     ############################# SERVER STATE ###############################
     ##########################################################################
-    def close(self):
-        # close all thread
-        for thread in self.dct_thread.values():
-            thread["thread"].quit()
-        print("All thread is closed.")
     
     ##########################################################################
     ######################## EXECUTION FILTER ################################
@@ -82,6 +83,8 @@ class Manager:
         thread.start(source)
         
         self.dct_thread[execution_name] = {"thread" : thread, "filterchain" : filterchain}
+        
+        return True
     
     def stop_filterchain_execution(self, execution_name):
         thread = self.dct_thread.get(execution_name, None)
@@ -93,6 +96,8 @@ class Manager:
         
         thread["thread"].quit()
         del self.dct_thread[execution_name]
+        
+        return True
         
     ##########################################################################
     ################################ SOURCE ##################################
@@ -107,24 +112,55 @@ class Manager:
     ##########################################################################
     #############################  OBSERVER  #################################
     ##########################################################################
-    def add_image_observer(self, observer, execution_name, filter_name, filter_name_replaced = None):
+    def add_image_observer(self, observer, execution_name, filter_name):
         """
             Inform the server what filter we want to observe
             Param : 
                 - ref, observer is a reference on method for callback
                 - string, execution_name to select an execution
                 - string, filter_name to select the filter
-                - string, filter_name_replaced to optimize request, it stop transmission
         """
         ret_value = False
-        if filter_name != filter_name_replaced:
+        dct_thread = self.dct_thread.get(execution_name, {})
+        if dct_thread:
+            filterchain = dct_thread.get("filterchain", None)
+            if filterchain:
+                ret_value = filterchain.add_image_observer(observer, filter_name)
+        return ret_value
+    
+    def set_image_observer(self, observer, execution_name, filter_name_old, filter_name_new):
+        """
+            Inform the server what filter we want to observe
+            Param : 
+                - ref, observer is a reference on method for callback
+                - string, execution_name to select an execution
+                - string, filter_name_old , filter to replace
+                - string, filter_name_new , filter to use
+        """
+        ret_value = False
+        if filter_name_old != filter_name_new:
             dct_thread = self.dct_thread.get(execution_name, {})
             if dct_thread:
-                ref = dct_thread.get("filterchain", None)
-                if ref:
-                    ret_value = ref.add_image_observer(observer, filter_name)
-                    if filter_name_replaced:
-                        ref.remove_image_observer(observer, filter_name_replaced)
+                filterchain = dct_thread.get("filterchain", None)
+                if filterchain:
+                    filterchain.remove_image_observer(observer, filter_name_old)
+                    ret_value = filterchain.add_image_observer(observer, filter_name_new)
+        return ret_value
+    
+    def remove_image_observer(self, observer, execution_name, filter_name):
+        """
+            Inform the server what filter we want to observe
+            Param : 
+                - ref, observer is a reference on method for callback
+                - string, execution_name to select an execution
+                - string, filter_name , filter to remove
+        """
+        ret_value = False
+        dct_thread = self.dct_thread.get(execution_name, {})
+        if dct_thread:
+            filterchain = dct_thread.get("filterchain", None)
+            if filterchain:
+                ret_value = filterchain.remove_image_observer(observer, filter_name)
         return ret_value
     
     ##########################################################################

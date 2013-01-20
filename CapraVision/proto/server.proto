@@ -82,7 +82,17 @@ message AddImageObserverRequest
 {
   required string execution_name = 1;
   required string filter_name = 2;
-  optional string filter_name_replaced = 3;
+}
+message SetImageObserverRequest
+{
+  required string execution_name = 1;
+  required string filter_name_old = 2;
+  required string filter_name_new = 3;
+}
+message RemoveImageObserverRequest
+{
+  required string execution_name = 1;
+  required string filter_name = 2;
 }
 //############################################################
 //######################## GET SECTION ####################### 
@@ -132,14 +142,21 @@ message FilterChain
 //#############################################################
 service CommandService 
 {
+  // get information
   rpc get_filter_list(GetFilterListRequest) returns(GetFilterListResponse);
   rpc get_filter_list_from_filterchain(GetFilterListFromFilterChainRequest) returns(GetFilterListFromFilterChainResponse);
   rpc get_filterchain_list(GetFilterChainListRequest) returns(GetFilterChainListResponse);
   rpc get_source_list(GetSourceListRequest) returns(GetSourceListResponse);
   
+  // ask state
   rpc is_connected(IsConnectedRequest) returns(StatusResponse);
   
+  // observer
   rpc add_image_observer(AddImageObserverRequest) returns(StatusResponse);
+  rpc set_image_observer(SetImageObserverRequest) returns(StatusResponse);
+  rpc remove_image_observer(RemoveImageObserverRequest) returns(StatusResponse);
+  
+  // action
   rpc reload_filter(ReloadFilterRequest) returns(StatusResponse);
   rpc load_chain(LoadChainRequest) returns(StatusResponse);
   rpc delete_filterchain(DeleteFilterChainRequest) returns(StatusResponse);

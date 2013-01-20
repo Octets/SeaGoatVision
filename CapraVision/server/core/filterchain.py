@@ -186,7 +186,7 @@ class FilterChain:
                     del self.image_observers[filter_name]
                 return True
 
-        print("This observer is not in observation list for fitler %s" % filter_name)
+        print("This observer is not in observation list for filter %s" % filter_name)
         return False
 
     def add_filter_observer(self, observer):

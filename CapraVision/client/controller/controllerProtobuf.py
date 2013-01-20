@@ -49,7 +49,7 @@ class ControllerProtobuf():
         # Create a new service instance
         self.service = RpcService(server_pb2.CommandService_Stub, port, hostname)
         
-        self.observer = None
+        self.observer = {}
         
         self.socket = None
 
@@ -172,24 +172,26 @@ class ControllerProtobuf():
     ##########################################################################
     #############################  OBSERVER  #################################
     ##########################################################################
-    def add_image_observer(self, observer, execution_name, filter_name, filter_name_replaced = None):
+    def add_image_observer(self, observer, execution_name, filter_name):
         """
             Inform the server what filter we want to observe
             Param : 
                 - ref, observer is a reference on method for callback
                 - string, execution_name to select an execution
                 - string, filter_name to select the filter
-                - string, filter_name_replaced to optimize request, it stop transmission
         """
-        self.observer = Observer(observer)
+        local_observer = self.observer.get(execution_name, None)
+        if local_observer:
+            print("This observer already exist")
+            return False
+        
+        local_observer = Observer(observer)
+        local_observer.start()
+        
         request = server_pb2.AddImageObserverRequest()
         request.execution_name = execution_name
         request.filter_name = filter_name
-        if filter_name_replaced:
-            request.execution_name = execution_name
 
-        self.observer.start()
-        
         # Make an synchronous call
         returnValue = None
         try:
@@ -206,6 +208,88 @@ class ControllerProtobuf():
 
         except Exception, ex:
             log.exception(ex)
+
+        if not returnValue:
+            local_observer.stop()
+        else:
+            self.observer[execution_name] = local_observer
+
+        return returnValue   
+    
+    def set_image_observer(self, observer, execution_name, filter_name_old, filter_name_new):
+        """
+            Inform the server what filter we want to observe
+            Param : 
+                - ref, observer is a reference on method for callback
+                - string, execution_name to select an execution
+                - string, filter_name_old , filter to replace
+                - string, filter_name_new , filter to use
+        """
+        observer = self.observer.get(execution_name, None)
+        if not observer:
+            print("This observer doesn't exist.")
+            return False
+        
+        request = server_pb2.SetImageObserverRequest()
+        request.execution_name = execution_name
+        request.filter_name_old = filter_name_old
+        request.filter_name_new = filter_name_new
+
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.set_image_observer(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with set_image_observer : %s" % response.message)
+                    else:
+                        print("Error with set_image_observer.")
+            else:
+                returnValue = False
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue   
+    
+    def remove_image_observer(self, observer, execution_name, filter_name):
+        """
+            Inform the server what filter we want to observe
+            Param : 
+                - ref, observer is a reference on method for callback
+                - string, execution_name to select an execution
+                - string, filter_name , filter to remove
+        """
+        observer = self.observer.get(execution_name, None)
+        if not observer:
+            print("This observer doesn't exist.")
+            return False
+        
+        request = server_pb2.RemoveImageObserverRequest()
+        request.execution_name = execution_name
+        request.filter_name = filter_name
+
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.remove_image_observer(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with remove_image_observer : %s" % response.message)
+                    else:
+                        print("Error with remove_image_observer.")
+            else:
+                returnValue = False
+
+        except Exception, ex:
+            log.exception(ex)
+
+        observer.stop()
+        del self.observer[execution_name]
 
         return returnValue   
     
@@ -427,15 +511,23 @@ class Observer(threading.Thread):
         threading.Thread.__init__(self)
         self.observer = observer
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind(("", 5000))
+        self.socket.bind(("", 5050))
     
     def run(self):
-        while 1:
-            data, address = self.socket.recvfrom(8192) # 262144
-            sData = data
-            for i in range(28):
+        if self.observer:
+            while 1:
                 data, address = self.socket.recvfrom(8192) # 262144
-                sData += data
+                sData = data
+                for i in range(28):
+                    data, address = self.socket.recvfrom(8192) # 262144
+                    sData += data
+                
+                self.observer(np.loads(sData))
+        else:
+            print("Error, self.observer is None.")
             
-            self.observer(np.loads(sData))
-            
+    def stop(self):
+        self.socket.close()
+
+
+

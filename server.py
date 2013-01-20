@@ -22,8 +22,8 @@ Description : Run the vision server
 Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
+from CapraVision.server.mainserver import run
 
 if __name__ == '__main__':
-    from CapraVision.server.mainserver import run
     run()
 

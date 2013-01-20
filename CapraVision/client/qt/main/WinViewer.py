@@ -70,9 +70,11 @@ class WinViewer(QtCore.QObject):
         
         self.actualFilter = self.ui.filterComboBox.currentText()
         self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter)
-        
+    
     def quit(self):
-        #TODO stop the observer
+        if self.actualFilter:
+            self.controller.remove_image_observer(self.updateImage, self.execution_name, self.actualFilter)
+            
         print("WinViewer %s quit." % (self.filterchain_name))
         
     ######################################################################
@@ -86,7 +88,7 @@ class WinViewer(QtCore.QObject):
     def _changeFilter(self):
         if self.actualFilter:
             filter_name = self.ui.filterComboBox.currentText()
-            self.controller.add_image_observer(self.updateImage, self.execution_name, filter_name, self.actualFilter)
+            self.controller.set_image_observer(self.updateImage, self.execution_name, filter_name, self.actualFilter)
             self.actualFilter = filter_name
     
     def updateImage(self, image):

@@ -33,7 +33,12 @@ class ProtobufServerImpl(server_pb2.CommandService):
     def __init__(self, * args, ** kwargs):
         server_pb2.CommandService.__init__(self, * args, ** kwargs)
         self.manager = Manager()
-        self.observer = {}
+        self.dct_observer = {}
+        
+    def __del__(self):
+        print("Close protobuf.")
+        for observer in self.dct_observer.values():
+            observer.close()
 
     ##########################################################################
     ################################ CLIENT ##################################
@@ -57,11 +62,8 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             # dont start a filterchain execution if it already exist
-            if not self.observer.get(request.execution_name, None):
-                self.observer[request.execution_name] = self.manager.start_filterchain_execution(request.execution_name, request.source_name, request.filterchain_name)
-                response.status = 0
-            else:
-                response.status = 1
+            response.status = int(not self.manager.start_filterchain_execution(request.execution_name, request.source_name, request.filterchain_name))
+            if response.status:
                 response.message = "This filterchain_execution already exist." 
         except Exception, e:
             print "Exception: ", e
@@ -77,12 +79,8 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
-            if self.observer.get(request.execution_name, None):
-                response.status = int(not self.manager.stop_filterchain_execution(request.execution_name))
-                del self.observer[request.execution_name]
-                response.status = 0
-            else:
-                response.status = 1
+            response.status = int(not self.manager.stop_filterchain_execution(request.execution_name))
+            if response.status:
                 response.message = "This filterchain_execution is already close."
         except Exception, e:
             print "Exception: ", e
@@ -100,13 +98,57 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
-            # dont start a filterchain execution if it already exist
             observer = Observer()
+            self.dct_observer[request.execution_name] = observer
             if self.manager.add_image_observer(observer.observer, request.execution_name, request.filter_name):
                 response.status = 0
             else:
                 response.status = 1
                 response.message = "This add_image_observer can't add observer." 
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+    
+    def set_image_observer(self, controller, request, done):
+        print("set_image_observer request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            observer = self.dct_observer.get(request.execution_name, None)
+            if observer and self.manager.set_image_observer(observer.observer, request.execution_name, request.filter_name_new, request.filter_name_old): 
+                response.status = 0
+            else:
+                response.status = 1
+                response.message = "This set_image_observer can't change observer." 
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+    
+    def remove_image_observer(self, controller, request, done):
+        print("remove_image_observer request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            observer = self.dct_observer.get(request.execution_name, None)
+            if self.manager.remove_image_observer(observer.observer, request.execution_name, request.filter_name):
+                response.status = 0
+            else:
+                response.status = 1
+                response.message = "This remove_image_observer can't remove observer."
+                 
+            observer = self.dct_observer.get(request.execution_name, None)
+            if observer:
+                observer.close()
+                del self.dct_observer[request.execution_name]
+                
         except Exception, e:
             print "Exception: ", e
             response.status = -1
@@ -276,7 +318,10 @@ class Observer():
         data = image.dumps()
         # print(len(data))
         for i in range(29):
-            self.socket.sendto(data[i * 8192:(i + 1) * 8192], ("localhost", 5000))
+            self.socket.sendto(data[i * 8192:(i + 1) * 8192], ("localhost", 5050))
+    
+    def close(self):
+        self.socket.close()
 
 
 
