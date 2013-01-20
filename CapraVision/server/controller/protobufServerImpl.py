@@ -144,10 +144,6 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = "This remove_image_observer can't remove observer."
                  
-            observer = self.dct_observer.get(request.execution_name, None)
-            if observer:
-                observer.close()
-                del self.dct_observer[request.execution_name]
                 
         except Exception, e:
             print "Exception: ", e
@@ -155,6 +151,12 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         # We're done, call the run method of the done callback
         done.run(response)
+        
+        # close the socket
+        observer = self.dct_observer.get(request.execution_name, None)
+        if observer:
+            observer.close()
+            del self.dct_observer[request.execution_name]
     
     ##########################################################################
     ################################ SOURCE ##################################
@@ -313,14 +315,41 @@ class ProtobufServerImpl(server_pb2.CommandService):
 class Observer():
     def __init__(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        add = "localhost"
+        port = 5051
+        self.add = (add, port)
+        self.socket.connect(self.add)
+        self.stop = False
     
     def observer(self, image):
+        buffer = 65507
         data = image.dumps()
-        # print(len(data))
-        for i in range(29):
-            self.socket.sendto(data[i * 8192:(i + 1) * 8192], ("localhost", 5050))
+        nb_packet = int(len(data)/buffer) + 1
+        # TODO missing count for index byte
+        
+        for i in range(nb_packet):
+            if not i:
+                sIndex = "b%d_" % nb_packet
+                begin_index = 0
+            else:
+                sIndex = "c%d_" % i
+                begin_index += nb_char
+            
+            nb_char = buffer - len(sIndex)
+            sData = "%s%s" % (sIndex, data[begin_index:begin_index + nb_char])
+            try:
+                if not self.stop:
+                    self.socket.send(sData)
+                else:
+                    break
+            except Exception, e:
+                # Don't print error if we suppose to stop the socket
+                if not self.stop:
+                    print(e)
+                
     
     def close(self):
+        self.stop = True
         self.socket.close()
 
 

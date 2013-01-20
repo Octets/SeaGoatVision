@@ -71,7 +71,7 @@ class WinFilterChain(QtCore.QObject):
         source_name = self.ui.sourcesComboBox.currentText()
         filterchain_name = self.ui.sourceNameLineEdit.text()
         lst_filter = self._get_listString_qList(self.ui.filterListWidget)
-        self.addPreviewCall(self.controller, "Execution", source_name, filterchain_name, lst_filter)
+        self.addPreviewCall(self.controller, filterchain_name, source_name, filterchain_name, lst_filter)
         
     def add_filter(self, filter_name):
         if filter_name:

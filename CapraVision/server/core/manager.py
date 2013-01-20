@@ -44,8 +44,12 @@ class Manager:
     def __del__(self):
         print("Close manager")
         # close all thread
+        self.close()
+    
+    def close(self):
         for thread in self.dct_thread.values():
             thread["thread"].quit()
+        
     
     ##########################################################################
     ################################ CLIENT ##################################

@@ -53,6 +53,18 @@ class ControllerProtobuf():
         
         self.socket = None
 
+    def __del__(self):
+        """
+            Close the socket connection.
+        """
+        self.close()
+        print("Closed connection.")
+
+    def close(self):
+        for observer in self.observer.values():
+            observer.stop()
+        
+
     ##########################################################################
     ################################ CLIENT ##################################
     ##########################################################################
@@ -70,12 +82,6 @@ class ControllerProtobuf():
 
         return response
     
-    def close(self):
-        """
-            Close the socket connection.
-        """
-        print("Close connection.")
-        
     ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
@@ -266,6 +272,9 @@ class ControllerProtobuf():
         if not observer:
             print("This observer doesn't exist.")
             return False
+
+        observer.stop()
+        del self.observer[execution_name]
         
         request = server_pb2.RemoveImageObserverRequest()
         request.execution_name = execution_name
@@ -288,8 +297,6 @@ class ControllerProtobuf():
         except Exception, ex:
             log.exception(ex)
 
-        observer.stop()
-        del self.observer[execution_name]
 
         return returnValue   
     
@@ -351,9 +358,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        print("Error with start_filterchain_execution : %s" % response.message)
+                        print("Error with delete_filterchain : %s" % response.message)
                     else:
-                        print("Error with start_filterchain_execution.")
+                        print("Error with delete_filterchain.")
             else:
                 returnValue = False
             
@@ -511,23 +518,72 @@ class Observer(threading.Thread):
         threading.Thread.__init__(self)
         self.observer = observer
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind(("", 5050))
+        self.socket.bind(("localhost", 5051))
+        self.close = False
     
     def run(self):
         if self.observer:
-            while 1:
-                data, address = self.socket.recvfrom(8192) # 262144
-                sData = data
-                for i in range(28):
-                    data, address = self.socket.recvfrom(8192) # 262144
-                    sData += data
-                
-                self.observer(np.loads(sData))
+            buffer = 65507
+            while not self.close:
+                sData = ""
+                try:
+                    data, address = self.socket.recvfrom(buffer) # 262144 # 8192
+                    if data[0] != "b":
+                        print("wrong type index.")
+                        continue
+                    
+                    i = 1
+                    while i < buffer and data[i] != "_":
+                        i += 1
+                    
+                    nb_packet_string = data[1:i]
+                    if nb_packet_string.isdigit():
+                        nb_packet = int(nb_packet_string)
+                    else:
+                        print("wrong index.")
+                        continue
+                    
+                    sData += data[i+1:]
+                    for packet in range(1, nb_packet):
+                        data, address = self.socket.recvfrom(buffer) # 262144 # 8192
+                        if data[0] != "c":
+                            print("wrong type index continue")
+                            continue
+                        
+                        i = 1
+                        while i < buffer and data[i] != "_":
+                            i += 1
+                        
+                        no_packet_string = data[1:i]
+                        if no_packet_string.isdigit():
+                            no_packet = int(no_packet_string)
+                            if no_packet != packet:
+                                print("Wrong no packet : %d" % packet)
+                        else:
+                            print("wrong index continue.")
+                            continue
+                    
+                        sData += data[i+1:]
+                        
+                    """
+                    for i in range(28):
+                        data, address = self.socket.recvfrom(8192) # 262144
+                        sData += data
+                    """
+                    
+                    self.observer(np.loads(sData))
+                except Exception, e:
+                    if not self.close:
+                        print(e)
         else:
             print("Error, self.observer is None.")
             
     def stop(self):
-        self.socket.close()
+        self.close = True
+        if self.socket:
+            self.socket.close()
+            self.socket = None
+        print("Close client")
 
 
 
