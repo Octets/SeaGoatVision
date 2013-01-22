@@ -43,6 +43,7 @@ def callback(request, response):
 class ControllerProtobuf():
     def __init__(self):
         # Server details
+        #hostname = '192.168.0.105'
         hostname = 'localhost'
         port = 8090
 
@@ -51,8 +52,6 @@ class ControllerProtobuf():
         
         self.observer = {}
         
-        self.socket = None
-
     def __del__(self):
         """
             Close the socket connection.
@@ -192,7 +191,6 @@ class ControllerProtobuf():
             return False
         
         local_observer = Observer(observer)
-        local_observer.start()
         
         request = server_pb2.AddImageObserverRequest()
         request.execution_name = execution_name
@@ -219,6 +217,7 @@ class ControllerProtobuf():
             local_observer.stop()
         else:
             self.observer[execution_name] = local_observer
+            local_observer.start()
 
         return returnValue   
     
@@ -518,16 +517,18 @@ class Observer(threading.Thread):
         threading.Thread.__init__(self)
         self.observer = observer
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind(("localhost", 5051))
+        #self.add = ("192.168.1.191", 5051)
+        self.add = ("localhost", 5051)
         self.close = False
     
     def run(self):
         if self.observer:
             buffer = 65507
+            self.socket.sendto("I can see you.", self.add)
             while not self.close:
                 sData = ""
                 try:
-                    data, address = self.socket.recvfrom(buffer) # 262144 # 8192
+                    data = self.socket.recv(buffer)
                     if data[0] != "b":
                         print("wrong type index.")
                         continue
@@ -565,12 +566,6 @@ class Observer(threading.Thread):
                     
                         sData += data[i+1:]
                         
-                    """
-                    for i in range(28):
-                        data, address = self.socket.recvfrom(8192) # 262144
-                        sData += data
-                    """
-                    
                     self.observer(np.loads(sData))
                 except Exception, e:
                     if not self.close:

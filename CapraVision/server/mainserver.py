@@ -64,7 +64,7 @@ def run():
         # Note that this is an instantiation of the implementation class,
         # *not* the class defined in the proto file.
         server_service = impl.ProtobufServerImpl()
-        server = server.SocketRpcServer(8090)
+        server = server.SocketRpcServer(8090, "")
         server.registerService(server_service)
     
         # Start the server

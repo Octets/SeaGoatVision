@@ -28,6 +28,7 @@ from CapraVision.proto import server_pb2
 from CapraVision.server.core.manager import Manager
 import time
 import socket
+import threading
 
 class ProtobufServerImpl(server_pb2.CommandService):
     def __init__(self, * args, ** kwargs):
@@ -99,9 +100,10 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             observer = Observer()
-            self.dct_observer[request.execution_name] = observer
+            self.dct_observer[request.execution_name] = observer 
             if self.manager.add_image_observer(observer.observer, request.execution_name, request.filter_name):
                 response.status = 0
+                observer.start()
             else:
                 response.status = 1
                 response.message = "This add_image_observer can't add observer." 
@@ -312,44 +314,53 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     
-class Observer():
+class Observer(threading.Thread):
     def __init__(self):
+        threading.Thread.__init__(self)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        add = "localhost"
         port = 5051
-        self.add = (add, port)
-        self.socket.connect(self.add)
-        self.stop = False
-    
-    def observer(self, image):
-        buffer = 65507
-        data = image.dumps()
-        nb_packet = int(len(data)/buffer) + 1
-        # TODO missing count for index byte
+        self.socket.bind(("", port))
+        # self.add = (add, port)
+        # self.socket.connect(self.add)
+        self.__stop = False
+        self.address = None
         
-        for i in range(nb_packet):
-            if not i:
-                sIndex = "b%d_" % nb_packet
-                begin_index = 0
-            else:
-                sIndex = "c%d_" % i
-                begin_index += nb_char
+    def run(self):
+        # waiting answer from client
+        message, address = self.socket.recvfrom(1024)
+        print address
+        self.address = address
+        
+    def observer(self, image):
+        if self.address:
+            buffer = 65507
+            data = image.dumps()
+            nb_packet = int(len(data) / buffer) + 1
+            # TODO missing count for index byte
             
-            nb_char = buffer - len(sIndex)
-            sData = "%s%s" % (sIndex, data[begin_index:begin_index + nb_char])
-            try:
-                if not self.stop:
-                    self.socket.send(sData)
+            for i in range(nb_packet):
+                if not i:
+                    sIndex = "b%d_" % nb_packet
+                    begin_index = 0
                 else:
-                    break
-            except Exception, e:
-                # Don't print error if we suppose to stop the socket
-                if not self.stop:
-                    print(e)
+                    sIndex = "c%d_" % i
+                    begin_index += nb_char
+                
+                nb_char = buffer - len(sIndex)
+                sData = "%s%s" % (sIndex, data[begin_index:begin_index + nb_char])
+                try:
+                    if not self.__stop:
+                        self.socket.sendto(sData, self.address)
+                    else:
+                        break
+                except Exception, e:
+                    # Don't print error if we suppose to stop the socket
+                    if not self.__stop:
+                        print(e)
                 
     
     def close(self):
-        self.stop = True
+        self.__stop = True
         self.socket.close()
 
 
