@@ -77,6 +77,7 @@ def run():
         except Exception:
             raise(Exception)
         finally:
+            server_service.close()
             # force closing the file
             os.remove(sFileLockName)
 

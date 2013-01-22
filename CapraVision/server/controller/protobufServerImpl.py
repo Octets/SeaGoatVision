@@ -35,11 +35,12 @@ class ProtobufServerImpl(server_pb2.CommandService):
         server_pb2.CommandService.__init__(self, * args, ** kwargs)
         self.manager = Manager()
         self.dct_observer = {}
-        
-    def __del__(self):
+    
+    def close(self):
         print("Close protobuf.")
         for observer in self.dct_observer.values():
             observer.close()
+        self.manager.close()
 
     ##########################################################################
     ################################ CLIENT ##################################

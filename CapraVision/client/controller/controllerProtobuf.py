@@ -52,16 +52,10 @@ class ControllerProtobuf():
         
         self.observer = {}
         
-    def __del__(self):
-        """
-            Close the socket connection.
-        """
-        self.close()
-        print("Closed connection.")
-
     def close(self):
         for observer in self.observer.values():
             observer.stop()
+        print("Closed connection.")
         
 
     ##########################################################################

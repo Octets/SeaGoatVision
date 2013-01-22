@@ -40,16 +40,11 @@ class Manager:
         """
         self.dct_thread = {}
         self.configuration = Configuration()
-    
-    def __del__(self):
-        print("Close manager")
-        # close all thread
-        self.close()
-    
+
     def close(self):
+        print("Close manager")
         for thread in self.dct_thread.values():
             thread["thread"].quit()
-        
     
     ##########################################################################
     ################################ CLIENT ##################################
