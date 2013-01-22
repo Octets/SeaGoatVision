@@ -26,6 +26,11 @@ Date : October 2012
 from protobuf.socketrpc import RpcService
 from CapraVision.proto import server_pb2
 
+# guppy to check memory
+#import guppy
+#from guppy.heapy import Remote
+#Remote.on()
+
 import socket
 import numpy as np
 import threading
