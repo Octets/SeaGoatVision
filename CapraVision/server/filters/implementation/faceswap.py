@@ -48,16 +48,16 @@ class FaceSwap:
             miny, maxy, minx, maxx = coord
             
             gray = cv2.cvtColor(face, cv.CV_BGR2GRAY)
-            gray = cv2.Canny(gray, 100, 50)
+            gray = cv2.Canny(gray, 30, 100)
             gray = self.convexhull(gray)
             gray = cv2.resize(gray, (lastmaxy-lastminy, lastmaxx-lastminx))             
             face = cv2.resize(face, (lastmaxy-lastminy, lastmaxx-lastminx))             
-            
             welp = image[lastminy:lastmaxy, 
                   lastminx:lastmaxx]
-            welp[gray!=0] = face[gray!=0]
+            #welp[gray!=0] = face[gray!=0]
+            
             image[lastminy:lastmaxy, 
-                  lastminx:lastmaxx] = welp#cv2.merge((gray,gray,gray))
+                  lastminx:lastmaxx] = cv2.addWeighted(welp, 0.5, face, 0.5, 0.0)#cv2.merge((gray,gray,gray))
                   
         return image
 
