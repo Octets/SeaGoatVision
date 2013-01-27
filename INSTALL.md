@@ -17,7 +17,7 @@ A. Install dependencies
   Ubuntu :
 
     Execution only :
- sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf
+ sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf protobuf
 
     Compilation proto : 
  sudo apt-get install protobuf-compiler
