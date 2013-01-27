@@ -48,12 +48,12 @@ def callback(request, response):
 class ControllerProtobuf():
     def __init__(self):
         # Server details
-        #hostname = '192.168.0.105'
-        hostname = 'localhost'
-        port = 8090
+        #self.hostname = '192.168.0.11'
+        self.hostname = 'localhost'
+        self.port = 8090
 
         # Create a new service instance
-        self.service = RpcService(server_pb2.CommandService_Stub, port, hostname)
+        self.service = RpcService(server_pb2.CommandService_Stub, self.port, self.hostname)
         
         self.observer = {}
         
@@ -74,7 +74,7 @@ class ControllerProtobuf():
         try:
             response = self.service.is_connected(request, timeout=10000) is not None
             if response:
-                print("Connection sucessful")
+                print("Connection successful")
         except Exception, ex:
             log.exception(ex)
 
@@ -189,7 +189,7 @@ class ControllerProtobuf():
             print("This observer already exist")
             return False
         
-        local_observer = Observer(observer)
+        local_observer = Observer(observer, self.hostname, 5051)
         
         request = server_pb2.AddImageObserverRequest()
         request.execution_name = execution_name
@@ -512,12 +512,11 @@ class ControllerProtobuf():
         return returnValue
 
 class Observer(threading.Thread):
-    def __init__(self, observer):
+    def __init__(self, observer, hostname, port):
         threading.Thread.__init__(self)
         self.observer = observer
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        #self.add = ("192.168.1.191", 5051)
-        self.add = ("localhost", 5051)
+        self.add = (hostname, port)
         self.close = False
     
     def run(self):
@@ -568,7 +567,7 @@ class Observer(threading.Thread):
                     self.observer(np.loads(sData))
                 except Exception, e:
                     if not self.close:
-                        print(e)
+                        print("Error udp observer : %s" % e)
         else:
             print("Error, self.observer is None.")
             
