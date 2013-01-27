@@ -20,7 +20,7 @@ class ScipyExample:
         cv::circle(mat, cv::Point(mat.rows/2, mat.cols/2), mat.cols/4, cv::Scalar(255, 0, 0), -1);
         """,
         arg_names = ['img1'],
-        include_dirs = ['/usr/include/opencv'],
+        include_dirs = ['/usr/local/include/opencv/'],
         headers = ['<cv.h>', '<cxcore.h>'],
         #libraries = ['ml', 'cvaux', 'highgui', 'cv', 'cxcore'],
         extra_objects = ["`pkg-config --cflags --libs opencv`"],
