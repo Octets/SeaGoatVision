@@ -2,7 +2,7 @@ This Vision Serveur is tested on OpenCV 2.4.2 and Python 2.7 on Fedora 17 and Ub
 
 Requirements:
  - Python 2.7
- - PyGObjet/GTK+3
+ - PyQt4
  - Glade 3
  - OpenCV 2.4 w/ Python/Numpy bindings
  - Numpy
@@ -13,14 +13,30 @@ Until OpenCV 2.4 is fully supported, the preferred way is to compile OpenCV manu
 ==== INSTALLATION ====
 
 A. Install dependencies
-     Execution only :
- sudo apt-get install glade python python-numpy python-scipy python-opencv protobuf-python protobuf
+
+  Ubuntu :
+
+    Execution only :
+ sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf
 
     Compilation proto : 
  sudo apt-get install protobuf-compiler
 
     Client qt :
  sudo apt-get install python-pyside python-qt4
+
+
+  Fedora : 
+
+    Execution only :
+ sudo apt-get install python numpy scipy opencv-python protobuf-python protobuf
+
+    Compilation proto :
+ sudo apt-get install protobuf-compiler
+
+    Client qt :
+ sudo apt-get install python-pyside PyQt4
+
 
 B. Install OpenCV 2.4
 
