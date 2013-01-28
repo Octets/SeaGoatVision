@@ -22,6 +22,30 @@ A. Install dependencies
     Client qt :
  sudo apt-get install python-pyside python-qt4
 
+  Fedora : 
+
+    Execution only :
+ sudo apt-get install python numpy scipy opencv-python protobuf-python protobuf
+
+    Compilation proto :
+ sudo apt-get install protobuf-compiler
+
+    Client qt :
+ sudo apt-get install python-pyside PyQt4
+
+  Windows :
+	Install the following dependencies :
+ - Python: 	http://python.org/ftp/python/2.7.3/python-2.7.3.msi
+ - Numpy: 	http://sourceforge.net/projects/numpy/files/NumPy/	# Choose the installer
+ - Scipy:	http://sourceforge.net/projects/scipy/files/scipy/	# Choose the installer
+ - PyQt4:	http://www.riverbankcomputing.co.uk/software/pyqt/download
+ - PySide: 	http://qt-project.org/wiki/PySide_Binaries_Windows
+ - PIL:		http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe
+ - OpenCV: 	http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv	# OpenCV installer for Windows.
+=======
+ - PySide: 	http://qt-project.org/wiki/PySide_Binaries_Windows
+ - OpenCV: 	http://sourceforge.net/projects/opencvlibrary/files/opencv-win/
+
 B. Install OpenCV 2.4
 
  1. Install required OpenCV dependencies
