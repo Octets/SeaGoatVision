@@ -6,6 +6,7 @@ Requirements:
  - Glade 3
  - OpenCV 2.4 w/ Python/Numpy bindings
  - Numpy
+ - Scipy
 
 Until OpenCV 2.4 is fully supported, the preferred way is to compile OpenCV manually: 
  - http://opencv.willowgarage.com/wiki/InstallGuide
@@ -37,6 +38,13 @@ A. Install dependencies
     Client qt :
  sudo apt-get install python-pyside PyQt4
 
+  Windows :
+	Install the following dependencies :
+ - Python: 	http://python.org/ftp/python/2.7.3/python-2.7.3.msi
+ - Numpy: 	http://sourceforge.net/projects/numpy/files/NumPy/	# Choose the installer
+ - Scipy:	http://sourceforge.net/projects/scipy/files/scipy/	# Choose the installer
+ - PySide: 	http://qt-project.org/wiki/PySide_Binaries_Windows
+ - OpenCV: 	http://sourceforge.net/projects/opencvlibrary/files/opencv-win/
 
 B. Install OpenCV 2.4
 
