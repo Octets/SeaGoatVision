@@ -40,10 +40,6 @@ A. Install dependencies
  - Scipy:	http://sourceforge.net/projects/scipy/files/scipy/	# Choose the installer
  - PyQt4:	http://www.riverbankcomputing.co.uk/software/pyqt/download
  - PySide: 	http://qt-project.org/wiki/PySide_Binaries_Windows
- - PIL:		http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe
- - OpenCV: 	http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv	# OpenCV installer for Windows.
-=======
- - PySide: 	http://qt-project.org/wiki/PySide_Binaries_Windows
  - OpenCV: 	http://sourceforge.net/projects/opencvlibrary/files/opencv-win/
 
 B. Install OpenCV 2.4
