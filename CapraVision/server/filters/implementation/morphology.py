@@ -39,14 +39,13 @@ class Morphology:
                                 int(self.anchor_y.get_current_value())))
     
     def execute(self, image):
-        image_threshold = cv2.cvtColor(image, cv.CV_BGR2GRAY)
-        image_morphology = cv2.morphologyEx(
-                image_threshold, 
+        morph = cv2.cvtColor(image, cv.CV_BGR2GRAY)
+        cv2.morphologyEx(
+                morph, 
                 cv2.MORPH_CLOSE, 
-                self._kernel, 
+                self._kernel,
+                dst=morph, 
                 iterations=int(self.iterations.get_current_value()))
-        image[:, :, 0] = image_morphology
-        image[:, :, 1] = image_morphology
-        image[:, :, 2] = image_morphology
+        cv2.merge((morph, morph, morph), image)
         
         return image

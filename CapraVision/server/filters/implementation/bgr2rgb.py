@@ -24,5 +24,5 @@ class BGR2RGB:
     """Convert to RGB.  Useful for interacting with other libraries"""
     
     def execute(self, image):
-        bgrImage = cv2.cvtColor(image, cv.CV_BGR2RGB)
-        return bgrImage
+        cv2.cvtColor(image, cv.CV_BGR2RGB, image)
+        return image
