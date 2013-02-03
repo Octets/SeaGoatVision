@@ -26,9 +26,45 @@ Date : October 2012
 import os
 
 def run():
+    # recheck if its locked because the last check is maybe a false lock
+    pid = os.getpid()
+    sFileLockName = "/tmp/SeaGoat.lock"
+    if is_lock(sFileLockName):
+        exit(-1)
+    
+    fileLock = open(sFileLockName, "w")
+    fileLock.write("%s" % pid)
+    fileLock.close()
+    
+    # Import required RPC modules
+    import protobuf.socketrpc.server as server
+    from controller import protobufServerImpl as impl
+
+    # Create and register the service
+    # Note that this is an instantiation of the implementation class,
+    # *not* the class defined in the proto file.
+    server_service = impl.ProtobufServerImpl()
+    port = 8090
+    server = server.SocketRpcServer(port, "")
+    server.registerService(server_service)
+
+    # Start the server
+    print('Serving on port %s - pid %s' % (port, pid))
+    print('Waiting command')
+    try:
+        server.run()
+    except (KeyboardInterrupt, SystemExit):
+        print("\nClose SeaGoat. See you later!")
+    except Exception:
+        raise(Exception)
+    finally:
+        server_service.close()
+        # force closing the file
+        os.remove(sFileLockName)
+
+def is_lock(sFileLockName):
     # Create lock file
     # This technique counter the concurrence
-    sFileLockName = "/tmp/SeaGoat.lock"
     if os.path.isfile(sFileLockName):
         bIsLocked = True
     else:
@@ -48,38 +84,7 @@ def run():
                 bIsLocked = False
         else:
             print("SeaGoat lock is corrupted, see file : %s" % sFileLockName)
-    
-    # recheck if its locked because the last check is maybe a false lock
-    if not bIsLocked:
-        fileLock = open(sFileLockName, "w")
-        pid = os.getpid()
-        fileLock.write("%s" % pid)
-        fileLock.close()
-        
-        # Import required RPC modules
-        import protobuf.socketrpc.server as server
-        from controller import protobufServerImpl as impl
-    
-        # Create and register the service
-        # Note that this is an instantiation of the implementation class,
-        # *not* the class defined in the proto file.
-        server_service = impl.ProtobufServerImpl()
-        server = server.SocketRpcServer(8090, "")
-        server.registerService(server_service)
-    
-        # Start the server
-        print('Serving on port 8090 - pid %s' % (pid))
-        print('Waiting command')
-        try:
-            server.run()
-        except (KeyboardInterrupt, SystemExit):
-            print("\nClose SeaGoat. See you later!")
-        except Exception:
-            raise(Exception)
-        finally:
-            server_service.close()
-            # force closing the file
-            os.remove(sFileLockName)
+    return bIsLocked
 
 def check_pid(pid):        
     """ Check For the existence of a unix pid. """
