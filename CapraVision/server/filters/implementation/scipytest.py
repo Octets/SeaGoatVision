@@ -2,14 +2,15 @@
 from scipy import weave
 import cv
 import numpy
+from CapraVision.server.filters import dataextract
 
-class ScipyExample:
+class ScipyExample(dataextract.DataExtractor):
     """Example on how to use scipy.weave inside filters.
         The code loop inside the entire image 
         and reduce the value of each pixels by half"""
     
     def __init__(self):
-        pass
+        dataextract.DataExtractor.__init__(self)
 
     def execute(self, image):
         img1 = cv.fromarray(image)
@@ -35,5 +36,6 @@ class ScipyExample:
         """
         )
         img1 = numpy.asarray(img1)
+        self.notify_output_observers("ScipyExample: x=20 y=50\n")
         return img1
 

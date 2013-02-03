@@ -32,6 +32,8 @@ from PySide import QtCore
 from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
 import Image
 import time
+import threading
+import socket
 
 class WinViewer(QtCore.QObject):
     """Show the source after being processed by the filter chain.
@@ -51,15 +53,11 @@ class WinViewer(QtCore.QObject):
         
         self.actualFilter = None
         self.size = 1
-        self.thread = None
+        self.thread_output = None
         
-        # filterchain.add_filter_observer(self.updateFilters)
-        # filterchain.add_image_observer(self.updateImage)        
-           
         self.newImage.connect(self.setPixmap)
         self.ui.filterComboBox.currentIndexChanged.connect(self._changeFilter)
         self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
-        # self.updateFilters()
 
         self.lastSecondFps = None
         self.fpsCount = 0
@@ -70,16 +68,26 @@ class WinViewer(QtCore.QObject):
         
         self.actualFilter = self.ui.filterComboBox.currentText()
         self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter)
+        self.__add_output_observer()
+        self.last_output = ""
     
     def quit(self):
         if self.actualFilter:
             self.controller.remove_image_observer(self.updateImage, self.execution_name, self.actualFilter)
-            
+            self.controller.remove_output_observer(self.execution_name)
+        if self.thread_output:
+            self.thread_output.stop()
         print("WinViewer %s quit." % (self.filterchain_name))
         
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################
     ######################################################################
+    def __add_output_observer(self):
+        self.thread_output = Listen_output(self.updateLog)
+        self.thread_output.start()
+        ########### TODO fait un thread de client dude
+        self.controller.add_output_observer(self.execution_name)
+        
     def _updateFilters(self, lst_filter_str):
         self.ui.filterComboBox.clear()
         for sFilter in lst_filter_str:
@@ -90,6 +98,12 @@ class WinViewer(QtCore.QObject):
             filter_name = self.ui.filterComboBox.currentText()
             self.controller.set_image_observer(self.updateImage, self.execution_name, filter_name, self.actualFilter)
             self.actualFilter = filter_name
+    
+    def updateLog(self, data):
+        data = str(data).strip()
+        if data and self.last_output != data:
+            self.last_output = data
+            self.ui.txtLog.appendPlainText(data)
     
     def updateImage(self, image):
         # fps
@@ -130,3 +144,19 @@ class WinViewer(QtCore.QObject):
         textSize = textSize[:-1]
         self.size = float(textSize) / 100 
             
+class Listen_output(threading.Thread):
+    def __init__(self, observer):
+        threading.Thread.__init__(self)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.is_stopped = False
+        self.observer = observer
+        
+    def run(self):
+        self.socket.connect(("127.0.0.1", 5030))
+        while not self.is_stopped:
+            self.observer(self.socket.recv(2048))
+    
+    def stop(self):
+        self.is_stopped = True
+        self.socket.close()
+

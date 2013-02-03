@@ -101,14 +101,10 @@ class FilterChain:
     def __init__(self):
         self.filters = []
         self.image_observers = {}
-        self.filter_observers = []
         self.filter_output_observers = []
 
     def count(self):
         return len(self.filters)
-
-    def get_filter_observers(self):
-        return self.filter_observers
 
     def get_filter_output_observers(self):
         return self.filter_output_observers
@@ -128,11 +124,9 @@ class FilterChain:
 
     def add_filter(self, filtre):
         self.filters.append(filtre)
-        self.notify_filter_observers()
 
     def remove_filter(self, filtre):
         self.filters.remove(filtre)
-        self.notify_filter_observers()
 
     def reload_filter(self, filtre=None):
         # if filter is none, we reload all filters
@@ -152,19 +146,6 @@ class FilterChain:
             # recreate the instance
             self.filters[index] = getattr(module , item.__class__.__name__)()
             
-        
-    def move_filter_up(self, filtre):
-        i = self.filters.index(filtre)
-        if i > 0:
-            self.filters[i], self.filters[i - 1] = self.filters[i - 1], filtre
-            self.notify_filter_observers()
-
-    def move_filter_down(self, filtre):
-        i = self.filters.index(filtre)
-        if i < len(self.filters) - 1:
-            self.filters[i], self.filters[i + 1] = self.filters[i + 1], filtre
-            self.notify_filter_observers()
-
     def add_image_observer(self, observer, filter_name):
         lstObserver = self.image_observers.get(filter_name, [])
         if lstObserver:
@@ -188,16 +169,6 @@ class FilterChain:
 
         print("This observer is not in observation list for filter %s" % filter_name)
         return False
-
-    def add_filter_observer(self, observer):
-        self.filter_observers.append(observer)
-
-    def remove_filter_observer(self, observer):
-        self.filter_observers.remove(observer)
-
-    def notify_filter_observers(self):
-        for observer in self.filter_observers:
-            observer()
 
     def add_filter_output_observer(self, output):
         self.filter_output_observers.append(output)

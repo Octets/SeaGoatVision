@@ -27,7 +27,6 @@ import main
 import sys
 
 from CapraVision.server.core.manager import Manager
-#from CapraVision.server.tcp_server import Server
 from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
 
 
@@ -41,9 +40,6 @@ def run():
     if not c.is_connected():
         print("Vision server is not accessible.")
         return
-
-    #server = Server()
-    #server.start("127.0.0.1", 5030)
     
     app = QApplication(sys.argv)
     win = main.WinMain(c)
@@ -55,7 +51,6 @@ def run():
     
     return rint
 
-    
 if __name__ == '__main__':
     # Project path is parent directory
     import os 

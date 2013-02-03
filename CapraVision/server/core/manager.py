@@ -31,20 +31,26 @@ from CapraVision.server.filters import utils
 from configuration import Configuration
 import time
 import numpy
+from CapraVision.server.tcp_server import Server
 
 class Manager:
     def __init__(self):
         """
             Structure of dct_thread
-            {"execution_name" : {"thread" : ref, "filterchain" : ref}
+            {"execution_name" : {"thread" : ref, "filterchain" : ref}}
         """
         self.dct_thread = {}
         self.configuration = Configuration()
+        
+        # tcp server for output observer
+        self.server_observer = Server()
+        self.server_observer.start("", 5030)
 
     def close(self):
         print("Close manager")
         for thread in self.dct_thread.values():
             thread["thread"].quit()
+        self.server_observer.stop()
     
     ##########################################################################
     ################################ CLIENT ##################################
@@ -129,7 +135,7 @@ class Manager:
     
     def set_image_observer(self, observer, execution_name, filter_name_old, filter_name_new):
         """
-            Inform the server what filter we want to observe
+            Inform the server what filter we want to change observer
             Param : 
                 - ref, observer is a reference on method for callback
                 - string, execution_name to select an execution
@@ -148,7 +154,7 @@ class Manager:
     
     def remove_image_observer(self, observer, execution_name, filter_name):
         """
-            Inform the server what filter we want to observe
+            Inform the server what filter we want to remove observer
             Param : 
                 - ref, observer is a reference on method for callback
                 - string, execution_name to select an execution
@@ -161,6 +167,37 @@ class Manager:
             if filterchain:
                 ret_value = filterchain.remove_image_observer(observer, filter_name)
         return ret_value
+    
+    def add_output_observer(self, execution_name):
+        """
+            attach the output information of execution to tcp_server
+            supported only one observer. Add observer to tcp_server
+        """
+        ret_value = False
+        dct_thread = self.dct_thread.get(execution_name, {})
+        if dct_thread:
+            filterchain = dct_thread.get("filterchain", None)
+            if filterchain:
+                if filterchain.get_filter_output_observers():
+                    return True
+                ret_value = filterchain.add_filter_output_observer(self.server_observer.send)
+        return ret_value
+        
+    def remove_output_observer(self, execution_name):
+        """
+            remove the output information of execution to tcp_server
+            supported only one observer. remove observer to tcp_server
+        """
+        
+        ret_value = False
+        dct_thread = self.dct_thread.get(execution_name, {})
+        if dct_thread:
+            filterchain = dct_thread.get("filterchain", None)
+            if filterchain:
+                if not filterchain.get_filter_output_observers():
+                    return True
+                ret_value = filterchain.remove_filter_output_observer(self.server_observer.send)
+        return ret_value        
     
     ##########################################################################
     ########################## CONFIGURATION  ################################

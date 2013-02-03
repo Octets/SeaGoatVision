@@ -37,8 +37,8 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>400</width>
-        <height>80</height>
+        <width>490</width>
+        <height>190</height>
        </size>
       </property>
       <property name="frameShape">
@@ -47,7 +47,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -91,7 +91,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -201,6 +201,19 @@
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QPlainTextEdit" name="txtLog">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>70</y>
+         <width>471</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
       </widget>
      </widget>
     </item>
