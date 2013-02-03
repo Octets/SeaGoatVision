@@ -94,6 +94,15 @@ message RemoveImageObserverRequest
   required string execution_name = 1;
   required string filter_name = 2;
 }
+
+message AddOutputObserverRequest
+{
+  required string execution_name = 1;
+}
+message RemoveOutputObserverRequest
+{
+  required string execution_name = 1;
+}
 //############################################################
 //######################## GET SECTION ####################### 
 //############################################################
@@ -155,6 +164,8 @@ service CommandService
   rpc add_image_observer(AddImageObserverRequest) returns(StatusResponse);
   rpc set_image_observer(SetImageObserverRequest) returns(StatusResponse);
   rpc remove_image_observer(RemoveImageObserverRequest) returns(StatusResponse);
+  rpc add_output_observer(AddOutputObserverRequest) returns(StatusResponse);
+  rpc remove_output_observer(RemoveOutputObserverRequest) returns(StatusResponse);
   
   // action
   rpc reload_filter(ReloadFilterRequest) returns(StatusResponse);

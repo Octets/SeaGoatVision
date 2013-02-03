@@ -160,7 +160,43 @@ class ProtobufServerImpl(server_pb2.CommandService):
         if observer:
             observer.close()
             del self.dct_observer[request.execution_name]
-    
+            
+    def add_output_observer(self, controller, request, done):
+        print("add_output_observer request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            if self.manager.add_output_observer(request.execution_name):
+                response.status = 0
+            else:
+                response.status = 1
+                response.message = "This add_output_observer can't add observer." 
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+            
+    def remove_output_observer(self, controller, request, done):
+        print("remove_output_observer request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            if self.manager.remove_output_observer(request.execution_name):
+                response.status = 0
+            else:
+                response.status = 1
+                response.message = "This remove_output_observer can't add observer." 
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+        
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################

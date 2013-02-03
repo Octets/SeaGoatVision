@@ -298,6 +298,60 @@ class ControllerProtobuf():
 
         return returnValue   
     
+    def add_output_observer(self, execution_name):
+        """
+            attach the output information of execution to tcp_server
+            supported only one observer. Add observer to tcp_server
+        """
+        request = server_pb2.AddOutputObserverRequest()
+        request.execution_name = execution_name
+
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.add_output_observer(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with add_output_observer : %s" % response.message)
+                    else:
+                        print("Error with add_output_observer.")
+            else:
+                returnValue = False
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue  
+    
+    def remove_output_observer(self, execution_name):
+        """
+            remove the output information of execution to tcp_server
+            supported only one observer. remove observer to tcp_server
+        """
+        request = server_pb2.RemoveOutputObserverRequest()
+        request.execution_name = execution_name
+
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.remove_output_observer(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with remove_output_observer : %s" % response.message)
+                    else:
+                        print("Error with remove_output_observer.")
+            else:
+                returnValue = False
+
+        except Exception, ex:
+            log.exception(ex)
+
+        return returnValue  
+    
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################

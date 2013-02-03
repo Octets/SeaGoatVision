@@ -188,7 +188,6 @@ class Manager:
             remove the output information of execution to tcp_server
             supported only one observer. remove observer to tcp_server
         """
-        
         ret_value = False
         dct_thread = self.dct_thread.get(execution_name, {})
         if dct_thread:

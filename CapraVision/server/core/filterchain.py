@@ -175,12 +175,14 @@ class FilterChain:
         for f in self.filters:
             if isinstance(f, DataExtractor):
                 f.add_output_observer(output)
+        return True
 
     def remove_filter_output_observer(self, output):
         self.filter_output_observers.remove(output)
         for f in self.filters:
             if isinstance(f, DataExtractor):
                 f.remove_output_observer(output)
+        return True
 
     def execute(self, image):
         for f in self.filters:

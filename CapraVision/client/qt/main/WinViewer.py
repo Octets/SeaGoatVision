@@ -54,6 +54,7 @@ class WinViewer(QtCore.QObject):
         self.actualFilter = None
         self.size = 1
         self.thread_output = None
+        self.last_output = ""
         
         self.newImage.connect(self.setPixmap)
         self.ui.filterComboBox.currentIndexChanged.connect(self._changeFilter)
@@ -69,7 +70,6 @@ class WinViewer(QtCore.QObject):
         self.actualFilter = self.ui.filterComboBox.currentText()
         self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter)
         self.__add_output_observer()
-        self.last_output = ""
     
     def quit(self):
         if self.actualFilter:
