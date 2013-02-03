@@ -96,7 +96,7 @@ def supported_video_formats():
 def ffmpeg_video_formats():
     """Finds all supported video formats of ffmpeg"""
     
-    p = subprocess.Popen(('avconv', '-formats'), stdout=subprocess.PIPE)
+    p = subprocess.Popen(('ffmpeg', '-formats'), stdout=subprocess.PIPE)
     lines = p.stdout.readlines()
 
     supported = []
