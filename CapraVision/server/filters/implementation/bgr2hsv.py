@@ -26,3 +26,5 @@ class BGR2HSV:
     def execute(self, image):
         image = cv2.cvtColor(image, cv.CV_BGR2HSV)
         return image
+
+                
