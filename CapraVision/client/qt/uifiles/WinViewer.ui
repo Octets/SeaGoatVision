@@ -211,6 +211,15 @@
          <height>111</height>
         </rect>
        </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="undoRedoEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="lineWrapMode">
+        <enum>QPlainTextEdit::NoWrap</enum>
+       </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
