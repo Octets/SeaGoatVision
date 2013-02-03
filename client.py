@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
@@ -47,6 +46,4 @@ if __name__ == '__main__':
         sys.exit(runCli())
     else:
         print("Interface not supported : %s" % sInterface)
-    
 
-    
