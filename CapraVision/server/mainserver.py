@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -31,11 +31,11 @@ def run():
     sFileLockName = "/tmp/SeaGoat.lock"
     if is_lock(sFileLockName):
         exit(-1)
-    
+
     fileLock = open(sFileLockName, "w")
     fileLock.write("%s" % pid)
     fileLock.close()
-    
+
     # Import required RPC modules
     import protobuf.socketrpc.server as server
     from controller import protobufServerImpl as impl
@@ -69,7 +69,7 @@ def is_lock(sFileLockName):
         bIsLocked = True
     else:
         bIsLocked = False
-    
+
     if bIsLocked:
         fileLock = open(sFileLockName, "r")
         pid = fileLock.readline()
@@ -86,7 +86,7 @@ def is_lock(sFileLockName):
             print("SeaGoat lock is corrupted, see file : %s" % sFileLockName)
     return bIsLocked
 
-def check_pid(pid):        
+def check_pid(pid):
     """ Check For the existence of a unix pid. """
     try:
         os.kill(pid, 0)
@@ -97,8 +97,8 @@ def check_pid(pid):
 
 if __name__ == '__main__':
     # Project path is parent directory
-    import os 
+    import os
     parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     os.sys.path.insert(0, parentdir)
     run()
-    
+

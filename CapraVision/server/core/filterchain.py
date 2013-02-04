@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -20,13 +20,9 @@
 """Contains the FilterChain class and helper functions to work with the filter chain."""
 
 import CapraVision.server.filters
-
 from CapraVision.server.filters.dataextract import DataExtractor
 from CapraVision.server.filters.parameter import Parameter
-
 import ConfigParser
-import types
-
 import numpy as np
 
 def my_import(name):
@@ -55,16 +51,16 @@ def isnumeric(string):
         return True
     except ValueError:
         return False
-    
+
 def read(file_name):
     """Open a filtre chain file and load its content in a new filtre chain."""
     new_chain = FilterChain()
     cfg = ConfigParser.ConfigParser()
     cfg.read(file_name)
     for section in cfg.sections():
-        filtre = CapraVision.server.filters.create_filter(section) 
+        filtre = CapraVision.server.filters.create_filter(section)
         for member in filtre.__dict__:
-            parameter = getattr(filtre,member)
+            parameter = getattr(filtre, member)
             if not isinstance(parameter, Parameter):
                 continue
             val = cfg.get(section, member)
@@ -91,7 +87,7 @@ def write(file_name, chain):
                 value = '\n'.join(['"%s"' % line for line in str.splitlines(value)])
             cfg.set(fname, name, value)
     cfg.write(open(file_name, 'w'))
-    
+
 class FilterChain:
     """ Observable.  Contains the chain of filters to execute on an image.
 
@@ -136,7 +132,7 @@ class FilterChain:
             lstFilterIndex = [self.filters.index(filtre)]
         else:
             lstFilterIndex = []
-            
+
         # example of __module__:
         for index in lstFilterIndex:
             item = self.filters[index]
@@ -144,8 +140,8 @@ class FilterChain:
             module = my_import(item.__module__)
             reload(module)
             # recreate the instance
-            self.filters[index] = getattr(module , item.__class__.__name__)()
-            
+            self.filters[index] = getattr(module, item.__class__.__name__)()
+
     def add_image_observer(self, observer, filter_name):
         lstObserver = self.image_observers.get(filter_name, [])
         if lstObserver:

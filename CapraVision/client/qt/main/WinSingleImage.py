@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -16,16 +16,17 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from PySide.QtGui import QFileDialog
 
 class WinSingleImage:
-    def __init__(self,simpleImage):
+    def __init__(self, simpleImage):
         self.simpleImage = simpleImage
-    
+
     def show(self):
         filename = QFileDialog.getOpenFileName(filter="Images(*.png *.jpg *.xpm)")[0]
         if len(filename) > 0:
             self.setImage(filename)
-    
-    def setImage(self,filename):
+
+    def setImage(self, filename):
         self.simpleImage.set_image(filename)

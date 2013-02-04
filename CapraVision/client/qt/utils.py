@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -19,7 +19,6 @@
 
 from PySide import QtUiTools
 from PySide import QtCore
-from PySide import QtGui
 import Image
 import ImageQt
 
@@ -27,12 +26,9 @@ import sources
 
 import inspect
 import os
-import StringIO
-import sys
-import numpy
 
 from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
- 
+
 def map_filter_to_ui(filter):
     return map_object_to_ui(filter, filters)
 
@@ -82,7 +78,7 @@ def get_ui(widget, *args):
     uiFile = QtCore.QFile(uiPath)
     uiFile.open(QtCore.QFile.ReadOnly)
     return loader.load(uiFile)
-    
+
 def win_name(window):
     return window.__class__.__name__
 
@@ -94,4 +90,3 @@ class WindowState:
         ExistingModified = File exists and the user made modifications
     """
     Empty, Create, Show, Modified = range(4)
-     

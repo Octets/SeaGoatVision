@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -17,32 +17,31 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import copy
 from CapraVision.client.qt.utils import *
 
 class WinExec:
-    
+
     def __init__(self):
-        
+
         #self.filtre = filtre
         #self.filtre_init = copy.copy(filtre)
         #self.cb = cb
-        
+
         self.ui = get_ui(self)
         #self.window = ui.get_object(win_name(self))
         #self.txtCurrent = ui.get_object('txtCurrent')
         #self.txtWorking = ui.get_object('txtWorking')
-        
+
         #self.init_window()
-        
+
     def init_window(self):
         self.txtCurrent.get_buffer().set_text(self.filtre.code)
         self.txtWorking.get_buffer().set_text(self.filtre.code)
-    
+
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
-        
+
     def on_btnCancel_clicked(self, widget):
         self.filtre.code = self.filtre_init.code
         self.init_window()
@@ -52,4 +51,3 @@ class WinExec:
         code = self.txtWorking.get_buffer().get_text(start, end, False)
         self.txtCurrent.get_buffer().set_text(code)
         self.filtre.set_code(code)
-    

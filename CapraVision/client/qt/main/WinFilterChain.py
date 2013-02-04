@@ -260,7 +260,7 @@ class WinFilterChain(QtCore.QObject):
             return self.ui.filterListWidget.item(noLine).text()
         return None
 
-    def _modeEdit(self, status = True):
+    def _modeEdit(self, status=True):
         self.ui.frame_editing.setVisible(status)
         self.ui.frame_filter_edit.setVisible(status)
         self.qtWidgetFilterSelect.ui.addFilterButton.setEnabled(status)
@@ -269,7 +269,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.filterchainListWidget.setEnabled(not status)
         self.ui.previewButton.setEnabled(not status)
 
-    def _list_filterchain_is_selected(self, isSelected = True):
+    def _list_filterchain_is_selected(self, isSelected=True):
         self.ui.editButton.setEnabled(isSelected)
         self.ui.copyButton.setEnabled(isSelected)
         self.ui.deleteButton.setEnabled(isSelected)

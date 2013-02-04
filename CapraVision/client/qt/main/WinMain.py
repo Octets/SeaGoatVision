@@ -4,7 +4,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -29,51 +29,51 @@ from PySide import QtCore
 
 class WinMain(QtGui.QMainWindow):
     def __init__(self, controller):
-        super(WinMain,self).__init__()
-        
+        super(WinMain, self).__init__()
+
         self.winViewer = None
-        
-        #create dockWidgets
+
+        # create dockWidgets
         self.winFilter = WinFilter()
         self.winFilterSel = WinFilterSel()
         self.winFilterChain = WinFilterChain(controller, self.winFilterSel, self.addPreview)
-          
-        self.setCentralWidget(self.winFilterChain.ui)      
-         
-        #connect action between dock widgets       
-        self.winFilterSel.onAddFilter.connect(self.winFilterChain.add_filter)       
+
+        self.setCentralWidget(self.winFilterChain.ui)
+
+        # connect action between dock widgets
+        self.winFilterSel.onAddFilter.connect(self.winFilterChain.add_filter)
         self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
-        
+
         self.ui = get_ui(self)
-        
-        #self._addToolBar() 
+
+        # self._addToolBar()
         self._addDockWidget()
-        #self._connectMainButtonsToWinFilterChain()         
-    
-    #def _connectMainButtonsToWinFilterChain(self):
+        # self._connectMainButtonsToWinFilterChain()
+
+    # def _connectMainButtonsToWinFilterChain(self):
     #    self.winFilterChain.ui.previewButton.clicked.connect(self.addPreview)
-        
+
     def _addDockWidget(self):
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilter)        
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,self.winFilterSel.ui)
-    
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilter)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilterSel.ui)
+
     def _addToolBar(self):
         self.toolbar = QtGui.QToolBar()
         self.addToolBar(self.toolbar)
         for widget in self.ui.children():
             if isinstance(widget, QtGui.QToolButton):
                 self.toolbar.addWidget(widget)
-            
+
     def addPreview(self, controller, execution_name, source_name, filterchain_name, lst_filter_str):
         if self.winViewer:
             self.winViewer.quit()
             self.removeDockWidget(self.winViewer.ui)
-        
+
         self.winViewer = WinViewer(controller, execution_name, source_name, filterchain_name, lst_filter_str)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winViewer.ui)
-        
+
     def quit(self):
         if self.winViewer:
             self.winViewer.quit()
-        
-    
+
+

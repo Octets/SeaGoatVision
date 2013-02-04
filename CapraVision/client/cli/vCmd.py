@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -38,14 +38,14 @@ class VCmd(cmd.Cmd):
         cmd.Cmd.__init__(self, completekey=completekey, stdin=stdin, stdout=stdout)
         # Protobuf
         self.controller = ControllerProtobuf()
-    
+
         # Directly connected to the vision server
         #self.controller = Manager()
-        
+
         if not self.controller.is_connected():
             print("Vision server is not accessible.")
             return None
-        
+
     ####################################################################################################
     # List of command
     ####################################################################################################
@@ -61,14 +61,14 @@ class VCmd(cmd.Cmd):
             print("Nombre de ligne %s, tableau : %s" % (len(lstFilter), lstFilter))
         else:
             print("No filterlist")
-            
+
     def do_get_filterchain_list(self, line):
         lstFilterChain = self.controller.get_filterchain_list()
         if lstFilterChain is not None:
             print("Nombre de ligne %s, tableau : %s" % (len(lstFilterChain), [item.name for item in lstFilterChain]))
         else:
             print("No lstFilterChain")
-            
+
     def do_EOF(self, line):
         # Redo last command
         return True

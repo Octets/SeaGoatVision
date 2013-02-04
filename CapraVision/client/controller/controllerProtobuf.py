@@ -23,20 +23,12 @@ Date : October 2012
 """
 
 # Import required RPC modules
-from protobuf.socketrpc import RpcService
 from CapraVision.proto import server_pb2
-
-# guppy to check memory
-#import guppy
-#from guppy.heapy import Remote
-#Remote.on()
-
-import socket
-import numpy as np
-import threading
-
-# Configure logging
 import logging
+import numpy as np
+from protobuf.socketrpc import RpcService
+import socket
+import threading
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
@@ -54,14 +46,14 @@ class ControllerProtobuf():
 
         # Create a new service instance
         self.service = RpcService(server_pb2.CommandService_Stub, self.port, self.hostname)
-        
+
         self.observer = {}
-        
+
     def close(self):
         for observer in self.observer.values():
             observer.stop()
         print("Closed connection.")
-        
+
 
     ##########################################################################
     ################################ CLIENT ##################################
@@ -79,7 +71,7 @@ class ControllerProtobuf():
             log.exception(ex)
 
         return response
-    
+
     ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
@@ -95,8 +87,6 @@ class ControllerProtobuf():
         request.source_name = source_name
         request.filterchain_name = filterchain_name
 
-        observer = None
-        
         # Make an synchronous call
         returnValue = None
         try:
@@ -115,7 +105,7 @@ class ControllerProtobuf():
             log.exception(ex)
 
         return returnValue
-        
+
     def stop_filterchain_execution(self, execution_name):
         """
             Stop a filterchain on the server.
@@ -137,13 +127,13 @@ class ControllerProtobuf():
                         print("Error with stop_filterchain_execution.")
             else:
                 returnValue = False
-            
+
 
         except Exception, ex:
             log.exception(ex)
 
         return returnValue
-        
+
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
@@ -157,14 +147,14 @@ class ControllerProtobuf():
         try:
             response = self.service.get_source_list(request, timeout=10000)
             if response:
-                returnResponse = response.source 
+                returnResponse = response.source
             else:
                 print("No answer on get_source_list")
         except Exception, ex:
             log.exception(ex)
 
         return returnResponse
-        
+
     ##########################################################################
     ############################### THREAD  ##################################
     ##########################################################################
@@ -179,7 +169,7 @@ class ControllerProtobuf():
     def add_image_observer(self, observer, execution_name, filter_name):
         """
             Inform the server what filter we want to observe
-            Param : 
+            Param :
                 - ref, observer is a reference on method for callback
                 - string, execution_name to select an execution
                 - string, filter_name to select the filter
@@ -188,9 +178,9 @@ class ControllerProtobuf():
         if local_observer:
             print("This observer already exist")
             return False
-        
+
         local_observer = Observer(observer, self.hostname, 5051)
-        
+
         request = server_pb2.AddImageObserverRequest()
         request.execution_name = execution_name
         request.filter_name = filter_name
@@ -218,12 +208,12 @@ class ControllerProtobuf():
             self.observer[execution_name] = local_observer
             local_observer.start()
 
-        return returnValue   
-    
+        return returnValue
+
     def set_image_observer(self, observer, execution_name, filter_name_old, filter_name_new):
         """
             Inform the server what filter we want to observe
-            Param : 
+            Param :
                 - ref, observer is a reference on method for callback
                 - string, execution_name to select an execution
                 - string, filter_name_old , filter to replace
@@ -233,7 +223,7 @@ class ControllerProtobuf():
         if not observer:
             print("This observer doesn't exist.")
             return False
-        
+
         request = server_pb2.SetImageObserverRequest()
         request.execution_name = execution_name
         request.filter_name_old = filter_name_old
@@ -256,12 +246,12 @@ class ControllerProtobuf():
         except Exception, ex:
             log.exception(ex)
 
-        return returnValue   
-    
+        return returnValue
+
     def remove_image_observer(self, observer, execution_name, filter_name):
         """
             Inform the server what filter we want to observe
-            Param : 
+            Param :
                 - ref, observer is a reference on method for callback
                 - string, execution_name to select an execution
                 - string, filter_name , filter to remove
@@ -273,7 +263,7 @@ class ControllerProtobuf():
 
         observer.stop()
         del self.observer[execution_name]
-        
+
         request = server_pb2.RemoveImageObserverRequest()
         request.execution_name = execution_name
         request.filter_name = filter_name
@@ -296,8 +286,8 @@ class ControllerProtobuf():
             log.exception(ex)
 
 
-        return returnValue   
-    
+        return returnValue
+
     def add_output_observer(self, execution_name):
         """
             attach the output information of execution to tcp_server
@@ -323,8 +313,8 @@ class ControllerProtobuf():
         except Exception, ex:
             log.exception(ex)
 
-        return returnValue  
-    
+        return returnValue
+
     def remove_output_observer(self, execution_name):
         """
             remove the output information of execution to tcp_server
@@ -350,8 +340,8 @@ class ControllerProtobuf():
         except Exception, ex:
             log.exception(ex)
 
-        return returnValue  
-    
+        return returnValue
+
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################
@@ -373,7 +363,7 @@ class ControllerProtobuf():
             log.exception(ex)
 
         return returnValue
-    
+
     def get_filter_list_from_filterchain(self, filterchain_name):
         """
             Return list of filter from filterchain.
@@ -393,7 +383,7 @@ class ControllerProtobuf():
             log.exception(ex)
 
         return returnValue
-    
+
     def delete_filterchain(self, filterchain_name):
         """
             deleter a filterchain
@@ -415,13 +405,13 @@ class ControllerProtobuf():
                         print("Error with delete_filterchain.")
             else:
                 returnValue = False
-            
+
 
         except Exception, ex:
             log.exception(ex)
 
         return returnValue
-        
+
     def upload_filterchain(self, filterchain_name, s_file_contain):
         """
             upload a filterchain
@@ -450,7 +440,7 @@ class ControllerProtobuf():
             log.exception(ex)
 
         return returnValue
-        
+
 
     def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
         """
@@ -464,7 +454,7 @@ class ControllerProtobuf():
         request.new_filterchain_name = new_filterchain_name
         for filter in lst_str_filters:
             request.lst_str_filters.add().name = filter
-            
+
         # Make an synchronous call
         returnValue = None
         try:
@@ -484,7 +474,7 @@ class ControllerProtobuf():
             log.exception(ex)
 
         return returnValue
-        
+
     def load_chain(self, file_name):
         """
             load Filter.
@@ -528,7 +518,7 @@ class ControllerProtobuf():
             request.filterName = [filtre]
         elif filtre is not None:
             raise Exception("filtre is wrong type : %s" % type(filtre))
-        
+
         # Make an synchronous call
         returnValue = None
         try:
@@ -548,7 +538,7 @@ class ControllerProtobuf():
             log.exception(ex)
 
         return returnValue
-    
+
     def get_filter_list(self):
         """
             Return list of filter
@@ -572,7 +562,7 @@ class Observer(threading.Thread):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.add = (hostname, port)
         self.close = False
-    
+
     def run(self):
         if self.observer:
             buffer = 65507
@@ -584,29 +574,29 @@ class Observer(threading.Thread):
                     if data[0] != "b":
                         print("wrong type index.")
                         continue
-                    
+
                     i = 1
                     while i < buffer and data[i] != "_":
                         i += 1
-                    
+
                     nb_packet_string = data[1:i]
                     if nb_packet_string.isdigit():
                         nb_packet = int(nb_packet_string)
                     else:
                         print("wrong index.")
                         continue
-                    
-                    sData += data[i+1:]
+
+                    sData += data[i + 1:]
                     for packet in range(1, nb_packet):
                         data, address = self.socket.recvfrom(buffer) # 262144 # 8192
                         if data[0] != "c":
                             print("wrong type index continue")
                             continue
-                        
+
                         i = 1
                         while i < buffer and data[i] != "_":
                             i += 1
-                        
+
                         no_packet_string = data[1:i]
                         if no_packet_string.isdigit():
                             no_packet = int(no_packet_string)
@@ -615,16 +605,16 @@ class Observer(threading.Thread):
                         else:
                             print("wrong index continue.")
                             continue
-                    
-                        sData += data[i+1:]
-                        
+
+                        sData += data[i + 1:]
+
                     self.observer(np.loads(sData))
                 except Exception, e:
                     if not self.close:
                         print("Error udp observer : %s" % e)
         else:
             print("Error, self.observer is None.")
-            
+
     def stop(self):
         self.close = True
         if self.socket:

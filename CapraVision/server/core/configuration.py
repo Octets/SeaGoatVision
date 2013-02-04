@@ -23,16 +23,16 @@ Authors: Mathieu Benoit <mathben963@gmail.com>
 Date : December 2012
 """
 
-import os
-import filterchain
 from CapraVision.server.filters import utils
+import filterchain
+import os
 
 class Configuration:
 
     def __init__(self):
         self.dirFilterChain = "CapraVision/server/configuration/filterchain/"
         self.extFilterChain = ".filterchain"
-    
+
     def get_filterchain_list(self):
         class FilterChain: pass
         lstFilterChain = []
@@ -57,10 +57,10 @@ class Configuration:
             return os.remove(self._get_filename(filterchain_name))
         except OSError:
             return -1
-    
+
     def get_filterchain(self, filterchain_name):
         return filterchain.read(self._get_filename(filterchain_name))
-    
+
     def get_filters_from_filterchain(self, filterchain_name):
         o_filterchain = filterchain.read(self._get_filename(filterchain_name))
         return o_filterchain.get_filter_list()
@@ -73,8 +73,8 @@ class Configuration:
                 self.delete_filterchain(old_filterchain_name)
             return True
         # error with create filterchain
-        return False 
-    
+        return False
+
     def create_filterchain(self, filterchain_name, lst_str_filters):
         dct_all_filters = utils.load_filters()
         chain = filterchain.FilterChain()
@@ -84,10 +84,10 @@ class Configuration:
                 # error, cancel the transaction
                 return False
             chain.add_filter(filter())
-        
+
         filterchain.write(self._get_filename(filterchain_name), chain)
         return True
-    
+
     def _get_filename(self, filterchain_name):
         return self.dirFilterChain + filterchain_name + self.extFilterChain
-        
+

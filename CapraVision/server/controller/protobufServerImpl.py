@@ -26,7 +26,6 @@ Date : October 2012
 # Import required RPC modules
 from CapraVision.proto import server_pb2
 from CapraVision.server.core.manager import Manager
-import time
 import socket
 import threading
 
@@ -35,7 +34,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         server_pb2.CommandService.__init__(self, * args, ** kwargs)
         self.manager = Manager()
         self.dct_observer = {}
-    
+
     def close(self):
         print("Close protobuf.")
         for observer in self.dct_observer.values():
@@ -66,15 +65,15 @@ class ProtobufServerImpl(server_pb2.CommandService):
             # dont start a filterchain execution if it already exist
             response.status = int(not self.manager.start_filterchain_execution(request.execution_name, request.source_name, request.filterchain_name))
             if response.status:
-                response.message = "This filterchain_execution already exist." 
+                response.message = "This filterchain_execution already exist."
         except Exception, e:
             print "Exception: ", e
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
-    
-        
+
+
     def stop_filterchain_execution(self, controller, request, done):
         print("stop_filterchain_execution request %s" % str(request).replace("\n", " "))
 
@@ -101,20 +100,20 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             observer = Observer()
-            self.dct_observer[request.execution_name] = observer 
+            self.dct_observer[request.execution_name] = observer
             if self.manager.add_image_observer(observer.observer, request.execution_name, request.filter_name):
                 response.status = 0
                 observer.start()
             else:
                 response.status = 1
-                response.message = "This add_image_observer can't add observer." 
+                response.message = "This add_image_observer can't add observer."
         except Exception, e:
             print "Exception: ", e
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
-    
+
     def set_image_observer(self, controller, request, done):
         print("set_image_observer request %s" % str(request).replace("\n", " "))
 
@@ -122,18 +121,18 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             observer = self.dct_observer.get(request.execution_name, None)
-            if observer and self.manager.set_image_observer(observer.observer, request.execution_name, request.filter_name_new, request.filter_name_old): 
+            if observer and self.manager.set_image_observer(observer.observer, request.execution_name, request.filter_name_new, request.filter_name_old):
                 response.status = 0
             else:
                 response.status = 1
-                response.message = "This set_image_observer can't change observer." 
+                response.message = "This set_image_observer can't change observer."
         except Exception, e:
             print "Exception: ", e
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
-    
+
     def remove_image_observer(self, controller, request, done):
         print("remove_image_observer request %s" % str(request).replace("\n", " "))
 
@@ -146,21 +145,21 @@ class ProtobufServerImpl(server_pb2.CommandService):
             else:
                 response.status = 1
                 response.message = "This remove_image_observer can't remove observer."
-                 
-                
+
+
         except Exception, e:
             print "Exception: ", e
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
-        
+
         # close the socket
         observer = self.dct_observer.get(request.execution_name, None)
         if observer:
             observer.close()
             del self.dct_observer[request.execution_name]
-            
+
     def add_output_observer(self, controller, request, done):
         print("add_output_observer request %s" % str(request).replace("\n", " "))
 
@@ -171,14 +170,14 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 0
             else:
                 response.status = 1
-                response.message = "This add_output_observer can't add observer." 
+                response.message = "This add_output_observer can't add observer."
         except Exception, e:
             print "Exception: ", e
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
-            
+
     def remove_output_observer(self, controller, request, done):
         print("remove_output_observer request %s" % str(request).replace("\n", " "))
 
@@ -189,14 +188,14 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 0
             else:
                 response.status = 1
-                response.message = "This remove_output_observer can't add observer." 
+                response.message = "This remove_output_observer can't add observer."
         except Exception, e:
             print "Exception: ", e
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
-        
+
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
@@ -206,13 +205,13 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.GetSourceListResponse()
         for item in self.manager.get_source_list():
             response.source.append(item)
-            
+
         done.run(response)
-    
+
     ##########################################################################
     ############################### THREAD  ##################################
     ##########################################################################
-   
+
     ##########################################################################
     ##########################  CONFIGURATION  ###############################
     ##########################################################################
@@ -229,7 +228,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         # We're done, call the run method of the done callback
         done.run(response)
-    
+
     def delete_filterchain(self, controller, request, done):
         print("delete_filterchain request %s" % str(request).replace("\n", " "))
 
@@ -243,7 +242,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         # We're done, call the run method of the done callback
         done.run(response)
-    
+
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################
@@ -350,7 +349,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
-    
+
 class Observer(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
@@ -361,20 +360,20 @@ class Observer(threading.Thread):
         # self.socket.connect(self.add)
         self.__stop = False
         self.address = None
-        
+
     def run(self):
         # waiting answer from client
         message, address = self.socket.recvfrom(1024)
         print address
         self.address = address
-        
+
     def observer(self, image):
         if self.address:
             buffer = 65507
             data = image.dumps()
             nb_packet = int(len(data) / buffer) + 1
             # TODO missing count for index byte
-            
+
             for i in range(nb_packet):
                 if not i:
                     sIndex = "b%d_" % nb_packet
@@ -382,7 +381,7 @@ class Observer(threading.Thread):
                 else:
                     sIndex = "c%d_" % i
                     begin_index += nb_char
-                
+
                 nb_char = buffer - len(sIndex)
                 sData = "%s%s" % (sIndex, data[begin_index:begin_index + nb_char])
                 try:
@@ -394,8 +393,8 @@ class Observer(threading.Thread):
                     # Don't print error if we suppose to stop the socket
                     if not self.__stop:
                         print(e)
-                
-    
+
+
     def close(self):
         self.__stop = True
         self.socket.close()
