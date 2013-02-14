@@ -3,6 +3,7 @@
 
 import cv2
 import cv2.cv as cv
+import numpy as np
 
 import os
 
@@ -26,8 +27,19 @@ class GetFirstFace:
                                                    (30, 30)
                                                 )
         for face in faces:
-            return self.get_face(image, face)
+            faceimg = self.get_face(image, face)
+            mask = np.zeros((image.shape[0], image.shape[1], 1), dtype=np.uint8)
+            rect = (face[0], face[1], face[0]+face[2], face[1]+face[3])
+            bgdModel = np.zeros((1, 5*13))
+            fgdModel = np.zeros((1, 5*13))
+            cv2.grabCut(image, mask, rect, bgdModel, fgdModel, 10, mode=cv2.GC_INIT_WITH_RECT)
+            b,g,r = cv2.split(image)
+            b[mask == cv2.GC_BGD] = 255
+            g[mask == cv2.GC_BGD] = 255
+            r[mask == cv2.GC_BGD] = 255
             
+    	return cv2.merge((b, g, r))
+        
     def get_face(self, image, coord):
         x, y, w, h = coord
         miny = y

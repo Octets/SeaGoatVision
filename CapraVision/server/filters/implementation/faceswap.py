@@ -27,11 +27,14 @@ class FaceSwap:
                                                    0|cv.CV_HAAR_SCALE_IMAGE, 
                                                    (30, 30)
                                                 )
-        facedata = []
-        smallestx = sys.maxint
-        smallesty = sys.maxint
-        
-        for face in faces:
+        for i in xrange(0, len(faces)):
+            lastface = faces[i-1]
+            face = faces[i]
+            lastrect = self.get_image_size(image, face)
+            face = cv2.resize(face, (lastmaxy-lastminy, lastmaxx-lastminx))
+            
+            
+            
             faceimg, coord = self.get_image_data(image, face)
             y, x, _ = faceimg.shape
             if x < smallestx:
@@ -47,21 +50,16 @@ class FaceSwap:
             face, coord = facedata[i]
             miny, maxy, minx, maxx = coord
             
-            gray = cv2.cvtColor(face, cv.CV_BGR2GRAY)
-            gray = cv2.Canny(gray, 30, 100)
-            gray = self.convexhull(gray)
-            gray = cv2.resize(gray, (lastmaxy-lastminy, lastmaxx-lastminx))             
             face = cv2.resize(face, (lastmaxy-lastminy, lastmaxx-lastminx))             
             welp = image[lastminy:lastmaxy, 
                   lastminx:lastmaxx]
-            #welp[gray!=0] = face[gray!=0]
             
             image[lastminy:lastmaxy, 
                   lastminx:lastmaxx] = cv2.addWeighted(welp, 0.5, face, 0.5, 0.0)#cv2.merge((gray,gray,gray))
                   
         return image
 
-    def get_image_data(self, image, coord):
+    def get_image_size(self, image, coord):
         x, y, w, h = coord
         miny = y
         if miny < 0:
@@ -76,7 +74,7 @@ class FaceSwap:
         if maxx > image.shape[1]:
             maxx = image.shape[1]
     
-        return (image[miny:maxy, minx:maxx].copy(), (miny, maxy, minx, maxx))
+        return (miny, maxy, minx, maxx)
     
     def convexhull(self, gray):
         mask = np.zeros(gray.shape, dtype=np.uint8)

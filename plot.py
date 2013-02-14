@@ -29,7 +29,7 @@ def create_graphic(data_file):
     noises = data[1, :]
     plt.clf()
     plt.plot(noises, precisions, '.b')
-    plt.xlabel('Rappel (%)')
+    plt.xlabel('Noise (%)')
     plt.ylabel('Precision (%)')
     #plt.xlim(0, np.max(precisions))
     #plt.ylim(0, np.max(noises))

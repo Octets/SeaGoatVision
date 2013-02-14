@@ -34,3 +34,4 @@ class BGR2HSVManual:
                            v.astype(np.uint8)))
         
         return image 
+    
