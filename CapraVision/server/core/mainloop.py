@@ -74,15 +74,22 @@ class ThreadMainLoop(threading.Thread):
         
     def run(self):
         self.running = True
-        for image in self.source:
+        for image in self.source:            
             if image is None:
                 time.sleep(self.sleep_time)
                 continue
+
+            start_time = time.time()
             self.observer(image)
             if not self.running:
                 break
             if self.sleep_time >= 0:
-                time.sleep(self.sleep_time)
+                sleep_time = self.sleep_time - (time.time() - start_time)
+                if sleep_time > 0:
+                    time.sleep(sleep_time)
+                else:
+                    time.sleep(0)
+                    
         self.running = False
         self.observer(None)
         

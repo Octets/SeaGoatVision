@@ -48,17 +48,17 @@ class ParameterEvaluation:
         
     def launch(self):
         test = linetest.LineTest(self.test_folder, self.chain)
-        orig_val = getattr(self.filter, self.pname).get_current_value()
+        orig_val = getattr(self.filter, self.pname)
         for i in xrange(int(self.minval), int(self.maxval)):
             idx = i - self.minval
-            getattr(self.filter, self.pname).set_current_value(i)
+            setattr(self.filter, self.pname, i)
             if hasattr(self.filter, 'configure'):
                 self.filter.configure()
             test.launch()
             self.precisions[idx] = round(test.avg_precision() * 100.0, 2)
             self.noises[idx] = round(test.avg_noise() * 100.0, 2)
 
-        getattr(self.filter, self.pname).set_current_value(orig_val)
+        setattr(self.filter, self.pname, orig_val)
         if hasattr(self.filter, 'configure'):
             self.filter.configure()
 
