@@ -27,8 +27,8 @@ class SectionFilter:
     
     def __init__(self):
         self.kernel_erode_height = Parameter("Kernel Erode Height", 1, 255, 3)
-        self.kernel_erode_width = Parameter("Kernel Dilate Width", 1, 255, 3)
-        self.kernel_dilate_height = Parameter("Kernel Erode Height", 1, 255, 5)
+        self.kernel_erode_width = Parameter("Kernel Erode Width", 1, 255, 3)
+        self.kernel_dilate_height = Parameter("Kernel Dilate Height", 1, 255, 5)
         self.kernel_dilate_width = Parameter("Kernel Dilate Width", 1, 255, 5)
         self.sections = Parameter("Sections", 1, 10, 5)
         self.min_area = Parameter("Minimum Area", 1, 65535, 1000)
