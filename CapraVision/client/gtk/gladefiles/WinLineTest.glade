@@ -54,9 +54,11 @@
             <child>
               <object class="GtkButton" id="btnOpenFilterchain">
                 <property name="label">gtk-open</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="on_btnOpenFilterchain_clicked" swapped="no"/>
               </object>
@@ -99,9 +101,11 @@
             <child>
               <object class="GtkButton" id="btnOpenTestFolder">
                 <property name="label">gtk-open</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="on_btnOpenTestFolder_clicked" swapped="no"/>
               </object>
@@ -115,9 +119,11 @@
             <child>
               <object class="GtkButton" id="btnClear">
                 <property name="label">gtk-clear</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="on_btnClear_clicked" swapped="no"/>
               </object>
@@ -229,7 +235,7 @@
                                   <object class="GtkLabel" id="label7">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Noise :</property>
+                                    <property name="label" translatable="yes">Recall :</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -276,9 +282,11 @@
                                 <child>
                                   <object class="GtkButton" id="btnSaveAsPrecision">
                                     <property name="label">gtk-save-as</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="use_stock">True</property>
                                     <signal name="clicked" handler="on_btnSaveAsPrecision_clicked" swapped="no"/>
                                   </object>
@@ -291,9 +299,11 @@
                                 <child>
                                   <object class="GtkButton" id="btnExecPrecision">
                                     <property name="label">gtk-execute</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="use_stock">True</property>
                                     <signal name="clicked" handler="on_btnExecPrecision_clicked" swapped="no"/>
                                   </object>
@@ -421,9 +431,11 @@
                         <child>
                           <object class="GtkButton" id="btnExecParams">
                             <property name="label">gtk-execute</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="use_stock">True</property>
                             <signal name="clicked" handler="on_btnExecParams_clicked" swapped="no"/>
                           </object>
@@ -485,9 +497,11 @@
                         <child>
                           <object class="GtkButton" id="btnSaveAsParams">
                             <property name="label">gtk-save-as</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="use_stock">True</property>
                             <signal name="clicked" handler="on_btnSaveAsParams_clicked" swapped="no"/>
                           </object>

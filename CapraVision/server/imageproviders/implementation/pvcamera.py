@@ -17,19 +17,28 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import ctypes
-from ctypes import cdll
+import camera
 
 class PvNetworkCamera:
     
     def __init__(self):
-        pass
-    
+        self.cam = camera.Camera()
+        try:
+            self.cam.initialize()
+        except:
+            pass
+        try:
+            self.cam.startCamera()
+        except:
+            pass
+        
     def __iter__(self):
         return self
     
     def next(self):
-        pass
+        image = self.cam.getFrame()
+        print image
+        return image
     
     def close(self):
         pass

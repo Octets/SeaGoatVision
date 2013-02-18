@@ -38,6 +38,8 @@ class WinViewer():
         
         self.win_list = []
 
+        self.image = None
+        
         self.filter = None
         self.size = 1.0
         self.image_shape = (320, 240, 0)
@@ -137,6 +139,7 @@ class WinViewer():
                 image = cv2.resize(image, 
                     (int(image.shape[1] * self.size), 
                      int(image.shape[0] * self.size)))
+            self.image = image
             self.imgSource.set_from_pixbuf(numpy_to_pixbuf(image))
                             
     def on_cboFilter_changed(self, widget):
@@ -150,6 +153,11 @@ class WinViewer():
     def on_cboSize_changed(self, widget):
         self.change_display_size()
                 
+    def on_WinViewer_key_press_event(self, widget, event):
+        _, key = event.get_keycode()
+        if key == 39 and self.image is not None:
+            cv2.imwrite('capravision_screenshot.png', self.image)
+            print 'Wrote capravision_screenshot.png'
     def on_window_destroy(self, widget):
         self.win_list.remove(widget)
 

@@ -12,6 +12,7 @@
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Filterchain Viewer</property>
     <signal name="destroy" handler="on_WinViewer_destroy" swapped="no"/>
+    <signal name="key-press-event" handler="on_WinViewer_key_press_event" swapped="no"/>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>
