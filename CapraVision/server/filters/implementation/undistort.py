@@ -25,8 +25,6 @@ class Undistort:
     
     def execute(self, image):
     
-        image = cv2.cvtColor(image, cv.CV_BGR2RGB)
-        
         distCoeffs = numpy.array([-0.34, 0.085, 0, 0, -0.007])
         cameraMatrix = numpy.matrix([[630.79035702238025, 0, 645.50000000000000],[0, 630.79035702238025, 366.50000000000000],[0, 0, 1]])
         size = (1292, 734)
