@@ -35,6 +35,7 @@ from PySide import QtCore
 from PySide import QtGui
 import socket
 import threading
+import StringIO
 
 class WinViewer(QtCore.QObject):
     """Show the source after being processed by the filter chain.

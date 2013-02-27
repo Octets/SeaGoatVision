@@ -59,3 +59,9 @@ B. Install OpenCV 2.4
 
 More information is available here: http://opencv.willowgarage.com/wiki/InstallGuide
 
+- FAQ -
+
+1. Error on compiling filter in c++ with opencv. Example, with the filter ScipyExample.py.
+- Do you install opencv-dev? Is this repertory exist : /usr/local/include/opencv
+- If not, maybe you need this : sudo ln -s /usr/include/opencv /usr/local/include/opencv
+
