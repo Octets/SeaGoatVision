@@ -26,7 +26,6 @@ A. Install dependencies
     Client qt :
  sudo apt-get install python-pyside python-qt4
 
-
   Fedora : 
 
     Execution only :

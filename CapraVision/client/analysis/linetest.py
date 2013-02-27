@@ -126,28 +126,11 @@ class LineTest:
                 min_dist = dist
         return min_dist
 
-    def find_precision_rapport(self, filtered, mapping):
-        vp = (filtered * mapping) # VP
-        fp = self.remove_line(filtered, mapping) #FP
-        sum_vp = float(np.count_nonzero(vp))
-        sum_fp = float(np.count_nonzero(fp))
-        div = sum_vp + sum_fp
-        if div == 0:
-            return 0
-        else:
-            return sum_vp / div
-    
-    def find_rappel_rapport(self, filtered, mapping):
-        vp = (filtered * mapping) # VP
-        fn = (np.invert(vp) * mapping) #FN
-        sum_vp = float(np.count_nonzero(vp))
-        sum_fn = float(np.count_nonzero(fn))
-        div = sum_vp + sum_fn
-        if div == 0:
-            return 0
-        else:
-            return sum_vp / div
-    
+    def find_noise_2(self, filtered, mapping):
+        detected = (filtered * mapping)
+        undetected = (np.invert(detected) * mapping)
+        noise = self.remove_line(filtered, mapping)
+        
     def find_noise(self, filtered, mapping):
         """Returns the percentage of noise in the image
         Args:
@@ -219,10 +202,8 @@ class LineTest:
         self.noises = {}
         for file_name, _ in self.testable_images.items():
             filtered, mapping = self.get_test_images(file_name)
-            #self.precisions[file_name] = self.find_precision(filtered, mapping)
-            #self.noises[file_name] = self.find_noise(filtered, mapping)
-            self.precisions[file_name] = self.find_precision_rapport(filtered, mapping)
-            self.noises[file_name] = self.find_rappel_rapport(filtered, mapping)
+            self.precisions[file_name] = self.find_precision(filtered, mapping)
+            self.noises[file_name] = self.find_noise(filtered, mapping)
                 
     def make_binary_array(self, filtered):
         """Convert a filtered image to binary
@@ -271,13 +252,3 @@ class LineTest:
         """Returns the amount of testable images in the test folder"""
         return len(self.testable_images)
             
-    def dump_images(self, folder):
-        for full_name in self.testable_images:
-            orig = self.original_image(full_name)
-            example = self.example_image(full_name)
-            orig_file_name = 'orig_' + os.path.basename(full_name)
-            example_file_name = 'example_' + os.path.basename(full_name)
-            cv2.imwrite(os.path.join(folder, orig_file_name), orig)
-            cv2.imwrite(os.path.join(folder, example_file_name), example)
-        cv2.imwrite(os.path.join(folder, 'graphic.png'), self.create_graphic())
-        
