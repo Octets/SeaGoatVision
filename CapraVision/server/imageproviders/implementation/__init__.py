@@ -28,6 +28,7 @@ Sources should implement the iterator protocol:
 import os
 
 for f in os.listdir(os.path.dirname(__file__)):
-    filename, _ = os.path.splitext(f)
-    code = 'from %(module)s import *' % {'module' : filename} 
-    exec code
+    if f.endswith(".pyc") or f.endswith(".py"):
+        filename, _ = os.path.splitext(f)
+        code = 'from %(module)s import *' % {'module' : filename} 
+        exec code
