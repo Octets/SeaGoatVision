@@ -38,7 +38,6 @@ class GetFirstFace:
             g[mask == cv2.GC_BGD] = 255
             r[mask == cv2.GC_BGD] = 255
             
-    	return cv2.merge((b, g, r))
         
     def get_face(self, image, coord):
         x, y, w, h = coord
