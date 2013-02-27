@@ -15,30 +15,18 @@ Until OpenCV 2.4 is fully supported, the preferred way is to compile OpenCV manu
 
 A. Install dependencies
 
-  Ubuntu :
+Ubuntu :
+	sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf protobuf-compiler python-pyside python-qt4 python-imaging
 
-    Execution only :
- sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf protobuf
+Fedora :
+	sudo yum install python numpy scipy opencv-python protobuf-python protobuf protobuf-compiler python-pyside PyQT4 python-imaging
 
-    Compilation proto : 
- sudo apt-get install protobuf-compiler
+Arch Linux package :
+	python2 python2-numpy python2-scipy opencv protobuf protobuf-python python2-pyside python2-pyqt python2-imaging
+Some package is on aur, you can use yaourt or pacman.
 
-    Client qt :
- sudo apt-get install python-pyside python-qt4
-
-  Fedora : 
-
-    Execution only :
- sudo apt-get install python numpy scipy opencv-python protobuf-python protobuf
-
-    Compilation proto :
- sudo apt-get install protobuf-compiler
-
-    Client qt :
- sudo apt-get install python-pyside PyQt4
-
-  Windows :
-	Install the following dependencies :
+Windows :
+Install the following dependencies :
  - Python: 	http://python.org/ftp/python/2.7.3/python-2.7.3.msi
  - Numpy: 	http://sourceforge.net/projects/numpy/files/NumPy/	# Choose the installer
  - Scipy:	http://sourceforge.net/projects/scipy/files/scipy/	# Choose the installer
@@ -49,25 +37,25 @@ A. Install dependencies
 
 B. Install OpenCV 2.4
 
- 1. Install required OpenCV dependencies
-   sudo apt-get install cmake cmake-gui gcc pkg-config libavformat-dev libswscale-dev
+1. Install required OpenCV dependencies
+	sudo apt-get install cmake cmake-gui gcc pkg-config libavformat-dev libswscale-dev
 
- 2. Download the archive manually 
-  From here: http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.2/OpenCV-2.4.2.tar.bz2/
-  Go to directory containing downloaded file with a command line.
+2. Download the archive manually 
+	From here: http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.2/OpenCV-2.4.2.tar.bz2/
+	Go to directory containing downloaded file with a command line.
  
- 3. Extract the archive
-  tar -jxvf OpenCV-2.4.2.tar.bz2 && cd OpenCV-2.4.2
+3. Extract the archive
+	tar -jxvf OpenCV-2.4.2.tar.bz2 && cd OpenCV-2.4.2
 
- 4. Configure
-  mkdir release
-  cd release
-  cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_PYTHON_SUPPORT=ON ..
+4. Configure
+	mkdir release
+	cd release
+	cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_PYTHON_SUPPORT=ON ..
 
- 5. Compile
-  make -j
+5. Compile
+	make -j
 
- 6. Do crazy stuff!
+6. Do crazy stuff!
 
- More information is available here: http://opencv.willowgarage.com/wiki/InstallGuide
+More information is available here: http://opencv.willowgarage.com/wiki/InstallGuide
 

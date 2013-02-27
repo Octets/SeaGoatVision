@@ -1,5 +1,8 @@
 *.pyc
-*~
 .project
 .pydevproject
 .settings
+
+# text editor
+*.swp
+*~
