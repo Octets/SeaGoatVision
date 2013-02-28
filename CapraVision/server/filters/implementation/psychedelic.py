@@ -35,7 +35,7 @@ class Psychedelic:
             
         try:
             for img in self._images:
-                image = np.subtract(image, img)
+                image = np.add(image, img)
         except:
             pass
         return image
