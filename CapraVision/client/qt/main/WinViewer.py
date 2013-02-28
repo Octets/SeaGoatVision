@@ -98,7 +98,7 @@ class WinViewer(QtCore.QObject):
     def _changeFilter(self):
         if self.actualFilter:
             filter_name = self.ui.filterComboBox.currentText()
-            self.controller.set_image_observer(self.updateImage, self.execution_name, filter_name, self.actualFilter)
+            self.controller.set_image_observer(self.updateImage, self.execution_name, self.actualFilter, filter_name)
             self.actualFilter = filter_name
 
     def updateLog(self, data):

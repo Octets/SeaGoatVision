@@ -121,7 +121,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             observer = self.dct_observer.get(request.execution_name, None)
-            if observer and self.manager.set_image_observer(observer.observer, request.execution_name, request.filter_name_new, request.filter_name_old):
+            if observer and self.manager.set_image_observer(observer.observer, request.execution_name, request.filter_name_old, request.filter_name_new):
                 response.status = 0
             else:
                 response.status = 1
