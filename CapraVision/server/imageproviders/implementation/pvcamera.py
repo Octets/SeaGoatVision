@@ -17,29 +17,36 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import camera
+USE_PV_CAM = True
 
-class PvNetworkCamera:
-    
-    def __init__(self):
-        self.cam = camera.Camera()
-        try:
-            self.cam.initialize()
-        except:
-            pass
-        try:
-            self.cam.startCamera()
-        except:
-            pass
+try:
+    import camera
+except:
+    print "Cannot open PvCamera.  Missing camera library."
+    USE_PV_CAM = False
+
+if USE_PV_CAM:
+    class PvNetworkCamera:
         
-    def __iter__(self):
-        return self
-    
-    def next(self):
-        image = self.cam.getFrame()
-        print image
-        return image
-    
-    def close(self):
-        pass
+        def __init__(self):
+            self.cam = camera.Camera()
+            try:
+                self.cam.initialize()
+            except:
+                pass
+            try:
+                self.cam.startCamera()
+            except:
+                pass
+            
+        def __iter__(self):
+            return self
+        
+        def next(self):
+            image = self.cam.getFrame()
+            print image
+            return image
+        
+        def close(self):
+            pass
     
