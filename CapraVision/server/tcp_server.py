@@ -91,6 +91,10 @@ class ClientHandler:
 
     def stop(self):
         self.done = True
+        try:
+            self.conn.shutdown(socket.SHUT_RDWR)
+        except:
+            pass
         self.conn.close()
 
     def send(self, data):

@@ -383,7 +383,12 @@ class Observer(threading.Thread):
 
     def close(self):
         self.__stop = True
+        try:
+            self.socket.shutdown(socket.SHUT_RDWR)
+        except:
+            pass
         self.socket.close()
+        self.socket = None
 
 
 

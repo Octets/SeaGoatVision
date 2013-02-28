@@ -618,6 +618,10 @@ class Observer(threading.Thread):
     def stop(self):
         self.close = True
         if self.socket:
+            try:
+                self.socket.shutdown(socket.SHUT_RDWR)
+            except:
+                pass
             self.socket.close()
             self.socket = None
         print("Close client")
