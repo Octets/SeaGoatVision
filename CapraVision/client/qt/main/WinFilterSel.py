@@ -24,16 +24,21 @@ from PySide import QtCore
 class WinFilterSel(QtCore.QObject):
     """Allow the user to select a filter to add to the filterchain"""
     onAddFilter = QtCore.Signal(object)
-    def __init__(self):
+    def __init__(self, controller):
         super(WinFilterSel, self).__init__()
         self.ui = get_ui(self)
         self.filters = filters.load_filters()
-
+        self.controller = controller
 
         self.ui.addFilterButton.clicked.connect(self._addFilter)
+        self.ui.reloadFilterButton.clicked.connect(self._reloadFilter)
 
         for name, filter in self.filters.items():
             self.ui.filterListWidget.addItem(name)
 
     def _addFilter(self):
         self.onAddFilter.emit(self.ui.filterListWidget.currentItem().text())
+
+    def _reloadFilter(self):
+        print("reload")
+        self.controller.reload_filter(self.ui.filterListWidget.currentItem().text())

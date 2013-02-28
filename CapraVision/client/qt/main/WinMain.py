@@ -35,7 +35,7 @@ class WinMain(QtGui.QMainWindow):
 
         # create dockWidgets
         self.winFilter = WinFilter()
-        self.winFilterSel = WinFilterSel()
+        self.winFilterSel = WinFilterSel(controller)
         self.winFilterChain = WinFilterChain(controller, self.winFilterSel, self.addPreview)
 
         self.setCentralWidget(self.winFilterChain.ui)

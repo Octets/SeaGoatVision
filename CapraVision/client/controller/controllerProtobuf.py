@@ -514,8 +514,8 @@ class ControllerProtobuf():
         if type(filtre) is list:
             for item in filtre:
                 request.filterName.append(item)
-        elif type(filtre) is str:
-            request.filterName = [filtre]
+        elif type(filtre) is str or type(filtre) is unicode:
+            request.filterName.append(filtre)
         elif filtre is not None:
             raise Exception("filtre is wrong type : %s" % type(filtre))
 

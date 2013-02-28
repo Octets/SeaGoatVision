@@ -325,7 +325,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
-            self.manager.reload_filter(request.filterName)
+            self.manager.reload_filter(request.filterName[0])
             response.status = 0
         except Exception, e:
             print "Exception: ", e

@@ -228,10 +228,12 @@ class Manager:
         return self.chain_exists()
 
     def reload_filter(self, filtre=None):
-        #NEED TO BE UPDATED
-        # if filter is none, we reload all filters
-        if self.chain is not None:
-            self.chain.reload_filter(filtre)
+        print(filtre)
+        for thread in self.dct_thread.values():
+            print(thread)
+            filterchain = thread.get("filterchain", None)
+            if filterchain:
+                filterchain.reload_filter(filtre)
 
     ##########################################################################
     ############################### FILTER  ##################################

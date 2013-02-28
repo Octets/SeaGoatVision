@@ -124,23 +124,17 @@ class FilterChain:
     def remove_filter(self, filtre):
         self.filters.remove(filtre)
 
-    def reload_filter(self, filtre=None):
-        # if filter is none, we reload all filters
-        if filtre is None:
-            lstFilterIndex = range(len(self.filters))
-        elif filtre in self.filters:
-            lstFilterIndex = [self.filters.index(filtre)]
-        else:
-            lstFilterIndex = []
-
+    def reload_filter(self, filtre):
         # example of __module__:
-        for index in lstFilterIndex:
-            item = self.filters[index]
-            # reload the module
-            module = my_import(item.__module__)
-            reload(module)
-            # recreate the instance
-            self.filters[index] = getattr(module, item.__class__.__name__)()
+        index = 0
+        for item in self.filters:
+            if item.__class__.__name__ == filtre:
+                # reload the module
+                module = my_import(item.__module__)
+                reload(module)
+                # recreate the instance
+                self.filters[index] = getattr(module, item.__class__.__name__)()
+            index += 1
 
     def add_image_observer(self, observer, filter_name):
         lstObserver = self.image_observers.get(filter_name, [])
