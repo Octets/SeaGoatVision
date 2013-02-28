@@ -67,7 +67,7 @@ class ControllerProtobuf():
             response = self.service.is_connected(request, timeout=10000) is not None
             if response:
                 print("Connection successful")
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return response
@@ -101,7 +101,7 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -129,7 +129,7 @@ class ControllerProtobuf():
                 returnValue = False
 
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -150,7 +150,7 @@ class ControllerProtobuf():
                 returnResponse = response.source
             else:
                 print("No answer on get_source_list")
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnResponse
@@ -199,7 +199,7 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         if not returnValue:
@@ -243,7 +243,7 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -282,7 +282,7 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
 
@@ -310,7 +310,7 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -337,7 +337,7 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -359,7 +359,7 @@ class ControllerProtobuf():
             else:
                 print("Error : protobuf, get_filterchain_list response is None")
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -379,7 +379,7 @@ class ControllerProtobuf():
             else:
                 print("Error : protobuf, get_filterchain_list response is None")
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -407,7 +407,7 @@ class ControllerProtobuf():
                 returnValue = False
 
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -436,7 +436,7 @@ class ControllerProtobuf():
                 returnValue = False
 
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -452,8 +452,8 @@ class ControllerProtobuf():
         request = server_pb2.ModifyFilterChainRequest()
         request.old_filterchain_name = old_filterchain_name
         request.new_filterchain_name = new_filterchain_name
-        for filter in lst_str_filters:
-            request.lst_str_filters.add().name = filter
+        for filter_name in lst_str_filters:
+            request.lst_str_filters.add().name = filter_name
 
         # Make an synchronous call
         returnValue = None
@@ -470,7 +470,7 @@ class ControllerProtobuf():
                 returnValue = False
 
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -497,7 +497,7 @@ class ControllerProtobuf():
                 returnValue = False
 
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -534,7 +534,7 @@ class ControllerProtobuf():
                 returnValue = False
 
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -550,7 +550,7 @@ class ControllerProtobuf():
             response = self.service.get_filter_list(request, timeout=10000)
             returnValue = response.filters
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
         return returnValue
@@ -562,21 +562,21 @@ class Observer(threading.Thread):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.add = (hostname, port)
         self.close = False
+        self.buffer = 65507
 
     def run(self):
         if self.observer:
-            buffer = 65507
             self.socket.sendto("I can see you.", self.add)
             while not self.close:
                 sData = ""
                 try:
-                    data = self.socket.recv(buffer)
+                    data = self.socket.recv(self.buffer)
                     if data[0] != "b":
                         print("wrong type index.")
                         continue
 
                     i = 1
-                    while i < buffer and data[i] != "_":
+                    while i < self.buffer and data[i] != "_":
                         i += 1
 
                     nb_packet_string = data[1:i]
@@ -588,13 +588,13 @@ class Observer(threading.Thread):
 
                     sData += data[i + 1:]
                     for packet in range(1, nb_packet):
-                        data, address = self.socket.recvfrom(buffer) # 262144 # 8192
+                        data, _ = self.socket.recvfrom(self.buffer) # 262144 # 8192
                         if data[0] != "c":
                             print("wrong type index continue")
                             continue
 
                         i = 1
-                        while i < buffer and data[i] != "_":
+                        while i < self.buffer and data[i] != "_":
                             i += 1
 
                         no_packet_string = data[1:i]
@@ -609,7 +609,7 @@ class Observer(threading.Thread):
                         sData += data[i + 1:]
 
                     self.observer(np.loads(sData))
-                except Exception, e:
+                except Exception as e:
                     if not self.close:
                         print("Error udp observer : %s" % e)
         else:

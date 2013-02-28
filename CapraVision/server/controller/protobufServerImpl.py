@@ -229,20 +229,6 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
-    def delete_filterchain(self, controller, request, done):
-        print("delete_filterchain request %s" % str(request).replace("\n", " "))
-
-        # Create a reply
-        response = server_pb2.StatusResponse()
-        try:
-            response.status = int(not self.manager.load_chain(request.filterchain_name))
-        except Exception, e:
-            print "Exception: ", e
-            response.status = -1
-
-        # We're done, call the run method of the done callback
-        done.run(response)
-
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################
@@ -363,17 +349,17 @@ class Observer(threading.Thread):
 
     def run(self):
         # waiting answer from client
-        message, address = self.socket.recvfrom(1024)
+        _, address = self.socket.recvfrom(1024)
         print address
         self.address = address
+        self.buffer = 65507
 
     def observer(self, image):
         if self.address:
-            buffer = 65507
             data = image.dumps()
-            nb_packet = int(len(data) / buffer) + 1
+            nb_packet = int(len(data) / self.buffer) + 1
             # TODO missing count for index byte
-
+            nb_char = 0
             for i in range(nb_packet):
                 if not i:
                     sIndex = "b%d_" % nb_packet
@@ -382,7 +368,7 @@ class Observer(threading.Thread):
                     sIndex = "c%d_" % i
                     begin_index += nb_char
 
-                nb_char = buffer - len(sIndex)
+                nb_char = self.buffer - len(sIndex)
                 sData = "%s%s" % (sIndex, data[begin_index:begin_index + nb_char])
                 try:
                     if not self.__stop:
