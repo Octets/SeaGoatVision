@@ -1,6 +1,7 @@
-This Vision Serveur is tested on OpenCV 2.4.2 and Python 2.7 on Fedora 17 and Ubuntu 12.04.
+This Vision Serveur is tested on OpenCV 2.4.2 with Python 2.7 on Fedora 17, Ubuntu 12.04 and Arch Linux.
 
 Requirements:
+
  - Python 2.7
  - PyQt4
  - Glade 3
@@ -8,25 +9,36 @@ Requirements:
  - Numpy
  - Scipy
 
-Until OpenCV 2.4 is fully supported, the preferred way is to compile OpenCV manually: 
+Until OpenCV 2.4 is fully supported, the preferred way is to compile OpenCV manually:
  - http://opencv.willowgarage.com/wiki/InstallGuide
 
 ==== INSTALLATION ====
 
-A. Install dependencies
+A. Download the project
+
+    git clone git://github.com/clubcapra/CapraVision.git
+
+
+B. Install dependencies
 
 Ubuntu :
-	sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf protobuf-compiler python-pyside python-qt4 python-imaging
+
+    sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf protobuf-compiler python-pyside python-qt4 python-imaging
 
 Fedora :
-	sudo yum install python numpy scipy opencv-python protobuf-python protobuf protobuf-compiler python-pyside PyQT4 python-imaging
+
+    sudo yum install python numpy scipy opencv-python protobuf-python protobuf protobuf-compiler python-pyside PyQT4 python-imaging
 
 Arch Linux package :
-	python2 python2-numpy python2-scipy opencv protobuf protobuf-python python2-pyside python2-pyqt python2-imaging
-Some package is on aur, you can use yaourt or pacman.
+
+Don't forget to active the "community" repositorie. See https://wiki.archlinux.org/index.php/Pacman
+
+    pacman -S python2 python2-numpy python2-scipy opencv protobuf protobuf-python python2-pyside python2-pyqt python2-imaging
 
 Windows :
+
 Install the following dependencies :
+
  - Python: 	http://python.org/ftp/python/2.7.3/python-2.7.3.msi
  - Numpy: 	http://sourceforge.net/projects/numpy/files/NumPy/	# Choose the installer
  - Scipy:	http://sourceforge.net/projects/scipy/files/scipy/	# Choose the installer
@@ -35,7 +47,7 @@ Install the following dependencies :
  - PIL:		http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe
  - OpenCV: 	http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv	# OpenCV installer for Windows.
 
-B. Install OpenCV 2.4
+C. Install OpenCV 2.4
 
 1. Install required OpenCV dependencies
 	sudo apt-get install cmake cmake-gui gcc pkg-config libavformat-dev libswscale-dev
@@ -59,9 +71,8 @@ B. Install OpenCV 2.4
 
 More information is available here: http://opencv.willowgarage.com/wiki/InstallGuide
 
-- FAQ -
+FAQ
 
 1. Error on compiling filter in c++ with opencv. Example, with the filter ScipyExample.py.
-- Do you install opencv-dev? Is this repertory exist : /usr/local/include/opencv
-- If not, maybe you need this : sudo ln -s /usr/include/opencv /usr/local/include/opencv
-
+Do you install opencv-dev? Is this repertory exist : /usr/local/include/opencv
+If not, maybe you need this : sudo ln -s /usr/include/opencv /usr/local/include/opencv

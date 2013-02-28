@@ -23,18 +23,20 @@ Date : November 2012
 """
 import sys
 
-from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
 from CapraVision.server.core.manager import Manager
 from PySide.QtGui import QApplication
 import main
 
 
-def run():
-    # Protobuf
-    c = ControllerProtobuf()
+def run(local=False):
+    if local:
+        # Directly connected to the vision server
+        c = Manager()
+    else:
+        from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
+        # Protobuf
+        c = ControllerProtobuf()
 
-    # Directly connected to the vision server
-    #c = Manager()
 
     if not c.is_connected():
         print("Vision server is not accessible.")
@@ -55,4 +57,4 @@ if __name__ == '__main__':
     import os
     parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     os.sys.path.insert(0, parentdir)
-    sys.exit(run())
+    sys.exit(run(local=True))

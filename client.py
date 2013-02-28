@@ -26,25 +26,26 @@ import sys
 
 import argparse
 
-def runQt():
+def runQt(local=False):
     from CapraVision.client.qt.mainqt import run
-    return run()
+    return run(local=local)
 
-def runCli():
+def runCli(local=False):
     from CapraVision.client.cli.cli import run
     return run()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Open client for vision server.')
     parser.add_argument('interface', metavar='interface name', nargs='?', type=str, default="qt", help='cli, gtk or qt is supported.')
+    parser.add_argument('--local', action='store_true', help='Run server local, else remote.')
 
     args = parser.parse_args()
 
     sInterface = args.interface.lower()
     if sInterface == "qt":
-        sys.exit(runQt())
+        sys.exit(runQt(local=args.local))
     elif sInterface == "cli":
-        sys.exit(runCli())
+        sys.exit(runCli(local=args.local))
     else:
         print("Interface not supported : %s" % sInterface)
 
