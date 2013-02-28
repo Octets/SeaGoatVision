@@ -228,9 +228,7 @@ class Manager:
         return self.chain_exists()
 
     def reload_filter(self, filtre=None):
-        print(filtre)
         for thread in self.dct_thread.values():
-            print(thread)
             filterchain = thread.get("filterchain", None)
             if filterchain:
                 filterchain.reload_filter(filtre)

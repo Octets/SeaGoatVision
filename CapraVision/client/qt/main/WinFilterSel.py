@@ -40,5 +40,4 @@ class WinFilterSel(QtCore.QObject):
         self.onAddFilter.emit(self.ui.filterListWidget.currentItem().text())
 
     def _reloadFilter(self):
-        print("reload")
         self.controller.reload_filter(self.ui.filterListWidget.currentItem().text())
