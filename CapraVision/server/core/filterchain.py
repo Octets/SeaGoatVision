@@ -129,11 +129,18 @@ class FilterChain:
         index = 0
         for item in self.filters:
             if item.__class__.__name__ == filtre:
+                # remote observer
+                filter_output_obs_copy = self.filter_output_observers[:]
+                for output in filter_output_obs_copy:
+                    self.remove_filter_output_observer(output)
                 # reload the module
                 module = my_import(item.__module__)
                 reload(module)
                 # recreate the instance
                 self.filters[index] = getattr(module, item.__class__.__name__)()
+                # re-add observer
+                for output in filter_output_obs_copy:
+                    self.add_filter_output_observer(output)
             index += 1
 
     def add_image_observer(self, observer, filter_name):
