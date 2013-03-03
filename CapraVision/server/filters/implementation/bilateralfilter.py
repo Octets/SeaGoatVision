@@ -2,7 +2,7 @@
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
-#    This filename is part of CapraVision.
+#    This file is part of CapraVision.
 #    
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,35 +17,22 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-USE_PV_CAM = True
+import cv2
 
-try:
-    import camera
-except:
-    print "Cannot open PvCamera.  Missing camera library."
-    USE_PV_CAM = False
+from CapraVision.server.filters.parameter import Parameter
 
-if USE_PV_CAM:
-    class PvNetworkCamera:
+class BilateralFilter:
+    """Applies the bilateral filter to an image."""
+    
+    def __init__(self):
+        self.diameter = Parameter("Diameter", 0, 255, 10) 
+        self.sigma_color = Parameter("Sigma Color", 0, 255, 20)
+        self.sigma_space = Parameter("Sigma Space", 0, 255, 5)
         
-        def __init__(self):
-            self.cam = camera.Camera()
-            try:
-                self.cam.initialize()
-            except:
-                pass
-            try:
-                self.cam.startCamera()
-            except:
-                pass
-            
-        def __iter__(self):
-            return self
-        
-        def next(self):
-            image = self.cam.getFrame()
-            return image
-        
-        def close(self):
-            pass
+    def execute(self, image):
+        return cv2.bilateralFilter(image,
+                            int(self.diameter.get_current_value()),
+                            int(self.sigma_color.get_current_value()),
+                            int(self.sigma_space.get_current_value()))
+    
     

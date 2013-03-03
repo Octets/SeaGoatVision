@@ -2,7 +2,7 @@
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
-#    This filename is part of CapraVision.
+#    This file is part of CapraVision.
 #    
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,35 +17,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-USE_PV_CAM = True
+import numpy as np
 
-try:
-    import camera
-except:
-    print "Cannot open PvCamera.  Missing camera library."
-    USE_PV_CAM = False
+from CapraVision.server.filters.parameter import  Parameter
 
-if USE_PV_CAM:
-    class PvNetworkCamera:
-        
-        def __init__(self):
-            self.cam = camera.Camera()
-            try:
-                self.cam.initialize()
-            except:
-                pass
-            try:
-                self.cam.startCamera()
-            except:
-                pass
-            
-        def __iter__(self):
-            return self
-        
-        def next(self):
-            image = self.cam.getFrame()
-            return image
-        
-        def close(self):
-            pass
+class Psychedelic:
+    """Acid trip"""
     
+    def __init__(self):
+        self._images = []
+        self.nb_images = Parameter("Nb Images", 1, 99, 10)
+        
+    def execute(self, image):
+        self._images.append(image)
+        while len(self._images) >= self.nb_images.get_current_value():
+            del self._images[0]
+            
+        try:
+            for img in self._images:
+                image = np.add(image, img)
+        except:
+            pass
+        return image
