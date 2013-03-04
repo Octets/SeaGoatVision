@@ -22,7 +22,7 @@
 from CapraVision.client.qt.utils import get_ui
 from PySide import QtGui
 from PySide import QtCore
-from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
+from CapraVision.server.filters.implementation.python.bgr2rgb import BGR2RGB
 from threading import Lock
 import StringIO
 import Image
