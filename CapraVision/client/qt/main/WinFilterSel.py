@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.client.qt.utils import *
+from CapraVision.client.qt.utils import get_ui
 from PySide import QtCore
 
 class WinFilterSel(QtCore.QObject):
