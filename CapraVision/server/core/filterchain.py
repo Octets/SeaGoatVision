@@ -54,7 +54,7 @@ def isnumeric(string):
 
 def read(file_name):
     """Open a filtre chain file and load its content in a new filtre chain."""
-    new_chain = FilterChain()
+    new_chain = FilterChain(file_name[file_name.rfind("/") + 1:file_name.rfind(".")])
     cfg = ConfigParser.ConfigParser()
     cfg.read(file_name)
     for section in cfg.sections():
@@ -94,13 +94,17 @@ class FilterChain:
     The observer must be a method that receive a filter and an image as parameter.
     The observer method is called after each execution of a filter in the filter chain.
     """
-    def __init__(self):
+    def __init__(self, filterchain_name):
         self.filters = []
         self.image_observers = {}
         self.filter_output_observers = []
+        self.filterchain_name = filterchain_name
 
     def count(self):
         return len(self.filters)
+
+    def get_name(self):
+        return self.filterchain_name
 
     def get_filter_output_observers(self):
         return self.filter_output_observers
@@ -117,6 +121,15 @@ class FilterChain:
 
     def __getitem__(self, index):
         return self.filters[index]
+
+    def get_filter(self, index=None, name=None):
+        if index is not None:
+            return self.filters[index]
+        elif name is not None:
+            lst_filter = [o_filter for o_filter in self.filters if o_filter.__class__.__name__ == name]
+            if lst_filter:
+                return lst_filter[0]
+        return None
 
     def add_filter(self, filtre):
         self.filters.append(filtre)

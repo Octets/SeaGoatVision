@@ -34,7 +34,7 @@ class WinMain(QtGui.QMainWindow):
         self.winViewer = None
 
         # create dockWidgets
-        self.winFilter = WinFilter()
+        self.winFilter = WinFilter(controller)
         self.winFilterSel = WinFilterSel(controller)
         self.winFilterChain = WinFilterChain(controller, self.winFilterSel, self.addPreview)
 
@@ -46,12 +46,7 @@ class WinMain(QtGui.QMainWindow):
 
         self.ui = get_ui(self)
 
-        # self._addToolBar()
         self._addDockWidget()
-        # self._connectMainButtonsToWinFilterChain()
-
-    # def _connectMainButtonsToWinFilterChain(self):
-    #    self.winFilterChain.ui.previewButton.clicked.connect(self.addPreview)
 
     def _addDockWidget(self):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilter)

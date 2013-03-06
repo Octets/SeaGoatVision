@@ -18,7 +18,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from CapraVision.client.qt.utils import *
-from CapraVision.server import filters
 from PySide import QtCore
 
 class WinFilterSel(QtCore.QObject):
@@ -27,14 +26,21 @@ class WinFilterSel(QtCore.QObject):
     def __init__(self, controller):
         super(WinFilterSel, self).__init__()
         self.ui = get_ui(self)
-        self.filters = filters.load_filters()
         self.controller = controller
 
         self.ui.addFilterButton.clicked.connect(self._addFilter)
         self.ui.reloadFilterButton.clicked.connect(self._reloadFilter)
 
-        for name, filter in self.filters.items():
+        self.reload_list_filter(self.controller.get_filter_list())
+
+    def reload_list_filter(self, lst_filter):
+        lst_filter_sort = lst_filter[:]
+        lst_filter_sort.sort()
+        for name in lst_filter_sort:
             self.ui.filterListWidget.addItem(name)
+
+    def _selectedFilterChanged(self):
+        self.selectedFilterChanged.emit(self.ui.filterListWidget.currentItem().text())
 
     def _addFilter(self):
         self.onAddFilter.emit(self.ui.filterListWidget.currentItem().text())

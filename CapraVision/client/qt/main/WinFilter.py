@@ -34,35 +34,38 @@ class TempParameter:
         self.parameter.set_current_value(self.tempValue)
 
 class WinFilter(QtGui.QDockWidget):
-    def __init__(self):
+    selectedFilterChanged = QtCore.Signal(object)
+
+    def __init__(self, controller):
         super(WinFilter, self).__init__()
         self.setWidget(QtGui.QWidget())
         self.tempParameters = []
+        self.controller = controller
 
-
-    def get_filter_attr(self, filter):
-        widgetList = []
-        for parameterName in dir(filter):
-            parameter = getattr(filter, parameterName)
-            if isinstance(parameter, Parameter):
-                widgetList.append(self.getWidget(parameter))
-        return widgetList
-
-    def setFilter(self, filter):
+    def setFilter(self, execution_name, filter_name):
         # self.clear()
         del self.tempParameters[:]
         self.widget().destroy()
         self.setWidget(QtGui.QWidget())
-        self.filter = filter
-        self.construct_widget(filter)
+        self.filter_name = filter_name
+        self.execution_name = execution_name
+        self.construct_widget()
 
+    def construct_widget(self):
+        self.setWindowTitle(self.filter_name + " - " + self.execution_name)
+        self.filter_param = self.controller.get_filter_param(self.execution_name, self.filter_name)
 
-    def construct_widget(self, filter):
-        self.setWindowTitle(filter.__class__.__name__)
         layout = QtGui.QVBoxLayout()
 
-        for widget in self.get_filter_attr(filter):
-            layout.addWidget(widget)
+        if not self.filter_param:
+            nothing = QtGui.QLabel()
+            nothing.setText("Empty parameters.")
+            layout.addWidget(nothing)
+            self.widget().setLayout(layout)
+            return
+
+        for param in self.filter_param:
+            layout.addWidget(self.getWidget(param))
 
         self.executeButton = QtGui.QPushButton()
         self.executeButton.clicked.connect(self.execute)
@@ -126,9 +129,9 @@ class WinFilter(QtGui.QDockWidget):
     def execute(self):
         for tempParameter in self.tempParameters:
             tempParameter.execute()
-        if hasattr(self.filter, "configure"):
-            self.filter.configure()
-            print "conf"
+        #if hasattr(self.filter, "configure"):
+        #    self.filter.configure()
+        #    print "conf"
 
 
 

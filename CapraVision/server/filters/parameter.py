@@ -3,12 +3,12 @@
 class Parameter:
     INT,FLOAT,EVEN,ODD = range(4)
     
-    def __init__(self,name, minValue,maxValue,currentValue,type=INT):
+    def __init__(self, name, minValue, maxValue, currentValue, type_t=INT):
         self.name = name
         self.minValue = minValue
         self.maxValue = maxValue
         self.currentValue = currentValue
-        self.type = type
+        self.type = type_t
     
     def get_name(self):
         return self.name

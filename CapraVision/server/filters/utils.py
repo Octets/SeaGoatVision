@@ -20,6 +20,7 @@
 import inspect
 import types
 import CapraVision.server.filters.implementation
+from CapraVision.server.filters.parameter import Parameter
 
 def add_getters_setters(filtre):
     def create_getter(param):
@@ -58,5 +59,12 @@ def list_params_from_filter(filtre):
 def get_filter_from_filterName(filter_name):
     return load_filters().get(filter_name, None)
     
+def get_filter_param(o_filter):
+    widget_list = []
+    for parameterName in dir(o_filter):
+        parameter = getattr(o_filter, parameterName)
+        if isinstance(parameter, Parameter):
+            widget_list.append(parameter)
+    return widget_list
     
     

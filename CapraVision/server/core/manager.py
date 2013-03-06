@@ -102,6 +102,24 @@ class Manager:
 
         return True
 
+    def get_filter_param(self, filterchain_name, filter_name):
+        # get actual filter from execution
+        filterchain_item = None
+        for item in self.dct_thread.values():
+            filterchain_item = item.get("filterchain", None)
+            if filterchain_item and filterchain_item.get_name() == filterchain_name:
+                o_filter = filterchain_item.get_filter(name=filter_name)
+                break
+
+        if filterchain_item is None:
+            # search in config
+            o_filter = utils.get_filter_from_filterName(filter_name=filter_name)
+
+        if not o_filter:
+            return None
+
+        return utils.get_filter_param(o_filter)
+
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################

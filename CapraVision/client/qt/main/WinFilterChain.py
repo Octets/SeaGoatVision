@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from CapraVision.client.qt.utils import *
+from CapraVision.client.qt.utils import get_ui
 
 from PySide import QtGui
 from PySide import QtCore
@@ -29,7 +29,7 @@ class WinFilterChain(QtCore.QObject):
     """
 
     WINDOW_TITLE = "Capra Vision"
-    selectedFilterChanged = QtCore.Signal(object)
+    selectedFilterChanged = QtCore.Signal(object, object)
 
     def __init__(self, controller, qtWidgetFilterSelect, addPreviewCall):
         super(WinFilterChain, self).__init__()
@@ -196,8 +196,8 @@ class WinFilterChain(QtCore.QObject):
 
     def updateFiltersList(self, filterchain_name):
         self.ui.filterListWidget.clear()
-        for filter in self.controller.get_filter_list_from_filterchain(filterchain_name):
-            self.ui.filterListWidget.addItem(filter.name)
+        for o_filter in self.controller.get_filter_list_from_filterchain(filterchain_name):
+            self.ui.filterListWidget.addItem(o_filter.name)
 
     def updateFilterChainList(self):
         self.ui.filterchainListWidget.clear()
@@ -213,7 +213,11 @@ class WinFilterChain(QtCore.QObject):
         self._move_curent_item_on_qtList(self.ui.filterListWidget, 1)
 
     def onSelectedFilterchanged(self):
-        self.ui.frame_filter_edit.setEnabled(self._get_selected_filter_name() is not None)
+        filter_name = self._get_selected_filter_name()
+        self.ui.frame_filter_edit.setEnabled(filter_name is not None)
+        if filter_name:
+            filterchain_name = self._get_selected_filterchain_name()
+            self.selectedFilterChanged.emit(filterchain_name, filter_name)
 
     def onSelectedFilterchainChanged(self):
         filterchain_name = self._get_selected_filterchain_name()
