@@ -24,14 +24,14 @@ for f in os.listdir(dirname):
     extcode = """
         cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
         cv::Mat ret = execute(mat);
-        if (mat.data != ret.data)  
-            ret.copyTo(mat);  
+        if (mat.data != ret.data)
+            ret.copyTo(mat);
         """
-        
+
     func = ext_tools.ext_function(filename, extcode,['image'])
     func.customize.add_support_code(cppcode)
     mod.add_function(func)
-    
+
     #helpcode = """
     #    #ifdef DOCSTRING
     #    help = "hello!";
@@ -40,22 +40,24 @@ for f in os.listdir(dirname):
     #helpmod = ext_tools.ext_function('help_' + filename, helpcode,['help'])
     #helpmod.customize.add_support_code(cppcode)
     #mod.add_function(helpmod)
-    
-mod.compile()    
 
-def create_execute(cppfunc):
-    def execute(self, image):
-        cppfunc(image)
-        return image
-    return execute
+try:
+    mod.compile()
+    def create_execute(cppfunc):
+        def execute(self, image):
+            cppfunc(image)
+            return image
+        return execute
 
-import cppfilters
-from cppfilters import * 
-for module in cppmodules:
-    #code = """from cppfilters import %(module)s""" % {'module' : module} 
-    #exec code
-    clazz = type(module, (object,), 
-                 {'execute' : create_execute(globals()[filename]),
-                  '__doc__' : "C++ filter"})#getattr(cppfilters, 'help_' + filename)()})    
-    setattr(sys.modules[__name__], module, clazz)
-    del clazz
+    import cppfilters
+    from cppfilters import *
+    for module in cppmodules:
+        #code = """from cppfilters import %(module)s""" % {'module' : module}
+        #exec code
+        clazz = type(module, (object,),
+                     {'execute' : create_execute(globals()[filename]),
+                      '__doc__' : "C++ filter"})#getattr(cppfilters, 'help_' + filename)()})
+        setattr(sys.modules[__name__], module, clazz)
+        del clazz
+except Exception as e:
+    print(e)
