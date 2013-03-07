@@ -28,15 +28,14 @@ from PySide.QtGui import QApplication
 import main
 
 
-def run(local=False):
+def run(local=False, host="localhost", port=8090):
     if local:
         # Directly connected to the vision server
         c = Manager()
     else:
         from CapraVision.client.controller.controllerProtobuf import ControllerProtobuf
         # Protobuf
-        c = ControllerProtobuf()
-
+        c = ControllerProtobuf(host, port)
 
     if not c.is_connected():
         print("Vision server is not accessible.")

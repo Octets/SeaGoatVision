@@ -38,11 +38,10 @@ def callback(request, response):
     log.info('Asynchronous response :' + response.__str__())
 
 class ControllerProtobuf():
-    def __init__(self):
+    def __init__(self, host, port):
         # Server details
-        #self.hostname = '192.168.0.11'
-        self.hostname = 'localhost'
-        self.port = 8090
+        self.hostname = host
+        self.port = int(port)
 
         # Create a new service instance
         self.service = RpcService(server_pb2.CommandService_Stub, self.port, self.hostname)

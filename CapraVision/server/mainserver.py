@@ -25,7 +25,7 @@ Date : October 2012
 
 import os
 
-def run():
+def run(port=8090):
     # recheck if its locked because the last check is maybe a false lock
     pid = os.getpid()
     sFileLockName = "/tmp/SeaGoat.lock"
@@ -44,7 +44,6 @@ def run():
     # Note that this is an instantiation of the implementation class,
     # *not* the class defined in the proto file.
     server_service = impl.ProtobufServerImpl()
-    port = 8090
     server = server.SocketRpcServer(port, "")
     server.registerService(server_service)
 

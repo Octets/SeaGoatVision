@@ -21,8 +21,13 @@ Description : Run the vision server
 Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
+import argparse
+
 from CapraVision.server.mainserver import run
 
 if __name__ == '__main__':
-    run()
+    parser = argparse.ArgumentParser(description='Vision Server')
+    parser.add_argument('--port', type=int, default="8090", help='Port of the host.')
+    args = parser.parse_args()
+    run(port=args.port)
 

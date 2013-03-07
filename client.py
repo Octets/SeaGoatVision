@@ -23,14 +23,13 @@ Date : October 2012
 """
 
 import sys
-
 import argparse
 
-def runQt(local=False):
+def runQt(local=False, host="localhost", port=8090):
     from CapraVision.client.qt.mainqt import run
-    return run(local=local)
+    return run(local=local, host=host, port=port)
 
-def runCli(local=False):
+def runCli(local=False, host="localhost", port=8090):
     from CapraVision.client.cli.cli import run
     return run()
 
@@ -38,14 +37,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Open client for vision server.')
     parser.add_argument('interface', metavar='interface name', nargs='?', type=str, default="qt", help='cli, gtk or qt is supported.')
     parser.add_argument('--local', action='store_true', help='Run server local, else remote.')
+    parser.add_argument('--host', type=str, default="localhost", help='Ip adress of remote server.')
+    parser.add_argument('--port', type=int, default=8090, help='Port of remote server.')
 
     args = parser.parse_args()
 
     sInterface = args.interface.lower()
     if sInterface == "qt":
-        sys.exit(runQt(local=args.local))
+        sys.exit(runQt(local=args.local, host=args.host, port=args.port))
     elif sInterface == "cli":
-        sys.exit(runCli(local=args.local))
+        sys.exit(runCli(local=args.local, host=args.host, port=args.port))
     else:
         print("Interface not supported : %s" % sInterface)
 
