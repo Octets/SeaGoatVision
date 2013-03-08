@@ -35,6 +35,9 @@ class WinExec:
         self.window = ui.get_object(win_name(self))
         self.scwCurrent = ui.get_object('scwCurrent')
         self.scwWorking = ui.get_object('scwWorking')
+        self.rdoPython = ui.get_object('rdoPython')
+        self.rdoCPP = ui.get_object('rdoCPP')
+        self.rdoCPP.join_group(self.rdoPython)
         
         self.txtCurrent = GtkSource.View.new_with_buffer(GtkSource.Buffer())
         self.txtCurrent.set_editable(False)
@@ -96,3 +99,4 @@ class WinExec:
     
     def on_rdoCPP_toggled(self, widget):
         self.set_used_language()    
+    
