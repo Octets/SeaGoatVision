@@ -104,4 +104,6 @@ class ThreadMainLoop(threading.Thread):
         self.observer(None)
 
     def stop(self):
+        # TODO : check if other filterchain don't use this source
+        self.source.close()
         self.running = False
