@@ -35,6 +35,7 @@ class Exec:
         self._has_error = False
         
     def set_code(self, code, is_python):
+        self._has_error = False
         self.is_python = is_python
         try:
             self.code = code
