@@ -47,12 +47,11 @@ class WinExec:
         self.txtWorking.set_indent_width(4)
         self.txtWorking.set_show_line_numbers(True)
         self.txtWorking.set_can_default(True)
-        
-        lang_manager = GtkSource.LanguageManager()
-        self.txtCurrent.get_buffer().set_language(
-                                        lang_manager.get_language('python'))
-        self.txtWorking.get_buffer().set_language(
-                                        lang_manager.get_language('python'))
+
+        self.rdoPython = ui.get_object('rdoPython')
+        self.rdoCPP = ui.get_object('rdoCPP')
+        self.rdoCPP.join_group(self.rdoPython)
+                
         self.scwCurrent.add(self.txtCurrent)
         self.scwWorking.add(self.txtWorking)
         
@@ -60,11 +59,24 @@ class WinExec:
         self.window.set_focus(self.txtWorking)
         
         self.init_window()
+        self.set_used_language()
         
     def init_window(self):
         self.txtCurrent.get_buffer().set_text(self.filtre.code)
         self.txtWorking.get_buffer().set_text(self.filtre.code)
         
+    def set_used_language(self):
+        lang_manager = GtkSource.LanguageManager()
+        if self.rdoPython.get_active():
+            self.txtCurrent.get_buffer().set_language(
+                                            lang_manager.get_language('python'))
+            self.txtWorking.get_buffer().set_language(
+                                            lang_manager.get_language('python'))
+        else:
+            self.txtCurrent.get_buffer().set_language(
+                                            lang_manager.get_language('cpp'))
+            self.txtWorking.get_buffer().set_language(
+                                            lang_manager.get_language('cpp'))            
     def on_btnOK_clicked(self, widget):
         self.cb()
         self.window.destroy()
@@ -77,5 +89,10 @@ class WinExec:
         start, end = self.txtWorking.get_buffer().get_bounds()
         code = self.txtWorking.get_buffer().get_text(start, end, False)
         self.txtCurrent.get_buffer().set_text(code)
-        self.filtre.set_code(code)
+        self.filtre.set_code(code, self.rdoPython.get_active())
     
+    def on_rdoPython_toggled(self, widget):
+        self.set_used_language()
+    
+    def on_rdoCPP_toggled(self, widget):
+        self.set_used_language()    
