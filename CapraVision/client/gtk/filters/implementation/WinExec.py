@@ -35,6 +35,9 @@ class WinExec:
         self.window = ui.get_object(win_name(self))
         self.scwCurrent = ui.get_object('scwCurrent')
         self.scwWorking = ui.get_object('scwWorking')
+        self.rdoPython = ui.get_object('rdoPython')
+        self.rdoCPP = ui.get_object('rdoCPP')
+        self.rdoCPP.join_group(self.rdoPython)
         
         self.txtCurrent = GtkSource.View.new_with_buffer(GtkSource.Buffer())
         self.txtCurrent.set_editable(False)
@@ -77,5 +80,11 @@ class WinExec:
         start, end = self.txtWorking.get_buffer().get_bounds()
         code = self.txtWorking.get_buffer().get_text(start, end, False)
         self.txtCurrent.get_buffer().set_text(code)
-        self.filtre.set_code(code)
+        self.filtre.set_code(code, self.rdoPython.get_active())
+    
+    def on_rdoPython_toggled(self, widget):
+        pass
+    
+    def on_rdoCPP_toggled(self, widget):
+        pass
     

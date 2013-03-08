@@ -21,25 +21,60 @@
 import cv2 #@UnusedImport
 import cv2.cv as cv #@UnusedImport
 import numpy as np #@UnusedImport
+import sys
+
+import scipy.weave as weave
 
 class Exec:
     """Create and edit a filter on the fly for testing purposes"""
     
     def __init__(self):
         self.code = ""
+        self.is_python = True
         self._ccode = None
+        self._has_error = False
         
-    def set_code(self, code):
-        self.code = code
-        self._ccode = compile(code, '<string>', 'exec')
-        
+    def set_code(self, code, is_python):
+        self.is_python = is_python
+        try:
+            self.code = code
+            if self.is_python:
+                self._ccode = compile(code, '<string>', 'exec')
+        except Exception,e:
+            sys.stderr.write(str(e) + '\n')
+            self._has_error = True
+            
+    def exec_python(self, image):
+        if self._ccode is not None:
+            exec self._ccode
+        return image
+    
+    def exec_cpp(self, numpy_array):
+        weave.inline(
+        """
+        // Convert numpy array to C++ Mat object
+        // The image data is accessed directly, there is no copy
+        cv::Mat image(Nnumpy_array[0], Nnumpy_array[1], CV_8UC(3), numpy_array);
+        """ + self.code,
+        arg_names = ['numpy_array'],
+        headers = ['<opencv2/opencv.hpp>', '<opencv2/gpu/gpu.hpp>'],
+        extra_objects = ["`pkg-config --cflags --libs opencv`"])
+
+        return numpy_array
+    
     def configure(self):
-        self.set_code(self.code)
+        self._has_error = False
+        self.set_code(self.code, self.is_python)
         
     def execute(self, image):
+        if self._has_error:
+            return image
         try:
-            if self._ccode is not None:
-                exec self._ccode
+            if self.is_python:
+                image = self.exec_python(image)
+            else:
+                image = self.exec_cpp(image)
         except Exception, e:
-            print e
+            sys.stderr.write(str(e) + '\n')
+            self._has_error = True
         return image
