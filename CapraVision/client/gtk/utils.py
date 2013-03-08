@@ -23,7 +23,7 @@ import Image
 import os
 import StringIO
 
-from CapraVision.server.filters.implementation.python.bgr2rgb import BGR2RGB
+from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
  
 def tree_selected_index(treeview):
     sel = treeview.get_selection()
