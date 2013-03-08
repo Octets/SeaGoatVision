@@ -1,10 +1,10 @@
 import os
 import sys
+import traceback
 import numpy as np
 import scipy.weave.ext_tools as ext_tools
 
 image = np.zeros((1,1), dtype=np.uint8)
-help = ""
 
 extcode = """
     cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
@@ -12,6 +12,14 @@ extcode = """
     if (mat.data != ret.data)
         ret.copyTo(mat);
     """
+
+helpcode = """
+    #ifdef DOCSTRING
+    return_val = DOCSTRING;
+    #else
+    return_val = "";
+    #endif
+"""
 
 dirname = os.path.dirname(__file__)
 for f in os.listdir(dirname):
@@ -30,14 +38,8 @@ for f in os.listdir(dirname):
     func.customize.add_support_code(cppcode)
     mod.add_function(func)
 
-    #helpcode = """
-    #    #ifdef DOCSTRING
-    #    help = "hello!";
-    #    #endif
-    #"""
-    #helpmod = ext_tools.ext_function('help_' + filename, helpcode,['help'])
-    #helpmod.customize.add_support_code(cppcode)
-    #mod.add_function(helpmod)
+    helpfunc = ext_tools.ext_function('help_' + filename, helpcode, [])
+    mod.add_function(helpfunc)
 
     try:
         mod.compile()
@@ -47,13 +49,16 @@ for f in os.listdir(dirname):
                 return image
             return execute
 
+        def create_help(cppfunc):
+            def help(self):
+                cpp
         cppmodule = __import__(filename)
-        #code = """from cppfilters import %(module)s""" % {'module' : module}
-        #exec code
         clazz = type(filename, (object,),
                      {'execute' : create_execute(getattr(cppmodule, filename)),
-                      '__doc__' : "C++ filter"})#getattr(cppfilters, 'help_' + filename)()})
+                      '__doc__' : getattr(cppmodule, 'help_' + filename)()})
         setattr(sys.modules[__name__], filename, clazz)
         del clazz
     except Exception as e:
-        sys.stderr.write(e)
+        sys.stderr.write(str(e) + '\n')
+        sys.stderr.write(traceback.format_exc() + "\n")
+                         
