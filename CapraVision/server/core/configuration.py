@@ -77,13 +77,13 @@ class Configuration:
 
     def create_filterchain(self, filterchain_name, lst_str_filters):
         dct_all_filters = utils.load_filters()
-        chain = filterchain.FilterChain()
+        chain = filterchain.FilterChain(filterchain_name)
         for strFilter in lst_str_filters:
-            filter = dct_all_filters.get(strFilter, None)
-            if filter is None:
+            o_filter = dct_all_filters.get(strFilter, None)
+            if o_filter is None:
                 # error, cancel the transaction
                 return False
-            chain.add_filter(filter())
+            chain.add_filter(o_filter())
 
         filterchain.write(self._get_filename(filterchain_name), chain)
         return True
