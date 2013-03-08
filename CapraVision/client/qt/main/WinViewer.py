@@ -29,7 +29,7 @@ Date : december 2012
 import time
 
 from CapraVision.client.qt.utils import get_ui
-from CapraVision.server.filters.implementation.python.bgr2rgb import BGR2RGB
+from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
 import Image
 from PySide import QtCore
 from PySide import QtGui

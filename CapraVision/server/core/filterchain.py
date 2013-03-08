@@ -54,11 +54,15 @@ def isnumeric(string):
 
 def read(file_name):
     """Open a filtre chain file and load its content in a new filtre chain."""
-    new_chain = FilterChain(file_name[file_name.rfind("/") + 1:file_name.rfind(".")])
+    filterchain_name = file_name[file_name.rfind("/") + 1:file_name.rfind(".")]
+    new_chain = FilterChain(filterchain_name)
     cfg = ConfigParser.ConfigParser()
     cfg.read(file_name)
     for section in cfg.sections():
         filtre = CapraVision.server.filters.create_filter(section)
+        if not filtre:
+            print("Error : The filter %s doesn't exist on filterchain." % (section, filterchain_name))
+            continue
         for member in filtre.__dict__:
             parameter = getattr(filtre, member)
             if not isinstance(parameter, Parameter):

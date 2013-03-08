@@ -27,7 +27,7 @@ import sources
 import inspect
 import os
 
-from CapraVision.server.filters.implementation.python.bgr2rgb import BGR2RGB
+from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
 
 def map_source_to_ui(source):
     return map_object_to_ui(source, sources)
