@@ -30,12 +30,15 @@ class WinFilterChain(QtCore.QObject):
 
     WINDOW_TITLE = "Capra Vision"
     selectedFilterChanged = QtCore.Signal(object, object)
+    onPreviewClick = QtCore.Signal(object, object, object, object)
 
-    def __init__(self, controller, qtWidgetFilterSelect, addPreviewCall):
+    def __init__(self, controller, qtWidgetFilterSelect):
         super(WinFilterChain, self).__init__()
 
         self.controller = controller
         self.qtWidgetFilterSelect = qtWidgetFilterSelect
+        self.lastRowFilterChainSelected = 0
+        self.lock_preview = False
 
         self.ui = get_ui(self)
         self.ui.filterListWidget.currentItemChanged.connect(self.onSelectedFilterchanged)
@@ -57,10 +60,6 @@ class WinFilterChain(QtCore.QObject):
         self._modeEdit(False)
         self._list_filterchain_is_selected(False)
         self.ui.frame_filter_edit.setEnabled(False)
-
-        self.lastRowFilterChainSelected = 0
-        
-        self.addPreviewCall = addPreviewCall
         
         self.updateSources()
 
@@ -71,8 +70,15 @@ class WinFilterChain(QtCore.QObject):
         source_name = self.ui.sourcesComboBox.currentText()
         filterchain_name = self.ui.sourceNameLineEdit.text()
         lst_filter = self._get_listString_qList(self.ui.filterListWidget)
-        self.addPreviewCall(self.controller, filterchain_name, source_name, filterchain_name, lst_filter)
-        
+        execution_name = "%s_%s" % (filterchain_name, source_name)
+        self.enable_preview(enable=False)
+        self.onPreviewClick.emit(execution_name, source_name, filterchain_name, lst_filter)
+
+    def enable_preview(self, enable=True):
+        # todo receive string when close from winViewer with execution_name
+        self.lock_preview = not enable
+        self.ui.previewButton.setEnabled(not self.lock_preview)
+
     def add_filter(self, filter_name):
         if filter_name:
             self.ui.filterListWidget.addItem(filter_name)
@@ -174,7 +180,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.sourceNameLineEdit.setText(filterchain_name)
 
         for item in lstFiltreStr:
-             self.ui.filterListWidget.addItem(item)
+            self.ui.filterListWidget.addItem(item)
 
 
     def new(self):
@@ -271,13 +277,15 @@ class WinFilterChain(QtCore.QObject):
         self.ui.frame_edit.setEnabled(not status)
         self.ui.sourceNameLineEdit.setReadOnly(not status)
         self.ui.filterchainListWidget.setEnabled(not status)
-        self.ui.previewButton.setEnabled(not status)
+        if not self.lock_preview:
+            self.ui.previewButton.setEnabled(not status)
 
     def _list_filterchain_is_selected(self, isSelected=True):
         self.ui.editButton.setEnabled(isSelected)
         self.ui.copyButton.setEnabled(isSelected)
         self.ui.deleteButton.setEnabled(isSelected)
-        self.ui.previewButton.setEnabled(isSelected)
+        if not self.lock_preview:
+            self.ui.previewButton.setEnabled(isSelected)
 
     def _get_listString_qList(self, ui):
         return [ui.item(no).text() for no in range(ui.count())]

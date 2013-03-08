@@ -44,6 +44,7 @@ class WinViewer(QtCore.QObject):
     """
 
     newImage = QtCore.Signal(QtGui.QImage)
+    closePreview = QtCore.Signal(object)
 
     def __init__(self, controller, execution_name, source_name, filterchain_name, lst_filter_str):
         super(WinViewer, self).__init__()
@@ -57,33 +58,37 @@ class WinViewer(QtCore.QObject):
         self.size = 1
         self.thread_output = None
         self.last_output = ""
-
-        self.newImage.connect(self.setPixmap)
-        self.ui.filterComboBox.currentIndexChanged.connect(self._changeFilter)
-        self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
-
         self.lastSecondFps = None
         self.fpsCount = 0
 
+        self.newImage.connect(self.setPixmap)
+        self.ui.filterComboBox.currentIndexChanged.connect(self._changeFilter)
+        self.ui.closeButton.clicked.connect(self.__close)
+        self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
+
         self._updateFilters(lst_filter_str)
-
         self.controller.start_filterchain_execution(execution_name, source_name, filterchain_name)
-
         self.actualFilter = self.ui.filterComboBox.currentText()
+
         self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter)
         self.__add_output_observer()
 
-    def quit(self):
+    def closeEvent(self):
+        # this is fake closeEvent, it's called by button close with signal
         if self.actualFilter:
             self.controller.remove_image_observer(self.updateImage, self.execution_name, self.actualFilter)
             self.controller.remove_output_observer(self.execution_name)
+            self.controller.stop_filterchain_execution(self.execution_name)
         if self.thread_output:
             self.thread_output.stop()
-        print("WinViewer %s quit." % (self.filterchain_name))
+        print("WinViewer %s quit." % (self.execution_name))
 
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################
     ######################################################################
+    def __close(self):
+        self.closePreview.emit(self.execution_name)
+
     def __add_output_observer(self):
         self.thread_output = Listen_output(self.updateLog)
         self.thread_output.start()

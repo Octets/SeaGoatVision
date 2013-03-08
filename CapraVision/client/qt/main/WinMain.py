@@ -28,24 +28,25 @@ from PySide import QtGui
 from PySide import QtCore
 
 class WinMain(QtGui.QMainWindow):
+
     def __init__(self, controller):
         super(WinMain, self).__init__()
 
-        self.winViewer = None
+        self.controller = controller
+        self.dct_preview = {}
+        self.ui = get_ui(self)
 
         # create dockWidgets
         self.winFilter = WinFilter(controller)
         self.winFilterSel = WinFilterSel(controller)
-        self.winFilterChain = WinFilterChain(controller, self.winFilterSel, self.addPreview)
-
-        self.setCentralWidget(self.winFilterChain.ui)
+        self.winFilterChain = WinFilterChain(controller, self.winFilterSel)
 
         # connect action between dock widgets
         self.winFilterSel.onAddFilter.connect(self.winFilterChain.add_filter)
         self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
+        self.winFilterChain.onPreviewClick.connect(self.addPreview)
 
-        self.ui = get_ui(self)
-
+        self.setCentralWidget(self.winFilterChain.ui)
         self._addDockWidget()
 
     def _addDockWidget(self):
@@ -59,16 +60,22 @@ class WinMain(QtGui.QMainWindow):
             if isinstance(widget, QtGui.QToolButton):
                 self.toolbar.addWidget(widget)
 
-    def addPreview(self, controller, execution_name, source_name, filterchain_name, lst_filter_str):
-        if self.winViewer:
-            self.winViewer.quit()
-            self.removeDockWidget(self.winViewer.ui)
+    def addPreview(self, execution_name, source_name, filterchain_name, lst_filter_str):
+        winviewer = WinViewer(self.controller, execution_name, source_name, filterchain_name, lst_filter_str)
+        self.dct_preview[execution_name] = winviewer
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, winviewer.ui)
+        winviewer.closePreview.connect(self.removePreview)
+        winviewer.closePreview.connect(self.winFilterChain.enable_preview)
 
-        self.winViewer = WinViewer(controller, execution_name, source_name, filterchain_name, lst_filter_str)
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winViewer.ui)
+    def removePreview(self, execution_name):
+        viewer = self.dct_preview.get(execution_name, None)
+        if viewer:
+            viewer.closeEvent()
+            self.removeDockWidget(viewer.ui)
+            del self.dct_preview[execution_name]
+        else:
+            print("Don't find DockWidget %s" % execution_name)
 
     def quit(self):
-        if self.winViewer:
-            self.winViewer.quit()
-
-
+        for viewer in self.dct_preview.values():
+            viewer.closeEvent()
