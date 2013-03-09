@@ -98,9 +98,6 @@ for f in os.listdir(dirname):
                 return image
             return execute
 
-        def create_help(cppfunc):
-            def help(self):
-                cpp
         cppmodule = __import__(filename)
         clazz = type(filename, (object,),
                      {'execute' : create_execute(getattr(cppmodule, filename)),
