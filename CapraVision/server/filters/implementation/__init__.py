@@ -19,12 +19,12 @@
 """ Filters implementations
     Rules:
         - Filter must be a class
-        - Filter must have a execute(image) function that 
+        - Filter must have a execute(image) function that
             returns the processed image
-        - Filter can have a configure() function to configure the 
+        - Filter can have a configure() function to configure the
             object after creation
         - If there are data members that must not be saved, the member name
-            must start with an underscore.  
+            must start with an underscore.
             Eg: self._dont_save = 123 # value will not be save
                 self.save = 456 # value will be saved"""
 
@@ -41,7 +41,7 @@ for f in os.listdir(os.path.dirname(__file__)):
     if not f.endswith(".py"):
         continue
     filename, _ = os.path.splitext(f)
-    code = 'from %(module)s import *' % {'module' : filename} 
+    code = 'from %(module)s import *' % {'module' : filename}
     exec code
 
 
@@ -64,7 +64,11 @@ helpcode = """
     return_val = "";
     #endif
 """
-
+build_dir = "build/"
+try:
+    os.mkdir(build_dir)
+except:
+    pass
 dirname = os.path.dirname(__file__)
 for f in os.listdir(dirname):
     if not f.endswith(".cpp"):
@@ -73,12 +77,13 @@ for f in os.listdir(dirname):
     cppcode = open(os.path.join(dirname, f)).read()
 
     mod = ext_tools.ext_module(filename)
-    [mod.customize.add_header(line.replace('#include ', '')) 
-                             for line in cppcode.split('\n') 
+
+    [mod.customize.add_header(line.replace('#include ', ''))
+                             for line in cppcode.split('\n')
                              if line.startswith('#include')]
     mod.customize.add_extra_link_arg("`pkg-config --cflags --libs opencv`")
 
-    func = ext_tools.ext_function(filename, extcode,['image'])
+    func = ext_tools.ext_function(filename, extcode, ['image'])
     func.customize.add_support_code(cppcode)
     mod.add_function(func)
 
@@ -86,7 +91,7 @@ for f in os.listdir(dirname):
     mod.add_function(helpfunc)
 
     try:
-        mod.compile()
+        mod.compile(location=build_dir)
         def create_execute(cppfunc):
             def execute(self, image):
                 cppfunc(image)
