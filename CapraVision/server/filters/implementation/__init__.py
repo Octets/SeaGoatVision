@@ -94,7 +94,7 @@ for f in os.listdir(dirname):
         mod.compile(location=build_dir)
         def create_execute(cppfunc):
             def execute(self, image):
-                cppfunc(image)
+                image = cppfunc(image)
                 return image
             return execute
 
