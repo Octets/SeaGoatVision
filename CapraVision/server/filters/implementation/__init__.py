@@ -51,25 +51,24 @@ for f in os.listdir(os.path.dirname(__file__)):
 ##
 # C++ FILTERS IMPORT
 ##
-
 def compile_cpp_filters():
     """
     This method finds and compile every c++ filters
-    If a c++ file changed, the file must be recompiled in a new .so file 
+    If a c++ file changed, the file must be recompiled in a new .so file
     """
-    
+
     BUILD_DIR = 'build'
     RELOAD_DIR = os.path.join('build', 'reload')
     if not os.path.exists(BUILD_DIR):
         os.mkdir(BUILD_DIR)
     if not os.path.exists(RELOAD_DIR):
         os.mkdir(RELOAD_DIR)
-    if len(g.cppfiles) == 0:
+    if not len(g.cppfiles):
         for f in os.listdir(RELOAD_DIR):
             os.remove(os.path.join(RELOAD_DIR, f))
 
     image = np.zeros((1,1), dtype=np.uint8)
-    
+
     def ext_code():
         """
         Return the code that calls a c++ filter
@@ -78,9 +77,9 @@ def compile_cpp_filters():
             cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
             cv::Mat ret = execute(mat);
             if (mat.data != ret.data)
-            ret.copyTo(mat);
+                image = ret.data;
             """
-    
+
     def help_code():
         """
         Return the code that returns the help string from a c++ file
@@ -92,7 +91,7 @@ def compile_cpp_filters():
             return_val = "";
             #endif
             """
-    
+
     def create_execute(cppfunc):
         """
         Create and return an "execute" method for the dynamically
@@ -102,14 +101,14 @@ def compile_cpp_filters():
             cppfunc(image)
             return image
         return execute
-        
+
     dirname = os.path.dirname(__file__)
     for f in os.listdir(dirname):
         if not f.endswith(".cpp"):
             continue
         filename, _ = os.path.splitext(f)
         cppcode = open(os.path.join(dirname, f)).read()
-        
+
         #Verify if there are changes in the c++ code file.  If there are
         #changes, add a timestamp to the filter .so file name to force a
         #reimportation of the new filter.
@@ -117,36 +116,36 @@ def compile_cpp_filters():
             if cppcode != g.cppfiles[filename]:
                 g.cpptimestamps[filename] = str(int(time.time()))
         g.cppfiles[filename] = cppcode
-        
+
         if g.cpptimestamps.has_key(filename):
             modname = filename + g.cpptimestamps[filename]
         else:
             modname = filename
-        
+
         #Compile filters
         #The included files are found in the .cpp file
         mod = ext_tools.ext_module(modname)
-        [mod.customize.add_header(line.replace('#include ', '')) 
-                                 for line in cppcode.split('\n') 
+        [mod.customize.add_header(line.replace('#include ', ''))
+                                 for line in cppcode.split('\n')
                                  if line.startswith('#include')]
         mod.customize.add_extra_link_arg("`pkg-config --cflags --libs opencv`")
-    
+
         func = ext_tools.ext_function(filename, ext_code(),['image'])
         func.customize.add_support_code(cppcode)
         mod.add_function(func)
-    
+
         helpfunc = ext_tools.ext_function('help_' + filename, help_code(), [])
         mod.add_function(helpfunc)
-    
+
         try:
             if g.cpptimestamps.has_key(filename):
             #Reloaded modules are saved in the reload folder for easy cleanup
                 mod.compile(RELOAD_DIR)
             else:
                 mod.compile(BUILD_DIR)
-    
+
             cppmodule = __import__(modname)
-            
+
             clazz = type(filename, (object,),
                          {'execute' : create_execute(getattr(cppmodule, filename)),
                           '__doc__' : getattr(cppmodule, 'help_' + filename)()})
