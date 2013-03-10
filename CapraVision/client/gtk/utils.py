@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -24,7 +24,7 @@ import os
 import StringIO
 
 from CapraVision.server.filters.implementation.bgr2rgb import BGR2RGB
- 
+
 def tree_selected_index(treeview):
     sel = treeview.get_selection()
     if sel is None:
@@ -55,9 +55,9 @@ def numpy_to_pixbuf(image):
 
 def get_ui(window, *names):
     ui = Gtk.Builder()
-    glade_file = os.path.join('CapraVision', 'client', 'gtk', 'gladefiles', 
+    glade_file = os.path.join('CapraVision', 'client', 'gtk', 'gladefiles',
                               win_name(window) + '.glade')
-    ui.add_objects_from_file(glade_file, [win_name(window)] + 
+    ui.add_objects_from_file(glade_file, [win_name(window)] +
                              [name for name in names])
     ui.connect_signals(window)
     return ui
@@ -73,4 +73,4 @@ class WindowState:
         ExistingModified = File exists and the user made modifications
     """
     Empty, Create, Show, Modified = range(4)
-    
+

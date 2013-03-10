@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of CapraVision.
-#    
+#
 #    CapraVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Description : Open gtk 
+Description : Open gtk
 Authors: Benoit Paquet
 Date : October 2012
 """
@@ -34,7 +34,7 @@ def run():
 
     # Directly connected to the vision server
     c = VisionManager()
-    
+
     if not c.is_connected():
         print("Vision server is not accessible.")
         return
@@ -57,11 +57,11 @@ def run():
     # Close connection
     server.stop()
     c.close_server()
-    
+
 if __name__ == '__main__':
     # Project path is parent directory
-    import os 
+    import os
     parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     os.sys.path.insert(0, parentdir)
     run()
-    
+
