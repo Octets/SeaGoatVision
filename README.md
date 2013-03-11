@@ -15,8 +15,6 @@ License : Read LICENSE file.
 
 Contact information :
 
-Write into github project : https://github.com/SeaGoatVision/SeaGoatVision
-
 Known bugs :
 
 It's not a release version, the project is in developpement.
