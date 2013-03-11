@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>523</width>
-    <height>387</height>
+    <width>666</width>
+    <height>423</height>
    </rect>
   </property>
   <property name="features">
@@ -45,7 +45,7 @@
           <rect>
            <x>0</x>
            <y>80</y>
-           <width>54</width>
+           <width>64</width>
            <height>158</height>
           </rect>
          </property>
@@ -196,7 +196,7 @@
          <widget class="QFrame" name="frame_edit">
           <property name="minimumSize">
            <size>
-            <width>256</width>
+            <width>300</width>
             <height>55</height>
            </size>
           </property>
@@ -211,7 +211,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>256</width>
+             <width>299</width>
              <height>54</height>
             </rect>
            </property>
@@ -224,6 +224,12 @@
             </property>
             <item>
              <widget class="QToolButton" name="newButton">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>49</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
@@ -252,6 +258,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>49</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
@@ -263,6 +275,10 @@
               <property name="text">
                <string>Edit</string>
               </property>
+              <property name="icon">
+               <iconset>
+                <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/edit-select-all.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/edit-select-all.png</iconset>
+              </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextUnderIcon</enum>
               </property>
@@ -270,6 +286,12 @@
             </item>
             <item>
              <widget class="QToolButton" name="copyButton">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>49</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
@@ -291,6 +313,12 @@
             </item>
             <item>
              <widget class="QToolButton" name="deleteButton">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>49</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
@@ -318,6 +346,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>49</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
@@ -329,6 +363,10 @@
               <property name="text">
                <string>Upload</string>
               </property>
+              <property name="icon">
+               <iconset>
+                <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/view-restore.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/view-restore.png</iconset>
+              </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextUnderIcon</enum>
               </property>
@@ -338,6 +376,12 @@
              <widget class="QToolButton" name="previewButton">
               <property name="enabled">
                <bool>true</bool>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>49</height>
+               </size>
               </property>
               <property name="font">
                <font>
@@ -387,7 +431,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>86</width>
+             <width>101</width>
              <height>41</height>
             </rect>
            </property>
