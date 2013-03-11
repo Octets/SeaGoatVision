@@ -16,7 +16,7 @@ Until OpenCV 2.4 is fully supported, the preferred way is to compile OpenCV manu
 
 A. Download the project
 
-    git clone git://github.com/clubcapra/SeaGoatVision.git
+    git clone git://github.com/SeaGoatVision/SeaGoatVision.git
 
 
 B. Install dependencies

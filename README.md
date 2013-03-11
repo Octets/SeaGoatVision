@@ -15,7 +15,7 @@ License : Read LICENSE file.
 
 Contact information :
 
-Write into github project : https://github.com/clubcapra/SeaGoatVision
+Write into github project : https://github.com/SeaGoatVision/SeaGoatVision
 
 Known bugs :
 
