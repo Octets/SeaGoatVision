@@ -1,9 +1,9 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#
+#    
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -16,18 +16,30 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-Description : Run the vision server
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
-"""
-import argparse
 
-from SeaGoatVision.server.mainserver import run
+import cv2
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Vision Server')
-    parser.add_argument('--port', type=int, default="8090", help='Port of the host.')
-    args = parser.parse_args()
-    run(port=args.port)
+global captures 
+captures = {}
 
+class Webcam:
+    """Return images from the webcam."""
+         
+    def __init__(self):
+        self.run = True
+        self.camera_number = 0
+        self.video = cv2.VideoCapture(self.camera_number)
+        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 320)
+        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 240)
+        
+    def __iter__(self):
+        return self
+    
+    def next(self):
+        run, image = self.video.read()
+        if run == False:
+            raise StopIteration
+        return image
+        
+    def close(self):
+        self.video.release()

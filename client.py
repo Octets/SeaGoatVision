@@ -1,9 +1,9 @@
 #! /usr/bin/env python2.7
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
-#    This file is part of CapraVision.
+#    This file is part of SeaGoatVision.
 #
-#    CapraVision is free software: you can redistribute it and/or modify
+#    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
@@ -26,11 +26,11 @@ import sys
 import argparse
 
 def runQt(local=False, host="localhost", port=8090):
-    from CapraVision.client.qt.mainqt import run
+    from SeaGoatVision.client.qt.mainqt import run
     return run(local=local, host=host, port=port)
 
 def runCli(local=False, host="localhost", port=8090):
-    from CapraVision.client.cli.cli import run
+    from SeaGoatVision.client.cli.cli import run
     return run()
 
 if __name__ == '__main__':

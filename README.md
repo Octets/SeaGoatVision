@@ -1,6 +1,6 @@
 Description:
 
-Capravision is a vision server to execute filter on picture.
+SeaGoatVision is a vision server to execute filter on picture.
 
 - Manage multiple client
 - Run filterchain
@@ -15,7 +15,7 @@ License : Read LICENSE file.
 
 Contact information :
 
-Write into github project : https://github.com/clubcapra/CapraVision
+Write into github project : https://github.com/clubcapra/SeaGoatVision
 
 Known bugs :
 

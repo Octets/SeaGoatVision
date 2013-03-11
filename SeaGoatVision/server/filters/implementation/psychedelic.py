@@ -1,9 +1,9 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#
+#    
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -16,18 +16,26 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-Description : Run the vision server
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
-"""
-import argparse
 
-from SeaGoatVision.server.mainserver import run
+import numpy as np
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Vision Server')
-    parser.add_argument('--port', type=int, default="8090", help='Port of the host.')
-    args = parser.parse_args()
-    run(port=args.port)
+from SeaGoatVision.server.filters.parameter import  Parameter
 
+class Psychedelic:
+    """Acid trip"""
+    
+    def __init__(self):
+        self._images = []
+        self.nb_images = Parameter("Nb Images", 1, 99, 10)
+        
+    def execute(self, image):
+        self._images.append(image)
+        while len(self._images) >= self.nb_images.get_current_value():
+            del self._images[0]
+            
+        try:
+            for img in self._images:
+                image = np.add(image, img)
+        except:
+            pass
+        return image

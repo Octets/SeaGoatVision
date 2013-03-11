@@ -1,0 +1,179 @@
+//    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
+//
+//    This file is part of SeaGoatVision.
+//    
+//    SeaGoatVision is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+//Description : This is the proto file. We use this file to generate server_pb2.py for protobuf service. 
+//Authors: Mathieu Benoit (mathben963@gmail.com)
+//Date : October 2012
+
+package protobuf.socketrpc;
+
+option java_package = "com.capra";
+option java_outer_classname = "VServerProto";
+
+option py_generic_services = true;
+option optimize_for = SPEED;
+
+//############################################################
+//##################### GENERAL SECTION ######################
+//############################################################
+message StatusResponse
+{
+  required int32 status = 1;
+  optional string message = 2;
+}
+
+//############################################################
+//###################### ACTION SECTION ######################
+//############################################################
+message IsConnectedRequest{}
+
+message ReloadFilterRequest
+{
+  repeated string filterName = 1;
+}
+
+message StartFilterchainExecutionRequest
+{
+  required string execution_name = 1;
+  required string source_name = 2;
+  required string filterchain_name = 3;
+}
+
+message StopFilterchainExecutionRequest
+{
+  required string execution_name = 1;
+}
+
+message LoadChainRequest
+{
+  required string filterName = 1;
+}
+
+message DeleteFilterChainRequest{
+  required string filterchain_name = 1;
+}
+
+message UploadFilterChainRequest{
+  required string filterchain_name = 1;
+  required string s_file_contain = 2;
+}
+
+message ModifyFilterChainRequest{
+  required string old_filterchain_name = 1;
+  required string new_filterchain_name = 2;
+  repeated Filter lst_str_filters = 3;
+}
+
+message AddImageObserverRequest
+{
+  required string execution_name = 1;
+  required string filter_name = 2;
+}
+message SetImageObserverRequest
+{
+  required string execution_name = 1;
+  required string filter_name_old = 2;
+  required string filter_name_new = 3;
+}
+message RemoveImageObserverRequest
+{
+  required string execution_name = 1;
+  required string filter_name = 2;
+}
+
+message AddOutputObserverRequest
+{
+  required string execution_name = 1;
+}
+message RemoveOutputObserverRequest
+{
+  required string execution_name = 1;
+}
+//############################################################
+//######################## GET SECTION ####################### 
+//############################################################
+message GetFilterListRequest{}
+message GetFilterListResponse
+{
+  repeated string filters = 1;
+}
+
+message GetFilterListFromFilterChainRequest{
+  required string filterchain_name = 1;
+}
+message GetFilterListFromFilterChainResponse
+{
+  repeated Filter filters = 1;
+}
+message GetFilterChainListRequest{}
+message GetFilterChainListResponse
+{
+  repeated FilterChain filterchains = 1;
+}
+
+message GetSourceListRequest{}
+message GetSourceListResponse
+{
+  repeated string source = 1;
+}
+
+//############################################################
+//################## CUSTOM MESSAGE SECTION ##################
+//############################################################
+message Filter
+{
+  required string name = 1;
+  optional string doc = 2;
+}
+
+message FilterChain
+{
+  required string name = 1;
+  optional string doc = 2;
+}
+
+//#############################################################
+//###################### SERVICE SECTION ###################### 
+//#############################################################
+service CommandService 
+{
+  // get information
+  rpc get_filter_list(GetFilterListRequest) returns(GetFilterListResponse);
+  rpc get_filter_list_from_filterchain(GetFilterListFromFilterChainRequest) returns(GetFilterListFromFilterChainResponse);
+  rpc get_filterchain_list(GetFilterChainListRequest) returns(GetFilterChainListResponse);
+  rpc get_source_list(GetSourceListRequest) returns(GetSourceListResponse);
+  
+  // ask state
+  rpc is_connected(IsConnectedRequest) returns(StatusResponse);
+  
+  // observer
+  rpc add_image_observer(AddImageObserverRequest) returns(StatusResponse);
+  rpc set_image_observer(SetImageObserverRequest) returns(StatusResponse);
+  rpc remove_image_observer(RemoveImageObserverRequest) returns(StatusResponse);
+  rpc add_output_observer(AddOutputObserverRequest) returns(StatusResponse);
+  rpc remove_output_observer(RemoveOutputObserverRequest) returns(StatusResponse);
+  
+  // action
+  rpc reload_filter(ReloadFilterRequest) returns(StatusResponse);
+  rpc load_chain(LoadChainRequest) returns(StatusResponse);
+  rpc delete_filterchain(DeleteFilterChainRequest) returns(StatusResponse);
+  rpc upload_filterchain(UploadFilterChainRequest) returns(StatusResponse);
+  rpc modify_filterchain(ModifyFilterChainRequest) returns(StatusResponse);
+  rpc start_filterchain_execution(StartFilterchainExecutionRequest) returns(StatusResponse);
+  rpc stop_filterchain_execution(StopFilterchainExecutionRequest) returns(StatusResponse);
+}
+

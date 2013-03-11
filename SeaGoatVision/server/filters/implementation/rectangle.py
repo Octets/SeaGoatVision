@@ -1,9 +1,9 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#
+#    
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -16,18 +16,25 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-Description : Run the vision server
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
-"""
-import argparse
 
-from SeaGoatVision.server.mainserver import run
+import cv2
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Vision Server')
-    parser.add_argument('--port', type=int, default="8090", help='Port of the host.')
-    args = parser.parse_args()
-    run(port=args.port)
+from SeaGoatVision.server.filters.parameter import Parameter
 
+class Rectangle:
+    """Draw a black rectangle on top of the image"""
+    
+    def __init__(self):
+        self.x1 = Parameter('x1', 0, 65535, 0)
+        self.y1 = Parameter('y1', 0, 65535, 0)
+        self.x2 = Parameter('x2', 0, 65535, 100)
+        self.y2 = Parameter('y2', 0, 65535, 100)
+    
+    def execute(self, image):
+        cv2.rectangle(image, 
+            (int(self.x1.get_current_value()), int(self.y1.get_current_value())), 
+            (int(self.x2.get_current_value()), int(self.y2.get_current_value())), 
+            (0, 0, 0),
+            cv2.cv.CV_FILLED)
+        return image    
+    
