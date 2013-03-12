@@ -46,8 +46,10 @@ class WinViewer(QtCore.QObject):
     newImage = QtCore.Signal(QtGui.QImage)
     closePreview = QtCore.Signal(object)
 
-    def __init__(self, controller, execution_name, source_name, filterchain_name, lst_filter_str):
+    def __init__(self, controller, execution_name, source_name, filterchain_name, lst_filter_str, host):
         super(WinViewer, self).__init__()
+        self.host = host
+        self.port = 5030
         self.ui = get_ui(self, 'sourcesListStore', 'filterChainListStore')
 
         self.controller = controller
@@ -73,6 +75,7 @@ class WinViewer(QtCore.QObject):
         self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter)
         self.__add_output_observer()
 
+
     def closeEvent(self):
         # this is fake closeEvent, it's called by button close with signal
         if self.actualFilter:
@@ -90,7 +93,7 @@ class WinViewer(QtCore.QObject):
         self.closePreview.emit(self.execution_name)
 
     def __add_output_observer(self):
-        self.thread_output = Listen_output(self.updateLog)
+        self.thread_output = Listen_output(self.updateLog, self.host, self.port)
         self.thread_output.start()
         ########### TODO fait un thread de client dude
         self.controller.add_output_observer(self.execution_name)
@@ -153,14 +156,16 @@ class WinViewer(QtCore.QObject):
         self.size = float(textSize) / 100
 
 class Listen_output(threading.Thread):
-    def __init__(self, observer):
+    def __init__(self, observer, host, port):
         threading.Thread.__init__(self)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.is_stopped = False
         self.observer = observer
+        self.host = host
+        self.port = port
 
     def run(self):
-        self.socket.connect(("127.0.0.1", 5030))
+        self.socket.connect((self.host, self.port))
         while not self.is_stopped:
             self.observer(self.socket.recv(2048))
 
