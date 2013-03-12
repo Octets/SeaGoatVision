@@ -109,9 +109,9 @@ class WinViewer(QtCore.QObject):
     def updateLog(self, data):
         data = str(data).strip()
         print data
-        if data and self.last_output != data:
-            self.last_output = data
-            self.ui.txtLog.insertPlainText(data + "\n")
+        #if data and self.last_output != data:
+        #    self.last_output = data
+        #    self.ui.txtLog.insertPlainText(data + "\n")
 
     def updateImage(self, image):
         # fps
