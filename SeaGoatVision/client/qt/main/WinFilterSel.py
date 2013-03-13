@@ -30,6 +30,7 @@ class WinFilterSel(QtCore.QObject):
 
         self.ui.addFilterButton.clicked.connect(self._addFilter)
         self.ui.reloadFilterButton.clicked.connect(self._reloadFilter)
+        self.ui.filterListWidget.doubleClicked.connect(self._addFilter)
 
         self.reload_list_filter(self.controller.get_filter_list())
 
