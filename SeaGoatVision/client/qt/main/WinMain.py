@@ -29,7 +29,7 @@ from PySide import QtCore
 
 class WinMain(QtGui.QMainWindow):
 
-    def __init__(self, controller):
+    def __init__(self, controller, host="localhost"):
         super(WinMain, self).__init__()
 
         self.controller = controller
@@ -48,6 +48,8 @@ class WinMain(QtGui.QMainWindow):
 
         self.setCentralWidget(self.winFilterChain.ui)
         self._addDockWidget()
+        
+        self.host = host
 
     def _addDockWidget(self):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilter)
@@ -61,7 +63,7 @@ class WinMain(QtGui.QMainWindow):
                 self.toolbar.addWidget(widget)
 
     def addPreview(self, execution_name, source_name, filterchain_name, lst_filter_str):
-        winviewer = WinViewer(self.controller, execution_name, source_name, filterchain_name, lst_filter_str)
+        winviewer = WinViewer(self.controller, execution_name, source_name, filterchain_name, lst_filter_str, self.host)
         self.dct_preview[execution_name] = winviewer
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, winviewer.ui)
         winviewer.closePreview.connect(self.removePreview)
