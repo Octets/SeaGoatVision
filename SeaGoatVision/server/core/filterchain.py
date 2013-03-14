@@ -67,7 +67,11 @@ def read(file_name):
             parameter = getattr(filtre, member)
             if not isinstance(parameter, Parameter):
                 continue
-            val = cfg.get(section, member)
+            try:
+                val = cfg.get(section, member)
+            except:
+                # the file didn't contain the parameter
+                continue
             if val == "True" or val == "False":
                 parameter.set_current_value(cfg.getboolean(section, member))
             elif isnumeric(val):
