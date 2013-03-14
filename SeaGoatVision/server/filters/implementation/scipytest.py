@@ -14,12 +14,15 @@ class ScipyExample(dataextract.DataExtractor):
         dataextract.DataExtractor.__init__(self)
         self.Circlex = Parameter("Circlex", 0, 200, 0)
         self.Circley = Parameter("Circley", 0, 200, 0)
+        self.param = {"Circlex" : self.Circlex,
+                      "Circley" : self.Circley}
 
     def execute(self, image):
         #self.notify_output_observers("ScipyTestPy: j=6 \n")
         notify = self.notify_output_observers
-        circlex = self.Circlex.get_current_value()
-        circley = self.Circley.get_current_value()
+        param = {}
+        for key, value in self.param.items():
+            param[key] = value.get_current_value()
         img1 = cv.fromarray(image)
         weave.inline(
         """
@@ -29,9 +32,13 @@ class ScipyExample(dataextract.DataExtractor):
         cv::Mat mat(get_cvmat(img1));
         //printf("addr %d %d\\n",  mat.rows, mat.cols);
         //printf("%d\\n", circlex);
+
+        int circlex = (int)PyInt_AsLong(PyDict_GetItemString(param, "Circlex"));
+        int circley = (int)PyInt_AsLong(PyDict_GetItemString(param, "Circley"));
+
         cv::circle(mat, cv::Point(circlex, circley), mat.cols/4, cv::Scalar(255, 0, 255), -1);
         """,
-        arg_names = ['img1', 'notify', 'circlex', 'circley'],
+        arg_names = ['img1', 'notify', 'param'],
         include_dirs = ['/usr/local/include/opencv/'],
         headers = ['<cv.h>', '<cxcore.h>'],
         #libraries = ['ml', 'cvaux', 'highgui', 'cv', 'cxcore'],
@@ -48,4 +55,3 @@ class ScipyExample(dataextract.DataExtractor):
         )
         img1 = numpy.asarray(img1)
         return img1
-
