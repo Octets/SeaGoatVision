@@ -11,7 +11,7 @@ class FaceDetection(dataextract.DataExtractor):
 
     def __init__(self):
         dataextract.DataExtractor.__init__(self)
-
+        self.nb_face = 1
         self.eye_detect_name = os.path.join('data', 'facedetect',
                                         'haarcascade_eye_tree_eyeglasses.xml')
         self.face_detect_name = os.path.join('data', 'facedetect',
@@ -44,6 +44,7 @@ class FaceDetection(dataextract.DataExtractor):
                         (face[0] + eye[0], face[1] + eye[1], eye[2], eye[3]),
                         (255, 0, 0))"""
 
+            self.nb_face = 1
         return image
 
     def draw_rectangle(self, image, coord, color):
@@ -65,7 +66,8 @@ class FaceDetection(dataextract.DataExtractor):
 
         c_x = (maxx-minx) / 2 + minx
         c_y = (maxy-miny) / 2 + miny
-        self.notify_output_observers("facedetect : x=%d, y=%d" % (c_x, c_y))
+        self.notify_output_observers("facedetect%d : x=%d, y=%d" % \
+                (self.nb_face, c_x, c_y))
 
         return image[miny:maxy, minx:maxx]
 
