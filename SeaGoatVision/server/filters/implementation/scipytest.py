@@ -3,6 +3,7 @@ from scipy import weave
 import cv
 import numpy
 from SeaGoatVision.server.filters import dataextract
+from SeaGoatVision.server.filters.parameter import Parameter
 
 class ScipyExample(dataextract.DataExtractor):
     """Example on how to use scipy.weave inside filters.
@@ -11,11 +12,14 @@ class ScipyExample(dataextract.DataExtractor):
 
     def __init__(self):
         dataextract.DataExtractor.__init__(self)
+        self.Circlex = Parameter("Circlex", 0, 200, 0)
+        self.Circley = Parameter("Circley", 0, 200, 0)
 
     def execute(self, image):
         #self.notify_output_observers("ScipyTestPy: j=6 \n")
         notify = self.notify_output_observers
-
+        circlex = self.Circlex.get_current_value()
+        circley = self.Circley.get_current_value()
         img1 = cv.fromarray(image)
         weave.inline(
         """
@@ -24,9 +28,10 @@ class ScipyExample(dataextract.DataExtractor):
         notify.call(notify_args);
         cv::Mat mat(get_cvmat(img1));
         //printf("addr %d %d\\n",  mat.rows, mat.cols);
-        cv::circle(mat, cv::Point(mat.rows/2, mat.cols/2), mat.cols/4, cv::Scalar(255, 0, 255), -1);
+        //printf("%d\\n", circlex);
+        cv::circle(mat, cv::Point(circlex, circley), mat.cols/4, cv::Scalar(255, 0, 255), -1);
         """,
-        arg_names = ['img1', 'notify'],
+        arg_names = ['img1', 'notify', 'circlex', 'circley'],
         include_dirs = ['/usr/local/include/opencv/'],
         headers = ['<cv.h>', '<cxcore.h>'],
         #libraries = ['ml', 'cvaux', 'highgui', 'cv', 'cxcore'],
