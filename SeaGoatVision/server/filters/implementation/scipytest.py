@@ -12,10 +12,16 @@ class ScipyExample(dataextract.DataExtractor):
 
     def __init__(self):
         dataextract.DataExtractor.__init__(self)
-        self.Circlex = Parameter("Circlex", 0, 200, 0)
         self.Circley = Parameter("Circley", 0, 200, 0)
+        self.Circlex = Parameter("Circlex", 0, 200, 0)
+        self.colorr = Parameter("colorr", 0, 255, 0)
+        self.colorg = Parameter("colorg", 0, 255, 0)
+        self.colorb = Parameter("colorb", 0, 255, 255)
         self.param = {"Circlex" : self.Circlex,
-                      "Circley" : self.Circley}
+                      "Circley" : self.Circley,
+                      "colorr" : self.colorr,
+                      "colorg" : self.colorg,
+                      "colorb" : self.colorb}
 
     def execute(self, image):
         #self.notify_output_observers("ScipyTestPy: j=6 \n")
@@ -35,8 +41,11 @@ class ScipyExample(dataextract.DataExtractor):
 
         int circlex = (int)PyInt_AsLong(PyDict_GetItemString(param, "Circlex"));
         int circley = (int)PyInt_AsLong(PyDict_GetItemString(param, "Circley"));
+        int colorr = (int)PyInt_AsLong(PyDict_GetItemString(param, "colorr"));
+        int colorg = (int)PyInt_AsLong(PyDict_GetItemString(param, "colorg"));
+        int colorb = (int)PyInt_AsLong(PyDict_GetItemString(param, "colorb"));
 
-        cv::circle(mat, cv::Point(circlex, circley), mat.cols/4, cv::Scalar(255, 0, 255), -1);
+        cv::circle(mat, cv::Point(circlex, circley), mat.cols/4, cv::Scalar(colorr, colorg, colorb), -1);
         """,
         arg_names = ['img1', 'notify', 'param'],
         include_dirs = ['/usr/local/include/opencv/'],

@@ -67,10 +67,10 @@ class WinFilter(QtGui.QDockWidget):
         for param in self.filter_param:
             layout.addWidget(self.getWidget(param))
 
-        self.executeButton = QtGui.QPushButton()
-        self.executeButton.clicked.connect(self.execute)
-        self.executeButton.setText("Execute")
-        layout.addWidget(self.executeButton)
+        #self.executeButton = QtGui.QPushButton()
+        #self.executeButton.clicked.connect(self.execute)
+        #self.executeButton.setText("Execute")
+        #layout.addWidget(self.executeButton)
 
         self.widget().setLayout(layout)
 
@@ -111,6 +111,7 @@ class WinFilter(QtGui.QDockWidget):
 
         slider.valueChanged.connect(numberLabel.setNum)
         slider.valueChanged.connect(tempParameter.setTempValue)
+        slider.valueChanged.connect(tempParameter.execute)
 
         layout = QtGui.QHBoxLayout()
         layout.addWidget(slider)
