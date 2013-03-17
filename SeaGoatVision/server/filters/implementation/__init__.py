@@ -35,7 +35,7 @@ import traceback
 import numpy as np
 import scipy.weave.ext_tools as ext_tools
 
-from SeaGoatVision.server.filters.dataextract import DataExtract
+from SeaGoatVision.server.core.filter import Filter
 import SeaGoatVision.globals as g
 
 ##
@@ -154,7 +154,7 @@ def compile_cpp_filters():
 
             cppmodule = __import__(modname)
 
-            clazz = type(filename, (DataExtract,),
+            clazz = type(filename, (Filter,),
                          {'__init__' : init(),
                           'execute' : create_execute(getattr(cppmodule, filename)),
                           '__doc__' : getattr(cppmodule, 'help_' + filename)()})
