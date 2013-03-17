@@ -73,6 +73,10 @@ def read(file_name):
                     param.set(int(f_value))
                 else:
                     param.set(f_value)
+            elif val[0] == "(":
+                # It's a tuple!
+                val = tuple(map(float, val[1:-1].split(',')))
+                param.set(val[0], thres_h=val[1])
             else:
                 val = '\n'.join([line[1:-1] for line in str.splitlines(val)])
                 param.set(val)

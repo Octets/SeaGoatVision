@@ -258,7 +258,7 @@ class Manager:
         filter = filterchain.get_filter(name=filter_name)
         param = filter.get_params(param_name=param_name)
         if param:
-            o_param.set(value)
+            param.set(value)
             filter.configure()
 
     ##########################################################################

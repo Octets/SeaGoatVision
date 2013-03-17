@@ -92,6 +92,9 @@ class Param(object):
         return self.force_type(self.value)
 
     def set(self, value, thres_h=None):
+        #exception for bool
+        if self.type_t is bool:
+            value = bool(value)
         if type(value) is not self.type_t:
             raise Exception("value is wrong type. Expected %s and receive %s" \
                     % (self.type_t, type(value)))

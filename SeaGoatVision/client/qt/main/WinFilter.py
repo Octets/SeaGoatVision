@@ -80,14 +80,13 @@ class WinFilter(QtGui.QDockWidget):
                 self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), value)
             return set
 
+        self.lst_param.append(param)
         layout = getWidget[param.get_type()](param, create_value_change(param))
         groupBox.setLayout(layout)
 
         return groupBox
 
     def getIntegerWidget(self, param, cb_value_change):
-        self.lst_param.append(param)
-
         numberLabel = QtGui.QLabel()
         numberLabel.setNum(param.get())
 
@@ -115,7 +114,18 @@ class WinFilter(QtGui.QDockWidget):
         print "string"
 
     def getBoolWidget(self, param, cb_value_change):
-        print "bool"
+        boolLabel = QtGui.QLabel()
+        boolLabel.setNum(param.get())
+
+        checkbox = QtGui.QCheckBox()
+        checkbox.stateChanged.connect(cb_value_change)
+        if param.get():
+            checkbox.setCheckState(QtCore.Qt.PartiallyChecked)
+
+        layout = QtGui.QHBoxLayout()
+        layout.addWidget(checkbox)
+        layout.addWidget(boolLabel)
+        return layout
 
     def reset(self):
         for param in self.lst_param:
