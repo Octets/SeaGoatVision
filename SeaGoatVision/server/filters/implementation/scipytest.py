@@ -2,7 +2,7 @@
 from scipy import weave
 import cv
 import numpy
-from SeaGoatVision.server.filters.parameter import Parameter
+from SeaGoatVision.server.filters.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
 class ScipyExample(Filter):
@@ -12,11 +12,11 @@ class ScipyExample(Filter):
 
     def __init__(self):
         Filter.__init__(self)
-        self.Circley = Parameter("Circley", 0, 200, 0)
-        self.Circlex = Parameter("Circlex", 0, 200, 0)
-        self.colorr = Parameter("colorr", 0, 255, 0)
-        self.colorg = Parameter("colorg", 0, 255, 0)
-        self.colorb = Parameter("colorb", 0, 255, 255)
+        self.Circley = Param("Circley", 0, min_v=0, max_v=200)
+        self.Circlex = Param("Circlex", 0, min_v=0, max_v=200)
+        self.colorr = Param("colorr", 0, min_v=0, max_v=255)
+        self.colorg = Param("colorg", 0, min_v=0, max_v=255)
+        self.colorb = Param("colorb", 255, min_v=0, max_v=255)
         self.param = {"Circlex" : self.Circlex,
                       "Circley" : self.Circley,
                       "colorr" : self.colorr,
@@ -24,11 +24,11 @@ class ScipyExample(Filter):
                       "colorb" : self.colorb}
 
     def execute(self, image):
-        #self.notify_output_observers("ScipyTestPy: j=6 \n")
+        # self.notify_output_observers("ScipyTestPy: j=6 \n")
         notify = self.notify_output_observers
         param = {}
         for key, value in self.param.items():
-            param[key] = value.get_current_value()
+            param[key] = value.get()
         img1 = cv.fromarray(image)
         weave.inline(
         """
@@ -47,12 +47,12 @@ class ScipyExample(Filter):
 
         cv::circle(mat, cv::Point(circlex, circley), mat.cols/4, cv::Scalar(colorr, colorg, colorb), -1);
         """,
-        arg_names = ['img1', 'notify', 'param'],
-        include_dirs = ['/usr/local/include/opencv/'],
-        headers = ['<cv.h>', '<cxcore.h>'],
-        #libraries = ['ml', 'cvaux', 'highgui', 'cv', 'cxcore'],
-        extra_objects = ["`pkg-config --cflags --libs opencv`"],
-        support_code = """
+        arg_names=['img1', 'notify', 'param'],
+        include_dirs=['/usr/local/include/opencv/'],
+        headers=['<cv.h>', '<cxcore.h>'],
+        # libraries = ['ml', 'cvaux', 'highgui', 'cv', 'cxcore'],
+        extra_objects=["`pkg-config --cflags --libs opencv`"],
+        support_code="""
         struct cvmat_t {
                 PyObject_HEAD
                 CvMat *a;

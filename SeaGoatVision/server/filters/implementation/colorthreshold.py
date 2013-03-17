@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -36,21 +36,21 @@ class ColorThreshold(Filter):
         self._garray = None
         self._rarray = None
         self.configure()
-    
+
     def configure(self):
         min_v, max_v = self.blue.get()
-        self._barray = np.array([1.0 * (min_v <= x <= max_v) 
+        self._barray = np.array([1.0 * (min_v <= x <= max_v)
                             for x in range(0, 256)], dtype=np.float32)
         min_v, max_v = self.green.get()
-        self._garray = np.array([1.0 * (min_v <= x <= max_v) 
+        self._garray = np.array([1.0 * (min_v <= x <= max_v)
                             for x in range(0, 256)], dtype=np.float32)
         min_v, max_v = self.red.get()
         self._rarray = np.array([1.0 * (min_v <= x <= max_v)
                             for x in range(0, 256)], dtype=np.float32)
-        
+
     def execute(self, image):
         image[:, :, 0] = image[:, :, 1] = image[:, :, 2] = (
-                                            255 * self._barray[image[:, :, 0]] * 
-                                            self._garray[image[:, :, 1]] * 
+                                            255 * self._barray[image[:, :, 0]] *
+                                            self._garray[image[:, :, 1]] *
                                             self._rarray[image[:, :, 2]])
         return image

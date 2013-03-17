@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -22,6 +22,6 @@ class Noop(Filter):
     """Do nothing"""
     def __init__(self):
         Filter.__init__(self)
-            
+
     def execute(self, image):
         return image

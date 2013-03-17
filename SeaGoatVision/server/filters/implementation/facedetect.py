@@ -5,6 +5,7 @@ import cv2
 import cv2.cv as cv
 import os
 from SeaGoatVision.server.core.filter import Filter
+from SeaGoatVision.server.filters.param import Param
 
 class FaceDetection(Filter):
     """Detect faces and eyes"""
@@ -20,6 +21,7 @@ class FaceDetection(Filter):
         self.face_cascade = cv2.CascadeClassifier()
         assert self.eye_cascade.load(self.eye_detect_name)
         assert self.face_cascade.load(self.face_detect_name)
+        self.notify_filter = Param("notify", False)
 
     def execute(self, image):
         gray = cv2.cvtColor(image, cv.CV_BGR2GRAY)
@@ -27,7 +29,7 @@ class FaceDetection(Filter):
         faces = self.face_cascade.detectMultiScale(gray,
                                                    1.1,
                                                    2,
-                                                   0|cv.CV_HAAR_SCALE_IMAGE,
+                                                   0 | cv.CV_HAAR_SCALE_IMAGE,
                                                    (30, 30)
                                                 )
         for face in faces:
@@ -64,9 +66,10 @@ class FaceDetection(Filter):
 
         cv2.rectangle(image, (minx, miny), (maxx, maxy), color, 3)
 
-        c_x = (maxx-minx) / 2 + minx
-        c_y = (maxy-miny) / 2 + miny
-        self.notify_output_observers("facedetect%d : x=%d, y=%d" % \
+        c_x = (maxx - minx) / 2 + minx
+        c_y = (maxy - miny) / 2 + miny
+        if self.notify_filter.get():
+            self.notify_output_observers("facedetect%d : x=%d, y=%d" % \
                 (self.nb_face, c_x, c_y))
         self.nb_face += 1
         return image[miny:maxy, minx:maxx]

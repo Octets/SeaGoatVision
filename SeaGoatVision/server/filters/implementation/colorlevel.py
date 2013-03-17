@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -32,12 +32,12 @@ class ColorLevel(Filter):
         self.red = Param("red", 100, min_v=0, max_v=255)
         self.green = Param("green", 100, min_v=0, max_v=255)
         self.blue = Param("blue", 100, min_v=0, max_v=255)
-        
+
     def execute(self, image):
         if self.red != 100:
             image[:, :, 2] *= self.red.get() / 100
         if self.green != 100:
             image[:, :, 1] *= self.green.get() / 100
         if self.blue != 100:
-            image[:, :, 0] *= self.blue.get() / 100 
+            image[:, :, 0] *= self.blue.get() / 100
         return image

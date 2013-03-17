@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -24,16 +24,16 @@ from SeaGoatVision.server.core.filter import Filter
 
 class BilateralFilter(Filter):
     """Applies the bilateral filter to an image."""
-    
+
     def __init__(self):
         Filter.__init__(self)
-        self.diameter = Param("Diameter", 10, min_v=0, max_v=255) 
+        self.diameter = Param("Diameter", 10, min_v=0, max_v=255)
         self.sigma_color = Param("Sigma Color", 0, min_v=0, max_v=255)
         self.sigma_space = Param("Sigma Space", 0, min_v=0, max_v=255)
-        
+
     def execute(self, image):
         return cv2.bilateralFilter(image,
                             self.diameter.get(),
                             self.sigma_color.get(),
                             self.sigma_space.get())
-    
+

@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import cv2 
+import cv2
 import cv2.cv as cv
 from SeaGoatVision.server.core.filter import Filter
 
@@ -25,7 +25,7 @@ class YUV2BGR(Filter):
     """Convert from YUV to BGR"""
     def __init__(self):
         Filter.__init__(self)
-                
+
     def execute(self, image):
         cv2.cvtColor(image, cv.CV_YCrCb2BGR, image)
         return image

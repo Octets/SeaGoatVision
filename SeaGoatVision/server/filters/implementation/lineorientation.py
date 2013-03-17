@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -22,33 +22,33 @@ import cv2.cv as cv
 import math
 import numpy as np
 
-from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.filters.param import  Param
 from SeaGoatVision.server.core.filter import Filter
 
 class LineOrientation(Filter):
     """Port of the old line detection code"""
-    
+
     def __init__(self):
         Filter.__init__(self)
-        self.area_min = Parameter("Area Min",1,100000,300)
-        self.area_max = Parameter("Area Max",1,100000,35000)
-    
-        self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3), (0,0))
-                
+        self.area_min = Param("Area Min", 300, min_v=1, max_v=100000)
+        self.area_max = Param("Area Max", 35000, min_v=1, max_v=100000)
+
+        self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3), (0, 0))
+
     def execute(self, image):
         image_threshold = cv2.split(image)[0]
         image_morphology = cv2.morphologyEx(
                     image_threshold, cv2.MORPH_CLOSE, self._kernel, iterations=1)
-                
+
         contours, _ = cv2.findContours(
-                                            image_morphology, 
-                                            cv2.RETR_TREE, 
+                                            image_morphology,
+                                            cv2.RETR_TREE,
                                             cv2.CHAIN_APPROX_SIMPLE)
         lines = self.find_lines(contours, image)
         self.draw_lines(lines, image)
-        
+
         return image
-    
+
     def draw_lines(self, lines, image):
         for l, t in lines:
             vx, vy, x, y = l
@@ -58,21 +58,21 @@ class LineOrientation(Filter):
             self.notify_output_observers(toSend)
             cv2.line(image, point1, point2, (0, 0, 255), 3, -1)
             cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
-            
+
         self.notify_output_observers("LineOrientation: \n")
-            
+
     def find_lines(self, contours, image):
         lines = []
         for contour in contours:
             approx = cv2.approxPolyDP(contour, 0, False)
             area = np.abs(cv2.contourArea(contour))
-            
-            if self.area_min.get_current_value() < area < self.area_max.get_current_value():
+
+            if self.area_min.get() < area < self.area_max.get():
                 line_values = cv2.fitLine(approx, cv.CV_DIST_L2, 0, 0.01, 0.01)
                 rect = cv2.boundingRect(approx)
-                t = math.sqrt((rect[2]**2 + rect[3]**2) / 2.0)
+                t = math.sqrt((rect[2] ** 2 + rect[3] ** 2) / 2.0)
                 lines.append((line_values, t))
                 cv2.drawContours(image, contour, -1, (255, 255, 0))
 
         return lines
-    
+
