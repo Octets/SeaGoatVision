@@ -2,16 +2,16 @@
 from scipy import weave
 import cv
 import numpy
-from SeaGoatVision.server.filters import dataextract
 from SeaGoatVision.server.filters.parameter import Parameter
+from SeaGoatVision.server.core.filter import Filter
 
-class ScipyExample(dataextract.DataExtractor):
+class ScipyExample(Filter):
     """Example on how to use scipy.weave inside filters.
         The code loop inside the entire image
         and reduce the value of each pixels by half"""
 
     def __init__(self):
-        dataextract.DataExtractor.__init__(self)
+        Filter.__init__(self)
         self.Circley = Parameter("Circley", 0, 200, 0)
         self.Circlex = Parameter("Circlex", 0, 200, 0)
         self.colorr = Parameter("colorr", 0, 255, 0)

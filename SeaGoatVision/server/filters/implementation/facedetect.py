@@ -3,14 +3,14 @@
 
 import cv2
 import cv2.cv as cv
-from SeaGoatVision.server.filters import dataextract
 import os
+from SeaGoatVision.server.core.filter import Filter
 
-class FaceDetection(dataextract.DataExtractor):
+class FaceDetection(Filter):
     """Detect faces and eyes"""
 
     def __init__(self):
-        dataextract.DataExtractor.__init__(self)
+        Filter.__init__(self)
         self.nb_face = 1
         self.eye_detect_name = os.path.join('data', 'facedetect',
                                         'haarcascade_eye_tree_eyeglasses.xml')
@@ -68,6 +68,6 @@ class FaceDetection(dataextract.DataExtractor):
         c_y = (maxy-miny) / 2 + miny
         self.notify_output_observers("facedetect%d : x=%d, y=%d" % \
                 (self.nb_face, c_x, c_y))
-
+        self.nb_face += 1
         return image[miny:maxy, minx:maxx]
 

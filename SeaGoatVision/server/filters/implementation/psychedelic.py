@@ -20,11 +20,13 @@
 import numpy as np
 
 from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.core.filter import Filter
 
-class Psychedelic:
+class Psychedelic(Filter):
     """Acid trip"""
     
     def __init__(self):
+        Filter.__init__(self)
         self._images = []
         self.nb_images = Parameter("Nb Images", 1, 99, 10)
         

@@ -21,11 +21,13 @@ import cv2
 import cv2.cv as cv
 import numpy as np
 from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.core.filter import Filter
 
-class HoughTransform:
+class HoughTransform(Filter):
     """Apply a Canny filter to the image then
     finds lines in a binary image using the standard Hough transform"""
     def __init__(self):
+        Filter.__init__(self)
         self.canny1 = Parameter("Canny1",1,256,50)
         self.canny2 = Parameter("Canny2",1,256,200)
         self.rho = Parameter("Rho",1,256,1)

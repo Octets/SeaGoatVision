@@ -1,17 +1,20 @@
 
 import cv2
 import numpy as np
+from SeaGoatVision.server.core.filter import Filter
 
-class BGR2HSVManual:
-    
+class BGR2HSVManual(Filter):
+    def __init__(self):
+        Filter.__init__(self)
+
     def execute(self, image):
         b, g, r = cv2.split(image)
         b = b.astype(np.float16) / 255.0
         g = g.astype(np.float16) / 255.0
         r = r.astype(np.float16) / 255.0
         
-        max_rgb = np.maximum(np.maximum(b,g), r)
-        min_rgb = np.minimum(np.minimum(r,g), b)
+        max_rgb = np.maximum(np.maximum(b, g), r)
+        min_rgb = np.minimum(np.minimum(r, g), b)
         
         v = max_rgb
         
@@ -29,8 +32,8 @@ class BGR2HSVManual:
         s = s * 255
         v = v * 255
         
-        image = cv2.merge((h.astype(np.uint8), 
-                           s.astype(np.uint8), 
+        image = cv2.merge((h.astype(np.uint8),
+                           s.astype(np.uint8),
                            v.astype(np.uint8)))
         
         return image 

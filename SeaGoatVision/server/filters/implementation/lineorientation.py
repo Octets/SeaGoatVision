@@ -22,14 +22,14 @@ import cv2.cv as cv
 import math
 import numpy as np
 
-from SeaGoatVision.server.filters import dataextract
 from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.core.filter import Filter
 
-class LineOrientation(dataextract.DataExtractor):
+class LineOrientation(Filter):
     """Port of the old line detection code"""
     
     def __init__(self):
-        dataextract.DataExtractor.__init__(self)
+        Filter.__init__(self)
         self.area_min = Parameter("Area Min",1,100000,300)
         self.area_max = Parameter("Area Max",1,100000,35000)
     

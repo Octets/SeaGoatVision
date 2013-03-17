@@ -102,23 +102,20 @@ class Manager:
 
         return True
 
-    def get_filter_param(self, filterchain_name, filter_name):
+    def get_params_filterchain(self, execution_name, filter_name=None):
         # get actual filter from execution
+        o_filter = None
         filterchain_item = None
-        for item in self.dct_thread.values():
-            filterchain_item = item.get("filterchain", None)
-            if filterchain_item and filterchain_item.get_name() == filterchain_name:
-                o_filter = filterchain_item.get_filter(name=filter_name)
-                break
-
-        if filterchain_item is None:
-            # search in config
-            o_filter = utils.get_filter_from_filterName(filter_name=filter_name)
-
-        if not o_filter:
+        thread = self.dct_thread.get(execution_name, None)
+        if not thread:
             return None
-
-        return utils.get_filter_param(o_filter)
+        filterchain = thread.get("filterchain", None)
+        if not filterchain:
+            return None
+        #if filterchain_item is None:
+        #    # search in config
+        #    o_filter = utils.get_filter_from_filterName(filter_name=filter_name)
+        return filterchain.get_params(filter_name=filter_name)
 
     ##########################################################################
     ################################ SOURCE ##################################
@@ -251,10 +248,21 @@ class Manager:
             if filterchain:
                 filterchain.reload_filter(filtre)
 
+    def update_param(self, execution_name, filter_name, param_name, value):
+        dct_thread = self.dct_thread.get(execution_name, {})
+        if not dct_thread:
+            return None
+        filterchain = dct_thread.get("filterchain", None)
+        if not filterchain:
+            return None
+        filter = filterchain.get_filter(name=filter_name)
+        param = filter.get_params(param_name=param_name)
+        if param:
+            o_param.set(value)
+            filter.configure()
+
     ##########################################################################
     ############################### FILTER  ##################################
     ##########################################################################
     def get_filter_list(self):
         return utils.load_filters().keys()
-
-

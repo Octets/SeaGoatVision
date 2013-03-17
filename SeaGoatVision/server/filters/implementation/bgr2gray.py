@@ -19,10 +19,13 @@
 
 import cv2
 import cv2.cv as cv
+from SeaGoatVision.server.core.filter import Filter
 
-class BGR2Grayscale:
+class BGR2Grayscale(Filter):
     """Convert to grayscale then convert back to BGR"""
-    
+    def __init__(self):
+        Filter.__init__(self)
+            
     def execute(self, image):
         cv2.cvtColor(image, cv.CV_BGR2GRAY, image)
         cv2.cvtColor(image, cv.CV_GRAY2BGR, image)

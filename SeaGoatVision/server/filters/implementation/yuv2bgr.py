@@ -19,10 +19,13 @@
 
 import cv2 
 import cv2.cv as cv
+from SeaGoatVision.server.core.filter import Filter
 
-class YUV2BGR:
+class YUV2BGR(Filter):
     """Convert from YUV to BGR"""
-        
+    def __init__(self):
+        Filter.__init__(self)
+                
     def execute(self, image):
         cv2.cvtColor(image, cv.CV_YCrCb2BGR, image)
         return image

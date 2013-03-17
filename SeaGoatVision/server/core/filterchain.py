@@ -20,8 +20,9 @@
 """Contains the FilterChain class and helper functions to work with the filter chain."""
 
 import SeaGoatVision.server.filters
-from SeaGoatVision.server.filters.dataextract import DataExtractor
-from SeaGoatVision.server.filters.parameter import Parameter
+from SeaGoatVision.server.filters import utils
+from SeaGoatVision.server.filters.dataextract import DataExtract
+from SeaGoatVision.server.filters.param import Param
 import ConfigParser
 import numpy as np
 
@@ -32,20 +33,8 @@ def my_import(name):
         mod = getattr(mod, comp)
     return mod
 
-def params_list(chain):
-    flist = []
-    for filtre in chain.filters:
-        fname = filtre.__class__.__name__
-        params = []
-        for name in dir(filtre):
-            parameter = getattr(filtre, name)
-            if not isinstance(parameter, Parameter):
-                continue
-            params.append((name, parameter.get_current_value()))
-        flist.append((fname, params))
-    return flist
-
 def isnumeric(string):
+    #TODO in python3, use str.isnumeric()
     try:
         float(string)
         return True
@@ -63,23 +52,30 @@ def read(file_name):
         if not filtre:
             print("Error : The filter %s doesn't exist on filterchain." % (section, filterchain_name))
             continue
+        # TODO refaire les parameter seulement
         for member in filtre.__dict__:
-            parameter = getattr(filtre, member)
-            if not isinstance(parameter, Parameter):
+            param = getattr(filtre, member)
+            if not isinstance(param, Param):
                 continue
             try:
                 val = cfg.get(section, member)
             except:
-                # the file didn't contain the parameter
+                # the file didn't contain the param
                 continue
             if val == "True" or val == "False":
-                parameter.set_current_value(cfg.getboolean(section, member))
+                param.set(cfg.getboolean(section, member))
+            elif val.isdigit():
+                param.set(cfg.getint(section, member))
             elif isnumeric(val):
-                parameter.set_current_value(cfg.getfloat(section, member))
+                f_value = cfg.getfloat(section, member)
+                #exception, if the param want int, we will cast it
+                if param.get_type() is int:
+                    param.set(int(f_value))
+                else:
+                    param.set(f_value)
             else:
-                if isinstance(val, str):
-                    val = '\n'.join([line[1:-1] for line in str.splitlines(val)])
-                parameter.set_current_value(val)
+                val = '\n'.join([line[1:-1] for line in str.splitlines(val)])
+                param.set(val)
         if hasattr(filtre, 'configure'):
             filtre.configure()
         new_chain.add_filter(filtre)
@@ -88,9 +84,11 @@ def read(file_name):
 def write(file_name, chain):
     """Save the content of the filter chain in a file."""
     cfg = ConfigParser.ConfigParser()
-    for fname, params in params_list(chain):
+    for fname, params in chain.get_params():
         cfg.add_section(fname)
-        for name, value in params:
+        for param in params:
+            value = param.get()
+            name = param.get_name()
             if isinstance(value, str):
                 value = '\n'.join(['"%s"' % line for line in str.splitlines(value)])
             cfg.set(fname, name, value)
@@ -99,7 +97,7 @@ def write(file_name, chain):
 class FilterChain:
     """ Observable.  Contains the chain of filters to execute on an image.
 
-    The observer must be a method that receive a filter and an image as parameter.
+    The observer must be a method that receive a filter and an image as param.
     The observer method is called after each execution of a filter in the filter chain.
     """
     def __init__(self, filterchain_name):
@@ -127,11 +125,19 @@ class FilterChain:
             retValue.append(filter)
         return retValue
 
+    def get_params(self, filter=None, filter_name=None):
+        if filter_name:
+            filter = self.get_filter(name=filter_name)
+        if filter:
+            return filter.get_params()
+        return [(filter.__class__.__name__, filter.get_params()) for filter in self.filters]
+
     def __getitem__(self, index):
         return self.filters[index]
 
     def get_filter(self, index=None, name=None):
         if index is not None:
+            #TODO not better return self[index] ??
             return self.filters[index]
         elif name is not None:
             lst_filter = [o_filter for o_filter in self.filters if o_filter.__class__.__name__ == name]
@@ -139,11 +145,11 @@ class FilterChain:
                 return lst_filter[0]
         return None
 
-    def add_filter(self, filtre):
-        self.filters.append(filtre)
+    def add_filter(self, filter):
+        self.filters.append(filter)
 
-    def remove_filter(self, filtre):
-        self.filters.remove(filtre)
+    def remove_filter(self, filter):
+        self.filters.remove(filter)
 
     def reload_filter(self, filtre):
         # example of __module__:
@@ -191,14 +197,14 @@ class FilterChain:
     def add_filter_output_observer(self, output):
         self.filter_output_observers.append(output)
         for f in self.filters:
-            if isinstance(f, DataExtractor):
+            if isinstance(f, DataExtract):
                 f.add_output_observer(output)
         return True
 
     def remove_filter_output_observer(self, output):
         self.filter_output_observers.remove(output)
         for f in self.filters:
-            if isinstance(f, DataExtractor):
+            if isinstance(f, DataExtract):
                 f.remove_output_observer(output)
         return True
 

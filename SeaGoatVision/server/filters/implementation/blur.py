@@ -18,18 +18,19 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-from SeaGoatVision.server.filters.parameter import Parameter
+from SeaGoatVision.server.filters.param import Param
+from SeaGoatVision.server.core.filter import Filter
 
-class Blur:
+class Blur(Filter):
     """Smoothes an image using the normalized box filter"""
     def __init__(self):
-        
-        self.kernel_width = Parameter("width",1,10,3)
-        self.kernel_height = Parameter("height",1,10,3)        
+        Filter.__init__(self)
+        self.kernel_width = Param("width", 3, min_v=1, max_v=10)
+        self.kernel_height = Param("height", 3, min_v=1, max_v=10)        
     
     def execute(self, image):
-        cv2.blur(image, (int(self.kernel_width.get_current_value()), 
-                                int(self.kernel_height.get_current_value())),
-                                image)
+        cv2.blur(image, (self.kernel_width.get(), 
+                        self.kernel_height.get()),
+                        image)
         return image
     

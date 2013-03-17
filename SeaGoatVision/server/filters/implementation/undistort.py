@@ -19,10 +19,13 @@
 
 import cv,cv2
 import numpy
+from SeaGoatVision.server.core.filter import Filter
 
-class Undistort:
+class Undistort(Filter):
     """Do nothing"""
-    
+    def __init__(self):
+        Filter.__init__(self)
+            
     def execute(self, image):
     
         distCoeffs = numpy.array([-0.34, 0.085, 0, 0, -0.007])

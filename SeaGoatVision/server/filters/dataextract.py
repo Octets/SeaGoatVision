@@ -1,5 +1,5 @@
 
-class DataExtractor(object):
+class DataExtract(object):
     def __init__(self):
         self._output_observers = list()
     

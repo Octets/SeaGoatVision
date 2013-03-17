@@ -20,10 +20,12 @@
 import cv2
 import cv2.cv as cv
 from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.core.filter import Filter
 
-class Morphology:
+class Morphology(Filter):
     
     def __init__(self):
+        Filter.__init__(self)
         self.kernel_width = Parameter("Kernel Width",1,256,3)
         self.kernel_height = Parameter("Kernel Height",1,256,3)
         self.anchor_x = Parameter("Anchor X",None,None,-1)

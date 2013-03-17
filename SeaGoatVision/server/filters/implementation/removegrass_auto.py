@@ -19,12 +19,13 @@
 
 import cv2
 import numpy as np
+from SeaGoatVision.server.core.filter import Filter
 
-class RemoveGrassAuto:
+class RemoveGrassAuto(Filter):
     """"""
     
     def __init__(self):
-        pass
+        Filter.__init__(self)
     
     def execute(self, image):
         #copy = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)

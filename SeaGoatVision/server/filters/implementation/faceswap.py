@@ -7,11 +7,13 @@ import numpy as np
 
 import os
 import sys
+from SeaGoatVision.server.core.filter import Filter
 
-class FaceSwap:
+class FaceSwap(Filter):
     """Swap faces"""
     
     def __init__(self):
+        Filter.__init__(self)
         self.face_detect_name = os.path.join('data', 
                                              'facedetect', 
                                              'haarcascade_frontalface_alt.xml')

@@ -6,11 +6,13 @@ import cv2.cv as cv
 import numpy as np
 
 import os
+from SeaGoatVision.server.core.filter import Filter
 
-class GetFirstFace:
+class GetFirstFace(Filter):
     """Get first face detected in the image"""
     
     def __init__(self):
+        Filter.__init__(self)
         self.face_detect_name = os.path.join('data', 
                                              'facedetect', 
                                              'haarcascade_frontalface_alt.xml')

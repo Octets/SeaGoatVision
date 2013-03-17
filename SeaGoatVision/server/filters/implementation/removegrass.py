@@ -20,11 +20,13 @@
 import cv2
 import numpy as np
 from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.core.filter import Filter
 
-class RemoveGrass:
+class RemoveGrass(Filter):
     """Remove grass from an image"""
     
     def __init__(self):
+        Filter.__init__(self)
         self.threshold = Parameter("Threshold",0,255,100)
         self.technique = Parameter("Technique",0,2,0)
         

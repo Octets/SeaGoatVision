@@ -2,7 +2,7 @@
 import cv2 
 import numpy as np
 from scipy.ndimage import label
-
+from SeaGoatVision.server.core.filter import Filter
 #http://stackoverflow.com/questions/11294859/how-to-define-the-markers-for-watershed-in-opencv
 
 def segment_on_dt(a, img):
@@ -24,10 +24,9 @@ def segment_on_dt(a, img):
     lbl = lbl.astype(np.uint8)
     return 255 - lbl
 
-class Watershed:
-    
+class Watershed(Filter):
     def __init__(self):
-        pass
+        Filter.__init__(self)
     
     def execute(self, image):
         return self.method1(image)

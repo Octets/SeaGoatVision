@@ -21,11 +21,13 @@ import cv2
 import numpy as np
 
 from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.core.filter import Filter
 
-class SectionFilter:
+class SectionFilter(Filter):
     """"""
     
     def __init__(self):
+        Filter.__init__(self)
         self.kernel_erode_height = Parameter("Kernel Erode Height", 1, 255, 3)
         self.kernel_erode_width = Parameter("Kernel Dilate Width", 1, 255, 3)
         self.kernel_dilate_height = Parameter("Kernel Erode Height", 1, 255, 5)

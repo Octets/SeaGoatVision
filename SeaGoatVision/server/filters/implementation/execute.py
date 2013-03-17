@@ -22,13 +22,14 @@ import cv2 #@UnusedImport
 import cv2.cv as cv #@UnusedImport
 import numpy as np #@UnusedImport
 import sys
-
+from SeaGoatVision.server.core.filter import Filter
 import scipy.weave as weave
 
-class Exec:
+class Exec(Filter):
     """Create and edit a filter on the fly for testing purposes"""
     
     def __init__(self):
+        Filter.__init__(self)
         self.code = ""
         self.is_python = True
         self._ccode = None

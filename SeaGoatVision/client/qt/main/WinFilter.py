@@ -20,18 +20,7 @@
 
 from PySide import QtGui
 from PySide import QtCore
-from SeaGoatVision.server.filters.parameter import Parameter
-
-class TempParameter:
-    def __init__(self, parameter):
-        self.parameter = parameter
-        self.tempValue = parameter.get_current_value()
-
-    def setTempValue(self, tempValue):
-        self.tempValue = tempValue
-
-    def execute(self):
-        self.parameter.set_current_value(self.tempValue)
+from SeaGoatVision.server.filters.param import Param
 
 class WinFilter(QtGui.QDockWidget):
     selectedFilterChanged = QtCore.Signal(object)
@@ -39,12 +28,12 @@ class WinFilter(QtGui.QDockWidget):
     def __init__(self, controller):
         super(WinFilter, self).__init__()
         self.setWidget(QtGui.QWidget())
-        self.tempParameters = []
+        self.lst_param = []
         self.controller = controller
 
     def setFilter(self, execution_name, filter_name):
         # self.clear()
-        del self.tempParameters[:]
+        del self.lst_param[:]
         self.widget().destroy()
         self.setWidget(QtGui.QWidget())
         self.filter_name = filter_name
@@ -53,13 +42,13 @@ class WinFilter(QtGui.QDockWidget):
 
     def construct_widget(self):
         self.setWindowTitle(self.filter_name + " - " + self.execution_name)
-        self.filter_param = self.controller.get_filter_param(self.execution_name, self.filter_name)
+        self.filter_param = self.controller.get_params_filterchain(self.execution_name, filter_name=self.filter_name)
 
         layout = QtGui.QVBoxLayout()
 
         if not self.filter_param:
             nothing = QtGui.QLabel()
-            nothing.setText("Empty parameters.")
+            nothing.setText("Empty params.")
             layout.addWidget(nothing)
             self.widget().setLayout(layout)
             return
@@ -67,77 +56,67 @@ class WinFilter(QtGui.QDockWidget):
         for param in self.filter_param:
             layout.addWidget(self.getWidget(param))
 
-        #self.executeButton = QtGui.QPushButton()
-        #self.executeButton.clicked.connect(self.execute)
-        #self.executeButton.setText("Execute")
-        #layout.addWidget(self.executeButton)
+        self.resetButton = QtGui.QPushButton()
+        self.resetButton.clicked.connect(self.reset)
+        self.resetButton.setText("Reset")
+        layout.addWidget(self.resetButton)
 
         self.widget().setLayout(layout)
 
-    def getWidget(self, parameter):
+    def getWidget(self, param):
         groupBox = QtGui.QGroupBox()
 
-        groupBox.setTitle(parameter.name)
+        groupBox.setTitle(param.get_name())
 
         getWidget = {
-            Parameter.INT: self.getIntegerWidget,
-            Parameter.FLOAT: self.getFloatWidget,
-            Parameter.EVEN: self.getEvenWidget,
-            Parameter.ODD: self.getOddWidget,
+            int : self.getIntegerWidget,
+            float : self.getFloatWidget,
+            str : self.getStrWidget,
+            bool : self.getBoolWidget,
             }
 
+        def create_value_change(param):
+            def set(value):
+                self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), value)
+            return set
 
-
-        layout = getWidget[parameter.type](parameter)
+        layout = getWidget[param.get_type()](param, create_value_change(param))
         groupBox.setLayout(layout)
 
         return groupBox
 
-    def getIntegerWidget(self, parameter):
-        tempParameter = TempParameter(parameter)
-        self.tempParameters.append(tempParameter)
+    def getIntegerWidget(self, param, cb_value_change):
+        self.lst_param.append(param)
 
         numberLabel = QtGui.QLabel()
-        numberLabel.setNum(parameter.currentValue)
+        numberLabel.setNum(param.get())
 
         slider = QtGui.QSlider()
         slider.setBaseSize(100, 100)
-        slider.setMinimum(parameter.minValue)
-        slider.setMaximum(parameter.maxValue)
+        slider.setMinimum(param.get_min())
+        slider.setMaximum(param.get_max())
         slider.setTickInterval(1)
-        slider.setValue(parameter.currentValue)
+        slider.setValue(param.get())
         slider.setTickPosition(QtGui.QSlider.TicksBothSides)
         slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
 
         slider.valueChanged.connect(numberLabel.setNum)
-        slider.valueChanged.connect(tempParameter.setTempValue)
-        slider.valueChanged.connect(tempParameter.execute)
+        slider.valueChanged.connect(cb_value_change)
 
         layout = QtGui.QHBoxLayout()
         layout.addWidget(slider)
         layout.addWidget(numberLabel)
         return layout
 
-    def getFloatWidget(self, parameter):
+    def getFloatWidget(self, param, cb_value_change):
         print "float"
 
-    def getEvenWidget(self, parameter):
-        print "even"
+    def getStrWidget(self, param, cb_value_change):
+        print "string"
 
-    def getOddWidget(self, parameter):
-        print "odd"
+    def getBoolWidget(self, param, cb_value_change):
+        print "bool"
 
-    def execute(self):
-        for tempParameter in self.tempParameters:
-            tempParameter.execute()
-        #if hasattr(self.filter, "configure"):
-        #    self.filter.configure()
-        #    print "conf"
-
-
-
-
-
-
-
-
+    def reset(self):
+        for param in self.lst_param:
+            param.reset()

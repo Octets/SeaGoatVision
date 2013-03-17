@@ -20,13 +20,15 @@
 import cv2
 import numpy as np
 from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.core.filter import Filter
 
-class ParticleFilter:
+class ParticleFilter(Filter):
     """Remove small particles from the image.
         The image is first converted to grayscale and is then eroded and 
         the remaining blobs are filtered according to the area of the blobs."""
     
     def __init__(self):
+        Filter.__init__(self)
         self.kernel_height = Parameter("Kernel Height",1,256,10)
         self.kernel_width = Parameter("Kernel Width",1,256,10)
         self.area_min = Parameter("Area Min",1,None,3200)

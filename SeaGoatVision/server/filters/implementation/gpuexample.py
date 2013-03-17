@@ -26,13 +26,14 @@
 #image.data = image
 
 import scipy.weave as weave
+from SeaGoatVision.server.core.filter import Filter
 
-class GPUExample:
+class GPUExample(Filter):
     """Example on how to use scipy.weave to access the GPU with OpenCV.
         http://opencv.willowgarage.com/wiki/OpenCV_GPU"""
             
     def __init__(self):
-        pass
+        Filter.__init__(self)
 
     def execute(self, image):
         """

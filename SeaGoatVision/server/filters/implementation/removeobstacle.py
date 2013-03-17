@@ -3,11 +3,13 @@ import cv2
 import cv2.cv as cv
 
 from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.core.filter import Filter
 
-class RemoveObstacle:
+class RemoveObstacle(Filter):
     """Remove obstacles from an image"""
     
     def __init__(self):
+        Filter.__init__(self)
         self.threshold = Parameter("Threshold",0,255,12)
         self.vertical_blur = Parameter("Vertical Blur",0,255,18)
         self.horizontal_blur = Parameter("Horizontal Blur",0,255,3)

@@ -19,10 +19,12 @@
 
 import cv2
 from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.core.filter import Filter
 
-class GaussianBlur:
+class GaussianBlur(Filter):
     """Smoothes an image using a Gaussian filter"""
     def __init__(self):
+        Filter.__init__(self)
         self.kernel_height = Parameter("Kernel Height",1,256,3)
         self.kernel_width = Parameter("Kernel Width",1,256,3)
         self.sigma_x = Parameter("Sigma X",1,256,3)

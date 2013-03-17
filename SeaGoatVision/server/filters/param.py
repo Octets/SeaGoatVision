@@ -1,21 +1,3 @@
-#! /usr/bin/env python
-
-#    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
-#
-#    This file is part of SeaGoatVision.
-#
-#    CapraVision is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 Parameter is used by filter and client. This is public variable with specific
 type of filter.
@@ -33,16 +15,16 @@ TIPS :
     p = Param("f", 2, min_v=1, max_v=19, lst_value=[-1,2,4,6,10])
  - We can use a threshold value. In this situation, we have two value.
   The value is always the low value and the threshold_hight is the hight value.
-    p = Param("f", 2, min_v=1, max_v=8, threshold_hight=5)
+    p = Param("f", 2, min_v=1, max_v=8, thres_h=5)
 """
 class Param(object):
-    """Let type_t to None to use autodetect.
-    type_t need to be a <type>
-
-    Param manager type : bool, int and float
+    """Param autodetect basic type
+    force_type need to be a <type>
+    If you want specific type, cast it to basic type and use force_type
+    Param manager type : bool, str, int and float
     """
     def __init__(self, name, value, min_v=None, max_v=None, lst_value=None,\
-                type_t=None, threshold_hight=None):
+                force_type=None, thres_h=None):
         if type(name) is not str:
             raise Exception("Name must be string value.")
         self.name = name
@@ -51,22 +33,21 @@ class Param(object):
         self.value = None
         self.default_value = None
         self.type_t = None
-        self.threshold_hight = None
-        self._valid_param(value, min_v, max_v, lst_value, type_t, \
-                threshold_hight)
+        self.thres_h = None
+        self.force_type = None
+        self._valid_param(value, min_v, max_v, lst_value, thres_h)
         self.set(value)
         self.default_value = self.value
-
-    def _valid_param(self, value, min_v, max_v, lst_value, type_t, \
-                threshold_hight):
-        type_v = type(value)
-        if type_t is not None and type(type_t) is not type:
-            raise Exception("Wrong type of type_t : %s" % type(self.type_t))
+        if force_type:
+            self.force_type = force_type
         else:
-            type_t = type_v
-        if not(type_v is int or type_v is bool or type_v is float):
-            raise Exception("Param don't manage type %s" % type_v)
-        if type_v is float or type_v is int:
+            self.force_type = self.type_t
+
+    def _valid_param(self, value, min_v, max_v, lst_value, thres_h):
+        type_t = type(value)
+        if not(type_t is int or type_t is bool or type_t is float or type_t is str):
+            raise Exception("Param don't manage type %s" % type_t)
+        if type_t is float or type_t is int:
             # check min and max
             if min_v is not None and \
                 not(type(min_v) is float or type(min_v) is int):
@@ -77,12 +58,12 @@ class Param(object):
             if lst_value is not None and \
                     not(type(lst_value) is tuple or type(lst_value) is list):
                 raise Exception("lst_value must be list or tuple")
-            if type_v is float:
+            if type_t is float:
                 min_v = None if min_v is None else float(min_v)
                 max_v = None if max_v is None else float(max_v)
                 lst_value = None if lst_value is None else \
                             [float(value) for value in lst_value]
-            if type_v is int:
+            if type_t is int:
                 min_v = None if min_v is None else int(min_v)
                 max_v = None if max_v is None else int(max_v)
                 lst_value = None if lst_value is None else \
@@ -91,7 +72,7 @@ class Param(object):
         self.max_v = max_v
         self.lst_value = lst_value
         self.type_t = type_t
-        self.thres_h = threshold_hight
+        self.thres_h = thres_h
 
     def reset(self):
         self.value = self.default_value
@@ -107,10 +88,10 @@ class Param(object):
 
     def get(self):
         if self.thres_h is not None:
-            return (self.value, self.thres_h)
-        return self.value
+            return (self.force_type(self.value), self.force_type(self.thres_h))
+        return self.force_type(self.value)
 
-    def set(self, value, thres_hight=None):
+    def set(self, value, thres_h=None):
         if type(value) is not self.type_t:
             raise Exception("value is wrong type. Expected %s and receive %s" \
                     % (self.type_t, type(value)))
@@ -124,25 +105,25 @@ class Param(object):
             if self.lst_value is not None and value not in self.lst_value:
                 raise Exception("value %s is not in lst of value" % (value))
         if self.thres_h is not None:
-            if thres_hight is None:
+            if thres_h is None:
                 if value > self.thres_h:
                     msg = "Threshold bot %s is upper then threshold top %s." \
                            % (value, self.thres_h)
                     raise Exception(msg)
             else:
-                if type(thres_hight) is not self.type_t:
+                if type(thres_h) is not self.type_t:
                     msg = "value is wrong type. Expected %s and receive %s" \
                         % (self.type_t, type(value))
                     raise Exception(msg)
-                elif value > thres_hight:
+                elif value > thres_h:
                     msg = "Threshold low %s is upper then threshold hight %s." \
-                           % (value, thres_hight)
+                           % (value, thres_h)
                     raise Exception(msg)
-                if thres_hight > self.max_v:
+                if thres_h > self.max_v:
                     raise Exception("Threshold hight %s is upper then max %s." \
-                            % (thres_hight, self.max_v))
-                self.thres_h = thres_hight
+                            % (thres_h, self.max_v))
+                self.thres_h = thres_h
         self.value = value
 
     def get_type(self):
-        return self.type_t
+        return self.force_type

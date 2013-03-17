@@ -19,21 +19,23 @@
 
 import cv2
 
-from SeaGoatVision.server.filters.parameter import Parameter
+from SeaGoatVision.server.filters.param import Param
+from SeaGoatVision.server.core.filter import Filter
 
-class Rectangle:
+class Rectangle(Filter):
     """Draw a black rectangle on top of the image"""
     
     def __init__(self):
-        self.x1 = Parameter('x1', 0, 65535, 0)
-        self.y1 = Parameter('y1', 0, 65535, 0)
-        self.x2 = Parameter('x2', 0, 65535, 100)
-        self.y2 = Parameter('y2', 0, 65535, 100)
+        Filter.__init__(self)
+        self.x1 = Param('x1', 0, max_v=65535, min_v=0)
+        self.y1 = Param('y1', 0, max_v=65535, min_v=0)
+        self.x2 = Param('x2', 100, max_v=65535, min_v=0)
+        self.y2 = Param('y2', 100, max_v=65535, min_v=0)
     
     def execute(self, image):
         cv2.rectangle(image, 
-            (int(self.x1.get_current_value()), int(self.y1.get_current_value())), 
-            (int(self.x2.get_current_value()), int(self.y2.get_current_value())), 
+            (self.x1.get(), self.y1.get()), 
+            (self.x2.get(), self.y2.get()), 
             (0, 0, 0),
             cv2.cv.CV_FILLED)
         return image    
