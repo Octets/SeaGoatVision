@@ -36,7 +36,13 @@ import numpy as np
 import scipy.weave.ext_tools as ext_tools
 
 from SeaGoatVision.server.core.filter import Filter
-import SeaGoatVision.globals as g
+
+# Global variable for cpp filter
+# TODO find another solution to remove global variable, like log file
+global cppfiles
+cppfiles = {}
+global cpptimestamps
+cpptimestamps = {}
 
 ##
 # PYTHON FILTERS IMPORT
@@ -64,7 +70,7 @@ def compile_cpp_filters():
         os.mkdir(BUILD_DIR)
     if not os.path.exists(RELOAD_DIR):
         os.mkdir(RELOAD_DIR)
-    if not len(g.cppfiles):
+    if not cppfiles:
         for f in os.listdir(RELOAD_DIR):
             os.remove(os.path.join(RELOAD_DIR, f))
 
@@ -120,13 +126,13 @@ def compile_cpp_filters():
         #Verify if there are changes in the c++ code file.  If there are
         #changes, add a timestamp to the filter .so file name to force a
         #reimportation of the new filter.
-        if g.cppfiles.has_key(filename):
-            if cppcode != g.cppfiles[filename]:
-                g.cpptimestamps[filename] = str(int(time.time()))
-        g.cppfiles[filename] = cppcode
+        if cppfiles.has_key(filename):
+            if cppcode != cppfiles[filename]:
+                cpptimestamps[filename] = str(int(time.time()))
+        cppfiles[filename] = cppcode
 
-        if g.cpptimestamps.has_key(filename):
-            modname = filename + g.cpptimestamps[filename]
+        if cpptimestamps.has_key(filename):
+            modname = filename + cpptimestamps[filename]
         else:
             modname = filename
 
@@ -146,7 +152,7 @@ def compile_cpp_filters():
         mod.add_function(helpfunc)
 
         try:
-            if g.cpptimestamps.has_key(filename):
+            if cpptimestamps.has_key(filename):
             #Reloaded modules are saved in the reload folder for easy cleanup
                 mod.compile(RELOAD_DIR)
             else:
