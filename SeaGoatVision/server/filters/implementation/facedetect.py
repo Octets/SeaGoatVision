@@ -5,7 +5,7 @@ import cv2
 import cv2.cv as cv
 import os
 from SeaGoatVision.server.core.filter import Filter
-from SeaGoatVision.server.filters.param import Param
+from SeaGoatVision.commun.param import Param
 
 class FaceDetection(Filter):
     """Detect faces and eyes"""

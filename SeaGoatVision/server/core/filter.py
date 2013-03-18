@@ -1,4 +1,4 @@
-from SeaGoatVision.server.filters.param import Param
+from SeaGoatVision.commun.param import Param
 from SeaGoatVision.server.filters.dataextract import DataExtract 
 
 class Filter(DataExtract):

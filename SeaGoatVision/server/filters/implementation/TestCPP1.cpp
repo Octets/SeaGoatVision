@@ -9,8 +9,8 @@ cv::Mat execute(cv::Mat image, py::object notify)
     notify_args[0] = "patatoum";
     notify.call(notify_args);
 
-    cv::cvtColor(image, image, CV_BGR2HSV);
-    //cv::cvtColor(image, image, CV_BGR2YUV);
+    //cv::cvtColor(image, image, CV_BGR2HSV);
+    cv::cvtColor(image, image, CV_BGR2YUV);
     //std::cout << image << std::endl;
     return image;
 }

@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-from SeaGoatVision.server.filters.param import  Param
+from SeaGoatVision.commun.param import  Param
 from SeaGoatVision.server.core.filter import Filter
 
 class GaussianBlur(Filter):

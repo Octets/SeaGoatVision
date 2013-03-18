@@ -20,7 +20,7 @@
 import inspect
 import types
 import SeaGoatVision.server.filters.implementation
-from SeaGoatVision.server.filters.param import Param
+from SeaGoatVision.commun.param import Param
 
 def load_filters():
     #TODO on devrait utiliser implement au lieu de tout le nom?

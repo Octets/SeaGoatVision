@@ -22,7 +22,7 @@
 import SeaGoatVision.server.filters
 from SeaGoatVision.server.filters import utils
 from SeaGoatVision.server.filters.dataextract import DataExtract
-from SeaGoatVision.server.filters.param import Param
+from SeaGoatVision.commun.param import Param
 import ConfigParser
 import numpy as np
 
