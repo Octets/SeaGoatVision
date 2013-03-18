@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -17,9 +17,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.filters.param import Param
+from SeaGoatVision.server.core.filter import Filter
 
-class ColorLevel:
+class ColorLevel(Filter):
     """Determine the value in % a color will have.
         0% = Nothing
         50% = Half the original value.
@@ -27,16 +28,16 @@ class ColorLevel:
         Example: With 50% Blue and the following pixel (100, 100, 100) give (50, 100, 100)"""
 
     def __init__(self):
-        self.red = Parameter("red",0,255,100)
-        self.green = Parameter("green",0,255,100)
-        self.blue = Parameter("blue",0,255,100)
-        
+        Filter.__init__(self)
+        self.red = Param("red", 100, min_v=0, max_v=255)
+        self.green = Param("green", 100, min_v=0, max_v=255)
+        self.blue = Param("blue", 100, min_v=0, max_v=255)
+
     def execute(self, image):
-        if self.red <> 100:
-            image[:,:, 2] *= (self.red.get_current_value()/100)
-        #image[:,:, 1] *= ((image[:,:, 0])/2)
-        if self.green <> 100:
-            image[:,:, 1] *= (self.green.get_current_value()/100)
-        if self.blue <> 100:
-            image[:,:, 0] *= (self.blue.get_current_value()/100) 
+        if self.red != 100:
+            image[:, :, 2] *= self.red.get() / 100
+        if self.green != 100:
+            image[:, :, 1] *= self.green.get() / 100
+        if self.blue != 100:
+            image[:, :, 0] *= self.blue.get() / 100
         return image

@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -19,33 +19,35 @@
 
 import cv2
 import cv2.cv as cv
-from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.filters.param import  Param
+from SeaGoatVision.server.core.filter import Filter
 
-class Morphology:
-    
+class Morphology(Filter):
+
     def __init__(self):
-        self.kernel_width = Parameter("Kernel Width",1,256,3)
-        self.kernel_height = Parameter("Kernel Height",1,256,3)
-        self.anchor_x = Parameter("Anchor X",None,None,-1)
-        self.anchor_y = Parameter("Anchor Y",None,None,-1)
-        self.iterations = Parameter("Iteration,",1,None,1)
+        Filter.__init__(self)
+        self.kernel_width = Param("Kernel Width", 3, min_v=1, max_v=256)
+        self.kernel_height = Param("Kernel Height", 3, min_v=1, max_v=256)
+        self.anchor_x = Param("Anchor X", -1)
+        self.anchor_y = Param("Anchor Y", -1)
+        self.iterations = Param("Iteration,", 1, min_v=1)
         self.configure()
-        
+
     def configure(self):
-        self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT, 
-                                (int(self.kernel_width.get_current_value()), 
-                                int(self.kernel_height.get_current_value())), 
-                                (int(self.anchor_x.get_current_value()), 
-                                int(self.anchor_y.get_current_value())))
-    
+        self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT,
+                                (self.kernel_width.get(),
+                                self.kernel_height.get()),
+                                (self.anchor_x.get(),
+                                self.anchor_y.get()))
+
     def execute(self, image):
         morph = cv2.cvtColor(image, cv.CV_BGR2GRAY)
         cv2.morphologyEx(
-                morph, 
-                cv2.MORPH_CLOSE, 
+                morph,
+                cv2.MORPH_CLOSE,
                 self._kernel,
-                dst=morph, 
-                iterations=int(self.iterations.get_current_value()))
+                dst=morph,
+                iterations=self.iterations.get())
         cv2.merge((morph, morph, morph), image)
-        
+
         return image

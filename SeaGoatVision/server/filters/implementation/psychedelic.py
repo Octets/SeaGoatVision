@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -19,20 +19,22 @@
 
 import numpy as np
 
-from SeaGoatVision.server.filters.parameter import  Parameter
+from SeaGoatVision.server.filters.param import  Param
+from SeaGoatVision.server.core.filter import Filter
 
-class Psychedelic:
+class Psychedelic(Filter):
     """Acid trip"""
-    
+
     def __init__(self):
+        Filter.__init__(self)
         self._images = []
-        self.nb_images = Parameter("Nb Images", 1, 99, 10)
-        
+        self.nb_images = Param("Nb Images", 10, min_v=1, max_v=99)
+
     def execute(self, image):
         self._images.append(image)
-        while len(self._images) >= self.nb_images.get_current_value():
+        while len(self._images) >= self.nb_images.get():
             del self._images[0]
-            
+
         try:
             for img in self._images:
                 image = np.add(image, img)

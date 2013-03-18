@@ -62,6 +62,13 @@ class WinFilterChain(QtCore.QObject):
         self.ui.frame_filter_edit.setEnabled(False)
         
         self.updateSources()
+    ######################################################################
+    ############################  PROPERTY  ##############################
+    ######################################################################
+    def get_execution_name(self):
+        source_name = self.ui.sourcesComboBox.currentText()
+        filterchain_name = self.ui.sourceNameLineEdit.text()
+        return "%s_%s" % (filterchain_name, source_name)
 
     ######################################################################
     #############################  SIGNAL  ###############################
@@ -70,9 +77,8 @@ class WinFilterChain(QtCore.QObject):
         source_name = self.ui.sourcesComboBox.currentText()
         filterchain_name = self.ui.sourceNameLineEdit.text()
         lst_filter = self._get_listString_qList(self.ui.filterListWidget)
-        execution_name = "%s_%s" % (filterchain_name, source_name)
         self.enable_preview(enable=False)
-        self.onPreviewClick.emit(execution_name, source_name, filterchain_name, lst_filter)
+        self.onPreviewClick.emit(self.get_execution_name(), source_name, filterchain_name, lst_filter)
 
     def enable_preview(self, enable=True):
         # todo receive string when close from winViewer with execution_name
@@ -182,7 +188,6 @@ class WinFilterChain(QtCore.QObject):
         for item in lstFiltreStr:
             self.ui.filterListWidget.addItem(item)
 
-
     def new(self):
         self.edit()
 
@@ -223,7 +228,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.frame_filter_edit.setEnabled(filter_name is not None)
         if filter_name:
             filterchain_name = self._get_selected_filterchain_name()
-            self.selectedFilterChanged.emit(filterchain_name, filter_name)
+            self.selectedFilterChanged.emit(self.get_execution_name(), filter_name)
 
     def onSelectedFilterchainChanged(self):
         filterchain_name = self._get_selected_filterchain_name()

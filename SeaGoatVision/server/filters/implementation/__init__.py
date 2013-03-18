@@ -35,6 +35,7 @@ import traceback
 import numpy as np
 import scipy.weave.ext_tools as ext_tools
 
+from SeaGoatVision.server.core.filter import Filter
 import SeaGoatVision.globals as g
 
 ##
@@ -68,6 +69,12 @@ def compile_cpp_filters():
             os.remove(os.path.join(RELOAD_DIR, f))
 
     image = np.zeros((1,1), dtype=np.uint8)
+    notify = None
+
+    def init():
+        def __init__(self):
+            self._output_observers = list()
+        return __init__
 
     def ext_code():
         """
@@ -75,7 +82,7 @@ def compile_cpp_filters():
         """
         return """
             cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
-            cv::Mat ret = execute(mat);
+            cv::Mat ret = execute(mat, notify);
             if (mat.data != ret.data)
                 image = ret.data;
             """
@@ -98,7 +105,8 @@ def compile_cpp_filters():
         created class that wraps the c++ filters
         """
         def execute(self, image):
-            cppfunc(image)
+            notify = self.notify_output_observers
+            cppfunc(image, notify)
             return image
         return execute
 
@@ -130,7 +138,7 @@ def compile_cpp_filters():
                                  if line.startswith('#include')]
         mod.customize.add_extra_link_arg("`pkg-config --cflags --libs opencv`")
 
-        func = ext_tools.ext_function(filename, ext_code(),['image'])
+        func = ext_tools.ext_function(filename, ext_code(),['image', 'notify'])
         func.customize.add_support_code(cppcode)
         mod.add_function(func)
 
@@ -146,8 +154,9 @@ def compile_cpp_filters():
 
             cppmodule = __import__(modname)
 
-            clazz = type(filename, (object,),
-                         {'execute' : create_execute(getattr(cppmodule, filename)),
+            clazz = type(filename, (Filter,),
+                         {'__init__' : init(),
+                          'execute' : create_execute(getattr(cppmodule, filename)),
                           '__doc__' : getattr(cppmodule, 'help_' + filename)()})
             setattr(sys.modules[__name__], filename, clazz)
             del clazz

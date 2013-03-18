@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -20,23 +20,25 @@
 import cv2
 import cv2.cv as cv
 import numpy as np
-from SeaGoatVision.server.filters.parameter import Parameter
+from SeaGoatVision.server.filters.param import Param
+from SeaGoatVision.server.core.filter import Filter
 
-class Canny:
+class Canny(Filter):
     """Apply a canny filter to the image"""
-    
+
     def __init__(self):
-        self.threshold1 = Parameter("Threshold1",0,255,10)
-        self.threshold2 = Parameter("Threshold2",0,255,100)
-    
+        Filter.__init__(self)
+        self.threshold1 = Param("Threshold1", 10, min_v=0, max_v=255)
+        self.threshold2 = Param("Threshold2", 100, min_v=0, max_v=255)
+
     def execute(self, image):
         gray = cv2.cvtColor(image, cv.CV_BGR2GRAY)
-        
-        cv2.Canny(gray, 
-                  self.threshold1.get_current_value(), 
-                  self.threshold2.get_current_value(),
+
+        cv2.Canny(gray,
+                  self.threshold1.get(),
+                  self.threshold2.get(),
                   gray)
         cv2.merge((gray, gray, gray), image)
 
         return image
-    
+

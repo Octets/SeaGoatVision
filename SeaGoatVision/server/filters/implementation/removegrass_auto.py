@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -19,19 +19,19 @@
 
 import cv2
 import numpy as np
+from SeaGoatVision.server.core.filter import Filter
 
-class RemoveGrassAuto:
-    """"""
-    
+class RemoveGrassAuto(Filter):
+
     def __init__(self):
-        pass
-    
+        Filter.__init__(self)
+
     def execute(self, image):
-        #copy = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)
+        # copy = cv2.cvtColor(image, cv2.cv.CV_BGR2HSV)
         h, s, v = cv2.split(image)
         image[(h > 12) & (h < 80)] = 0
         return image
-    
+
         blue, green, red = cv2.split(image)
         new_blue = np.subtract(blue, green / 2)
         black = blue < new_blue
@@ -44,4 +44,4 @@ class RemoveGrassAuto:
         image = cv2.merge((blue, green, red))
 
         return image
-    
+
