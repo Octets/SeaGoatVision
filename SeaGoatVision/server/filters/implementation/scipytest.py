@@ -17,27 +17,20 @@ class ScipyExample(Filter):
         self.colorr = Param("colorr", 0, min_v=0, max_v=255)
         self.colorg = Param("colorg", 0, min_v=0, max_v=255)
         self.colorb = Param("colorb", 255, min_v=0, max_v=255)
-        self.param = {"Circlex" : self.Circlex,
-                      "Circley" : self.Circley,
-                      "colorr" : self.colorr,
-                      "colorg" : self.colorg,
-                      "colorb" : self.colorb}
 
     def execute(self, image):
         # self.notify_output_observers("ScipyTestPy: j=6 \n")
         notify = self.notify_output_observers
         param = {}
-        for key, value in self.param.items():
+        for value in self.get_params():
+            key = value.get_name()
             param[key] = value.get()
-        img1 = cv.fromarray(image)
         weave.inline(
         """
         py::tuple notify_args(1);
         notify_args[0] = "patatoum";
         notify.call(notify_args);
-        cv::Mat mat(get_cvmat(img1));
-        //printf("addr %d %d\\n",  mat.rows, mat.cols);
-        //printf("%d\\n", circlex);
+        cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
 
         int circlex = (int)PyInt_AsLong(PyDict_GetItemString(param, "Circlex"));
         int circley = (int)PyInt_AsLong(PyDict_GetItemString(param, "Circley"));
@@ -47,20 +40,10 @@ class ScipyExample(Filter):
 
         cv::circle(mat, cv::Point(circlex, circley), mat.cols/4, cv::Scalar(colorr, colorg, colorb), -1);
         """,
-        arg_names=['img1', 'notify', 'param'],
+        arg_names=['image', 'notify', 'param'],
         include_dirs=['/usr/local/include/opencv/'],
         headers=['<cv.h>', '<cxcore.h>'],
         # libraries = ['ml', 'cvaux', 'highgui', 'cv', 'cxcore'],
-        extra_objects=["`pkg-config --cflags --libs opencv`"],
-        support_code="""
-        struct cvmat_t {
-                PyObject_HEAD
-                CvMat *a;
-                PyObject *data;
-                size_t offset;
-        };
-        CvMat *get_cvmat(PyObject *o) { return ((cvmat_t*)o)->a; }
-        """
+        extra_objects=["`pkg-config --cflags --libs opencv`"]
         )
-        img1 = numpy.asarray(img1)
-        return img1
+        return image
