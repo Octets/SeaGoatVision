@@ -1,9 +1,8 @@
 from SeaGoatVision.commun.param import Param
-from SeaGoatVision.server.filters.dataextract import DataExtract 
 
-class Filter(DataExtract):
+class Filter(object):
     def __init__(self):
-        DataExtract.__init__(self)
+        self._output_observers = list()
 
     def configure(self):
         pass
@@ -20,3 +19,13 @@ class Filter(DataExtract):
             else:
                 params.append(var)
         return params
+
+    def notify_output_observers(self, data):
+        for obs in self._output_observers:
+            obs(data)
+
+    def add_output_observer(self, observer):
+        self._output_observers.append(observer)
+
+    def remove_output_observer(self, observer):
+        self._output_observers.remove(observer)

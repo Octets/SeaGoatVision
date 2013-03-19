@@ -21,7 +21,7 @@
 
 import SeaGoatVision.server.filters
 from SeaGoatVision.server.filters import utils
-from SeaGoatVision.server.filters.dataextract import DataExtract
+from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.commun.param import Param
 import ConfigParser
 import numpy as np
@@ -34,7 +34,7 @@ def my_import(name):
     return mod
 
 def isnumeric(string):
-    #TODO in python3, use str.isnumeric()
+    # TODO in python3, use str.isnumeric()
     try:
         float(string)
         return True
@@ -68,7 +68,7 @@ def read(file_name):
                 param.set(cfg.getint(section, member))
             elif isnumeric(val):
                 f_value = cfg.getfloat(section, member)
-                #exception, if the param want int, we will cast it
+                # exception, if the param want int, we will cast it
                 if param.get_type() is int:
                     param.set(int(f_value))
                 else:
@@ -141,7 +141,7 @@ class FilterChain:
 
     def get_filter(self, index=None, name=None):
         if index is not None:
-            #TODO not better return self[index] ??
+            # TODO not better return self[index] ??
             return self.filters[index]
         elif name is not None:
             lst_filter = [o_filter for o_filter in self.filters if o_filter.__class__.__name__ == name]
@@ -201,14 +201,14 @@ class FilterChain:
     def add_filter_output_observer(self, output):
         self.filter_output_observers.append(output)
         for f in self.filters:
-            if isinstance(f, DataExtract):
+            if isinstance(f, Filter):
                 f.add_output_observer(output)
         return True
 
     def remove_filter_output_observer(self, output):
         self.filter_output_observers.remove(output)
         for f in self.filters:
-            if isinstance(f, DataExtract):
+            if isinstance(f, Filter):
                 f.remove_output_observer(output)
         return True
 
