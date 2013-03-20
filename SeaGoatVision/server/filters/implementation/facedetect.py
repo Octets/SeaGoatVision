@@ -19,8 +19,8 @@ class FaceDetection(Filter):
                                              'haarcascade_frontalface_alt.xml')
         self.eye_cascade = cv2.CascadeClassifier()
         self.face_cascade = cv2.CascadeClassifier()
-        assert self.eye_cascade.load(self.eye_detect_name)
-        assert self.face_cascade.load(self.face_detect_name)
+        self.eye_cascade.load(self.eye_detect_name)
+        self.face_cascade.load(self.face_detect_name)
         self.notify_filter = Param("notify", False)
 
     def execute(self, image):
