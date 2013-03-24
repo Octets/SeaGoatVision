@@ -129,6 +129,9 @@ class FilterChain:
 
     def add_filter(self, filtre):
         self.filters.append(filtre)
+        if isinstance(filtre, DataExtractor):
+            for obs in self.filter_output_observers:
+                filtre.add_output_observer(obs)
         self.notify_filter_observers()
 
     def remove_filter(self, filtre):

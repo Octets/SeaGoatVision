@@ -176,7 +176,8 @@ class VisionManager:
     def add_filter_output_observer(self, output):
         if self.chain is not None:
             self.chain.add_filter_output_observer(output)
-
+        else:
+            print "chain is None!"
     def remove_filter_output_observer(self, output):
         if self.chain is not None:
             self.chain.remove_filter_output_observer(output)

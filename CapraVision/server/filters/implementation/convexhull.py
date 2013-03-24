@@ -20,12 +20,30 @@
 import cv2
 import cv2.cv as cv
 
-class ConvexHull:
+import numpy as np
+
+from CapraVision.server.filters import dataextract
+from CapraVision.server.filters.parameter import  Parameter
+
+class ConvexHull(dataextract.DataExtractor):
         
+    def __init__(self):
+        dataextract.DataExtractor.__init__(self)
+        self.area_min = Parameter("Area Min", 1, 100000, 300)
+        self.area_max = Parameter("Area Max", 1, 100000, 35000)
+    
     def execute(self, image):
         gray = cv2.cvtColor(image, cv.CV_BGR2GRAY)
         cnt, _ = cv2.findContours(gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        image *= 0
         for c in cnt:
             hull = cv2.convexHull(c)
-            cv2.drawContours(image, [hull],-1, (255,255,255), -1)    
+            approx = cv2.approxPolyDP(c, 0, False)
+            area = np.abs(cv2.contourArea(c))
+            
+            if self.area_min.get_current_value() < area:
+                cv2.drawContours(image, [hull],-1, (255,255,255), -1)
+                self.notify_output_observers(str(area) + "\n")
+                
         return image
+    
