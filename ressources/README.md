@@ -3,7 +3,7 @@ Manually add thirdparty ressources here.
 What <1st folder> [1] would be commited ? :
 * embeded - public ressources
 
-What <1st folder> shouldn't be commited [2] : 
+What <1st folder> shouldn't be commited [2] ? : 
 * thirdparty - private ressources 
 
 Suggested subfolder tree  :
