@@ -12,5 +12,6 @@ Suggested subfolder tree  :
 
 
 [1] <1stfolder> designate the first level of folder that we can retreive in {project root}/ressources
+
 [2] Refer to {project root}/.gitignore
 
