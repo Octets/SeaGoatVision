@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
+#    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
 #    This filename is part of SeaGoatVision.
 #    
