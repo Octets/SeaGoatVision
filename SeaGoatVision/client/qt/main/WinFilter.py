@@ -88,14 +88,21 @@ class WinFilter(QtGui.QDockWidget):
 
     def getIntegerWidget(self, param, cb_value_change):
         numberLabel = QtGui.QLabel()
-        numberLabel.setNum(param.get())
+        value = param.get()
+        if type(value) is tuple:
+            numberLabel.setNum(value[0])
+        else:
+            numberLabel.setNum(value)
 
         slider = QtGui.QSlider()
         slider.setBaseSize(100, 100)
         slider.setMinimum(param.get_min())
         slider.setMaximum(param.get_max())
         slider.setTickInterval(1)
-        slider.setValue(param.get())
+        if type(value) is tuple:
+            slider.setValue(value[0])
+        else:
+            slider.setValue(value)
         slider.setTickPosition(QtGui.QSlider.TicksBothSides)
         slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
 

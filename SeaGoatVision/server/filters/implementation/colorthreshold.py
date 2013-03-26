@@ -28,10 +28,9 @@ class ColorThreshold(Filter):
         Everything else is black (0, 0, 0)"""
     def __init__(self):
         Filter.__init__(self)
-        self.shift_hue_plane = Param("Shift Hue Plane", False)
-        self.blue = Param("Blue", 20.0, min_v=1, max_v=256, thres_h=256.0)
-        self.green = Param("Green", 20.0, min_v=1, max_v=256, thres_h=256.0)
-        self.red = Param("Red", 20.0, min_v=1, max_v=256, thres_h=256.0)
+        self.blue = Param("Blue", 20, min_v=1, max_v=256, thres_h=256)
+        self.green = Param("Green", 20, min_v=1, max_v=256, thres_h=256)
+        self.red = Param("Red", 20, min_v=1, max_v=256, thres_h=256)
         self._barray = None
         self._garray = None
         self._rarray = None

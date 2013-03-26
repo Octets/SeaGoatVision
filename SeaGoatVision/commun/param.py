@@ -95,6 +95,10 @@ class Param(object):
         #exception for bool
         if self.type_t is bool:
             value = bool(value)
+        if self.type_t is int and type(value) is float:
+            value = int(value)
+        if self.type_t is float and type(value) is int:
+            value = float(value)
         if type(value) is not self.type_t:
             raise Exception("value is wrong type. Expected %s and receive %s" \
                     % (self.type_t, type(value)))
@@ -114,9 +118,13 @@ class Param(object):
                            % (value, self.thres_h)
                     raise Exception(msg)
             else:
+                if self.type_t is int and type(thres_h) is float:
+                    thres_h = int(thres_h)
+                if self.type_t is float and type(thres_h) is int:
+                    thres_h = float(thres_h)
                 if type(thres_h) is not self.type_t:
                     msg = "value is wrong type. Expected %s and receive %s" \
-                        % (self.type_t, type(value))
+                        % (self.type_t, type(thres_h))
                     raise Exception(msg)
                 elif value > thres_h:
                     msg = "Threshold low %s is upper then threshold hight %s." \
