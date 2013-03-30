@@ -72,11 +72,11 @@ class MTI880(DataExtractor):
 
         if self._calibrate_hue and c is not None and area > self.area_min:
             self.hue_min += 1
-            self.notify_observers()
+            #self.notify_observers()
         elif self._calibrate_hue and self.hue_min > 0:
             print self.hue_min
-            self._calibrate_hue = False
             self.notify_observers()
+            self._calibrate_hue = False
             
         self.calibrate_closed_hand(area)
         self.calibrate_extended_hand(area)

@@ -20,6 +20,7 @@
 import copy
 
 from gi.repository import Gtk
+from gi.repository import GObject
 
 from CapraVision.client.gtk import get_ui
 from CapraVision.client.gtk import win_name
@@ -72,6 +73,9 @@ class WinMTI880:
         self.spnAmplitude.set_value(self.filtre_init.amplitude)
         
     def filter_observer(self):
+        GObject.idle_add(self.refresh)
+        
+    def refresh(self):
         self.spnClosed.set_value(self.filtre.closed_hand)
         self.spnNormal.set_value(self.filtre.normal_hand)
         self.spnExtended.set_value(self.filtre.extended_hand)
