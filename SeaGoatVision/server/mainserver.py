@@ -25,7 +25,7 @@ Date : October 2012
 
 import os
 # Import required RPC modules
-import protobuf.socketrpc.server as server
+import protobuf.socketrpc.server as server_rpc
 from controller import protobufServerImpl as impl
 
 def run(port=8090):
@@ -43,7 +43,7 @@ def run(port=8090):
     # Note that this is an instantiation of the implementation class,
     # *not* the class defined in the proto file.
     server_service = impl.ProtobufServerImpl()
-    server = server.SocketRpcServer(port, "")
+    server = server_rpc.SocketRpcServer(port, "")
     server.registerService(server_service)
 
     # Start the server
