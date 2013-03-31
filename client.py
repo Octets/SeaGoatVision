@@ -18,24 +18,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Description : launch vision client. Can choose multiple client
+Description : launch gtk vision client.
 """
 
-import argparse
-
-def runGtk():
+if __name__ == '__main__':
     from CapraVision.client.gtk.maingtk import run
     run()
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Open client for vision server.')
-    #parser.add_argument('string', metavar='interface name', type=str, default="gtk", help='cli, gtk or qt is supported.')
-    parser.add_argument('interface', metavar='interface name', nargs='?', type=str, default="gtk", help='gtk is supported.')
-
-    args = parser.parse_args()
-
-    sInterface = args.interface.lower()
-    if sInterface == "gtk":
-        runGtk()
-    else:
-        print("Interface not supported : %s" % sInterface)
