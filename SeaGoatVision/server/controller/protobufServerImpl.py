@@ -196,6 +196,26 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
+    def get_params_filterchain(self, controller, request, done):
+        print("get_params_filterchain request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.GetParamsFilterchainResponse()
+        try:
+            ret = self.manager.get_params_filterchain(request.execution_name, request.filter_name)
+            if ret is not None:
+                for item in ret:
+                    if item.get_type() is int:
+                        response.params.add(name=item.get_name(), value_int=item.get(), max_v=item.get_max(), min_v=item.get_min())
+                    elif item.get_type() is bool:
+                        response.params.add(name=item.get_name(), value_bool=item.get())
+                    #TODO complete me mathben
+        except Exception, e:
+            print "Exception: ", e
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
@@ -320,6 +340,26 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
+    def update_param(self, controller, request, done):
+        print("update_param request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            value = None
+            if request.param.HasField("value_int"):
+                value = request.param.value_int
+            try:
+                response.status = self.manager.update_param(request.execution_name, request.filter_name, request.param.name, value)
+            except Exception, e:
+                reponse.status = 1
+                response.message = e
+        except Exception, e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
 
     ##########################################################################
     ############################### FILTER  ##################################
@@ -389,6 +429,4 @@ class Observer(threading.Thread):
             pass
         self.socket.close()
         self.socket = None
-
-
 

@@ -29,6 +29,7 @@ import numpy as np
 from protobuf.socketrpc import RpcService
 import socket
 import threading
+from SeaGoatVision.commun.param import Param
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
@@ -127,6 +128,28 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
+
+        except Exception as ex:
+            log.exception(ex)
+
+        return returnValue
+
+    def get_params_filterchain(self, execution_name, filter_name):
+        request = server_pb2.GetParamsFilterchainRequest()
+        request.execution_name = execution_name
+        request.filter_name = filter_name
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.get_params_filterchain(request, timeout=10000)
+
+            if response:
+                returnValue = []
+                for param in response.params:
+                    if param.HasField("value_int"):
+                        returnValue.append(Param(param.name, param.value_int))
+            else:
+                returnValue = False
 
         except Exception as ex:
             log.exception(ex)
@@ -495,6 +518,32 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
+        except Exception as ex:
+            log.exception(ex)
+
+        return returnValue
+
+    def update_param(self, execution_name, filter_name, param_name, value):
+        request = server_pb2.UpdateParamRequest()
+        request.execution_name = execution_name
+        request.filter_name = filter_name;
+        request.param.name = param_name
+        if type(value) is int:
+            request.param.value_int = value
+
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.update_param(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with reload_filter : %s" % response.message)
+                    else:
+                        print("Error with reload_filter.")
+            else:
+                returnValue = False
 
         except Exception as ex:
             log.exception(ex)
@@ -624,6 +673,3 @@ class Observer(threading.Thread):
             self.socket.close()
             self.socket = None
         print("Close client")
-
-
-

@@ -25,7 +25,7 @@ class Param(object):
     """
     def __init__(self, name, value, min_v=None, max_v=None, lst_value=None,\
                 force_type=None, thres_h=None):
-        if type(name) is not str:
+        if type(name) is not str and type(name) is not unicode:
             raise Exception("Name must be string value.")
         self.name = name
         self.min_v = None

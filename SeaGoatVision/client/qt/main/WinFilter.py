@@ -96,8 +96,10 @@ class WinFilter(QtGui.QDockWidget):
 
         slider = QtGui.QSlider()
         slider.setBaseSize(100, 100)
-        slider.setMinimum(param.get_min())
-        slider.setMaximum(param.get_max())
+        if param.get_min() is not None:
+            slider.setMinimum(param.get_min())
+        if param.get_max() is not None:
+            slider.setMaximum(param.get_max())
         slider.setTickInterval(1)
         if type(value) is tuple:
             slider.setValue(value[0])

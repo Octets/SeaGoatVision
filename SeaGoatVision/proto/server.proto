@@ -1,7 +1,7 @@
 //    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 //
 //    This file is part of SeaGoatVision.
-//    
+//
 //    SeaGoatVision is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
@@ -15,13 +15,13 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-//Description : This is the proto file. We use this file to generate server_pb2.py for protobuf service. 
+//Description : This is the proto file. We use this file to generate server_pb2.py for protobuf service.
 //Authors: Mathieu Benoit (mathben963@gmail.com)
 //Date : October 2012
 
 package protobuf.socketrpc;
 
-option java_package = "com.capra";
+option java_package = "com.seagoatvision";
 option java_outer_classname = "VServerProto";
 
 option py_generic_services = true;
@@ -103,8 +103,15 @@ message RemoveOutputObserverRequest
 {
   required string execution_name = 1;
 }
+
+message UpdateParamRequest
+{
+  required string execution_name = 1;
+  required string filter_name = 2;
+  required Param param = 3;
+}
 //############################################################
-//######################## GET SECTION ####################### 
+//######################## GET SECTION #######################
 //############################################################
 message GetFilterListRequest{}
 message GetFilterListResponse
@@ -131,6 +138,15 @@ message GetSourceListResponse
   repeated string source = 1;
 }
 
+message GetParamsFilterchainRequest
+{
+  required string execution_name = 1;
+  required string filter_name = 2;
+}
+message GetParamsFilterchainResponse
+{
+  repeated Param params = 1;
+}
 //############################################################
 //################## CUSTOM MESSAGE SECTION ##################
 //############################################################
@@ -146,27 +162,38 @@ message FilterChain
   optional string doc = 2;
 }
 
+message Param
+{
+  required string name = 1;
+  optional int32 value_int = 2;
+  optional string value_str = 3;
+  optional bool value_bool = 4;
+  optional float value_float = 5;
+  optional int32 min_v = 6;
+  optional int32 max_v = 7;
+}
 //#############################################################
-//###################### SERVICE SECTION ###################### 
+//###################### SERVICE SECTION ######################
 //#############################################################
-service CommandService 
+service CommandService
 {
   // get information
   rpc get_filter_list(GetFilterListRequest) returns(GetFilterListResponse);
   rpc get_filter_list_from_filterchain(GetFilterListFromFilterChainRequest) returns(GetFilterListFromFilterChainResponse);
   rpc get_filterchain_list(GetFilterChainListRequest) returns(GetFilterChainListResponse);
   rpc get_source_list(GetSourceListRequest) returns(GetSourceListResponse);
-  
+  rpc get_params_filterchain(GetParamsFilterchainRequest) returns(GetParamsFilterchainResponse);
+
   // ask state
   rpc is_connected(IsConnectedRequest) returns(StatusResponse);
-  
+
   // observer
   rpc add_image_observer(AddImageObserverRequest) returns(StatusResponse);
   rpc set_image_observer(SetImageObserverRequest) returns(StatusResponse);
   rpc remove_image_observer(RemoveImageObserverRequest) returns(StatusResponse);
   rpc add_output_observer(AddOutputObserverRequest) returns(StatusResponse);
   rpc remove_output_observer(RemoveOutputObserverRequest) returns(StatusResponse);
-  
+
   // action
   rpc reload_filter(ReloadFilterRequest) returns(StatusResponse);
   rpc load_chain(LoadChainRequest) returns(StatusResponse);
@@ -175,5 +202,6 @@ service CommandService
   rpc modify_filterchain(ModifyFilterChainRequest) returns(StatusResponse);
   rpc start_filterchain_execution(StartFilterchainExecutionRequest) returns(StatusResponse);
   rpc stop_filterchain_execution(StopFilterchainExecutionRequest) returns(StatusResponse);
+  rpc update_param(UpdateParamRequest) returns(StatusResponse);
 }
 

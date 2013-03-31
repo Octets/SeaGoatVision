@@ -102,7 +102,7 @@ class Manager:
 
         return True
 
-    def get_params_filterchain(self, execution_name, filter_name=None):
+    def get_params_filterchain(self, execution_name, filter_name):
         # get actual filter from execution
         o_filter = None
         filterchain_item = None
@@ -260,6 +260,8 @@ class Manager:
         if param:
             param.set(value)
             filter.configure()
+            return 0
+        return 1
 
     ##########################################################################
     ############################### FILTER  ##################################
