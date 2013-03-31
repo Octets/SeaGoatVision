@@ -23,7 +23,7 @@ Authors: Mathieu Benoit <mathben963@gmail.com>
 Date : December 2012
 """
 
-from SeaGoatVision.server.filters import utils
+from filters import utils
 import filterchain
 import os
 

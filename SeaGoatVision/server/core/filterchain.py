@@ -19,10 +19,10 @@
 
 """Contains the FilterChain class and helper functions to work with the filter chain."""
 
-import SeaGoatVision.server.filters
-from SeaGoatVision.server.filters import utils
+import filters
 from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.commun.param import Param
+from filters import utils
 import ConfigParser
 import numpy as np
 
@@ -48,7 +48,7 @@ def read(file_name):
     cfg = ConfigParser.ConfigParser()
     cfg.read(file_name)
     for section in cfg.sections():
-        filtre = SeaGoatVision.server.filters.create_filter(section)
+        filtre = filters.create_filter(section)
         if not filtre:
             print("Error : The filter %s doesn't exist on filterchain." % (section, filterchain_name))
             continue

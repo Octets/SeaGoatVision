@@ -26,7 +26,7 @@ Date : Novembre 2012
 
 from SeaGoatVision.server import imageproviders
 from SeaGoatVision.server.core.mainloop import MainLoop
-from SeaGoatVision.server.filters import utils
+from filters import utils
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
 import filterchain
