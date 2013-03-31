@@ -27,7 +27,6 @@ from SeaGoatVision.server.core.manager import Manager
 from PySide.QtGui import QApplication
 import main
 
-
 def run(local=False, host="localhost", port=8090):
     if local:
         # Directly connected to the vision server
@@ -50,10 +49,3 @@ def run(local=False, host="localhost", port=8090):
     c.close()
 
     return rint
-
-if __name__ == '__main__':
-    # Project path is parent directory
-    import os
-    parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-    os.sys.path.insert(0, parentdir)
-    sys.exit(run(local=True))

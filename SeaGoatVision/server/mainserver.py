@@ -24,6 +24,9 @@ Date : October 2012
 """
 
 import os
+# Import required RPC modules
+import protobuf.socketrpc.server as server
+from controller import protobufServerImpl as impl
 
 def run(port=8090):
     # recheck if its locked because the last check is maybe a false lock
@@ -35,10 +38,6 @@ def run(port=8090):
     fileLock = open(sFileLockName, "w")
     fileLock.write("%s" % pid)
     fileLock.close()
-
-    # Import required RPC modules
-    import protobuf.socketrpc.server as server
-    from controller import protobufServerImpl as impl
 
     # Create and register the service
     # Note that this is an instantiation of the implementation class,
@@ -93,10 +92,3 @@ def check_pid(pid):
         return False
     else:
         return True
-
-if __name__ == '__main__':
-    # Project path is parent directory
-    parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    os.sys.path.insert(0, parentdir)
-    run()
-

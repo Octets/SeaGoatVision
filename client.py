@@ -31,7 +31,7 @@ def runQt(local=False, host="localhost", port=8090):
 
 def runCli(local=False, host="localhost", port=8090):
     from SeaGoatVision.client.cli.cli import run
-    return run()
+    return run(local=local, host=host, port=port)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Open client for vision server.')

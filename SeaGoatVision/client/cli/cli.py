@@ -24,14 +24,7 @@ Date : October 2012
 """
 import sys
 
-def run():
+def run(local=False, host="localhost", port=8090):
     from vCmd import VCmd
-    VCmd().cmdloop()
+    VCmd(local=local, host=host, port=port).cmdloop()
     return 0
-
-if __name__ == '__main__':
-    # Project path is parent directory
-    import os
-    parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-    os.sys.path.insert(0, parentdir)
-    sys.exit(run())

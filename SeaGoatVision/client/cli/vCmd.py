@@ -34,10 +34,13 @@ log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 class VCmd(cmd.Cmd):
-    def __init__(self, completekey='tab', stdin=None, stdout=None):
+    def __init__(self, local=False, host="localhost", port=8090, completekey='tab', stdin=None, stdout=None):
         cmd.Cmd.__init__(self, completekey=completekey, stdin=stdin, stdout=stdout)
-        # Protobuf
-        self.controller = ControllerProtobuf()
+        if local:
+            self.controller = Manager()
+        else:
+            # Protobuf
+            self.controller = ControllerProtobuf(host, port)
 
         # Directly connected to the vision server
         #self.controller = Manager()
@@ -46,9 +49,9 @@ class VCmd(cmd.Cmd):
             print("Vision server is not accessible.")
             return None
 
-    ####################################################################################################
+    ##########################################################################
     # List of command
-    ####################################################################################################
+    ##########################################################################
     def do_is_connected(self, line):
         if self.controller.is_connected():
             print("You are connected.")
