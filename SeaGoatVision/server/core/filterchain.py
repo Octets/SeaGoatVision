@@ -21,87 +21,12 @@
 
 import filters
 from SeaGoatVision.server.core.filter import Filter
+from SeaGoatVision.server.core import utils
 from SeaGoatVision.commun.param import Param
-from filters import utils
 import ConfigParser
 import numpy as np
 
-def my_import(name):
-    mod = __import__(name)
-    components = name.split('.')
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
-    return mod
-
-def isnumeric(string):
-    # TODO in python3, use str.isnumeric()
-    try:
-        float(string)
-        return True
-    except ValueError:
-        return False
-
-def read(file_name):
-    """Open a filtre chain file and load its content in a new filtre chain."""
-    filterchain_name = file_name[file_name.rfind("/") + 1:file_name.rfind(".")]
-    new_chain = FilterChain(filterchain_name)
-    cfg = ConfigParser.ConfigParser()
-    cfg.read(file_name)
-    for section in cfg.sections():
-        filtre = filters.create_filter(section)
-        if not filtre:
-            print("Error : The filter %s doesn't exist on filterchain." % (section, filterchain_name))
-            continue
-        # TODO refaire les parameter seulement
-        for member in filtre.__dict__:
-            param = getattr(filtre, member)
-            if not isinstance(param, Param):
-                continue
-            try:
-                val = cfg.get(section, member)
-            except:
-                # the file didn't contain the param
-                continue
-            if val == "True" or val == "False":
-                param.set(cfg.getboolean(section, member))
-            elif val.isdigit():
-                param.set(cfg.getint(section, member))
-            elif isnumeric(val):
-                f_value = cfg.getfloat(section, member)
-                # exception, if the param want int, we will cast it
-                if param.get_type() is int:
-                    param.set(int(f_value))
-                else:
-                    param.set(f_value)
-            elif val[0] == "(":
-                # It's a tuple!
-                if val.find("."):
-                    val = tuple(map(float, val[1:-1].split(',')))
-                else:
-                    val = tuple(map(int, val[1:-1].split(',')))
-                param.set(val[0], thres_h=val[1])
-            else:
-                val = '\n'.join([line[1:-1] for line in str.splitlines(val)])
-                param.set(val)
-        if hasattr(filtre, 'configure'):
-            filtre.configure()
-        new_chain.add_filter(filtre)
-    return new_chain
-
-def write(file_name, chain):
-    """Save the content of the filter chain in a file."""
-    cfg = ConfigParser.ConfigParser()
-    for fname, params in chain.get_params():
-        cfg.add_section(fname)
-        for param in params:
-            value = param.get()
-            name = param.get_name()
-            if isinstance(value, str):
-                value = '\n'.join(['"%s"' % line for line in str.splitlines(value)])
-            cfg.set(fname, name, value)
-    cfg.write(open(file_name, 'w'))
-
-class FilterChain:
+class FilterChain(object):
     """ Observable.  Contains the chain of filters to execute on an image.
 
     The observer must be a method that receive a filter and an image as param.
@@ -168,7 +93,7 @@ class FilterChain:
                 for output in filter_output_obs_copy:
                     self.remove_filter_output_observer(output)
                 # reload the module
-                module = my_import(item.__module__)
+                module = utils.module_name(item.__module__)
                 reload(module)
                 # recreate the instance
                 self.filters[index] = getattr(module, item.__class__.__name__)()
@@ -223,4 +148,3 @@ class FilterChain:
                 # copy the picture because the next filter will modify him
                 observer(np.copy(image))
         return image
-

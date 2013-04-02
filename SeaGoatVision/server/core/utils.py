@@ -16,3 +16,20 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+"""Contains not classable function"""
+
+def isnumeric(string):
+    # TODO in python3, use str.isnumeric()
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
+
+def module_name(self, name):
+    mod = __import__(name)
+    components = name.split('.')
+    for comp in components[1:]:
+        mod = getattr(mod, comp)
+    return mod

@@ -26,10 +26,8 @@ Date : Novembre 2012
 
 from SeaGoatVision.server import imageproviders
 from SeaGoatVision.server.core.mainloop import MainLoop
-from filters import utils
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
-import filterchain
 
 class Manager:
     def __init__(self):
@@ -38,7 +36,7 @@ class Manager:
             {"execution_name" : {"thread" : ref, "filterchain" : ref}}
         """
         self.dct_thread = {}
-        self.configuration = Configuration()
+        self.config = Configuration()
 
         # tcp server for output observer
         self.server_observer = Server()
@@ -72,7 +70,7 @@ class Manager:
             return None
 
         source = imageproviders.load_sources().get(source_name, None)
-        filterchain = self.configuration.get_filterchain(filterchain_name)
+        filterchain = self.config.get_filterchain(filterchain_name)
 
         if not(source and filterchain):
             print("Erreur with the source \"%s\" or the filterchain \"%s\". Maybe they dont exist."
@@ -114,7 +112,7 @@ class Manager:
             return None
         #if filterchain_item is None:
         #    # search in config
-        #    o_filter = utils.get_filter_from_filterName(filter_name=filter_name)
+        #    o_filter = self.config.get_filter_from_filterName(filter_name=filter_name)
         return filterchain.get_params(filter_name=filter_name)
 
     ##########################################################################
@@ -215,19 +213,19 @@ class Manager:
     ########################## CONFIGURATION  ################################
     ##########################################################################
     def get_filterchain_list(self):
-        return self.configuration.get_filterchain_list()
+        return self.config.get_filterchain_list()
 
     def upload_filterchain(self, filterchain_name, s_file_contain):
-        return self.configuration.upload_filterchain(filterchain_name, s_file_contain)
+        return self.config.upload_filterchain(filterchain_name, s_file_contain)
 
     def delete_filterchain(self, filterchain_name):
-        return self.configuration.delete_filterchain(filterchain_name)
+        return self.config.delete_filterchain(filterchain_name)
 
     def get_filter_list_from_filterchain(self, filterchain_name):
-        return self.configuration.get_filters_from_filterchain(filterchain_name)
+        return self.config.get_filters_from_filterchain(filterchain_name)
 
     def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
-        return self.configuration.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters)
+        return self.config.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters)
 
     ##########################################################################
     ############################ FILTERCHAIN  ################################
@@ -236,7 +234,7 @@ class Manager:
         """
             return if chain is correctly loading.
         """
-        new_chain = filterchain.read(file_name)
+        new_chain = self.config.read_filterchain(file_name)
         if new_chain is not None and self.chain is not None:
             self.hook_new_chain(new_chain)
         self.chain = new_chain
@@ -267,4 +265,4 @@ class Manager:
     ############################### FILTER  ##################################
     ##########################################################################
     def get_filter_list(self):
-        return utils.load_filters().keys()
+        return self.config.load_filters().keys()
