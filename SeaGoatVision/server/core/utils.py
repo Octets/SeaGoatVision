@@ -27,7 +27,7 @@ def isnumeric(string):
     except ValueError:
         return False
 
-def module_name(self, name):
+def module_name(name):
     mod = __import__(name)
     components = name.split('.')
     for comp in components[1:]:
