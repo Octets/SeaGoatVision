@@ -29,7 +29,7 @@ Date : december 2012
 import time
 
 from SeaGoatVision.client.qt.utils import get_ui
-from filters.bgr2rgb import BGR2RGB
+from filters.public.bgr2rgb import BGR2RGB
 import Image
 from PySide import QtCore
 from PySide import QtGui
