@@ -32,7 +32,6 @@ class WinFilter(QtGui.QDockWidget):
         self.controller = controller
 
     def setFilter(self, execution_name, filter_name):
-        # self.clear()
         del self.lst_param[:]
         self.widget().destroy()
         self.setWidget(QtGui.QWidget())
@@ -139,3 +138,4 @@ class WinFilter(QtGui.QDockWidget):
     def reset(self):
         for param in self.lst_param:
             param.reset()
+        self.setFilter(self.execution_name, self.filter_name)
