@@ -30,6 +30,7 @@ import time
 
 from SeaGoatVision.client.qt.utils import get_ui
 from filters.public.bgr2rgb import BGR2RGB
+from SeaGoatVision.commun.filterchain import *
 import Image
 from PySide import QtCore
 from PySide import QtGui
@@ -100,8 +101,11 @@ class WinViewer(QtCore.QObject):
 
     def _updateFilters(self, lst_filter_str):
         self.ui.filterComboBox.clear()
+        # First is original image
+        self.ui.filterComboBox.addItem(get_filter_original_name())
         for sFilter in lst_filter_str:
             self.ui.filterComboBox.addItem(sFilter)
+        self.ui.filterComboBox.setCurrentIndex(self.ui.filterComboBox.count() - 1)
 
     def _changeFilter(self):
         if self.actualFilter:
@@ -112,9 +116,6 @@ class WinViewer(QtCore.QObject):
     def updateLog(self, data):
         data = str(data).strip()
         print data
-        #if data and self.last_output != data:
-        #    self.last_output = data
-        #    self.ui.txtLog.insertPlainText(data + "\n")
 
     def updateImage(self, image):
         # fps

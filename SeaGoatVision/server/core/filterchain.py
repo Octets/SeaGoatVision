@@ -23,6 +23,7 @@ import filters
 from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.server.core import utils
 from SeaGoatVision.commun.param import Param
+from SeaGoatVision.commun.filterchain import *
 import ConfigParser
 import numpy as np
 
@@ -37,6 +38,7 @@ class FilterChain(object):
         self.image_observers = {}
         self.filter_output_observers = []
         self.filterchain_name = filterchain_name
+        self.original_image_observer = []
 
     def count(self):
         return len(self.filters)
@@ -103,23 +105,36 @@ class FilterChain(object):
             index += 1
 
     def add_image_observer(self, observer, filter_name):
-        lstObserver = self.image_observers.get(filter_name, [])
+        # Exception for original image
+        b_original = False
+        if get_filter_original_name() == filter_name:
+            b_original = True
+            lstObserver = self.original_image_observer
+        else:
+            lstObserver = self.image_observers.get(filter_name, [])
         if lstObserver:
             if observer in lstObserver:
                 print("This observer already observer the filter %s" % filter_name)
                 return False
             else:
                 lstObserver.append(observer)
-        else:
+        elif not b_original:
             self.image_observers[filter_name] = [observer]
+        else:
+            lstObserver.append(observer)
         return True
 
     def remove_image_observer(self, observer, filter_name):
-        lstObserver = self.image_observers.get(filter_name, [])
+        b_original = False
+        if get_filter_original_name() == filter_name:
+            b_original = True
+            lstObserver = self.original_image_observer
+        else:
+            lstObserver = self.image_observers.get(filter_name, [])
         if lstObserver:
             if observer in lstObserver:
                 lstObserver.remove(observer)
-                if not lstObserver:
+                if not lstObserver and not b_original:
                     del self.image_observers[filter_name]
                 return True
 
@@ -141,6 +156,11 @@ class FilterChain(object):
         return True
 
     def execute(self, image):
+        # TODO Optimize for multiple observer, only one copy
+        # first image observator
+        if self.original_image_observer:
+            for observer in self.original_image_observer:
+                observer(np.copy(image))
         for f in self.filters:
             image = f.execute(image)
             lst_observer = self.image_observers.get(f.__class__.__name__, [])
