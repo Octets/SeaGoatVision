@@ -46,14 +46,15 @@ class WinMain(QtGui.QMainWindow):
         self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
         self.winFilterChain.onPreviewClick.connect(self.addPreview)
 
-        self.setCentralWidget(self.winFilterChain.ui)
         self._addDockWidget()
+        self._addToolBar()
         
         self.host = host
 
     def _addDockWidget(self):
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilter)
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilterSel.ui)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilter)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilterSel.ui)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilterChain.ui)
 
     def _addToolBar(self):
         self.toolbar = QtGui.QToolBar()
@@ -65,7 +66,7 @@ class WinMain(QtGui.QMainWindow):
     def addPreview(self, execution_name, source_name, filterchain_name, lst_filter_str):
         winviewer = WinViewer(self.controller, execution_name, source_name, filterchain_name, lst_filter_str, self.host)
         self.dct_preview[execution_name] = winviewer
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, winviewer.ui)
+        self.setCentralWidget(winviewer.ui)
         winviewer.closePreview.connect(self.removePreview)
         winviewer.closePreview.connect(self.winFilterChain.enable_preview)
 
