@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python2.7
 
 #    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
 #
@@ -45,7 +45,7 @@ def create_graphic(data_file):
 if __name__ == '__main__':
     data_file = sys.argv[1] 
     image_file = create_graphic(data_file)
-    print image_file
+    print(image_file)
     sys.stdout.flush()
     
     
