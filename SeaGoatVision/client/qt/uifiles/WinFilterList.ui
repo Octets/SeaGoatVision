@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>WinFilterSel</class>
- <widget class="QDockWidget" name="WinFilterSel">
+ <class>WinFilterList</class>
+ <widget class="QDockWidget" name="WinFilterList">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -20,7 +20,7 @@
    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
   </property>
   <property name="windowTitle">
-   <string>Filter Selector</string>
+   <string>Filter List</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">

@@ -20,7 +20,7 @@
 
 from SeaGoatVision.client.qt.utils import get_ui
 
-from WinFilterSel import WinFilterSel
+from WinFilterList import WinFilterList
 from WinViewer import WinViewer
 from WinFilterChain import WinFilterChain
 from WinFilter import WinFilter
@@ -38,7 +38,7 @@ class WinMain(QtGui.QMainWindow):
 
         # create dockWidgets
         self.winFilter = WinFilter(controller)
-        self.winFilterSel = WinFilterSel(controller)
+        self.winFilterList = WinFilterList(controller)
         self.winFilterChain = WinFilterChain(controller, self.winFilterSel)
 
         # connect action between dock widgets

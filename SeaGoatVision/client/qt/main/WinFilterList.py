@@ -20,11 +20,11 @@
 from SeaGoatVision.client.qt.utils import get_ui
 from PySide import QtCore
 
-class WinFilterSel(QtCore.QObject):
+class WinFilterList(QtCore.QObject):
     """Allow the user to select a filter to add to the filterchain"""
     onAddFilter = QtCore.Signal(object)
     def __init__(self, controller):
-        super(WinFilterSel, self).__init__()
+        super(WinFilterList, self).__init__()
         self.ui = get_ui(self)
         self.controller = controller
 
