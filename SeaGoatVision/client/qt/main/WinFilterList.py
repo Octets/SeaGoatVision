@@ -25,13 +25,14 @@ class WinFilterList(QtCore.QObject):
     onAddFilter = QtCore.Signal(object)
     def __init__(self, controller):
         super(WinFilterList, self).__init__()
-        self.ui = get_ui(self)
         self.controller = controller
+        self.reload_ui()
 
+    def reload_ui(self):
+        self.ui = get_ui(self)
         self.ui.addFilterButton.clicked.connect(self._addFilter)
         self.ui.reloadFilterButton.clicked.connect(self._reloadFilter)
         self.ui.filterListWidget.doubleClicked.connect(self._addFilter)
-
         self.reload_list_filter(self.controller.get_filter_list())
 
     def reload_list_filter(self, lst_filter):

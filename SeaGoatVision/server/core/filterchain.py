@@ -23,7 +23,7 @@ import filters
 from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.server.core import utils
 from SeaGoatVision.commun.param import Param
-from SeaGoatVision.commun.filterchain import *
+from SeaGoatVision.commun.keys import *
 import ConfigParser
 import numpy as np
 

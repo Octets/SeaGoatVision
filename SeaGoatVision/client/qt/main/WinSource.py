@@ -17,29 +17,34 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.client.qt.main.WinImageFolder import WinImageFolder
-from SeaGoatVision.client.qt.main.WinMovie import WinMovie
-from SeaGoatVision.client.qt.main.WinSingleImage import WinSingleImage
+from SeaGoatVision.client.qt.utils import get_ui
+from SeaGoatVision.commun.keys import *
 
-class WinSource:
-    def __init__(self, source=None):
-        self.source = source
-        self.sourceUi = None
+from PySide import QtCore
 
-    def setSource(self, source):
-        self.source = source
-        self.sourceUi = self._getUi(source.__class__.__name__)
+class WinSource(QtCore.QObject):
+    def __init__(self, controller, islocal):
+        super(WinSource, self).__init__()
+        self.controller = controller
+        self.islocal = islocal
 
-    def _getUi(self, sourceName):
-        if sourceName == "ImageFolder":
-            return WinImageFolder(self.source)
-        elif sourceName == "Movie":
-            return WinMovie(self.source)
-        elif sourceName == "SingleImage":
-            return WinSingleImage(self.source)
-        else:
-            return None
+        self.reload_ui()
 
-    def show(self):
-        if self.sourceUi != None:
-            self.sourceUi.show()
+    def reload_ui(self):
+        self.ui = get_ui(self)
+
+        # disable local media
+        self.ui.rbtnImage.setEnabled(self.islocal)
+        self.ui.rbtnImageFolder.setEnabled(self.islocal)
+        self.ui.rbtnVideo.setEnabled(self.islocal)
+
+    def get_selected_media(self):
+        if self.ui.rbtnImage.isChecked():
+            return get_source_image_name()
+        elif self.ui.rbtnImageFolder.isChecked():
+            return get_source_image_folder_name()
+        elif self.ui.rbtnVideo.isChecked():
+            return get_source_video_name()
+        elif self.ui.rbtnCamera.isChecked():
+            return get_source_camera_name()
+        return "None"

@@ -20,26 +20,41 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QToolButton" name="toolsButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>8</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
+      <widget class="QToolButton" name="btnFilterChain">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="text">
-        <string>Tools</string>
+        <string>filterchain</string>
        </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-execute.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/gtk-execute.png</iconset>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnFilterList">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextUnderIcon</enum>
+       <property name="text">
+        <string>filter list</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnSource">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>source</string>
        </property>
       </widget>
      </item>

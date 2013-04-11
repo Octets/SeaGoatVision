@@ -19,3 +19,15 @@
 
 def get_filter_original_name():
     return "-- original --"
+
+def get_source_image_name():
+    return "SingleImage"
+
+def get_source_image_folder_name():
+    return "ImageFolder"
+
+def get_source_video_name():
+    return "Movie"
+
+def get_source_camera_name():
+    return "Webcam"

@@ -74,7 +74,7 @@ class Manager:
 
         if not(source and filterchain):
             print("Erreur with the source \"%s\" or the filterchain \"%s\". Maybe they dont exist."
-                  % (source, filterchain))
+                  % (source_name, filterchain_name))
             return None
 
         source = source()

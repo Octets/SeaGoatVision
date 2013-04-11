@@ -32,14 +32,17 @@ class WinFilterChain(QtCore.QObject):
     selectedFilterChanged = QtCore.Signal(object, object)
     onPreviewClick = QtCore.Signal(object, object, object, object)
 
-    def __init__(self, controller, qtWidgetFilterSelect):
+    def __init__(self, controller, qtWidgetFilterList, qtWidgetSource):
         super(WinFilterChain, self).__init__()
 
         self.controller = controller
-        self.qtWidgetFilterSelect = qtWidgetFilterSelect
+        self.qtWidgetFilterList = qtWidgetFilterList
+        self.qtWidgetSource = qtWidgetSource
         self.lastRowFilterChainSelected = 0
-        self.lock_preview = False
 
+        self.reload_ui()
+
+    def reload_ui(self):
         self.ui = get_ui(self)
         self.ui.filterListWidget.currentItemChanged.connect(self.onSelectedFilterchanged)
         self.ui.filterchainListWidget.currentItemChanged.connect(self.onSelectedFilterchainChanged)
@@ -56,18 +59,18 @@ class WinFilterChain(QtCore.QObject):
         self.ui.previewButton.clicked.connect(self.add_preview)
 
         self.updateFilterChainList()
+        self.ui.frame_filter_edit.setEnabled(False)
+        self.lock_preview = False
 
         self.edit_mode = False
         self._modeEdit(False)
         self._list_filterchain_is_selected(False)
-        self.ui.frame_filter_edit.setEnabled(False)
         
-        self.updateSources()
     ######################################################################
     ############################  PROPERTY  ##############################
     ######################################################################
     def get_execution_name(self):
-        source_name = self.ui.sourcesComboBox.currentText()
+        source_name = self.qtWidgetSource.get_selected_media()
         filterchain_name = self.ui.sourceNameLineEdit.text()
         return "%s_%s" % (filterchain_name, source_name)
 
@@ -75,7 +78,7 @@ class WinFilterChain(QtCore.QObject):
     #############################  SIGNAL  ###############################
     ######################################################################
     def add_preview(self):
-        source_name = self.ui.sourcesComboBox.currentText()
+        source_name = self.qtWidgetSource.get_selected_media()
         filterchain_name = self.ui.sourceNameLineEdit.text()
         lst_filter = self._get_listString_qList(self.ui.filterListWidget)
         self.enable_preview(enable=False)
@@ -246,18 +249,6 @@ class WinFilterChain(QtCore.QObject):
             self._list_filterchain_is_selected(False)
 
     ######################################################################
-    ######################## SOURCE FUNCTION  ############################
-    ######################################################################
-    def updateSources(self):
-        self.ui.sourcesComboBox.clear()
-        self.ui.sourcesComboBox.addItem('None')
-        for source in self.controller.get_source_list():
-            self.ui.sourcesComboBox.addItem(source)
-        
-        # I know the final item is the webcam
-        self.ui.sourcesComboBox.setCurrentIndex(self.ui.sourcesComboBox.count() - 1)
-
-    ######################################################################
     ####################### PRIVATE FUNCTION  ############################
     ######################################################################
     def _is_unique_filterchain_name(self, filterchain_name):
@@ -282,7 +273,7 @@ class WinFilterChain(QtCore.QObject):
         self.edit_mode = status
         self.ui.frame_editing.setVisible(status)
         self.ui.frame_filter_edit.setVisible(status)
-        self.qtWidgetFilterSelect.ui.addFilterButton.setEnabled(status)
+        self.qtWidgetFilterList.ui.addFilterButton.setEnabled(status)
         self.ui.frame_edit.setEnabled(not status)
         self.ui.sourceNameLineEdit.setReadOnly(not status)
         self.ui.filterchainListWidget.setEnabled(not status)
@@ -309,6 +300,3 @@ class WinFilterChain(QtCore.QObject):
                 item = ui.takeItem(noRow)
                 ui.insertItem(newNoRow, item)
                 ui.setCurrentRow(newNoRow)
-
-
-

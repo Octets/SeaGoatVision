@@ -21,6 +21,7 @@
 from SeaGoatVision.client.qt.utils import get_ui
 
 from WinFilterList import WinFilterList
+from WinSource import WinSource
 from WinViewer import WinViewer
 from WinFilterChain import WinFilterChain
 from WinFilter import WinFilter
@@ -29,32 +30,29 @@ from PySide import QtCore
 
 class WinMain(QtGui.QMainWindow):
 
-    def __init__(self, controller, host="localhost"):
+    def __init__(self, controller, host="localhost", islocal=False):
         super(WinMain, self).__init__()
 
+        self.host = host
         self.controller = controller
         self.dct_preview = {}
         self.ui = get_ui(self)
 
         # create dockWidgets
-        self.winFilter = WinFilter(controller)
-        self.winFilterList = WinFilterList(controller)
-        self.winFilterChain = WinFilterChain(controller, self.winFilterSel)
+        self.winFilter = WinFilter(self.controller)
+        self.winFilterList = WinFilterList(self.controller)
+        self.winSource = WinSource(self.controller, islocal)
+        self.winFilterChain = WinFilterChain(self.controller, self.winFilterList, self.winSource)
 
-        # connect action between dock widgets
-        self.winFilterSel.onAddFilter.connect(self.winFilterChain.add_filter)
-        self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
-        self.winFilterChain.onPreviewClick.connect(self.addPreview)
+        # Add default widget
+        self.show_win_filter()
+        self.show_win_filterlist(first_time=True)
+        self.show_win_filterchain(first_time=True)
+        self.show_win_source(first_time=True)
+        # exception
+        self.winFilterList.onAddFilter.connect(self.winFilterChain.add_filter)
 
-        self._addDockWidget()
         self._addToolBar()
-        
-        self.host = host
-
-    def _addDockWidget(self):
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilter)
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilterSel.ui)
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilterChain.ui)
 
     def _addToolBar(self):
         self.toolbar = QtGui.QToolBar()
@@ -62,6 +60,34 @@ class WinMain(QtGui.QMainWindow):
         for widget in self.ui.children():
             if isinstance(widget, QtGui.QToolButton):
                 self.toolbar.addWidget(widget)
+        self.ui.btnSource.clicked.connect(self.show_win_source)
+        self.ui.btnFilterChain.clicked.connect(self.show_win_filterchain)
+        self.ui.btnFilterList.clicked.connect(self.show_win_filterlist)
+
+    def show_win_filterchain(self, first_time=False):
+        if not first_time:
+            self.removeDockWidget(self.winFilterChain.ui)
+            self.winFilterChain.reload_ui()
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilterChain.ui)
+        self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
+        self.winFilterChain.onPreviewClick.connect(self.addPreview)
+
+    def show_win_filterlist(self, first_time=False):
+        if not first_time:
+            self.removeDockWidget(self.winFilterList.ui)
+            self.winFilterList.reload_ui()
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilterList.ui)
+        self.winFilterList.onAddFilter.connect(self.winFilterChain.add_filter)
+
+    def show_win_filter(self):
+        self.winFilter.setFeatures(QtGui.QDockWidget.DockWidgetMovable or QtGui.QDockWidget.DockWidgetFloatable)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilter)
+
+    def show_win_source(self, first_time=False):
+        if not first_time:
+            self.removeDockWidget(self.winSource.ui)
+            self.winSource.reload_ui()
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winSource.ui)
 
     def addPreview(self, execution_name, source_name, filterchain_name, lst_filter_str):
         winviewer = WinViewer(self.controller, execution_name, source_name, filterchain_name, lst_filter_str, self.host)

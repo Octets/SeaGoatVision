@@ -41,7 +41,7 @@ def run(local=False, host="localhost", port=8090):
         return
 
     app = QApplication(sys.argv)
-    win = main.WinMain(c, host=host)
+    win = main.WinMain(c, host=host, islocal=local)
     win.show()
     rint = app.exec_()
     # close the server

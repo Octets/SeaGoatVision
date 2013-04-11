@@ -30,7 +30,7 @@ import time
 
 from SeaGoatVision.client.qt.utils import get_ui
 from filters.public.bgr2rgb import BGR2RGB
-from SeaGoatVision.commun.filterchain import *
+from SeaGoatVision.commun.keys import *
 import Image
 from PySide import QtCore
 from PySide import QtGui
