@@ -28,9 +28,8 @@ class WinFilterChain(QtCore.QObject):
     Allow the user to create, edit and test filter chains
     """
 
-    WINDOW_TITLE = "Capra Vision"
     selectedFilterChanged = QtCore.Signal(object, object)
-    onPreviewClick = QtCore.Signal(object, object, object, object)
+    selectedFilterChainChanged = QtCore.Signal(object)
 
     def __init__(self, controller, qtWidgetFilterList, qtWidgetSource):
         super(WinFilterChain, self).__init__()
@@ -56,7 +55,6 @@ class WinFilterChain(QtCore.QObject):
         self.ui.upButton.clicked.connect(self.moveUpSelectedFilter)
         self.ui.downButton.clicked.connect(self.moveDownSelectedFilter)
         self.ui.removeButton.clicked.connect(self.remove_filter)
-        self.ui.previewButton.clicked.connect(self.add_preview)
 
         self.updateFilterChainList()
         self.ui.frame_filter_edit.setEnabled(False)
@@ -77,18 +75,6 @@ class WinFilterChain(QtCore.QObject):
     ######################################################################
     #############################  SIGNAL  ###############################
     ######################################################################
-    def add_preview(self):
-        source_name = self.qtWidgetSource.get_selected_media()
-        filterchain_name = self.ui.sourceNameLineEdit.text()
-        lst_filter = self._get_listString_qList(self.ui.filterListWidget)
-        self.enable_preview(enable=False)
-        self.onPreviewClick.emit(self.get_execution_name(), source_name, filterchain_name, lst_filter)
-
-    def enable_preview(self, enable=True):
-        # todo receive string when close from winViewer with execution_name
-        self.lock_preview = not enable
-        self.ui.previewButton.setEnabled(not self.lock_preview)
-
     def add_filter(self, filter_name):
         if not self.edit_mode:
             return
@@ -233,7 +219,6 @@ class WinFilterChain(QtCore.QObject):
         filter_name = self._get_selected_filter_name()
         self.ui.frame_filter_edit.setEnabled(filter_name is not None)
         if filter_name:
-            filterchain_name = self._get_selected_filterchain_name()
             self.selectedFilterChanged.emit(self.get_execution_name(), filter_name)
 
     def onSelectedFilterchainChanged(self):
@@ -241,12 +226,16 @@ class WinFilterChain(QtCore.QObject):
         if filterchain_name:
             # set the filters section
             self.ui.sourceNameLineEdit.setText(filterchain_name)
-
             self.updateFiltersList(filterchain_name)
-
             self._list_filterchain_is_selected(True)
+
+            filterchain_name = self._get_selected_filterchain_name()
+            self.selectedFilterChainChanged.emit(filterchain_name)
         else:
             self._list_filterchain_is_selected(False)
+
+    def get_filter_list(self):
+        return self._get_listString_qList(self.ui.filterListWidget)
 
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################
@@ -277,15 +266,11 @@ class WinFilterChain(QtCore.QObject):
         self.ui.frame_edit.setEnabled(not status)
         self.ui.sourceNameLineEdit.setReadOnly(not status)
         self.ui.filterchainListWidget.setEnabled(not status)
-        if not self.lock_preview:
-            self.ui.previewButton.setEnabled(not status)
 
     def _list_filterchain_is_selected(self, isSelected=True):
         self.ui.editButton.setEnabled(isSelected)
         self.ui.copyButton.setEnabled(isSelected)
         self.ui.deleteButton.setEnabled(isSelected)
-        if not self.lock_preview:
-            self.ui.previewButton.setEnabled(isSelected)
 
     def _get_listString_qList(self, ui):
         return [ui.item(no).text() for no in range(ui.count())]

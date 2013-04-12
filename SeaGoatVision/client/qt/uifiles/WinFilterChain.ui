@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>462</width>
+    <width>393</width>
     <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>462</width>
+    <width>393</width>
     <height>500</height>
    </size>
   </property>
@@ -62,7 +62,7 @@
          <x>0</x>
          <y>80</y>
          <width>64</width>
-         <height>158</height>
+         <height>167</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -76,6 +76,12 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>55</height>
+           </size>
           </property>
           <property name="font">
            <font>
@@ -104,6 +110,12 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>55</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>8</pointsize>
@@ -130,6 +142,12 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>55</height>
+           </size>
           </property>
           <property name="font">
            <font>
@@ -362,42 +380,6 @@
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QToolButton" name="previewButton">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Preview</string>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/player_play.png</normaloff>../../../../../../../usr/share/icons/gnome/24x24/actions/player_play.png</iconset>
-              </property>
-              <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonTextUnderIcon</enum>
-              </property>
-             </widget>
-            </item>
            </layout>
           </widget>
          </widget>
@@ -407,10 +389,16 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>40</height>
+            <height>55</height>
            </size>
           </property>
           <property name="autoFillBackground">
@@ -427,13 +415,16 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>101</width>
-             <height>41</height>
+             <width>131</width>
+             <height>51</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_editing" stretch="0,0">
             <property name="spacing">
              <number>0</number>
+            </property>
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
             </property>
             <item>
              <widget class="QToolButton" name="saveButton">

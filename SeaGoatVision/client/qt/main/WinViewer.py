@@ -70,7 +70,6 @@ class WinViewer(QtCore.QObject):
         self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
 
         self._updateFilters(lst_filter_str)
-        self.controller.start_filterchain_execution(execution_name, source_name, filterchain_name)
         self.actualFilter = self.ui.filterComboBox.currentText()
 
         self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter)

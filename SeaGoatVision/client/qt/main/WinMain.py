@@ -24,6 +24,7 @@ from WinFilterList import WinFilterList
 from WinSource import WinSource
 from WinViewer import WinViewer
 from WinFilterChain import WinFilterChain
+from WinExecution import WinExecution
 from WinFilter import WinFilter
 from PySide import QtGui
 from PySide import QtCore
@@ -43,12 +44,14 @@ class WinMain(QtGui.QMainWindow):
         self.winFilterList = WinFilterList(self.controller)
         self.winSource = WinSource(self.controller, islocal)
         self.winFilterChain = WinFilterChain(self.controller, self.winFilterList, self.winSource)
+        self.winExecution = WinExecution(self.controller, self.winSource)
 
         # Add default widget
         self.show_win_filter()
         self.show_win_filterlist(first_time=True)
         self.show_win_filterchain(first_time=True)
         self.show_win_source(first_time=True)
+        self.show_win_execution(first_time=True)
         # exception
         self.winFilterList.onAddFilter.connect(self.winFilterChain.add_filter)
 
@@ -63,6 +66,7 @@ class WinMain(QtGui.QMainWindow):
         self.ui.btnSource.clicked.connect(self.show_win_source)
         self.ui.btnFilterChain.clicked.connect(self.show_win_filterchain)
         self.ui.btnFilterList.clicked.connect(self.show_win_filterlist)
+        self.ui.btnExecution.clicked.connect(self.show_win_execution)
 
     def show_win_filterchain(self, first_time=False):
         if not first_time:
@@ -70,7 +74,14 @@ class WinMain(QtGui.QMainWindow):
             self.winFilterChain.reload_ui()
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilterChain.ui)
         self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
-        self.winFilterChain.onPreviewClick.connect(self.addPreview)
+        self.winFilterChain.selectedFilterChainChanged.connect(self.winExecution.set_filterchain)
+
+    def show_win_execution(self, first_time=False):
+        if not first_time:
+            self.removeDockWidget(self.winExecution.ui)
+            self.winExecution.reload_ui()
+        self.winExecution.onPreviewClick.connect(self.addPreview)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winExecution.ui)
 
     def show_win_filterlist(self, first_time=False):
         if not first_time:
@@ -89,12 +100,13 @@ class WinMain(QtGui.QMainWindow):
             self.winSource.reload_ui()
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winSource.ui)
 
-    def addPreview(self, execution_name, source_name, filterchain_name, lst_filter_str):
+    def addPreview(self, execution_name, source_name, filterchain_name):
+        # TODO create signal to share the filter list
+        lst_filter_str = self.winFilterChain.get_filter_list()
         winviewer = WinViewer(self.controller, execution_name, source_name, filterchain_name, lst_filter_str, self.host)
         self.dct_preview[execution_name] = winviewer
         self.setCentralWidget(winviewer.ui)
         winviewer.closePreview.connect(self.removePreview)
-        winviewer.closePreview.connect(self.winFilterChain.enable_preview)
 
     def removePreview(self, execution_name):
         viewer = self.dct_preview.get(execution_name, None)
