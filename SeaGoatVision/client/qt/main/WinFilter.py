@@ -40,7 +40,8 @@ class WinFilter(QtGui.QDockWidget):
         self.construct_widget()
 
     def construct_widget(self):
-        self.setWindowTitle(self.filter_name + " - " + self.execution_name)
+        # TODO when self.execution_name is None, show configuration filterchain params
+        self.setWindowTitle("%s - %s" % (self.filter_name, self.execution_name))
         self.filter_param = self.controller.get_params_filterchain(self.execution_name, filter_name=self.filter_name)
 
         layout = QtGui.QVBoxLayout()

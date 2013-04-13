@@ -115,6 +115,9 @@ class Manager:
         #    o_filter = self.config.get_filter_from_filterName(filter_name=filter_name)
         return filterchain.get_params(filter_name=filter_name)
 
+    def get_execution_list(self):
+        return self.dct_thread.keys()
+
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################

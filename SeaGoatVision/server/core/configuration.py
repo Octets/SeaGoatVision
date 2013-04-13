@@ -29,6 +29,7 @@ import types
 import filters
 import ConfigParser
 from SeaGoatVision.commun.param import Param
+from SeaGoatVision.commun.keys import *
 from SeaGoatVision.server.core import filterchain
 from SeaGoatVision.server.core import utils
 
@@ -63,7 +64,9 @@ class Configuration(object):
             return -1
 
     def get_filterchain(self, filterchain_name):
-        return self.read_filterchain(self._get_filename(filterchain_name))
+        if filterchain_name and filterchain_name != get_empty_filterchain_name():
+            return self.read_filterchain(self._get_filename(filterchain_name))
+        return filterchain.FilterChain(get_empty_filterchain_name())
 
     def get_filters_from_filterchain(self, filterchain_name):
         o_filterchain = self.read_filterchain(self._get_filename(filterchain_name))

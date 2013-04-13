@@ -31,3 +31,6 @@ def get_source_video_name():
 
 def get_source_camera_name():
     return "Webcam"
+
+def get_empty_filterchain_name():
+    return "-- empty filterchain --"

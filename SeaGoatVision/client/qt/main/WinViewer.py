@@ -221,15 +221,20 @@ class LightWidget(QtGui.QWidget):
     def __init__(self):
         super(LightWidget, self).__init__()
         self.color = QColor()
+        self.last_is_red = True
         self.set_red()
 
     def set_red(self):
         self.color.setRgb(255, 0, 0)
-        self.update()
+        if not self.last_is_red:
+            self.update()
+        self.last_is_red = True
 
     def set_green(self):
         self.color.setRgb(0, 255, 0)
-        self.update()
+        if self.last_is_red:
+            self.update()
+        self.last_is_red = False
 
     def paintEvent(self, e):
         qp = QtGui.QPainter()

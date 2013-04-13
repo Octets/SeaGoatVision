@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
+from SeaGoatVision.commun.keys import *
 
 from PySide import QtGui
 from PySide import QtCore
@@ -31,12 +32,13 @@ class WinFilterChain(QtCore.QObject):
     selectedFilterChanged = QtCore.Signal(object, object)
     selectedFilterChainChanged = QtCore.Signal(object)
 
-    def __init__(self, controller, qtWidgetFilterList, qtWidgetSource):
+    def __init__(self, controller, qtWidgetFilterList, qtWidgetSource, winExecution):
         super(WinFilterChain, self).__init__()
 
         self.controller = controller
         self.qtWidgetFilterList = qtWidgetFilterList
         self.qtWidgetSource = qtWidgetSource
+        self.winExecution = winExecution
         self.lastRowFilterChainSelected = 0
 
         self.reload_ui()
@@ -63,14 +65,6 @@ class WinFilterChain(QtCore.QObject):
         self.edit_mode = False
         self._modeEdit(False)
         self._list_filterchain_is_selected(False)
-        
-    ######################################################################
-    ############################  PROPERTY  ##############################
-    ######################################################################
-    def get_execution_name(self):
-        source_name = self.qtWidgetSource.get_selected_media()
-        filterchain_name = self.ui.sourceNameLineEdit.text()
-        return "%s_%s" % (filterchain_name, source_name)
 
     ######################################################################
     #############################  SIGNAL  ###############################
@@ -124,9 +118,9 @@ class WinFilterChain(QtCore.QObject):
                                       "The filtername \"%s\" already exist." % newName,
                                       QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
             return
-        
+
         self.ui.sourceNameLineEdit.setText(newName)
-        
+
         lstFilter = self._get_listString_qList(self.ui.filterListWidget)
 
         if self.controller.modify_filterchain(oldName, newName, lstFilter):
@@ -208,6 +202,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.sourceNameLineEdit.clear()
         for filterlist in self.controller.get_filterchain_list():
             self.ui.filterchainListWidget.addItem(filterlist.name)
+        self.ui.filterchainListWidget.addItem(get_empty_filterchain_name())
 
     def moveUpSelectedFilter(self):
         self._move_curent_item_on_qtList(self.ui.filterListWidget, -1)
@@ -219,7 +214,7 @@ class WinFilterChain(QtCore.QObject):
         filter_name = self._get_selected_filter_name()
         self.ui.frame_filter_edit.setEnabled(filter_name is not None)
         if filter_name:
-            self.selectedFilterChanged.emit(self.get_execution_name(), filter_name)
+            self.selectedFilterChanged.emit(self.winExecution.get_execution_name(), filter_name)
 
     def onSelectedFilterchainChanged(self):
         filterchain_name = self._get_selected_filterchain_name()
@@ -247,15 +242,15 @@ class WinFilterChain(QtCore.QObject):
         return True
 
     def _get_selected_filterchain_name(self):
-        noLine = self.ui.filterchainListWidget.currentRow()
-        if noLine >= 0:
-            return self.ui.filterchainListWidget.item(noLine).text()
-        return None
+        return self._get_selected_list(self.ui.filterchainListWidget)
 
     def _get_selected_filter_name(self):
-        noLine = self.ui.filterListWidget.currentRow()
+        return self._get_selected_list(self.ui.filterListWidget)
+
+    def _get_selected_list(self, uiList):
+        noLine = uiList.currentRow()
         if noLine >= 0:
-            return self.ui.filterListWidget.item(noLine).text()
+            return uiList.item(noLine).text()
         return None
 
     def _modeEdit(self, status=True):

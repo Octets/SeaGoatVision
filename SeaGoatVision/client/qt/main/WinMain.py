@@ -43,8 +43,8 @@ class WinMain(QtGui.QMainWindow):
         self.winFilter = WinFilter(self.controller)
         self.winFilterList = WinFilterList(self.controller)
         self.winSource = WinSource(self.controller, islocal)
-        self.winFilterChain = WinFilterChain(self.controller, self.winFilterList, self.winSource)
         self.winExecution = WinExecution(self.controller, self.winSource)
+        self.winFilterChain = WinFilterChain(self.controller, self.winFilterList, self.winSource, self.winExecution)
 
         # Add default widget
         self.show_win_filter()
