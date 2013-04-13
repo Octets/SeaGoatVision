@@ -34,6 +34,10 @@ from SeaGoatVision.commun.keys import *
 import Image
 from PySide import QtCore
 from PySide import QtGui
+from PySide.QtGui import QPainter
+from PySide.QtGui import QColor
+from PySide.QtGui import QPen
+from PySide.QtCore import Qt
 import socket
 import threading
 import StringIO
@@ -72,23 +76,36 @@ class WinViewer(QtCore.QObject):
         self._updateFilters(lst_filter_str)
         self.actualFilter = self.ui.filterComboBox.currentText()
 
+        self.light_observer = self._get_light_observer()
+
         self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter)
         self.__add_output_observer()
 
+        self.light_observer.start()
 
     def closeEvent(self):
         # this is fake closeEvent, it's called by button close with signal
         if self.actualFilter:
             self.controller.remove_image_observer(self.updateImage, self.execution_name, self.actualFilter)
             self.controller.remove_output_observer(self.execution_name)
-            self.controller.stop_filterchain_execution(self.execution_name)
         if self.thread_output:
             self.thread_output.stop()
+        self.light_observer.stop()
         print("WinViewer %s quit." % (self.execution_name))
 
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################
     ######################################################################
+    def _get_light_observer(self):
+        # call me just one time
+        light_widget = LightWidget()
+        size = self.ui.qhboxlayout_2.minimumSize()
+        min_size = min(size.width(), size.height())
+        light_widget.setGeometry(0, 0, min_size, min_size)
+
+        self.ui.qhboxlayout_2.addWidget(light_widget)
+        return Light_observer(light_widget)
+
     def __close(self):
         self.closePreview.emit(self.execution_name)
 
@@ -117,6 +134,7 @@ class WinViewer(QtCore.QObject):
         print data
 
     def updateImage(self, image):
+        self.light_observer.active_light()
         # fps
         iActualTime = time.time()
         if self.lastSecondFps is None:
@@ -177,3 +195,60 @@ class Listen_output(threading.Thread):
             pass
         self.socket.close()
 
+class Light_observer(threading.Thread):
+    def __init__(self, uiwidget):
+        threading.Thread.__init__(self)
+        self.uiwidget = uiwidget
+        self.light = False
+        self.is_stopped = False
+
+    def active_light(self):
+        self.light = True
+
+    def run(self):
+        while not self.is_stopped:
+            time.sleep(1)
+            if self.light:
+                self.uiwidget.set_green()
+                self.light = False
+            else:
+                self.uiwidget.set_red()
+
+    def stop(self):
+        self.is_stopped = True
+
+class LightWidget(QtGui.QWidget):
+    def __init__(self):
+        super(LightWidget, self).__init__()
+        self.color = QColor()
+        self.set_red()
+
+    def set_red(self):
+        self.color.setRgb(255, 0, 0)
+        self.update()
+
+    def set_green(self):
+        self.color.setRgb(0, 255, 0)
+        self.update()
+
+    def paintEvent(self, e):
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        self.drawWidget(qp)
+        qp.end()
+
+    def drawWidget(self, qp):
+        size = self.size()
+        radx = size.width()
+        rady = size.height()
+        dot = min(radx, rady) / 2
+
+        pen = QPen()
+        pen.setWidth(dot)
+        #pen.setStyle(Qt.SolidLine)
+        pen.setBrush(self.color)
+        #pen.setCapStyle(Qt.RoundCap)
+        #pen.setJoinStyle(Qt.RoundJoin)
+        qp.setPen(pen)
+
+        qp.drawLine(dot, dot, dot, dot)
