@@ -28,6 +28,7 @@ from CapraVision.client.gtk.imageproviders import map_source_to_ui
 
 from CapraVision.server import imageproviders
 from CapraVision.server import filters
+from CapraVision.server.recording.recorder import SimpleRecorder
 
 from WinFilterSel import WinFilterSel
 from WinLineTest import WinLineTest
@@ -49,6 +50,7 @@ class WinFilterChain:
     def __init__(self, controller):
         self.lastSecondFps = 0
         self.fpsCount = 0
+        self.image_size = None
         self.controler = controller
         self.controler.get_thread().add_observer(self.chain_observer)
         #self.controler.add_image_observer(self.chain_observer)
@@ -57,7 +59,8 @@ class WinFilterChain:
         self.source_list = imageproviders.load_sources()
         self.source_window = None
         self.thread_running = self.controler.is_thread_running()
-
+        self.recorder = None
+        
         ui = get_ui(self,
                     'filterChainListStore',
                     'sourcesListStore',
@@ -70,6 +73,7 @@ class WinFilterChain:
         self.btnConfig = ui.get_object('btnConfig')
         self.btnUp = ui.get_object('btnUp')
         self.btnDown = ui.get_object('btnDown')
+        self.btnRecord = ui.get_object('btnRecord')
         self.chkLoop = ui.get_object('chkLoop')
         self.lblLoopState = ui.get_object('lblLoopState')
         self.lblRealFPS = ui.get_object('lblRealFPS')
@@ -95,6 +99,7 @@ class WinFilterChain:
         self.win_list.append(win.window)
 
     def chain_observer(self, output):
+        self.image_size = (output.shape[1], output.shape[0])
         GObject.idle_add(self.update_fps)
 
     def change_state(self):
@@ -405,8 +410,12 @@ class WinFilterChain:
     def on_btnSource_clicked(self, widget):
         self.show_source_config(self.controler.get_source())
 
-    def on_btnRecord_clicked(self, widget):
-        pass
+    def on_btnRecord_toggled(self, widget):
+        if self.btnRecord.get_active():
+            self.recorder = SimpleRecorder(int(self.spnFPS.get_value()), 
+                                self.image_size, self.controler.get_thread())
+        else:
+            self.recorder.stop()
     
     def on_spnFPS_value_changed(self, widget):
         self.controler.change_sleep_time(1.0 / self.spnFPS.get_value())

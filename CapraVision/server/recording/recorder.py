@@ -20,6 +20,7 @@
 import os
 from time import gmtime, strftime
 
+import cv
 import cv2
 
 class Recorder:
@@ -57,21 +58,25 @@ class Recorder:
     
 class SimpleRecorder:
     
-    def __init__(self):
-        self.video = None
-    
-    def start(self, fps, size, thread):
+    def __init__(self, fps, size, thread):
+        self.thread = None
+        print size
         self.video = cv2.VideoWriter(self.get_file_name(), 
-                            ('V','P','8','0'), fps, size)
+                    cv.CV_FOURCC('V','P','8','0'), fps, size)
+        self.thread = thread
+        thread.add_observer(self.thread_observer)
         
-    def thread_observer(self):
-        pass
+    def thread_observer(self, image):
+        self.video.write(image)
     
     def stop(self):
-        pass
+        self.thread.remove_observer(self.thread_observer)
+        self.video.release()
     
     def get_file_name(self):
-        return os.path.join('data', 'videos', 
+        x = os.path.join('.', 'data', 'videos', 
                            strftime("%Y_%m_%d_%H_%M_%S", gmtime()))
-
+        x = '/home/capra/workspaces/vision/SeaGoatVision/data/videos/' + strftime("%Y_%m_%d_%H_%M_%S", gmtime()) 
+        print x
+        return x + '.avi'
         

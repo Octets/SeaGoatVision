@@ -18,9 +18,11 @@
             <property name="show_arrow">False</property>
             <child>
               <object class="GtkToolButton" id="btnNew">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Create new</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Create new</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-new</property>
@@ -33,9 +35,11 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnOpen">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Open filterchain</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Open</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-open</property>
@@ -48,9 +52,11 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnSave">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Save</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Save</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-save</property>
@@ -63,9 +69,11 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnSaveAs">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Save As</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Save As</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-save-as</property>
@@ -88,9 +96,11 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnView">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Preview filterchain</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Preview</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-execute</property>
@@ -113,9 +123,11 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnAdd">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Add new filter</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Add</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-add</property>
@@ -128,9 +140,11 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnRemove">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Remove selected filter</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Remove</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-remove</property>
@@ -143,9 +157,11 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnConfig">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Edit selected filter</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Edit</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-edit</property>
@@ -158,9 +174,11 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnUp">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Move selected filter up</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Up</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-go-up</property>
@@ -173,9 +191,11 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnDown">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Move selected filter down</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Down</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-go-down</property>
@@ -188,11 +208,13 @@
             </child>
             <child>
               <object class="GtkToolButton" id="btnReload">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="has_tooltip">True</property>
                 <property name="tooltip_markup" translatable="yes">Update selected filter or all</property>
                 <property name="tooltip_text" translatable="yes">Update selected filter or all</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Update</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-refresh</property>
@@ -205,12 +227,15 @@
             </child>
             <child>
               <object class="GtkToggleToolButton" id="btnRecord">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Record</property>
+                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Record</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-media-record</property>
+                <signal name="toggled" handler="on_btnRecord_toggled" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -394,9 +419,11 @@
                         <child>
                           <object class="GtkButton" id="btnSource">
                             <property name="label" translatable="yes">...</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
                             <signal name="clicked" handler="on_btnSource_clicked" swapped="no"/>
                           </object>
                           <packing>
@@ -446,8 +473,10 @@
                         </child>
                         <child>
                           <object class="GtkSwitch" id="chkLoop">
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="active">True</property>
                             <signal name="button-release-event" handler="on_chkLoop_button_release_event" swapped="no"/>
                           </object>
@@ -508,9 +537,11 @@
                     <child>
                       <object class="GtkButton" id="btnLineMapper">
                         <property name="label" translatable="yes">Line Mapping</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_btnLineMapper_clicked" swapped="no"/>
                       </object>
                       <packing>
@@ -522,9 +553,11 @@
                     <child>
                       <object class="GtkButton" id="btnLineTest">
                         <property name="label" translatable="yes">Line Testing</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_btnLineTest_clicked" swapped="no"/>
                       </object>
                       <packing>
