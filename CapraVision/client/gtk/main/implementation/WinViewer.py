@@ -18,7 +18,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-import time
 
 from gi.repository import GObject
 
@@ -115,23 +114,6 @@ class WinViewer():
                                             
     def update_image(self, image):
         if image <> None:
-            
-            #fps
-            iActualTime = time.time()
-            if self.lastSecondFps is None:
-                #Initiate fps
-                self.lastSecondFps = iActualTime
-                self.fpsCount = 1
-            elif iActualTime - self.lastSecondFps > 1.0:
-                #show fps
-                context_id = self.statusbar.get_context_id("fps")
-                self.statusbar.push(context_id, "%d fps" % int(self.fpsCount))
-                #new set
-                self.lastSecondFps = iActualTime
-                self.fpsCount = 1
-            else:
-                self.fpsCount += 1
-
             if self.image_shape <> image.shape:
                 self.image_shape = image.shape
                 self.change_display_size()

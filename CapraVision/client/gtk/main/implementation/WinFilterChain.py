@@ -35,6 +35,9 @@ from WinMapper import WinMapper
 from WinViewer import WinViewer
 
 from gi.repository import Gtk
+from gi.repository import GObject
+
+import time
 
 class WinFilterChain:
     """Main window
@@ -44,7 +47,10 @@ class WinFilterChain:
     WINDOW_TITLE = "Capra Vision"
 
     def __init__(self, controller):
+        self.lastSecondFps = 0
+        self.fpsCount = 0
         self.controler = controller
+        self.controler.add_image_observer(self.chain_observer)
         self.controler.add_filter_observer(self.filters_changed_observer)
         self.controler.add_thread_observer(self.thread_observer)
         self.source_list = imageproviders.load_sources()
@@ -65,6 +71,7 @@ class WinFilterChain:
         self.btnDown = ui.get_object('btnDown')
         self.chkLoop = ui.get_object('chkLoop')
         self.lblLoopState = ui.get_object('lblLoopState')
+        self.lblRealFPS = ui.get_object('lblRealFPS')
         self.txtFilterChain = ui.get_object('txtFilterChain')
         self.cboSource = ui.get_object('cboSource')
         self.spnFPS = ui.get_object('spnFPS')
@@ -86,6 +93,9 @@ class WinFilterChain:
     def add_window_to_list(self, win):
         self.win_list.append(win.window)
 
+    def chain_observer(self, filtre, output):
+        GObject.idle_add(self.update_fps)
+
     def change_state(self):
         tools_enabled = self.state <> WindowState.Empty
         self.btnAdd.set_sensitive(tools_enabled)
@@ -106,7 +116,7 @@ class WinFilterChain:
 
     def filters_changed_observer(self):
         self.show_filter_chain()
-
+        
     def is_state_modified_or_created(self):
         return (self.state == WindowState.Create or
             self.state == WindowState.Modified)
@@ -245,6 +255,22 @@ class WinFilterChain:
             self.chkLoop.set_active(True)
         self.thread_running = self.controler.is_thread_running()
 
+    def update_fps(self):
+        #fps
+        iActualTime = time.time()
+        if self.lastSecondFps is None:
+            #Initiate fps
+            self.lastSecondFps = iActualTime
+            self.fpsCount = 1
+        elif iActualTime - self.lastSecondFps > 1.0:
+            #show fps
+            self.lblRealFPS.set_text(str(self.fpsCount))
+            #new set
+            self.lastSecondFps = iActualTime
+            self.fpsCount = 1
+        else:
+            self.fpsCount += 1
+        
     def use_new_chain(self):
         for win in list(self.win_list):
             win.destroy()
@@ -378,6 +404,9 @@ class WinFilterChain:
     def on_btnSource_clicked(self, widget):
         self.show_source_config(self.controler.get_source())
 
+    def on_btnRecord_clicked(self, widget):
+        pass
+    
     def on_spnFPS_value_changed(self, widget):
         self.controler.change_sleep_time(1.0 / self.spnFPS.get_value())
 
