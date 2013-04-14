@@ -58,9 +58,7 @@ class LineOrientation(dataextract.DataExtractor):
             self.notify_output_observers(toSend)
             cv2.line(image, point1, point2, (0, 0, 255), 3, -1)
             cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
-            
-        self.notify_output_observers("LineOrientation: \n")
-            
+                        
     def find_lines(self, contours, image):
         lines = []
         for contour in contours:
