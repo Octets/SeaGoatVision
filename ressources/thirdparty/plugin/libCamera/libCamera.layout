@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="../PvApi.h" open="0" top="0" tabpos="0">
+		<Cursor position="16053" topLine="335" />
+	</File>
+	<File name="../camera.cpp" open="1" top="1" tabpos="2">
+		<Cursor position="2017" topLine="78" />
+	</File>
+	<File name="../camera.h" open="1" top="0" tabpos="3">
+		<Cursor position="141" topLine="39" />
+	</File>
+	<File name="../main.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="2577" topLine="52" />
+	</File>
+</CodeBlocks_layout_file>
