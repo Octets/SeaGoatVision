@@ -17,6 +17,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+from time import gmtime, strftime
+
+import cv2
+
 class Recorder:
     
     def __init__(self):
@@ -50,3 +55,23 @@ class Recorder:
         if self.saver is not None and filtre in self.filters.keys:
             self.saver.save(filtre, image)
     
+class SimpleRecorder:
+    
+    def __init__(self):
+        self.video = None
+    
+    def start(self, fps, size, thread):
+        self.video = cv2.VideoWriter(self.get_file_name(), 
+                            ('V','P','8','0'), fps, size)
+        
+    def thread_observer(self):
+        pass
+    
+    def stop(self):
+        pass
+    
+    def get_file_name(self):
+        return os.path.join('data', 'videos', 
+                           strftime("%Y_%m_%d_%H_%M_%S", gmtime()))
+
+        

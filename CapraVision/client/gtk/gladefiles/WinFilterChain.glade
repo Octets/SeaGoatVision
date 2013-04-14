@@ -204,14 +204,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="btnRecord">
+              <object class="GtkToggleToolButton" id="btnRecord">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Record</property>
                 <property name="label" translatable="yes">Record</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-media-record</property>
-                <signal name="clicked" handler="on_btnRecord_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
