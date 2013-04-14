@@ -124,6 +124,13 @@ class Manager:
     def get_source_list(self):
         return imageproviders.load_sources().keys()
 
+    def start_record(self):
+        # Only record on webcam device
+        return True
+
+    def stop_record(self):
+        return True
+
     ##########################################################################
     ############################### THREAD  ##################################
     ##########################################################################
