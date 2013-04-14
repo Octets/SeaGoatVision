@@ -50,7 +50,8 @@ class WinFilterChain:
         self.lastSecondFps = 0
         self.fpsCount = 0
         self.controler = controller
-        self.controler.add_image_observer(self.chain_observer)
+        self.controler.get_thread().add_observer(self.chain_observer)
+        #self.controler.add_image_observer(self.chain_observer)
         self.controler.add_filter_observer(self.filters_changed_observer)
         self.controler.add_thread_observer(self.thread_observer)
         self.source_list = imageproviders.load_sources()
@@ -93,7 +94,7 @@ class WinFilterChain:
     def add_window_to_list(self, win):
         self.win_list.append(win.window)
 
-    def chain_observer(self, filtre, output):
+    def chain_observer(self, output):
         GObject.idle_add(self.update_fps)
 
     def change_state(self):
