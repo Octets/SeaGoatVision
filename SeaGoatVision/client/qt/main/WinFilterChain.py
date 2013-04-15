@@ -256,6 +256,7 @@ class WinFilterChain(QtCore.QObject):
     def _modeEdit(self, status=True):
         self.edit_mode = status
         self.ui.frame_editing.setVisible(status)
+        self.ui.frame_editing_2.setVisible(status)
         self.ui.frame_filter_edit.setVisible(status)
         self.qtWidgetFilterList.ui.addFilterButton.setEnabled(status)
         self.ui.frame_edit.setEnabled(not status)
