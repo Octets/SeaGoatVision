@@ -49,14 +49,14 @@ class WinSource(QtCore.QObject):
 
     def click_record_button(self):
         if not self.is_recorded:
-            if not self.controller.start_record():
+            if not self.controller.start_record(get_source_camera_name()):
                 # TODO improve error message
                 print("Error trying start record...")
             else:
                self.is_recorded = True
                self._set_record_icon()
         else:
-            if not self.controller.stop_record():
+            if not self.controller.stop_record(get_source_camera_name()):
                 print("Error trying stop record...")
             self.is_recorded = False
             self._set_record_icon()

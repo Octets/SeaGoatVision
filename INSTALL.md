@@ -76,3 +76,6 @@ FAQ
 1. Error on compiling filter in c++ with opencv. Example, with the filter ScipyExample.py.
 Do you install opencv-dev? Is this repertory exist : /usr/local/include/opencv
 If not, maybe you need this : sudo ln -s /usr/include/opencv /usr/local/include/opencv
+
+2. Error when recording video.
+Maybe you need to compile opencv with ffmpeg.

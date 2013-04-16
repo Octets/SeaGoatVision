@@ -41,6 +41,7 @@ class Manager:
         # tcp server for output observer
         self.server_observer = Server()
         self.server_observer.start("", 5030)
+        self.last_record_source = None
 
     def close(self):
         print("Close manager")
@@ -124,12 +125,22 @@ class Manager:
     def get_source_list(self):
         return imageproviders.load_sources().keys()
 
-    def start_record(self):
+    def start_record(self, source_name):
         # Only record on webcam device
-        return True
+        # TODO take the real instance of source and not this fake method
+        if not self.dct_thread:
+            return False
+        dct = self.dct_thread.values()[0].get("thread", None)
+        if not dct:
+            return False
+        source = dct.get_source()
+        self.last_record_source = source
+        return source.start_record()
 
-    def stop_record(self):
-        return True
+    def stop_record(self, source_name):
+        if not self.last_record_source:
+            return False
+        return self.last_record_source.stop_record()
 
     ##########################################################################
     ############################### THREAD  ##################################

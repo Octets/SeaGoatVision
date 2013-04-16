@@ -34,6 +34,10 @@ class MainLoop:
         self.observers = []
         self.thread = None
 
+    def get_source(self):
+        # TODO this is not suppose to be use
+        return self.thread.get_source()
+
     def add_observer(self, observer):
         self.observers.append(observer)
 
@@ -82,6 +86,10 @@ class ThreadMainLoop(threading.Thread):
         self.running = False
         self.observer = observer
         self.sleep_time = sleep_time
+
+    def get_source(self):
+        # TODO this is not suppose to be use
+        return self.source
 
     def run(self):
         self.running = True
