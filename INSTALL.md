@@ -79,3 +79,4 @@ If not, maybe you need this : sudo ln -s /usr/include/opencv /usr/local/include/
 
 2. Error when recording video.
 Maybe you need to compile opencv with ffmpeg.
+About fedora package, follow this : https://bugzilla.redhat.com/show_bug.cgi?id=812628
