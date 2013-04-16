@@ -43,7 +43,7 @@ class ConvexHull(dataextract.DataExtractor):
             
             if self.area_min.get_current_value() < area:
                 cv2.drawContours(image, [hull],-1, (255,255,255), -1)
-                self.notify_output_observers(str(area) + "\n")
+                #self.notify_output_observers(str(area) + "\n")
                 
         return image
     

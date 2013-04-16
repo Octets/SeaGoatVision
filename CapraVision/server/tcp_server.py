@@ -36,6 +36,7 @@ class Server:
     
     def innerStart(self, ip, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         self.socket.bind((ip, port))
         print "Server awaiting connections on port " + str(port)

@@ -39,6 +39,7 @@ from gi.repository import Gtk
 from gi.repository import GObject
 
 import time
+import os.path
 
 class WinFilterChain:
     """Main window
@@ -46,6 +47,7 @@ class WinFilterChain:
     """
 
     WINDOW_TITLE = "Capra Vision"
+    SETTINGS_FILE = "settings.py"
 
     def __init__(self, controller):
         self.lastSecondFps = 0
@@ -94,6 +96,8 @@ class WinFilterChain:
         for name in self.source_list.keys():
             self.sourcesListStore.append([name])
         self.cboSource.set_active(1)
+        
+        self.load_settings()
 
     def add_window_to_list(self, win):
         self.win_list.append(win.window)
@@ -126,6 +130,17 @@ class WinFilterChain:
     def is_state_modified_or_created(self):
         return (self.state == WindowState.Create or
             self.state == WindowState.Modified)
+    
+    def load_settings(self):
+        if os.path.exists(self.SETTINGS_FILE):
+            import settings
+            self.load_chain(settings.filterchain)    
+    
+    def save_settings(self):
+        file = open(self.SETTINGS_FILE, 'w')
+        file.write("filterchain='" + self.txtFilterChain.get_text() + "'")
+       # file.write("source=" + self.txtFilterChain.get_text())
+        file.close()
 
     def msg_confirm_create_new(self):
         dialog = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING,
@@ -169,6 +184,12 @@ class WinFilterChain:
         result = dialog.run()
         dialog.destroy()
         return result
+    
+    def load_chain(self, filename):
+        if self.controler.load_chain(filename):
+                self.use_new_chain()
+                self.txtFilterChain.set_text(filename)
+                self.set_state_show()
 
     def save_chain(self):
         if self.state == WindowState.Empty:
@@ -315,10 +336,7 @@ class WinFilterChain:
         dialog.set_filter(ff)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            if self.controler.load_chain(dialog.get_filename()):
-                self.use_new_chain()
-                self.txtFilterChain.set_text(dialog.get_filename())
-                self.set_state_show()
+            self.load_chain(dialog.get_filename())
         dialog.destroy()
 
     def on_btnSave_clicked(self, widget):
@@ -380,6 +398,7 @@ class WinFilterChain:
         self.win_list.remove(widget)
 
     def on_WinFilterChain_delete_event(self, widget, data=None):
+        self.save_settings()
         if self.is_state_modified_or_created():
             result = self.msg_confirm_save_before_closing()
             if result == Gtk.ResponseType.OK:
