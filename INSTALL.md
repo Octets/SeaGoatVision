@@ -19,22 +19,19 @@ http://opencv.willowgarage.com/wiki/InstallGuide
 Installation
 ------------
 ### A. Download the project ###
-```git clone git://github.com/Octets/SeaGoatVision.git
-```
+    git clone git://github.com/Octets/SeaGoatVision.git
 
 ###B. Install dependencies###
 #### Ubuntu : ####
-```sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf protobuf-compiler python-pyside python-qt4 python-imaging
-```
+	sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf protobuf-compiler python-pyside python-qt4 python-imaging
 
 #### Fedora : ####
-```sudo yum install python numpy scipy opencv-python protobuf-python protobuf protobuf-compiler python-pyside PyQT4 python-imaging
-```
+	sudo yum install python numpy scipy opencv-python protobuf-python protobuf protobuf-compiler python-pyside PyQT4 python-imaging
 
 #### Arch Linux : ####
 Don't forget to active the "community" repositorie. See https://wiki.archlinux.org/index.php/Pacman
-```pacman -S python2 python2-numpy python2-scipy opencv protobuf protobuf-python python2-pyside python2-pyqt python2-imaging
-```
+
+	pacman -S python2 python2-numpy python2-scipy opencv protobuf protobuf-python python2-pyside python2-pyqt python2-imaging
 
 #### Windows : ####
 Install the following dependencies :
@@ -50,30 +47,25 @@ Install the following dependencies :
 ### C. Install OpenCV 2.4 ###
 
 1. Install required OpenCV dependencies
-```sudo apt-get install cmake cmake-gui gcc pkg-config libavformat-dev libswscale-dev
-```
+	sudo apt-get install cmake cmake-gui gcc pkg-config libavformat-dev libswscale-dev
 
 2. Download the archive manually
 	From here : http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.4.5/opencv-2.4.5.tar.gz
 	Go to directory containing downloaded file with a command line.
 
 3. Extract the archive
-```tar -xvf OpenCV-2.4.5.tar.gz && cd OpenCV-2.4.5
-```
+	tar -xvf OpenCV-2.4.5.tar.gz && cd OpenCV-2.4.5
 
 4. Configure
-```mkdir release
-cd release
-cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_PYTHON_SUPPORT=ON ..
-```
+	mkdir release
+	cd release
+	cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_PYTHON_SUPPORT=ON ..
 
 5. Compile (replace # by the number of processor core)
-```make -j#
-```
+	make -j#
 
 6. Install
-```sudo make install
-```
+	sudo make install
 
 7. Do crazy stuff!
 
