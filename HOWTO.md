@@ -1,11 +1,18 @@
-To run in local.
+How To
+======
 
-    ./client.py --local
+On local
+----------
+```./client.py --local
+```
 
-To run on remote machine.
+On client/server
+-------------------
 
-- Install the server into the remote machine and run
-    ./server.py
+ - Install the server into the remote machine and execute
+```./server.py [--port=8090]
+```
 
-- On the client machine, run :
-    ./client.py
+ - On the client machine, execute
+```./client.py [--host=localhost] [--port=8090]
+```
