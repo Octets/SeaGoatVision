@@ -26,19 +26,31 @@
 
 
 
-#define ENTER 13
-
-
-
 using namespace std;
 using namespace boost::python;
 
 enum AcquisitionMode {Continuous,SingleFrame,MultiFrame,Recorder};
+static const char* acquisitionMode[]={"Continuous","SingleFrame","MultiFrame","Recorder"};
 
 enum PixelFormat {Mono8,Bayer8,Bayer16,Rgb24,Bgr24,Rgba32,Bgra32};
 
 enum ConfigFileIndex {Factory,Index1,Index2,Index3,Index4,Index5};
 
+namespace exposure{
+    enum ExposureMode{Manuel,AutoOnce,Auto,External};
+    enum ExposureAutoMode{ExposureAutoAdjustTol,ExposureAutoAlg,ExposureAutoMax,ExposureAutoMin,ExposureAutoOutliers,ExposureAutoRate,ExposureAutoTarger};
+    enum ExposureAutoAlgMode{Mean,FitRange};
+}
+
+namespace gain{
+    enum GainMode{Manuel,AutoOnce,Auto};
+    enum GainAutoMode{GainAutoAdjustTol,GainAutoMax,GainAutoMin,GainAutoOutliers,GainAutoRate,GainAutoTarget};
+}
+
+namespace whitebal{
+    enum WhitebalMode{Manuel,Auto,AutoOnce};
+    enum WhitebalAutoMode{WhitebalAutoAdjustTol,WhiteAutoRate};
+}
 
 class CameraNotInitializeException: public exception
 {
@@ -83,23 +95,63 @@ public:
 
     int getTotalBytesPerFrame();
 
+    //ROI methods
     int getHeight();
     void setHeight(int);
 
     int getWidth();
     void setWidth(int);
 
-    //int getRegionX();
-    //void setRegiontX(int);
+    int getRegionX();
+    void setRegiontX(int);
 
-    //int getRegionY();
-    //void setRegionY(int);
+    int getRegionY();
+    void setRegionY(int);
+
+    //Gamma methods
+    float getGamma();
+    void setGamma(float);
+
+    //Exposure methods
+    const char* getExposureMode();
+    void setExposureMode(exposure::ExposureMode);
+    void setExposureValue(int value);
+    int getExposureValue();
+    void setExposureAutoMode(exposure::ExposureAutoMode,int);
+    const char* getExposureAutoMode();
+    void setExposureAutoMode(exposure::ExposureAutoMode, exposure::ExposureAutoAlgMode);
+    const char* getExposureAutoAlg();
+
+    //Gain methods
+    const char* getGainMode();
+    void setGainMode(gain::GainMode);
+    void setGainAutoMode(gain::GainAutoMode,int);
+    void setGainValue(int);
+
+    //Hue methods
+    int getHue();
+    void setHue(int);
+
+    //Saturation methods
+    int getSaturation();
+    void setSaturation(int);
+
+    //WhiteBalance methods
+    const char* getWhitebalMode();
+    void setWhitebalMode(whitebal::WhitebalMode);
+    const char* getWhitebalAutoMode();
+    void setWhitebalAutoMode(whitebal::WhitebalAutoMode,int);
+    int getWhitebalValueRed();
+    void setWhitebalValueRed(int);
+    int getWhitebalValueBlue();
+    void setWhitebalValueBlue();
 
     PyObject* getFrame();
 
 private:
     tPvHandle cam;
     tPvFrame frame;
+    PyObject* numImg;
     npy_intp dims[];
     int channel;
     char* array;
