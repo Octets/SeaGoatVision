@@ -59,7 +59,7 @@ void Camera::initialize()
     }
     int i =0;
     while(PvCameraCount()==0 && i<100){
-        i++
+        i++;
     }
 
     if(i==100){
