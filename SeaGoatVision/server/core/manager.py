@@ -28,6 +28,7 @@ from SeaGoatVision.server import imageproviders
 from SeaGoatVision.server.core.mainloop import MainLoop
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
+from SeaGoatVision.commun.keys import *
 
 class Manager:
     def __init__(self):
@@ -111,7 +112,7 @@ class Manager:
         filterchain = thread.get("filterchain", None)
         if not filterchain:
             return None
-        #if filterchain_item is None:
+        # if filterchain_item is None:
         #    # search in config
         #    o_filter = self.config.get_filter_from_filterName(filter_name=filter_name)
         return filterchain.get_params(filter_name=filter_name)
@@ -123,7 +124,12 @@ class Manager:
     ################################ SOURCE ##################################
     ##########################################################################
     def get_source_list(self):
-        return imageproviders.load_sources().keys()
+        # TODO improve me
+        # return imageproviders.load_sources().keys()
+        return {"Webcam":get_source_type_streaming_name(),
+                "ImageSingle":get_source_type_video_name(),
+                "Video":get_source_type_video_name(),
+                "ImageFolder":get_source_type_video_name()}
 
     def start_record(self, source_name):
         # Only record on webcam device

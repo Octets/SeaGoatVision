@@ -34,29 +34,54 @@ class WinSource(QtCore.QObject):
         self.record_icon = QIcon(self.ressource_icon_path + "RecordVideoAction.png")
         self.save_record_icon = QIcon(self.ressource_icon_path + "SaveServerImageAction.png")
 
+        self.dct_source = None
+
         self.reload_ui()
 
     def reload_ui(self):
         self.ui = get_ui(self)
 
         self.ui.recordButton.clicked.connect(self.click_record_button)
-        # disable local media
-        self.ui.rbtnImage.setEnabled(self.islocal)
-        self.ui.rbtnImageFolder.setEnabled(self.islocal)
-        self.ui.rbtnVideo.setEnabled(self.islocal)
+        self.ui.cbSource.currentIndexChanged.connect(self._change_source)
 
         self._set_record_icon()
+        self._update_source()
+
+    def _update_source(self):
+        self.dct_source = self.controller.get_source_list()
+        for source in self.dct_source.keys():
+            self.ui.cbSource.addItem(source)
+        # TODO improve me
+        pos = self.dct_source.keys().index("Webcam")
+        #self.ui.cbSource.setCurrentIndex(self.ui.cbSource.count() - 1)
+        self.ui.cbSource.setCurrentIndex(pos)
+        self._change_source()
+
+    def _change_source(self):
+        item_cbsource = self.ui.cbSource.currentText()
+        frame_webcam = self.ui.frame_webcam
+        frame_webcam.setVisible(False)
+        frame_video = self.ui.frame_video
+        frame_video.setVisible(False)
+
+        source_type = self.dct_source.get(item_cbsource, None)
+        if not source_type:
+            return
+        if source_type == get_source_type_video_name():
+            frame_video.setVisible(True)
+        elif source_type == get_source_type_streaming_name():
+            frame_webcam.setVisible(True)
 
     def click_record_button(self):
         if not self.is_recorded:
-            if not self.controller.start_record(get_source_camera_name()):
+            if not self.controller.start_record(self.ui.cbSource.currentText()):
                 # TODO improve error message
                 print("Error trying start record...")
             else:
                self.is_recorded = True
                self._set_record_icon()
         else:
-            if not self.controller.stop_record(get_source_camera_name()):
+            if not self.controller.stop_record(self.ui.cbSource.currentText()):
                 print("Error trying stop record...")
             self.is_recorded = False
             self._set_record_icon()
@@ -68,12 +93,6 @@ class WinSource(QtCore.QObject):
             self.ui.recordButton.setIcon(self.save_record_icon)
 
     def get_selected_media(self):
-        if self.ui.rbtnImage.isChecked():
-            return get_source_image_name()
-        elif self.ui.rbtnImageFolder.isChecked():
-            return get_source_image_folder_name()
-        elif self.ui.rbtnVideo.isChecked():
-            return get_source_video_name()
-        elif self.ui.rbtnCamera.isChecked():
-            return get_source_camera_name()
-        return "None"
+        if not self.ui.cbSource.count():
+            return "None"
+        return self.ui.cbSource.currentText()
