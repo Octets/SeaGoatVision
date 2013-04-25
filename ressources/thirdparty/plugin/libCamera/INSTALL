@@ -1,0 +1,4 @@
+1. Run "make"
+2. Run "cp ./bin/Debug/camera.so /usr/lib/python2.7/"
+
+Use the module by calling "import camera" in python
