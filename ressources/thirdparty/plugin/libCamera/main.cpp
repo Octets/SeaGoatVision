@@ -32,7 +32,7 @@ BOOST_PYTHON_MODULE(camera)
 
     //This is the definition of AcquitionMode enum to python camera module
     enum_<AcquisitionMode>("AcquisitionMode")
-        .value("Continuous",Continuous)
+        .value(acquisitionMode[Continuous],Continuous)
         .value("SingleFrame",SingleFrame)
         .value("MultiFrame",MultiFrame)
         .value("Recorder",Recorder)
