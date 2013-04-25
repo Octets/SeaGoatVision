@@ -58,8 +58,8 @@ void Camera::initialize()
         cout<<"Camera module for Manta G-95c version 0.7"<<endl;
     }
     int i =0;
-    while(PvCameraCount()==0 && i<100){
-        i++
+    while(PvCameraCount()==0 && i<10000){
+        i++;
     }
 
     if(i==100){
