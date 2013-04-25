@@ -1,4 +1,6 @@
+To use the project:
 1. Run "make"
 2. Run "cp ./bin/Debug/camera.so /usr/lib/python2.7/"
+3. Use the module by calling "import camera" in python
 
-Use the module by calling "import camera" in python
+To use the CodeBlocks project, the CodeBlocks settings must be modified by going in "Advanced Options" section, through the Settings>Compiler menu, in the "Other Settings" tab. In the "Command" combobox, select "Link object files to dynamic libraries" and swap the $libs and $link_options parameters. This will allow the linking options to be placed at the complete end of the command. It is required for PvAPI to link with librt.
