@@ -39,10 +39,11 @@ def callback(request, response):
     log.info('Asynchronous response :' + response.__str__())
 
 class ControllerProtobuf():
-    def __init__(self, host, port):
+    def __init__(self, host, port, quiet=False):
         # Server details
         self.hostname = host
         self.port = int(port)
+        self.quiet = quiet
 
         # Create a new service instance
         self.service = RpcService(server_pb2.CommandService_Stub, self.port, self.hostname)
@@ -59,13 +60,14 @@ class ControllerProtobuf():
     ################################ CLIENT ##################################
     ##########################################################################
     def is_connected(self):
-        print("Try connection")
+        if not self.quiet:
+            print("Try connection")
         request = server_pb2.IsConnectedRequest()
         # Make an synchronous call
         response = None
         try:
             response = self.service.is_connected(request, timeout=10000) is not None
-            if response:
+            if response and not self.quiet:
                 print("Connection successful")
         except Exception as ex:
             log.exception(ex)

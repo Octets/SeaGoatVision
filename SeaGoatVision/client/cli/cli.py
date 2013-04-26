@@ -23,8 +23,9 @@ Authors: Mathieu Benoit (mathben963@gmail.com)
 Date : October 2012
 """
 import sys
+import fileinput
 
-def run(local=False, host="localhost", port=8090):
+def run(local=False, host="localhost", port=8090, quiet=False):
     from vCmd import VCmd
-    VCmd(local=local, host=host, port=port).cmdloop()
+    VCmd(stdin=fileinput.input(), local=local, host=host, port=port, quiet=quiet).cmdloop()
     return 0

@@ -22,7 +22,8 @@ USE_PV_CAM = True
 try:
     import camera
 except:
-    print "Cannot open PvCamera.  Missing camera library."
+    # TODO use future log
+    #print "Cannot open PvCamera.  Missing camera library."
     USE_PV_CAM = False
 
 if USE_PV_CAM:

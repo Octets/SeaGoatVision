@@ -34,13 +34,14 @@ log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 class VCmd(cmd.Cmd):
-    def __init__(self, local=False, host="localhost", port=8090, completekey='tab', stdin=None, stdout=None):
+    def __init__(self, local=False, host="localhost", port=8090, completekey='tab', stdin=None, stdout=None, quiet=False):
         cmd.Cmd.__init__(self, completekey=completekey, stdin=stdin, stdout=stdout)
+        self.quiet = quiet
         if local:
             self.controller = Manager()
         else:
             # Protobuf
-            self.controller = ControllerProtobuf(host, port)
+            self.controller = ControllerProtobuf(host, port, quiet=quiet)
 
         # Directly connected to the vision server
         #self.controller = Manager()
@@ -49,14 +50,18 @@ class VCmd(cmd.Cmd):
             print("Vision server is not accessible.")
             return None
 
+        if self.quiet:
+            self.prompt = ""
+
     ##########################################################################
     # List of command
     ##########################################################################
     def do_is_connected(self, line):
-        if self.controller.is_connected():
-            print("You are connected.")
-        else:
-            print("You are disconnected.")
+        if not self.quiet:
+            if self.controller.is_connected():
+                print("You are connected.")
+            else:
+                print("You are disconnected.")
 
     def do_get_filter_list(self, line):
         lstFilter = self.controller.get_filter_list()
@@ -67,10 +72,14 @@ class VCmd(cmd.Cmd):
 
     def do_get_filterchain_list(self, line):
         lstFilterChain = self.controller.get_filterchain_list()
-        if lstFilterChain is not None:
-            print("Nombre de ligne %s, tableau : %s" % (len(lstFilterChain), [item.name for item in lstFilterChain]))
+        lst_name = [item.name for item in lstFilterChain]
+        if not self.quiet:
+            if lstFilterChain is not None:
+                print("Nombre de ligne %s, tableau : %s" % (len(lstFilterChain), lst_name))
+            else:
+                print("No lstFilterChain")
         else:
-            print("No lstFilterChain")
+             print(lst_name)
 
     def do_EOF(self, line):
         # Redo last command

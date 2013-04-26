@@ -29,14 +29,15 @@ def runQt(local=False, host="localhost", port=8090):
     from SeaGoatVision.client.qt.mainqt import run
     return run(local=local, host=host, port=port)
 
-def runCli(local=False, host="localhost", port=8090):
+def runCli(local=False, host="localhost", port=8090, quiet=False):
     from SeaGoatVision.client.cli.cli import run
-    return run(local=local, host=host, port=port)
+    return run(local=local, host=host, port=port, quiet=quiet)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Open client for vision server.')
     parser.add_argument('interface', metavar='interface name', nargs='?', type=str, default="qt", help='cli, gtk or qt is supported.')
     parser.add_argument('--local', action='store_true', help='Run server local, else remote.')
+    parser.add_argument('--quiet', action='store_true', help='Only print important information.')
     parser.add_argument('--host', type=str, default="localhost", help='Ip adress of remote server.')
     parser.add_argument('--port', type=int, default=8090, help='Port of remote server.')
 
@@ -46,7 +47,7 @@ if __name__ == '__main__':
     if sInterface == "qt":
         sys.exit(runQt(local=args.local, host=args.host, port=args.port))
     elif sInterface == "cli":
-        sys.exit(runCli(local=args.local, host=args.host, port=args.port))
+        sys.exit(runCli(local=args.local, host=args.host, port=args.port, quiet=args.quiet))
     else:
         print("Interface not supported : %s" % sInterface)
 
