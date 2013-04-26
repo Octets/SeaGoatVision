@@ -62,7 +62,7 @@ void Camera::initialize()
 
     if(PvInitialize()==ePvErrSuccess)
     {
-        cout<<"Camera module for Manta G-95c version 0.7"<<endl;
+        cout<<"Camera module for Manta G-95c version 0.8"<<endl;
     }
 
     time_t initTimer = time(NULL);
@@ -148,8 +148,6 @@ void Camera::start()
     array = new char[frameSize];
     //cout << "papaya3" <<endl;
     frame.ImageBuffer=array;
-    numImg = PyArray_SimpleNewFromData(CHANNEL,dims,NPY_UINT8,array);
-
 }
 
 void Camera::stop(){
@@ -460,12 +458,10 @@ PyObject* Camera::getFrame()
         throw camNotStart;
     }
 
+    PvCaptureWaitForFrameDone(this->cam, &frame, PVINFINITE);
     PvCaptureQueueFrame(this->cam, &frame, NULL);
 
-    PvCaptureWaitForFrameDone(this->cam, &frame, PVINFINITE);
-
-    return numImg;
-
+    return PyArray_SimpleNewFromData(CHANNEL,dims,NPY_UINT8,array);
 }
 
 //private methods
