@@ -14,7 +14,7 @@
 #include "camera.h"
 #include <iostream>
 
-#define CHANNEL 3
+#define MAX_TIMEOUT 5
 
 //These string arrays exist to simplify convertion of enums to string
 
@@ -44,25 +44,38 @@ Camera::Camera()
 
 Camera::~Camera()
 {
-    this->stop();
-    this->uninitialize();
-    delete array;
+    if(array!=NULL){
+         this->stop();
+         delete array;
+    }
+    if(cam!=NULL){
+       this->uninitialize();
+    }
+
+
 }
 
 
 void Camera::initialize()
 {
 
+
     if(PvInitialize()==ePvErrSuccess)
     {
         cout<<"Camera module for Manta G-95c version 0.7"<<endl;
     }
-    int i =0;
-    while(PvCameraCount()==0 && i<10000){
-        i++;
+
+    time_t initTimer = time(NULL);
+    time_t currentTimer = time(NULL);
+    double seconds = 0;
+
+
+    while(PvCameraCount()==0 && seconds<MAX_TIMEOUT){
+        currentTimer = time(NULL);
+        seconds = difftime(currentTimer,initTimer);
     }
 
-    if(i==100){
+    if(seconds>=MAX_TIMEOUT){
         throw camNotInit;
     }
 

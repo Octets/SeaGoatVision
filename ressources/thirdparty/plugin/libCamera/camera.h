@@ -13,6 +13,7 @@
 #include <opencv2/opencv.hpp>
 
 #define PY_UFUNC_UNIQUE_SYMBOL
+#define CHANNEL 3
 
 #include "ImageLib.h"
 #include <stdio.h>
@@ -152,7 +153,7 @@ private:
     tPvHandle cam;
     tPvFrame frame;
     PyObject* numImg;
-    npy_intp dims[];
+    npy_intp dims[CHANNEL];
     int channel;
     char* array;
     CameraNotInitializeException camNotInit;
