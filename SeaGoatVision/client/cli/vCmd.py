@@ -81,6 +81,11 @@ class VCmd(cmd.Cmd):
         else:
              print(lst_name)
 
+    def do_start_filterchain_execution(self, line):
+        # execution_name, source_name, filterchain_name
+        param = line.split()
+        self.controller.start_filterchain_execution(param[0], param[1], param[2])
+
     def do_EOF(self, line):
         # Redo last command
         return True

@@ -15,7 +15,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='server.proto',
   package='protobuf.socketrpc',
-  serialized_pb='\n\x0cserver.proto\x12\x12protobuf.socketrpc\"1\n\x0eStatusResponse\x12\x0e\n\x06status\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x14\n\x12IsConnectedRequest\")\n\x13ReloadFilterRequest\x12\x12\n\nfilterName\x18\x01 \x03(\t\"i\n StartFilterchainExecutionRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0bsource_name\x18\x02 \x02(\t\x12\x18\n\x10\x66ilterchain_name\x18\x03 \x02(\t\"9\n\x1fStopFilterchainExecutionRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"&\n\x10LoadChainRequest\x12\x12\n\nfilterName\x18\x01 \x02(\t\"4\n\x18\x44\x65leteFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\"L\n\x18UploadFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\x12\x16\n\x0es_file_contain\x18\x02 \x02(\t\"\x8b\x01\n\x18ModifyFilterChainRequest\x12\x1c\n\x14old_filterchain_name\x18\x01 \x02(\t\x12\x1c\n\x14new_filterchain_name\x18\x02 \x02(\t\x12\x33\n\x0flst_str_filters\x18\x03 \x03(\x0b\x32\x1a.protobuf.socketrpc.Filter\"F\n\x17\x41\x64\x64ImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\"c\n\x17SetImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x17\n\x0f\x66ilter_name_old\x18\x02 \x02(\t\x12\x17\n\x0f\x66ilter_name_new\x18\x03 \x02(\t\"I\n\x1aRemoveImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\"2\n\x18\x41\x64\x64OutputObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"5\n\x1bRemoveOutputObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"k\n\x12UpdateParamRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\x12(\n\x05param\x18\x03 \x02(\x0b\x32\x19.protobuf.socketrpc.Param\"\x16\n\x14GetFilterListRequest\"(\n\x15GetFilterListResponse\x12\x0f\n\x07\x66ilters\x18\x01 \x03(\t\"?\n#GetFilterListFromFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\"S\n$GetFilterListFromFilterChainResponse\x12+\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\x1a.protobuf.socketrpc.Filter\"\x1b\n\x19GetFilterChainListRequest\"S\n\x1aGetFilterChainListResponse\x12\x35\n\x0c\x66ilterchains\x18\x01 \x03(\x0b\x32\x1f.protobuf.socketrpc.FilterChain\"\x16\n\x14GetSourceListRequest\"\'\n\x15GetSourceListResponse\x12\x0e\n\x06source\x18\x01 \x03(\t\"J\n\x1bGetParamsFilterchainRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\"I\n\x1cGetParamsFilterchainResponse\x12)\n\x06params\x18\x01 \x03(\x0b\x32\x19.protobuf.socketrpc.Param\"#\n\x06\x46ilter\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x0b\n\x03\x64oc\x18\x02 \x01(\t\"(\n\x0b\x46ilterChain\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x0b\n\x03\x64oc\x18\x02 \x01(\t\"\x82\x01\n\x05Param\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x11\n\tvalue_int\x18\x02 \x01(\x05\x12\x11\n\tvalue_str\x18\x03 \x01(\t\x12\x12\n\nvalue_bool\x18\x04 \x01(\x08\x12\x13\n\x0bvalue_float\x18\x05 \x01(\x02\x12\r\n\x05min_v\x18\x06 \x01(\x05\x12\r\n\x05max_v\x18\x07 \x01(\x05\x32\x95\x10\n\x0e\x43ommandService\x12\x66\n\x0fget_filter_list\x12(.protobuf.socketrpc.GetFilterListRequest\x1a).protobuf.socketrpc.GetFilterListResponse\x12\x95\x01\n get_filter_list_from_filterchain\x12\x37.protobuf.socketrpc.GetFilterListFromFilterChainRequest\x1a\x38.protobuf.socketrpc.GetFilterListFromFilterChainResponse\x12u\n\x14get_filterchain_list\x12-.protobuf.socketrpc.GetFilterChainListRequest\x1a..protobuf.socketrpc.GetFilterChainListResponse\x12\x66\n\x0fget_source_list\x12(.protobuf.socketrpc.GetSourceListRequest\x1a).protobuf.socketrpc.GetSourceListResponse\x12{\n\x16get_params_filterchain\x12/.protobuf.socketrpc.GetParamsFilterchainRequest\x1a\x30.protobuf.socketrpc.GetParamsFilterchainResponse\x12Z\n\x0cis_connected\x12&.protobuf.socketrpc.IsConnectedRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\x65\n\x12\x61\x64\x64_image_observer\x12+.protobuf.socketrpc.AddImageObserverRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\x65\n\x12set_image_observer\x12+.protobuf.socketrpc.SetImageObserverRequest\x1a\".protobuf.socketrpc.StatusResponse\x12k\n\x15remove_image_observer\x12..protobuf.socketrpc.RemoveImageObserverRequest\x1a\".protobuf.socketrpc.StatusResponse\x12g\n\x13\x61\x64\x64_output_observer\x12,.protobuf.socketrpc.AddOutputObserverRequest\x1a\".protobuf.socketrpc.StatusResponse\x12m\n\x16remove_output_observer\x12/.protobuf.socketrpc.RemoveOutputObserverRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\\\n\rreload_filter\x12\'.protobuf.socketrpc.ReloadFilterRequest\x1a\".protobuf.socketrpc.StatusResponse\x12V\n\nload_chain\x12$.protobuf.socketrpc.LoadChainRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\x66\n\x12\x64\x65lete_filterchain\x12,.protobuf.socketrpc.DeleteFilterChainRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\x66\n\x12upload_filterchain\x12,.protobuf.socketrpc.UploadFilterChainRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\x66\n\x12modify_filterchain\x12,.protobuf.socketrpc.ModifyFilterChainRequest\x1a\".protobuf.socketrpc.StatusResponse\x12w\n\x1bstart_filterchain_execution\x12\x34.protobuf.socketrpc.StartFilterchainExecutionRequest\x1a\".protobuf.socketrpc.StatusResponse\x12u\n\x1astop_filterchain_execution\x12\x33.protobuf.socketrpc.StopFilterchainExecutionRequest\x1a\".protobuf.socketrpc.StatusResponse\x12Z\n\x0cupdate_param\x12&.protobuf.socketrpc.UpdateParamRequest\x1a\".protobuf.socketrpc.StatusResponseB&\n\x11\x63om.seagoatvisionB\x0cVServerProtoH\x01\x90\x01\x01')
+  serialized_pb='\n\x0cserver.proto\x12\x12protobuf.socketrpc\"1\n\x0eStatusResponse\x12\x0e\n\x06status\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x14\n\x12IsConnectedRequest\")\n\x13ReloadFilterRequest\x12\x12\n\nfilterName\x18\x01 \x03(\t\"i\n StartFilterchainExecutionRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0bsource_name\x18\x02 \x02(\t\x12\x18\n\x10\x66ilterchain_name\x18\x03 \x02(\t\"9\n\x1fStopFilterchainExecutionRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"&\n\x10LoadChainRequest\x12\x12\n\nfilterName\x18\x01 \x02(\t\"4\n\x18\x44\x65leteFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\"L\n\x18UploadFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\x12\x16\n\x0es_file_contain\x18\x02 \x02(\t\"\x8b\x01\n\x18ModifyFilterChainRequest\x12\x1c\n\x14old_filterchain_name\x18\x01 \x02(\t\x12\x1c\n\x14new_filterchain_name\x18\x02 \x02(\t\x12\x33\n\x0flst_str_filters\x18\x03 \x03(\x0b\x32\x1a.protobuf.socketrpc.Filter\"F\n\x17\x41\x64\x64ImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\"c\n\x17SetImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x17\n\x0f\x66ilter_name_old\x18\x02 \x02(\t\x12\x17\n\x0f\x66ilter_name_new\x18\x03 \x02(\t\"I\n\x1aRemoveImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\"2\n\x18\x41\x64\x64OutputObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"5\n\x1bRemoveOutputObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"k\n\x12UpdateParamRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\x12(\n\x05param\x18\x03 \x02(\x0b\x32\x19.protobuf.socketrpc.Param\"\x16\n\x14GetFilterListRequest\"(\n\x15GetFilterListResponse\x12\x0f\n\x07\x66ilters\x18\x01 \x03(\t\"?\n#GetFilterListFromFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\"S\n$GetFilterListFromFilterChainResponse\x12+\n\x07\x66ilters\x18\x01 \x03(\x0b\x32\x1a.protobuf.socketrpc.Filter\"\x1b\n\x19GetFilterChainListRequest\"S\n\x1aGetFilterChainListResponse\x12\x35\n\x0c\x66ilterchains\x18\x01 \x03(\x0b\x32\x1f.protobuf.socketrpc.FilterChain\"\x16\n\x14GetSourceListRequest\"5\n\x15GetSourceListResponse\x12\x0e\n\x06source\x18\x01 \x03(\t\x12\x0c\n\x04type\x18\x02 \x03(\t\"J\n\x1bGetParamsFilterchainRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\"I\n\x1cGetParamsFilterchainResponse\x12)\n\x06params\x18\x01 \x03(\x0b\x32\x19.protobuf.socketrpc.Param\"\x15\n\x13GetExecutionRequest\")\n\x14GetExecutionResponse\x12\x11\n\texecution\x18\x01 \x03(\t\"#\n\x06\x46ilter\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x0b\n\x03\x64oc\x18\x02 \x01(\t\"(\n\x0b\x46ilterChain\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x0b\n\x03\x64oc\x18\x02 \x01(\t\"\x82\x01\n\x05Param\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x11\n\tvalue_int\x18\x02 \x01(\x05\x12\x11\n\tvalue_str\x18\x03 \x01(\t\x12\x12\n\nvalue_bool\x18\x04 \x01(\x08\x12\x13\n\x0bvalue_float\x18\x05 \x01(\x02\x12\r\n\x05min_v\x18\x06 \x01(\x05\x12\r\n\x05max_v\x18\x07 \x01(\x05\x32\xfe\x10\n\x0e\x43ommandService\x12\x66\n\x0fget_filter_list\x12(.protobuf.socketrpc.GetFilterListRequest\x1a).protobuf.socketrpc.GetFilterListResponse\x12\x95\x01\n get_filter_list_from_filterchain\x12\x37.protobuf.socketrpc.GetFilterListFromFilterChainRequest\x1a\x38.protobuf.socketrpc.GetFilterListFromFilterChainResponse\x12u\n\x14get_filterchain_list\x12-.protobuf.socketrpc.GetFilterChainListRequest\x1a..protobuf.socketrpc.GetFilterChainListResponse\x12\x66\n\x0fget_source_list\x12(.protobuf.socketrpc.GetSourceListRequest\x1a).protobuf.socketrpc.GetSourceListResponse\x12{\n\x16get_params_filterchain\x12/.protobuf.socketrpc.GetParamsFilterchainRequest\x1a\x30.protobuf.socketrpc.GetParamsFilterchainResponse\x12g\n\x12get_execution_list\x12\'.protobuf.socketrpc.GetExecutionRequest\x1a(.protobuf.socketrpc.GetExecutionResponse\x12Z\n\x0cis_connected\x12&.protobuf.socketrpc.IsConnectedRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\x65\n\x12\x61\x64\x64_image_observer\x12+.protobuf.socketrpc.AddImageObserverRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\x65\n\x12set_image_observer\x12+.protobuf.socketrpc.SetImageObserverRequest\x1a\".protobuf.socketrpc.StatusResponse\x12k\n\x15remove_image_observer\x12..protobuf.socketrpc.RemoveImageObserverRequest\x1a\".protobuf.socketrpc.StatusResponse\x12g\n\x13\x61\x64\x64_output_observer\x12,.protobuf.socketrpc.AddOutputObserverRequest\x1a\".protobuf.socketrpc.StatusResponse\x12m\n\x16remove_output_observer\x12/.protobuf.socketrpc.RemoveOutputObserverRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\\\n\rreload_filter\x12\'.protobuf.socketrpc.ReloadFilterRequest\x1a\".protobuf.socketrpc.StatusResponse\x12V\n\nload_chain\x12$.protobuf.socketrpc.LoadChainRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\x66\n\x12\x64\x65lete_filterchain\x12,.protobuf.socketrpc.DeleteFilterChainRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\x66\n\x12upload_filterchain\x12,.protobuf.socketrpc.UploadFilterChainRequest\x1a\".protobuf.socketrpc.StatusResponse\x12\x66\n\x12modify_filterchain\x12,.protobuf.socketrpc.ModifyFilterChainRequest\x1a\".protobuf.socketrpc.StatusResponse\x12w\n\x1bstart_filterchain_execution\x12\x34.protobuf.socketrpc.StartFilterchainExecutionRequest\x1a\".protobuf.socketrpc.StatusResponse\x12u\n\x1astop_filterchain_execution\x12\x33.protobuf.socketrpc.StopFilterchainExecutionRequest\x1a\".protobuf.socketrpc.StatusResponse\x12Z\n\x0cupdate_param\x12&.protobuf.socketrpc.UpdateParamRequest\x1a\".protobuf.socketrpc.StatusResponseB&\n\x11\x63om.seagoatvisionB\x0cVServerProtoH\x01\x90\x01\x01')
 
 
 
@@ -706,6 +706,13 @@ _GETSOURCELISTRESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='protobuf.socketrpc.GetSourceListResponse.type', index=1,
+      number=2, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -716,7 +723,7 @@ _GETSOURCELISTRESPONSE = _descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=1450,
-  serialized_end=1489,
+  serialized_end=1503,
 )
 
 
@@ -750,8 +757,8 @@ _GETPARAMSFILTERCHAINREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1491,
-  serialized_end=1565,
+  serialized_start=1505,
+  serialized_end=1579,
 )
 
 
@@ -778,8 +785,57 @@ _GETPARAMSFILTERCHAINRESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1567,
-  serialized_end=1640,
+  serialized_start=1581,
+  serialized_end=1654,
+)
+
+
+_GETEXECUTIONREQUEST = _descriptor.Descriptor(
+  name='GetExecutionRequest',
+  full_name='protobuf.socketrpc.GetExecutionRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=1656,
+  serialized_end=1677,
+)
+
+
+_GETEXECUTIONRESPONSE = _descriptor.Descriptor(
+  name='GetExecutionResponse',
+  full_name='protobuf.socketrpc.GetExecutionResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='execution', full_name='protobuf.socketrpc.GetExecutionResponse.execution', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=1679,
+  serialized_end=1720,
 )
 
 
@@ -813,8 +869,8 @@ _FILTER = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1642,
-  serialized_end=1677,
+  serialized_start=1722,
+  serialized_end=1757,
 )
 
 
@@ -848,8 +904,8 @@ _FILTERCHAIN = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1679,
-  serialized_end=1719,
+  serialized_start=1759,
+  serialized_end=1799,
 )
 
 
@@ -918,8 +974,8 @@ _PARAM = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1722,
-  serialized_end=1852,
+  serialized_start=1802,
+  serialized_end=1932,
 )
 
 _MODIFYFILTERCHAINREQUEST.fields_by_name['lst_str_filters'].message_type = _FILTER
@@ -952,6 +1008,8 @@ DESCRIPTOR.message_types_by_name['GetSourceListRequest'] = _GETSOURCELISTREQUEST
 DESCRIPTOR.message_types_by_name['GetSourceListResponse'] = _GETSOURCELISTRESPONSE
 DESCRIPTOR.message_types_by_name['GetParamsFilterchainRequest'] = _GETPARAMSFILTERCHAINREQUEST
 DESCRIPTOR.message_types_by_name['GetParamsFilterchainResponse'] = _GETPARAMSFILTERCHAINRESPONSE
+DESCRIPTOR.message_types_by_name['GetExecutionRequest'] = _GETEXECUTIONREQUEST
+DESCRIPTOR.message_types_by_name['GetExecutionResponse'] = _GETEXECUTIONRESPONSE
 DESCRIPTOR.message_types_by_name['Filter'] = _FILTER
 DESCRIPTOR.message_types_by_name['FilterChain'] = _FILTERCHAIN
 DESCRIPTOR.message_types_by_name['Param'] = _PARAM
@@ -1106,6 +1164,18 @@ class GetParamsFilterchainResponse(_message.Message):
 
   # @@protoc_insertion_point(class_scope:protobuf.socketrpc.GetParamsFilterchainResponse)
 
+class GetExecutionRequest(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _GETEXECUTIONREQUEST
+
+  # @@protoc_insertion_point(class_scope:protobuf.socketrpc.GetExecutionRequest)
+
+class GetExecutionResponse(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _GETEXECUTIONRESPONSE
+
+  # @@protoc_insertion_point(class_scope:protobuf.socketrpc.GetExecutionResponse)
+
 class Filter(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
   DESCRIPTOR = _FILTER
@@ -1134,8 +1204,8 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=1855,
-  serialized_end=3924,
+  serialized_start=1935,
+  serialized_end=4109,
   methods=[
   _descriptor.MethodDescriptor(
     name='get_filter_list',
@@ -1183,9 +1253,18 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
     options=None,
   ),
   _descriptor.MethodDescriptor(
+    name='get_execution_list',
+    full_name='protobuf.socketrpc.CommandService.get_execution_list',
+    index=5,
+    containing_service=None,
+    input_type=_GETEXECUTIONREQUEST,
+    output_type=_GETEXECUTIONRESPONSE,
+    options=None,
+  ),
+  _descriptor.MethodDescriptor(
     name='is_connected',
     full_name='protobuf.socketrpc.CommandService.is_connected',
-    index=5,
+    index=6,
     containing_service=None,
     input_type=_ISCONNECTEDREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1194,7 +1273,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='add_image_observer',
     full_name='protobuf.socketrpc.CommandService.add_image_observer',
-    index=6,
+    index=7,
     containing_service=None,
     input_type=_ADDIMAGEOBSERVERREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1203,7 +1282,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='set_image_observer',
     full_name='protobuf.socketrpc.CommandService.set_image_observer',
-    index=7,
+    index=8,
     containing_service=None,
     input_type=_SETIMAGEOBSERVERREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1212,7 +1291,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='remove_image_observer',
     full_name='protobuf.socketrpc.CommandService.remove_image_observer',
-    index=8,
+    index=9,
     containing_service=None,
     input_type=_REMOVEIMAGEOBSERVERREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1221,7 +1300,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='add_output_observer',
     full_name='protobuf.socketrpc.CommandService.add_output_observer',
-    index=9,
+    index=10,
     containing_service=None,
     input_type=_ADDOUTPUTOBSERVERREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1230,7 +1309,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='remove_output_observer',
     full_name='protobuf.socketrpc.CommandService.remove_output_observer',
-    index=10,
+    index=11,
     containing_service=None,
     input_type=_REMOVEOUTPUTOBSERVERREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1239,7 +1318,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='reload_filter',
     full_name='protobuf.socketrpc.CommandService.reload_filter',
-    index=11,
+    index=12,
     containing_service=None,
     input_type=_RELOADFILTERREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1248,7 +1327,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='load_chain',
     full_name='protobuf.socketrpc.CommandService.load_chain',
-    index=12,
+    index=13,
     containing_service=None,
     input_type=_LOADCHAINREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1257,7 +1336,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='delete_filterchain',
     full_name='protobuf.socketrpc.CommandService.delete_filterchain',
-    index=13,
+    index=14,
     containing_service=None,
     input_type=_DELETEFILTERCHAINREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1266,7 +1345,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='upload_filterchain',
     full_name='protobuf.socketrpc.CommandService.upload_filterchain',
-    index=14,
+    index=15,
     containing_service=None,
     input_type=_UPLOADFILTERCHAINREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1275,7 +1354,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='modify_filterchain',
     full_name='protobuf.socketrpc.CommandService.modify_filterchain',
-    index=15,
+    index=16,
     containing_service=None,
     input_type=_MODIFYFILTERCHAINREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1284,7 +1363,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='start_filterchain_execution',
     full_name='protobuf.socketrpc.CommandService.start_filterchain_execution',
-    index=16,
+    index=17,
     containing_service=None,
     input_type=_STARTFILTERCHAINEXECUTIONREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1293,7 +1372,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='stop_filterchain_execution',
     full_name='protobuf.socketrpc.CommandService.stop_filterchain_execution',
-    index=17,
+    index=18,
     containing_service=None,
     input_type=_STOPFILTERCHAINEXECUTIONREQUEST,
     output_type=_STATUSRESPONSE,
@@ -1302,7 +1381,7 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='update_param',
     full_name='protobuf.socketrpc.CommandService.update_param',
-    index=18,
+    index=19,
     containing_service=None,
     input_type=_UPDATEPARAMREQUEST,
     output_type=_STATUSRESPONSE,

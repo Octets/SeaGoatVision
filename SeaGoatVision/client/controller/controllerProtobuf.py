@@ -158,6 +158,27 @@ class ControllerProtobuf():
 
         return returnValue
 
+    def get_execution_list(self):
+        request = server_pb2.GetExecutionRequest()
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.get_execution_list(request, timeout=10000)
+
+            if response:
+                return response.execution
+                returnValue = []
+                for param in response.params:
+                    if param.HasField("value_int"):
+                        returnValue.append(Param(param.name, param.value_int))
+            else:
+                returnValue = False
+
+        except Exception as ex:
+            log.exception(ex)
+
+        return returnValue
+
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
@@ -167,11 +188,14 @@ class ControllerProtobuf():
         """
         request = server_pb2.GetSourceListRequest()
         # Make an synchronous call
-        returnResponse = []
+        returnResponse = {}
         try:
             response = self.service.get_source_list(request, timeout=10000)
             if response:
-                returnResponse = response.source
+                i = 0
+                for key in response.source:
+                    returnResponse[key] = response.type[i]
+                    i += 1
             else:
                 print("No answer on get_source_list")
         except Exception as ex:

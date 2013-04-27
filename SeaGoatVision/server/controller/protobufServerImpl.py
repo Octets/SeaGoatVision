@@ -216,6 +216,20 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
+    def get_execution_list(self, controller, request, done):
+        print("get_execution_list request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.GetExecutionResponse()
+        try:
+            for execution in self.manager.get_execution_list():
+                response.execution.append(execution)
+        except Exception, e:
+            print "Exception: ", e
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
@@ -223,8 +237,9 @@ class ProtobufServerImpl(server_pb2.CommandService):
         print("get_source_list request %s" % str(request).replace("\n", " "))
 
         response = server_pb2.GetSourceListResponse()
-        for item in self.manager.get_source_list():
-            response.source.append(item)
+        for key, item in self.manager.get_source_list().items():
+            response.source.append(key)
+            response.type.append(item)
 
         done.run(response)
 

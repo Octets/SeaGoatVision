@@ -136,6 +136,7 @@ message GetSourceListRequest{}
 message GetSourceListResponse
 {
   repeated string source = 1;
+  repeated string type = 2;
 }
 
 message GetParamsFilterchainRequest
@@ -146,6 +147,12 @@ message GetParamsFilterchainRequest
 message GetParamsFilterchainResponse
 {
   repeated Param params = 1;
+}
+
+message GetExecutionRequest{}
+message GetExecutionResponse
+{
+  repeated string execution = 1;
 }
 //############################################################
 //################## CUSTOM MESSAGE SECTION ##################
@@ -183,6 +190,7 @@ service CommandService
   rpc get_filterchain_list(GetFilterChainListRequest) returns(GetFilterChainListResponse);
   rpc get_source_list(GetSourceListRequest) returns(GetSourceListResponse);
   rpc get_params_filterchain(GetParamsFilterchainRequest) returns(GetParamsFilterchainResponse);
+  rpc get_execution_list(GetExecutionRequest) returns(GetExecutionResponse);
 
   // ask state
   rpc is_connected(IsConnectedRequest) returns(StatusResponse);

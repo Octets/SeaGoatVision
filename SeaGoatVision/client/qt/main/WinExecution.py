@@ -47,6 +47,7 @@ class WinExecution(QtCore.QObject):
         self.ui.executeButton.clicked.connect(self.execute)
         self.ui.previewButton.clicked.connect(self.preview)
         self.ui.stopButton.clicked.connect(self.stop)
+        self.ui.lstExecution.currentItemChanged.connect(self._on_selected_lstExecution_change)
 
         self.ui.txtSource.setReadOnly(True)
         self.ui.txtFilterchain.setReadOnly(True)
@@ -102,6 +103,10 @@ class WinExecution(QtCore.QObject):
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################
     ######################################################################
+    def _on_selected_lstExecution_change(self):
+        execution = self._get_selected_list(self.ui.lstExecution)
+        self.ui.txtExecution.setText(execution)
+
     def _update_execution_list(self):
         self.ui.lstExecution.clear()
         for execution_name in self.controller.get_execution_list():
@@ -110,6 +115,19 @@ class WinExecution(QtCore.QObject):
         self._enable_stop_button(contain_execution)
         # TODO fix temporary a bug, enable execute
         self._enable_execution_button(not contain_execution)
+
+    def _get_selected_list(self, uiList):
+        # TODO it's duplicated fct
+        noLine = uiList.currentRow()
+        if noLine >= 0:
+            return uiList.item(noLine).text()
+        return None
+
+    def _get_selected_list(self, uiList):
+        noLine = uiList.currentRow()
+        if noLine >= 0:
+            return uiList.item(noLine).text()
+        return None
 
     def _is_unique_execution_name(self, execution_name):
         for noLine in range(self.ui.lstExecution.count()):
