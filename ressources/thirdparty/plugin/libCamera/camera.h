@@ -149,10 +149,10 @@ public:
 
     PyObject* getFrame();
 
+
 private:
     tPvHandle cam;
     tPvFrame frame;
-    PyObject* numImg;
     npy_intp dims[CHANNEL];
     int channel;
     char* array;

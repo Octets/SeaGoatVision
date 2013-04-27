@@ -1,30 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-<<<<<<< Updated upstream
-	<File name="ImageLib.h" open="0" top="0" tabpos="0">
-		<Cursor position="2400" topLine="47" />
-	</File>
-	<File name="PvApi.h" open="0" top="0" tabpos="0">
-		<Cursor position="5921" topLine="125" />
-	</File>
-	<File name="PvRegIo.h" open="0" top="0" tabpos="0">
-		<Cursor position="2002" topLine="72" />
-	</File>
-	<File name="camera.cpp" open="1" top="1" tabpos="2">
-		<Cursor position="4132" topLine="121" />
-	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="259" topLine="0" />
-=======
 	<File name="camera.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="4076" topLine="129" />
+		<Cursor position="1987" topLine="42" />
 	</File>
 	<File name="camera.h" open="1" top="0" tabpos="3">
-		<Cursor position="2107" topLine="72" />
+		<Cursor position="455" topLine="8" />
 	</File>
 	<File name="main.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="1416" topLine="45" />
->>>>>>> Stashed changes
+		<Cursor position="3601" topLine="15" />
 	</File>
 </CodeBlocks_layout_file>
