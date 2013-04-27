@@ -1,3 +1,6 @@
 *.layout
 bin/*
 obj/*
+.cproject
+.settings/*
+Debug/*

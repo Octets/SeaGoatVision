@@ -15,16 +15,13 @@
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
-					<Add option="-glibc" />
 					<Add option="-lrt" />
 					<Add option="-lopencv_core" />
 					<Add option="-lopencv_highgui" />
-					<Add option="-lpthread" />
 					<Add option="-lpython2.7" />
-					<Add option="-lboost_python-mt-py27" />
+					<Add option="-lboost_python" />
 					<Add library="x86/4.5/libPvAPI.a" />
 					<Add library="x86/4.5/libImagelib.a" />
-					<Add library="../../../../../../../../usr/lib/libccgnu2.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -37,6 +34,13 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-lrt" />
+					<Add option="-lopencv_core" />
+					<Add option="-lopencv_highgui" />
+					<Add option="-lpython2.7" />
+					<Add option="-lboost_python" />
+					<Add library="x86/4.5/libPvAPI.a" />
+					<Add library="x86/4.5/libImagelib.a" />
 				</Linker>
 			</Target>
 		</Build>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="camera.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="1987" topLine="42" />
+	<File name="camera.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="8364" topLine="375" />
 	</File>
 	<File name="camera.h" open="1" top="0" tabpos="3">
-		<Cursor position="455" topLine="8" />
+		<Cursor position="3916" topLine="115" />
 	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="3601" topLine="15" />
+	<File name="main.cpp" open="1" top="1" tabpos="2">
+		<Cursor position="2488" topLine="44" />
 	</File>
 </CodeBlocks_layout_file>

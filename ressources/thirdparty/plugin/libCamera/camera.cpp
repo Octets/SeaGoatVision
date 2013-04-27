@@ -7,26 +7,18 @@
  *
  *  Class Description:
  *      This class have the responsability to make a abstraction of the library PvApi.h
-        of Allied Technology. PvApi.h is a library use to communicate to this ethernet camera
-        Manta g-095c. This class is used to simplify the definition of c++-python interface.
+ *      of Allied Technology. PvApi.h is a library use to communicate to this ethernet camera
+ *      Manta g-095c. This class is used to simplify the definition of c++-python interface.
  *************************************************************************************************/
 
 #include "camera.h"
 #include <iostream>
 
-#define MAX_TIMEOUT 5
+
 
 //These string arrays exist to simplify convertion of enums to string
 
-static const char* pixelFormat[]={"Mono8","Bayer8","Bayer16","Rgb24","Bgr24","Rgba32","Bgra32"};
-static const char* configFileIndex[]={"Factory","1","2","3","4","5"};
-static const char* exposureMode[]={"Manuel","AutoOnce","Auto","External"};
-//static const char* exposureAutoMode[]={"ExposureAutoAdjustTol","ExposureAutoAlg","ExposureAutoMax","ExposureAutoMin","ExposureAutoOutliers","ExposureAutoRate","ExposureAutoTarger"};
-//static const char* exposureAutoAlgMode[]={"Mean","FitRange"};
-//static const char* gainMode[]={"Manuel","AutoOnce","Auto"};
-//static const char* gainAutoMode[]={"GainAutoAdjustTol","GainAutoMax","GainAutoMin","GainAutoOutliers","GainAutoRate","GainAutoTarget"};
-//static const char* whitebalMode[]={"Manuel","Auto","AutoOnce"};
-//static const char* whiteAutoMode[]={"WhitebalAutoAdjustTol","WhiteAutoRate"};
+
 
 Camera::Camera()
 {
@@ -37,6 +29,7 @@ Camera::Camera()
     frame = tPvFrame();
     camNotInit = CameraNotInitializeException();
     camNotStart = CameraNotStartException();
+    pvApiNotInit  = PvApiNotInitializeException();
 
     array = NULL;
 
@@ -55,7 +48,7 @@ Camera::~Camera()
 
 }
 
-
+/** begin Commands methods **/
 void Camera::initialize()
 {
 
@@ -63,6 +56,8 @@ void Camera::initialize()
     if(PvInitialize()==ePvErrSuccess)
     {
         cout<<"Camera module for Manta G-95c version 0.8"<<endl;
+    } else {
+        throw pvApiNotInit;
     }
 
     time_t initTimer = time(NULL);
@@ -120,6 +115,27 @@ void Camera::uninitialize(){
     PvUnInitialize();
 }
 
+PyObject* Camera::getFrame()
+{
+
+    if(this->cam == NULL)
+    {
+        throw camNotInit;
+    }
+    if(array==NULL)
+    {
+        throw camNotStart;
+    }
+
+    PvCaptureWaitForFrameDone(this->cam, &frame, PVINFINITE);
+    PvCaptureQueueFrame(this->cam, &frame, NULL);
+
+
+
+    return PyArray_SimpleNewFromData(CHANNEL,dims,NPY_UINT8,array);
+}
+
+
 void Camera::start()
 {
     if(this->cam == NULL)
@@ -129,7 +145,7 @@ void Camera::start()
 
     //start camera receiving frame triggers
     PvCommandRun(this->cam, "AcquisitionStart");
-    //unsigned long maxSize;
+
 
     int frameSize = getTotalBytesPerFrame();
     int frameWidth =getWidth();
@@ -146,7 +162,7 @@ void Camera::start()
     }
 
     array = new char[frameSize];
-    //cout << "papaya3" <<endl;
+
     frame.ImageBuffer=array;
 }
 
@@ -158,13 +174,6 @@ void Camera::stop(){
      PvCommandRun(this->cam, "AcquisitionStop");
 }
 
-void Camera::abort(){
-    if(this->cam == NULL)
-    {
-        throw camNotInit;
-    }
-    PvCommandRun(this->cam,"AcquisitionAbort");
-}
 
 void Camera::loadConfigFile(){
     if(this->cam == NULL)
@@ -182,6 +191,8 @@ void Camera::saveConfigFile(){
     PvCommandRun(this->cam,"ConfigFileSave");
 }
 
+/** end Commands methods **/
+/** Begin Configurations methods **/
 void Camera::setPixelFormat(PixelFormat pf){
     if(this->cam == NULL)
     {
@@ -196,8 +207,9 @@ const char* Camera::getPixelFormat(){
     {
         throw camNotInit;
     }
-    char table[10];
-    PvAttrEnumGet(this->cam,"PixelFormat",table,10,NULL);
+    long size = 10;
+    char table[size];
+    PvAttrEnumGet(this->cam,"PixelFormat",table,size,NULL);
     string pf(table);
     return pf.c_str();
 }
@@ -215,8 +227,9 @@ const char* Camera::getAcquisitionMode(){
     {
         throw camNotInit;
     }
-    char table[20];
-    PvAttrEnumGet(this->cam,"AcquisitionMode",table,20,NULL);
+    long size = 20;
+    char table[size];
+    PvAttrEnumGet(this->cam,"AcquisitionMode",table,size,NULL);
     string am(table);
     return am.c_str();
 }
@@ -234,8 +247,9 @@ const char* Camera::getConfigFileIndex(){
     {
         throw camNotInit;
     }
-    char table[10];
-    PvAttrEnumGet(this->cam,"ConfigFileIndex",table,10,NULL);
+    long size = 10;
+    char table[size];
+    PvAttrEnumGet(this->cam,"ConfigFileIndex",table,size,NULL);
     string cfi(table);
     return cfi.c_str();
 }
@@ -250,7 +264,9 @@ int Camera::getTotalBytesPerFrame(){
     return frameSize;
 }
 
-/** ROI methods**/
+/** End Configurations Commands **/
+
+/** Begin ROI methods**/
 
 int Camera::getHeight(){
     if(this->cam == NULL)
@@ -323,8 +339,8 @@ void Camera::setRegionY(int regionY){
     }
     PvAttrUint32Set(this->cam,"RegionY",regionY);
 }
-
-/** Gamma methods **/
+/** End ROI Methods **/
+/** Begin Gamma methods **/
 float Camera::getGamma(){
     if(this->cam == NULL)
     {
@@ -342,15 +358,16 @@ void Camera::setGamma(float gamma){
     }
     PvAttrFloat32Set(this->cam,"Gamma",gamma);
 }
-
-/** Exposure methods **/
+/** End Gamma Methods **/
+/** Begin Exposure methods **/
 const char* Camera::getExposureMode(){
     if(this->cam == NULL)
     {
         throw camNotInit;
     }
-    char table[20];
-    PvAttrEnumGet(this->cam,"ExposureMode",table,10,NULL);
+    long size = 20;
+    char table[size];
+    PvAttrEnumGet(this->cam,"ExposureMode",table,size,NULL);
     string em(table);
     return em.c_str();
 }
@@ -368,15 +385,33 @@ int Camera::getExposureValue(){
     {
         throw camNotInit;
     }
-    return 0;
+    tPvUint32 exposureValue;
+    PvAttrUint32Get(this->cam,"ExposureValue",&exposureValue);
+    return exposureValue;
+}
+
+void Camera::setExposureValue(int value){
+
 }
 
 void Camera::setExposureAutoMode(exposure::ExposureAutoMode eam,int value){
+    if(this->cam == NULL)
+    {
+        throw camNotInit;
+    }
 
 }
 
 const char* Camera::getExposureAutoMode(){
-    return NULL;
+    if(this->cam == NULL)
+    {
+        throw camNotInit;
+    }
+    long size = 25;
+    char table[size];
+    PvAttrEnumGet(this->cam,"ExposureAutoMode",table,size,NULL);
+    string eam(table);
+    return eam.c_str();
 }
 
 void Camera::setExposureAutoMode(exposure::ExposureAutoMode eam, exposure::ExposureAutoAlgMode eaa){
@@ -385,8 +420,8 @@ void Camera::setExposureAutoMode(exposure::ExposureAutoMode eam, exposure::Expos
 const char* Camera::getExposureAutoAlg(){
     return NULL;
 }
-
-/** Gain methods **/
+/** End Exposure Methods **/
+/** Begin Gain methods **/
 const char* Camera::getGainMode(){
     return NULL;
 }
@@ -398,7 +433,7 @@ void Camera::setGainAutoMode(gain::GainAutoMode,int){
 }
 void Camera::setGainValue(int){
 }
-
+/** End Gain Methods **/
 /** Hue methods **/
 int Camera::getHue(){
     return 0;
@@ -449,22 +484,7 @@ void Camera::setWhitebalValueBlue(){
 PyObject* Camera::getFrame()
 {
 
-    if(this->cam == NULL)
-    {
-        throw camNotInit;
-    }
-    if(array==NULL)
-    {
-        throw camNotStart;
-    }
-
-    PvCaptureWaitForFrameDone(this->cam, &frame, PVINFINITE);
-    PvCaptureQueueFrame(this->cam, &frame, NULL);
-
-    return PyArray_SimpleNewFromData(CHANNEL,dims,NPY_UINT8,array);
-}
-
-//private methods
+/** private methods **/
 void Camera::setChannel(PixelFormat pf){
     switch(pf){
         case Mono8:

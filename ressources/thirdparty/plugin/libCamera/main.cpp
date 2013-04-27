@@ -33,31 +33,40 @@ BOOST_PYTHON_MODULE(camera)
     //This is the definition of AcquitionMode enum to python camera module
     enum_<AcquisitionMode>("AcquisitionMode")
         .value(acquisitionMode[Continuous],Continuous)
-        .value("SingleFrame",SingleFrame)
-        .value("MultiFrame",MultiFrame)
-        .value("Recorder",Recorder)
+        .value(acquisitionMode[SingleFrame],SingleFrame)
+        .value(acquisitionMode[MultiFrame],MultiFrame)
+        .value(acquisitionMode[Recorder],Recorder)
     ;
 
     //This is the definition of PixelFormat enum to python camera module
     enum_<PixelFormat>("PixelFormat")
-        .value("Mono8",Mono8)
-        .value("Bayer8",Bayer8)
-        .value("Bayer16",Bayer16)
-        .value("Rgb24",Rgb24)
-        .value("Bgr24",Bgr24)
-        .value("Rgba32",Rgba32)
-        .value("Bgra32",Bgra32)
+        .value(pixelFormat[Mono8],Mono8)
+        .value(pixelFormat[Bayer8],Bayer8)
+        .value(pixelFormat[Bayer16],Bayer16)
+        .value(pixelFormat[Rgb24],Rgb24)
+        .value(pixelFormat[Bgr24],Bgr24)
+        .value(pixelFormat[Rgba32],Rgba32)
+        .value(pixelFormat[Bgra32],Bgra32)
     ;
 
     //This is the definition of ConfigFileIndex enum to python camera module
     enum_<ConfigFileIndex>("ConfigFileIndex")
-        .value("Factory",Factory)
+        .value(configFileIndex[Factory],Factory)
         .value("Index1",Index1)
         .value("Index2",Index2)
         .value("Index3",Index3)
         .value("Index4",Index4)
         .value("Index5",Index5)
     ;
+
+    enum_<exposure::ExposureMode>("ExposureMode")
+        .value(exposureMode[exposure::Manual],exposure::Manual)
+        .value(exposureMode[exposure::AutoOnce],exposure::AutoOnce)
+        .value(exposureMode[exposure::Auto],exposure::Auto)
+        .value(exposureMode[exposure::External],exposure::External)
+    ;
+
+
 
     /*************************************************************************************
         This is the definition of Camera class to python camera module.
@@ -66,12 +75,16 @@ BOOST_PYTHON_MODULE(camera)
     class_<Camera>("Camera")
         .def("initialize", &Camera::initialize)
         .def("uninitialize",&Camera::uninitialize)
+        .def("getFrame",&Camera::getFrame)
+
+        /**Commands**/
         .def("start", &Camera::start)
         .def("stop",&Camera::stop)
-        .def("getFrame",&Camera::getFrame)
-        .def("abort",&Camera::abort)
+
         .def("loadConfigFile",&Camera::loadConfigFile)
         .def("saveConfigFile",&Camera::saveConfigFile)
+
+        /**Condifurations methods**/
         .def("setPixelFormat",&Camera::setPixelFormat)
         .def("getPixelFormat",&Camera::getPixelFormat)
         .def("setAcquisitionMode",&Camera::setAcquisitionMode)
@@ -79,10 +92,33 @@ BOOST_PYTHON_MODULE(camera)
         .def("setConfigFileIndex",&Camera::setConfigFileIndex)
         .def("getConfigFileIndex",&Camera::getConfigFileIndex)
         .def("getTotalBytesPerFrame",&Camera::getTotalBytesPerFrame)
+
+        /**ROI methods**/
         .def("getHeight",&Camera::getHeight)
         .def("setHeight",&Camera::setHeight)
         .def("getWidth",&Camera::getWidth)
         .def("setWidth",&Camera::setWidth)
+        .def("getRegionX",&Camera::getRegionX)
+        .def("setRegionX",&Camera::setRegiontX)
+        .def("getRegionY",&Camera::getRegionY)
+        .def("setRegionY",&Camera::setRegionY)
+
+        /** Gamma Methods **/
+        .def("getGamma",&Camera::getGamma)
+        .def("setGamma", &Camera::setGamma)
+
+        /** Exposure Methods **/
+        .def("getExposureMode",&Camera::getExposureMode)
+        .def("setExposureMode",&Camera::setExposureMode)
+        /** Gain Methods **/
+
+        /** Hue Methods**/
+
+        /** Saturation Methods **/
+
+        /** WhiteBalance Methods **/
+
+
     ;
 }
 
