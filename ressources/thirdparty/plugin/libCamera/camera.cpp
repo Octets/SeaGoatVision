@@ -480,10 +480,6 @@ int Camera::getWhitebalValueBlue(){
 void Camera::setWhitebalValueBlue(){
 }
 
-/** general methods **/
-PyObject* Camera::getFrame()
-{
-
 /** private methods **/
 void Camera::setChannel(PixelFormat pf){
     switch(pf){
