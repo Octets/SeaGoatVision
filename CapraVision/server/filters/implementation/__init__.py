@@ -103,6 +103,7 @@ def compile_cpp_filters():
         This method returns the code to initialize the parameters
         """
         return """
+            ppp = params;
             {class_name} p;
             p.setParams(params);
             p.setInitParam(py_init_param);
