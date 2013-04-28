@@ -66,6 +66,20 @@ BOOST_PYTHON_MODULE(camera)
         .value(exposureMode[exposure::External],exposure::External)
     ;
 
+    enum_<exposure::ExposureAutoMode>("ExposureAutoMode")
+        .value(exposureAutoMode[exposure::ExposureAutoAdjustTol],exposure::ExposureAutoAdjustTol)
+        .value(exposureAutoMode[exposure::ExposureAutoAlg],exposure::ExposureAutoAlg)
+        .value(exposureAutoMode[exposure::ExposureAutoMax],exposure::ExposureAutoMax)
+        .value(exposureAutoMode[exposure::ExposureAutoMin],exposure::ExposureAutoMin)
+        .value(exposureAutoMode[exposure::ExposureAutoOutliers],exposure::ExposureAutoOutliers)
+        .value(exposureAutoMode[exposure::ExposureAutoRate],exposure::ExposureAutoRate)
+        .value(exposureAutoMode[exposure::ExposureAutoTarger],exposure::ExposureAutoTarger)
+    ;
+
+    enum_<exposure::ExposureAutoAlgMode>("ExposureAutoAlgMode")
+        .value(exposureAutoAlgMode[exposure::FitRange],exposure::FitRange)
+        .value(exposureAutoAlgMode[exposure::Mean],exposure::Mean)
+    ;
 
 
     /*************************************************************************************
@@ -110,6 +124,12 @@ BOOST_PYTHON_MODULE(camera)
         /** Exposure Methods **/
         .def("getExposureMode",&Camera::getExposureMode)
         .def("setExposureMode",&Camera::setExposureMode)
+        .def("setExposureValue",&Camera::setExposureValue)
+        .def("getExposureValue",&Camera::getExposureValue)
+        .def("getExposureAutoMode",&Camera::getExposureAutoMode)
+        .def("setExposureAutoAlgMode",&Camera::setExposureAutoAlgMode)
+        .def("getExposureAutoAlgMode",&Camera::getExposureAutoAlgMode)
+
         /** Gain Methods **/
 
         /** Hue Methods**/
