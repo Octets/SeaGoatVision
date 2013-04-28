@@ -96,8 +96,11 @@ class WinFilterChain:
             self.sourcesListStore.append([name])
         self.cboSource.set_active(1)
         
-        self.load_settings()
-
+        try:
+            self.load_settings()
+        except Exception, e:
+            print e
+            
     def add_window_to_list(self, win):
         self.win_list.append(win.window)
 
