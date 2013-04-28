@@ -61,13 +61,14 @@ namespace whitebal{
 static const char* pixelFormat[]={"Mono8","Bayer8","Bayer16","Rgb24","Bgr24","Rgba32","Bgra32"};
 static const char* configFileIndex[]={"Factory","1","2","3","4","5"};
 static const char* exposureMode[]={"Manual","AutoOnce","Auto","External"};
-//static const char* exposureAutoMode[]={"ExposureAutoAdjustTol","ExposureAutoAlg","ExposureAutoMax","ExposureAutoMin","ExposureAutoOutliers","ExposureAutoRate","ExposureAutoTarger"};
-//static const char* exposureAutoAlgMode[]={"Mean","FitRange"};
+static const char* exposureAutoMode[]={"ExposureAutoAdjustTol","ExposureAutoAlg","ExposureAutoMax","ExposureAutoMin","ExposureAutoOutliers","ExposureAutoRate","ExposureAutoTarger"};
+static const char* exposureAutoAlgMode[]={"Mean","FitRange"};
 //static const char* gainMode[]={"Manuel","AutoOnce","Auto"};
 //static const char* gainAutoMode[]={"GainAutoAdjustTol","GainAutoMax","GainAutoMin","GainAutoOutliers","GainAutoRate","GainAutoTarget"};
 //static const char* whitebalMode[]={"Manuel","Auto","AutoOnce"};
 //static const char* whiteAutoMode[]={"WhitebalAutoAdjustTol","WhiteAutoRate"};
 
+/** Declarations of Exceptions**/
 class CameraNotInitializeException: public exception
 {
     virtual const char* what() const throw()
@@ -91,6 +92,25 @@ class PvApiNotInitializeException: public exception
     }
 };
 
+class ExposureAutoAlgException:public exception{
+    virtual const char* what() const throw(){
+        return "ExposureAutoAlgMode have to be with ExposureAutoAlgMode.";
+    }
+};
+
+class ExposureValueException:public exception{
+     virtual const char* what() const throw(){
+        return "ExposureValue is only for Manual Mode.";
+    }
+};
+
+class ExposureAutoModeException:public exception{
+     virtual const char* what() const throw(){
+        return "ExposureAutoMode is only for Auto Mode.";
+    }
+};
+/** End Declaration of Exception **/
+/** CAMERA_h **/
 class Camera
 {
 public:
@@ -141,10 +161,10 @@ public:
     void setExposureValue(int value);
     int getExposureValue();
     void setExposureAutoMode(exposure::ExposureAutoMode,int);
-    void setExposureAutoMode(exposure::ExposureAutoMode, exposure::ExposureAutoAlgMode);
+    void setExposureAutoAlgMode(exposure::ExposureAutoAlgMode);
     const char* getExposureAutoMode();
 
-    const char* getExposureAutoAlg();
+    const char* getExposureAutoAlgMode();
 
     //Gain methods
     const char* getGainMode();
@@ -170,18 +190,13 @@ public:
     int getWhitebalValueBlue();
     void setWhitebalValueBlue();
 
-
-
-
 private:
     tPvHandle cam;
     tPvFrame frame;
     npy_intp dims[CHANNEL];
     int channel;
     char* array;
-    CameraNotInitializeException camNotInit;
-    CameraNotStartException camNotStart;
-    PvApiNotInitializeException pvApiNotInit;
+
 
     //private methods
     void setChannel(PixelFormat);
