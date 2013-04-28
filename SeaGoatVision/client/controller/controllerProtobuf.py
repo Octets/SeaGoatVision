@@ -150,6 +150,13 @@ class ControllerProtobuf():
                 for param in response.params:
                     if param.HasField("value_int"):
                         returnValue.append(Param(param.name, param.value_int))
+                    if param.HasField("value_bool"):
+                        returnValue.append(Param(param.name, param.value_bool))
+                    if param.HasField("value_str"):
+                        returnValue.append(Param(param.name, param.value_str))
+                    if param.HasField("value_float"):
+                        returnValue.append(Param(param.name, param.value_float))
+                    # TODO complete with other param restriction
             else:
                 returnValue = False
 
@@ -556,6 +563,8 @@ class ControllerProtobuf():
         request.param.name = param_name
         if type(value) is int:
             request.param.value_int = value
+        if type(value) is bool:
+            request.param.value_bool = value
 
         # Make an synchronous call
         returnValue = None

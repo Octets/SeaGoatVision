@@ -77,6 +77,8 @@ class WinFilter(QtGui.QDockWidget):
 
         def create_value_change(param):
             def set(value):
+                if param.get_type() is bool:
+                    value = bool(value)
                 self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), value)
             return set
 
@@ -127,9 +129,9 @@ class WinFilter(QtGui.QDockWidget):
         boolLabel.setNum(param.get())
 
         checkbox = QtGui.QCheckBox()
-        checkbox.stateChanged.connect(cb_value_change)
         if param.get():
             checkbox.setCheckState(QtCore.Qt.PartiallyChecked)
+        checkbox.stateChanged.connect(cb_value_change)
 
         layout = QtGui.QHBoxLayout()
         layout.addWidget(checkbox)
