@@ -62,7 +62,7 @@ class SimpleRecorder:
         self.thread = None
         print size
         self.video = cv2.VideoWriter(self.get_file_name(), 
-                    cv.CV_FOURCC('V','P','8','0'), fps, size)
+                    cv.CV_FOURCC('M','J','P','G'), fps, size)
         self.thread = thread
         thread.add_observer(self.thread_observer)
         
