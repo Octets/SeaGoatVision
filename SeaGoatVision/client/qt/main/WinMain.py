@@ -52,8 +52,16 @@ class WinMain(QtGui.QMainWindow):
         self.show_win_filterchain(first_time=True)
         self.show_win_source(first_time=True)
         self.show_win_execution(first_time=True)
-        # exception
+
+        # Signal
         self.winFilterList.onAddFilter.connect(self.winFilterChain.add_filter)
+        self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
+        self.winFilterChain.selectedFilterChainChanged.connect(self.winExecution.set_filterchain)
+        self.ui.btnSource.clicked.connect(self.show_win_source)
+        self.ui.btnFilterChain.clicked.connect(self.show_win_filterchain)
+        self.ui.btnFilterList.clicked.connect(self.show_win_filterlist)
+        self.ui.btnExecution.clicked.connect(self.show_win_execution)
+        self.winExecution.onPreviewClick.connect(self.addPreview)
 
         self._addToolBar()
 
@@ -63,24 +71,17 @@ class WinMain(QtGui.QMainWindow):
         for widget in self.ui.children():
             if isinstance(widget, QtGui.QToolButton):
                 self.toolbar.addWidget(widget)
-        self.ui.btnSource.clicked.connect(self.show_win_source)
-        self.ui.btnFilterChain.clicked.connect(self.show_win_filterchain)
-        self.ui.btnFilterList.clicked.connect(self.show_win_filterlist)
-        self.ui.btnExecution.clicked.connect(self.show_win_execution)
 
     def show_win_filterchain(self, first_time=False):
         if not first_time:
             self.removeDockWidget(self.winFilterChain.ui)
             self.winFilterChain.reload_ui()
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winFilterChain.ui)
-        self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
-        self.winFilterChain.selectedFilterChainChanged.connect(self.winExecution.set_filterchain)
 
     def show_win_execution(self, first_time=False):
         if not first_time:
             self.removeDockWidget(self.winExecution.ui)
             self.winExecution.reload_ui()
-        self.winExecution.onPreviewClick.connect(self.addPreview)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, self.winExecution.ui)
 
     def show_win_filterlist(self, first_time=False):
@@ -88,7 +89,6 @@ class WinMain(QtGui.QMainWindow):
             self.removeDockWidget(self.winFilterList.ui)
             self.winFilterList.reload_ui()
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilterList.ui)
-        self.winFilterList.onAddFilter.connect(self.winFilterChain.add_filter)
 
     def show_win_filter(self):
         self.winFilter.setFeatures(QtGui.QDockWidget.DockWidgetMovable or QtGui.QDockWidget.DockWidgetFloatable)
