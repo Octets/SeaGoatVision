@@ -81,6 +81,11 @@ class VCmd(cmd.Cmd):
         else:
              print(lst_name)
 
+    def do_add_output_observer(self, line):
+        # execution_name
+        param = line.split()
+        self.controller.add_output_observer(param[0])
+
     def do_start_filterchain_execution(self, line):
         # execution_name, source_name, filterchain_name
         param = line.split()

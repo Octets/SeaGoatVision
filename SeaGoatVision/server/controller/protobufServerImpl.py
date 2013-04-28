@@ -230,6 +230,21 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
+    def get_execution_info(self, controller, request, done):
+        print("get_execution_info request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.GetExecutionInfoResponse()
+        try:
+            o_exec = self.manager.get_execution_info(request.execution)
+            response.filterchain = o_exec.filterchain
+            response.source = o_exec.source
+        except Exception, e:
+            print "Exception: ", e
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
@@ -277,7 +292,6 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         # We're done, call the run method of the done callback
         done.run(response)
-
 
     def load_chain(self, controller, request, done):
         print("load_chain request %s" % str(request).replace("\n", " "))
