@@ -81,6 +81,32 @@ BOOST_PYTHON_MODULE(camera)
         .value(exposureAutoAlgMode[exposure::Mean],exposure::Mean)
     ;
 
+    enum_<gain::GainMode>("GainMode")
+        .value(gainMode[gain::Manual],gain::Manual)
+        .value(gainMode[gain::Auto],gain::Auto)
+        .value(gainMode[gain::AutoOnce],gain::AutoOnce)
+    ;
+
+    enum_<gain::GainAutoMode>("GainAutoMode")
+        .value(gainAutoMode[gain::GainAutoAdjustTol],gain::GainAutoAdjustTol)
+        .value(gainAutoMode[gain::GainAutoMax],gain::GainAutoMin)
+        .value(gainAutoMode[gain::GainAutoMin],gain::GainAutoMin)
+        .value(gainAutoMode[gain::GainAutoOutliers],gain::GainAutoOutliers)
+        .value(gainAutoMode[gain::GainAutoRate],gain::GainAutoRate)
+        .value(gainAutoMode[gain::GainAutoTarget],gain::GainAutoTarget)
+    ;
+
+    enum_<whitebal::WhitebalMode>("WhitebalMode")
+        .value(whitebalMode[whitebal::Manual],whitebal::Manual)
+        .value(whitebalMode[whitebal::Auto],whitebal::Auto)
+        .value(whitebalMode[whitebal::AutoOnce],whitebal::AutoOnce)
+    ;
+
+    enum_<whitebal::WhitebalAutoMode>("WhitebalAutoMode")
+        .value(whiteAutoMode[whitebal::WhiteAutoRate],whitebal::WhiteAutoRate)
+        .value(whitebalMode[whitebal::WhitebalAutoAdjustTol],whitebal::WhitebalAutoAdjustTol)
+    ;
+
 
     /*************************************************************************************
         This is the definition of Camera class to python camera module.
@@ -131,14 +157,30 @@ BOOST_PYTHON_MODULE(camera)
         .def("getExposureAutoAlgMode",&Camera::getExposureAutoAlgMode)
 
         /** Gain Methods **/
+        .def("getGainMode",&Camera::getGainMode)
+        .def("setGainMode",&Camera::setGainMode)
+        .def("getGainAutoMode",&Camera::getGainAutoMode)
+        .def("setGainAutoMode",&Camera::setGainAutoMode)
+        .def("setGainValue",&Camera::setGainValue)
+        .def("getGainValue",&Camera::getGainValue)
 
         /** Hue Methods**/
+        .def("getHue",&Camera::getHue)
+        .def("setHue",&Camera::setHue)
 
         /** Saturation Methods **/
+        .def("getSaturation",&Camera::getSaturation)
+        .def("setSaturation",&Camera::setSaturation)
 
         /** WhiteBalance Methods **/
-
-
+        .def("getWhitebalMode",&Camera::getWhitebalMode)
+        .def("setWhitebalMode",&Camera::setWhitebalMode)
+        .def("getWhitebalAutoMode",&Camera::getWhitebalAutoMode)
+        .def("setWhitebalAutoMode", &Camera::setWhitebalAutoMode)
+        .def("getWhitebalValueRed",&Camera::getWhitebalValueRed)
+        .def("setWhitebalValueRed",&Camera::setWhitebalValueRed)
+        .def("getWhitebalValueBlue",&Camera::getWhitebalValueBlue)
+        .def("setWhitebalValueBlue",&Camera::setWhitebalValueBlue)
     ;
 }
 

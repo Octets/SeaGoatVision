@@ -49,12 +49,12 @@ namespace exposure{
 }
 
 namespace gain{
-    enum GainMode{Manuel,AutoOnce,Auto};
+    enum GainMode{Manual,AutoOnce,Auto};
     enum GainAutoMode{GainAutoAdjustTol,GainAutoMax,GainAutoMin,GainAutoOutliers,GainAutoRate,GainAutoTarget};
 }
 
 namespace whitebal{
-    enum WhitebalMode{Manuel,Auto,AutoOnce};
+    enum WhitebalMode{Manual,Auto,AutoOnce};
     enum WhitebalAutoMode{WhitebalAutoAdjustTol,WhiteAutoRate};
 }
 
@@ -63,10 +63,10 @@ static const char* configFileIndex[]={"Factory","1","2","3","4","5"};
 static const char* exposureMode[]={"Manual","AutoOnce","Auto","External"};
 static const char* exposureAutoMode[]={"ExposureAutoAdjustTol","ExposureAutoAlg","ExposureAutoMax","ExposureAutoMin","ExposureAutoOutliers","ExposureAutoRate","ExposureAutoTarger"};
 static const char* exposureAutoAlgMode[]={"Mean","FitRange"};
-//static const char* gainMode[]={"Manuel","AutoOnce","Auto"};
-//static const char* gainAutoMode[]={"GainAutoAdjustTol","GainAutoMax","GainAutoMin","GainAutoOutliers","GainAutoRate","GainAutoTarget"};
-//static const char* whitebalMode[]={"Manuel","Auto","AutoOnce"};
-//static const char* whiteAutoMode[]={"WhitebalAutoAdjustTol","WhiteAutoRate"};
+static const char* gainMode[]={"Manual","AutoOnce","Auto"};
+static const char* gainAutoMode[]={"GainAutoAdjustTol","GainAutoMax","GainAutoMin","GainAutoOutliers","GainAutoRate","GainAutoTarget"};
+static const char* whitebalMode[]={"Manual","Auto","AutoOnce"};
+static const char* whiteAutoMode[]={"WhitebalAutoAdjustTol","WhiteAutoRate"};
 
 /** Declarations of Exceptions**/
 class CameraNotInitializeException: public exception
@@ -104,10 +104,17 @@ class ExposureValueException:public exception{
     }
 };
 
-class ExposureAutoModeException:public exception{
+class GainValueException:public exception{
      virtual const char* what() const throw(){
-        return "ExposureAutoMode is only for Auto Mode.";
+        return "GainValue is only for Manual Mode.";
     }
+};
+
+class SaturationOutOfRangeException:public exception{
+    virtual const char* what() const throw(){
+        return "Saturation value have to be between 0.0 and 2.0";
+    }
+
 };
 /** End Declaration of Exception **/
 /** CAMERA_h **/
@@ -161,34 +168,37 @@ public:
     void setExposureValue(int value);
     int getExposureValue();
     void setExposureAutoMode(exposure::ExposureAutoMode,int);
-    void setExposureAutoAlgMode(exposure::ExposureAutoAlgMode);
-    const char* getExposureAutoMode();
-
     const char* getExposureAutoAlgMode();
+    void setExposureAutoAlgMode(exposure::ExposureAutoAlgMode);
+    int getExposureAutoMode(exposure::ExposureAutoMode);
 
     //Gain methods
     const char* getGainMode();
     void setGainMode(gain::GainMode);
+    int getGainAutoMode(gain::GainAutoMode);
     void setGainAutoMode(gain::GainAutoMode,int);
     void setGainValue(int);
+    int getGainValue(int);
 
     //Hue methods
     int getHue();
     void setHue(int);
 
     //Saturation methods
-    int getSaturation();
-    void setSaturation(int);
+    float getSaturation();
+    void setSaturation(float);
 
     //WhiteBalance methods
     const char* getWhitebalMode();
     void setWhitebalMode(whitebal::WhitebalMode);
-    const char* getWhitebalAutoMode();
+    int getWhitebalAutoMode(whitebal::WhitebalAutoMode);
     void setWhitebalAutoMode(whitebal::WhitebalAutoMode,int);
     int getWhitebalValueRed();
     void setWhitebalValueRed(int);
     int getWhitebalValueBlue();
-    void setWhitebalValueBlue();
+    void setWhitebalValueBlue(int);
+
+    //Stats methods
 
 private:
     tPvHandle cam;

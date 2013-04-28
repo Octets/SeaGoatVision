@@ -56,7 +56,7 @@ void Camera::initialize()
 
     if(PvInitialize()==ePvErrSuccess)
     {
-        cout<<"Camera module for Manta G-95c version 0.81"<<endl;
+        cout<<"Camera module for Manta G-95c version 0.9"<<endl;
     } else {
         throw PvApiNotInitializeException();
     }
@@ -408,25 +408,22 @@ void Camera::setExposureAutoMode(exposure::ExposureAutoMode eam,int value){
     {
         throw CameraNotInitializeException();
     }
-    string em = getExposureMode();
-    if(em != exposureMode[exposure::Auto] && em != exposureMode[exposure::AutoOnce]){
-        throw ExposureAutoModeException();
-    }
-    PvAttrUint32Set(this->cam,exposureAutoMode[eam],value);
 
+    PvAttrUint32Set(this->cam,exposureAutoMode[eam],value);
 }
 
-const char* Camera::getExposureAutoMode(){
+int Camera::getExposureAutoMode(exposure::ExposureAutoMode eam){
     if(this->cam == NULL)
     {
         throw CameraNotInitializeException();
     }
+    if(eam == exposure::ExposureAutoAlg){
+        throw ExposureAutoAlgException();
+    }
 
-    long size = 25;
-    char table[size];
-    PvAttrEnumGet(this->cam,"ExposureAutoMode",table,size,NULL);
-    string eam(table);
-    return eam.c_str();
+    tPvUint32 value;
+    PvAttrUint32Get(this->cam,exposureAutoMode[eam],&value);
+    return value;
 }
 
 void Camera::setExposureAutoAlgMode(exposure::ExposureAutoAlgMode eaa){
@@ -454,61 +451,181 @@ const char* Camera::getExposureAutoAlgMode(){
 /** End Exposure Methods **/
 /** Begin Gain methods **/
 const char* Camera::getGainMode(){
-    return NULL;
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    long size = 10;
+    char table[size];
+    PvAttrEnumGet(this->cam,"GainMode",table,size,NULL);
+    string gm(table);
+    return gm.c_str();
 }
 
 void Camera::setGainMode(gain::GainMode gm){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    PvAttrEnumSet(this->cam,"GainMode",gainMode[gm]);
 }
 
-void Camera::setGainAutoMode(gain::GainAutoMode,int){
+void Camera::setGainAutoMode(gain::GainAutoMode gam ,int value){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    PvAttrUint32Set(this->cam,gainAutoMode[gam],value);
 }
-void Camera::setGainValue(int){
+
+int Camera::getGainAutoMode(gain::GainAutoMode gam){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    tPvUint32 value;
+    PvAttrUint32Get(this->cam,gainAutoMode[gam],&value);
+
+    return value;
+}
+
+void Camera::setGainValue(int value){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+
+    string gm = getGainMode();
+    if(gm != gainMode[gain::Manual]){
+        throw GainValueException();
+    }
+    PvAttrUint32Set(this->cam,"GainValue",value);
 }
 /** End Gain Methods **/
 /** Hue methods **/
 int Camera::getHue(){
-    return 0;
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+
+    tPvUint32 value;
+    PvAttrUint32Get(this->cam,"Hue",&value);
+    return value;
 }
 
 void Camera::setHue(int hue){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+
+    PvAttrUint32Set(this->cam,"Hue",hue);
 }
 
 /** Saturation methods **/
-int Camera::getSaturation(){
-    return 0;
+float Camera::getSaturation(){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    tPvFloat32 value;
+    PvAttrFloat32Get(this->cam,"Saturation",&value);
+    return value;
 }
 
 
-void Camera::setSaturation(int){
+void Camera::setSaturation(float value){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+
+    if(value > 2 || value < 0){
+        throw SaturationOutOfRangeException();
+    }
+
+    PvAttrFloat32Set(this->cam,"Saturation",value);
 }
 
 /** WhiteBalance methods **/
 const char* Camera::getWhitebalMode(){
-    return NULL;
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    long size = 10;
+    char table[size];
+    PvAttrEnumGet(this->cam,"WhitebalMode",table,size,NULL);
+    string wbm(table);
+    return wbm.c_str();
 }
 
 void Camera::setWhitebalMode(whitebal::WhitebalMode wb){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+
+    PvAttrEnumSet(this->cam,"WhitebalMode",whitebalMode[wb]);
 }
 
 void Camera::setWhitebalAutoMode(whitebal::WhitebalAutoMode wam,int value){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+
+    PvAttrUint32Set(this->cam,whiteAutoMode[wam],value);
 }
 
-const char* Camera::getWhitebalAutoMode(){
-    return NULL;
+
+int Camera::getWhitebalAutoMode(whitebal::WhitebalAutoMode wam){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+
+    tPvUint32 value;
+    PvAttrUint32Get(this->cam,whiteAutoMode[wam],&value);
+
+    return value;
 }
 
 int Camera::getWhitebalValueRed(){
-    return 0;
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    tPvUint32 value;;
+    PvAttrUint32Get(this->cam,"WhitebalValueRed",&value);
+    return value;
 }
 
 void Camera::setWhitebalValueRed(int value){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    PvAttrUint32Set(this->cam,"WhitebalValueRed",value);
 }
 
 int Camera::getWhitebalValueBlue(){
-    return 0;
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    tPvUint32 value;
+    PvAttrUint32Get(this->cam,"WhitebalValueBlue",&value);
+    return value;
 }
 
-void Camera::setWhitebalValueBlue(){
+void Camera::setWhitebalValueBlue(int value){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    PvAttrUint32Set(this->cam,"WhitebalValueBlue",value);
 }
 
 /** private methods **/
