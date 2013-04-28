@@ -122,6 +122,8 @@ class WinViewer():
                     (int(image.shape[1] * self.size), 
                      int(image.shape[0] * self.size)))
             self.image = image
+            if image[0,0].size == 1:
+                image = cv2.cvtColor(image, cv2.cv.CV_GRAY2BGR)
             self.imgSource.set_from_pixbuf(numpy_to_pixbuf(image))
                             
     def on_cboFilter_changed(self, widget):
