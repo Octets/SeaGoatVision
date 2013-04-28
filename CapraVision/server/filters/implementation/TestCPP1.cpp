@@ -12,6 +12,7 @@ public:
 	void init() {
 		std::cout << "minit" << std::endl;
 		x = ParameterAsInt("x", 0, 255, 30);
+		std::cout << "minit" << std::endl;
 	}
 
 	void configure() {
@@ -26,6 +27,7 @@ public:
 
 		std::cout << "exec " << x << std::endl;
 		cv::cvtColor(image, image, CV_BGR2HSV);
+		std::cout << "exec " << x << std::endl;
 		return image;
 	}
 

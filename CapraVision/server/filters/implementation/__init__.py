@@ -85,12 +85,12 @@ def compile_cpp_filters():
         Return the code that calls a c++ filter
         """
         return """
-            cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
             class_name* p = static_cast<class_name*> (PyCapsule_GetPointer(capsule, "class_name"));
             p->setInitParam(py_init_param);
             std::cout << "debut" << std::endl;
             p->setParams(params);
-            p->init();            
+            p->init();
+            cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
             cv::Mat ret = p->execute(mat);
             if (mat.data != ret.data) {
                 ret.copyTo(mat);
@@ -119,7 +119,7 @@ def compile_cpp_filters():
         return """
             class Filter {
                 private:
-                    py::dict params;
+                    py::dict* params;
                     py::object py_init_param;
 
                     void init_param(char* name, int min, int max, int def_val) {
@@ -135,27 +135,30 @@ def compile_cpp_filters():
                     long ParameterAsInt(char* name, int min, int max, int def_val) {
                         std::cout << "paramasint" << std::endl;
                         std::cout << name << std::endl;
-                        if(!params.has_key(name)) {
+                        if(!params->has_key(name)) {
+                        std::cout << "hoho" << std::endl;
                             init_param(name, min, max, def_val);
                         }
-                        return PyInt_AsLong(params[name].mcall("get_current_value"));
+                        py::object o = params->get(name);
+                        o.mcall("get_current_value");
+                        int z = o.mcall("get_current_value");
+                        std::cout << PyInt_AsLong(o.mcall("get_current_value")) << std::endl;
+                        return PyInt_AsLong(o.mcall("get_current_value"));
                     }
                     
                     bool ParameterAsBool(char* name, int min, int max, int def_val) {
-                        if(!params.has_key(name)) {
+                        if(!params->has_key(name)) {
                             init_param(name, min, max, def_val);
                         }
-                        return PyInt_AsLong(params[name].mcall("get_current_value"));
+                        return PyInt_AsLong(params->get(name).mcall("get_current_value"));
                     }
                 public:
                     void setParams(py::dict p) {
-                    std::cout << "dans params!!!" << std::endl;
-                        params = p;
-                    std::cout << "apres params!!!" << std::endl;
+                        params = &p;
                     }
                     void setInitParam(py::object o) {
                         py_init_param = o;
-                    }                                        
+                    }         
             };
             
         """
@@ -188,6 +191,8 @@ def compile_cpp_filters():
         """
         def execute(self, image):
             cppfunc(image, self.params, self.py_init_param, self.cppclass)
+            import cv2
+            cv2.imwrite("/home/capra/cpp.png", image)
             return image
         return execute
         
