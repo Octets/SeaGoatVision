@@ -4,3 +4,4 @@ obj/*
 .cproject
 .settings/*
 Debug/*
+*.o
