@@ -27,9 +27,10 @@ Camera::Camera()
 
     cam=NULL;
     frame = tPvFrame();
-    camNotInit = CameraNotInitializeException();
-    camNotStart = CameraNotStartException();
-    pvApiNotInit  = PvApiNotInitializeException();
+    //camNotInit = CameraNotInitializeException();
+    //camNotStart = CameraNotStartException();
+    //pvApiNotInit  = PvApiNotInitializeException();
+
 
     array = NULL;
 
@@ -55,9 +56,9 @@ void Camera::initialize()
 
     if(PvInitialize()==ePvErrSuccess)
     {
-        cout<<"Camera module for Manta G-95c version 0.8"<<endl;
+        cout<<"Camera module for Manta G-95c version 0.81"<<endl;
     } else {
-        throw pvApiNotInit;
+        throw PvApiNotInitializeException();
     }
 
     time_t initTimer = time(NULL);
@@ -71,7 +72,7 @@ void Camera::initialize()
     }
 
     if(seconds>=MAX_TIMEOUT){
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
 
     tPvCameraInfoEx lInfos[1];
@@ -120,11 +121,11 @@ PyObject* Camera::getFrame()
 
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     if(array==NULL)
     {
-        throw camNotStart;
+        throw CameraNotStartException();
     }
 
     PvCaptureWaitForFrameDone(this->cam, &frame, PVINFINITE);
@@ -140,7 +141,7 @@ void Camera::start()
 {
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
 
     //start camera receiving frame triggers
@@ -169,7 +170,7 @@ void Camera::start()
 void Camera::stop(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
      PvCommandRun(this->cam, "AcquisitionStop");
 }
@@ -178,7 +179,7 @@ void Camera::stop(){
 void Camera::loadConfigFile(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     PvCommandRun(this->cam,"ConfigFileLoad");
 }
@@ -186,7 +187,7 @@ void Camera::loadConfigFile(){
 void Camera::saveConfigFile(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     PvCommandRun(this->cam,"ConfigFileSave");
 }
@@ -196,7 +197,7 @@ void Camera::saveConfigFile(){
 void Camera::setPixelFormat(PixelFormat pf){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     PvAttrEnumSet(this->cam,"PixelFormat",pixelFormat[pf]);
     setChannel(pf);
@@ -205,7 +206,7 @@ void Camera::setPixelFormat(PixelFormat pf){
 const char* Camera::getPixelFormat(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     long size = 10;
     char table[size];
@@ -217,7 +218,7 @@ const char* Camera::getPixelFormat(){
 void Camera::setAcquisitionMode(AcquisitionMode am){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     PvAttrEnumSet(this->cam,"AcquisitionMode",acquisitionMode[am]);
 }
@@ -225,7 +226,7 @@ void Camera::setAcquisitionMode(AcquisitionMode am){
 const char* Camera::getAcquisitionMode(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     long size = 20;
     char table[size];
@@ -237,7 +238,7 @@ const char* Camera::getAcquisitionMode(){
 void Camera::setConfigFileIndex(ConfigFileIndex cfi){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
      PvAttrEnumSet(this->cam,"ConfigFileIndex",configFileIndex[cfi]);
 }
@@ -245,7 +246,7 @@ void Camera::setConfigFileIndex(ConfigFileIndex cfi){
 const char* Camera::getConfigFileIndex(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     long size = 10;
     char table[size];
@@ -257,7 +258,7 @@ const char* Camera::getConfigFileIndex(){
 int Camera::getTotalBytesPerFrame(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     tPvUint32 frameSize;
     PvAttrUint32Get(this->cam, "TotalBytesPerFrame", &frameSize);
@@ -271,7 +272,7 @@ int Camera::getTotalBytesPerFrame(){
 int Camera::getHeight(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     tPvUint32 height;
     PvAttrUint32Get(this->cam, "Height", &height);
@@ -281,7 +282,7 @@ int Camera::getHeight(){
 void Camera::setHeight(int height){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     PvAttrUint32Set(this->cam,"Height",height);
 }
@@ -289,7 +290,7 @@ void Camera::setHeight(int height){
 int Camera::getWidth(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     tPvUint32 width;
     PvAttrUint32Get(this->cam,"Width",&width);
@@ -299,7 +300,7 @@ int Camera::getWidth(){
 void Camera::setWidth(int width){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     PvAttrUint32Set(this->cam,"Width",width);
 }
@@ -307,7 +308,7 @@ void Camera::setWidth(int width){
 int Camera::getRegionX(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     tPvUint32 regionX;
     PvAttrUint32Get(this->cam,"RegionX",&regionX);
@@ -317,7 +318,7 @@ int Camera::getRegionX(){
 void Camera::setRegiontX(int regionX){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     PvAttrUint32Set(this->cam,"RegionX",regionX);
 }
@@ -325,7 +326,7 @@ void Camera::setRegiontX(int regionX){
 int Camera::getRegionY(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     tPvUint32 regionY;
     PvAttrUint32Get(this->cam,"RegionY",&regionY);
@@ -335,7 +336,7 @@ int Camera::getRegionY(){
 void Camera::setRegionY(int regionY){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     PvAttrUint32Set(this->cam,"RegionY",regionY);
 }
@@ -344,7 +345,7 @@ void Camera::setRegionY(int regionY){
 float Camera::getGamma(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     tPvFloat32 gamma;
     PvAttrFloat32Get(this->cam,"Gamma",&gamma);
@@ -354,7 +355,7 @@ float Camera::getGamma(){
 void Camera::setGamma(float gamma){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     PvAttrFloat32Set(this->cam,"Gamma",gamma);
 }
@@ -363,7 +364,7 @@ void Camera::setGamma(float gamma){
 const char* Camera::getExposureMode(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     long size = 20;
     char table[size];
@@ -375,7 +376,7 @@ const char* Camera::getExposureMode(){
 void Camera::setExposureMode(exposure::ExposureMode em){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     PvAttrEnumSet(this->cam,"ExposureMode",exposureMode[em]);
 }
@@ -383,7 +384,7 @@ void Camera::setExposureMode(exposure::ExposureMode em){
 int Camera::getExposureValue(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
     tPvUint32 exposureValue;
     PvAttrUint32Get(this->cam,"ExposureValue",&exposureValue);
@@ -391,22 +392,36 @@ int Camera::getExposureValue(){
 }
 
 void Camera::setExposureValue(int value){
-
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    string em = getExposureMode();
+    if(em != exposureMode[exposure::Manual]){
+        throw ExposureValueException();
+    }
+    PvAttrUint32Set(this->cam,"ExposureValue",value);
 }
 
 void Camera::setExposureAutoMode(exposure::ExposureAutoMode eam,int value){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
+    string em = getExposureMode();
+    if(em != exposureMode[exposure::Auto] && em != exposureMode[exposure::AutoOnce]){
+        throw ExposureAutoModeException();
+    }
+    PvAttrUint32Set(this->cam,exposureAutoMode[eam],value);
 
 }
 
 const char* Camera::getExposureAutoMode(){
     if(this->cam == NULL)
     {
-        throw camNotInit;
+        throw CameraNotInitializeException();
     }
+
     long size = 25;
     char table[size];
     PvAttrEnumGet(this->cam,"ExposureAutoMode",table,size,NULL);
@@ -414,11 +429,27 @@ const char* Camera::getExposureAutoMode(){
     return eam.c_str();
 }
 
-void Camera::setExposureAutoMode(exposure::ExposureAutoMode eam, exposure::ExposureAutoAlgMode eaa){
+void Camera::setExposureAutoAlgMode(exposure::ExposureAutoAlgMode eaa){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+
+    PvAttrEnumSet(this->cam,exposureAutoMode[exposure::ExposureAutoAlg],exposureAutoAlgMode[eaa]);
+
+
 }
 
-const char* Camera::getExposureAutoAlg(){
-    return NULL;
+const char* Camera::getExposureAutoAlgMode(){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    long size = 10;
+    char table[size];
+    PvAttrEnumGet(this->cam,"ExposureAutoAlgMode",table,size,NULL);
+    string eaam(table);
+    return eaam.c_str();
 }
 /** End Exposure Methods **/
 /** Begin Gain methods **/
