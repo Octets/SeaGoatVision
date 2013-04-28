@@ -31,27 +31,27 @@ class WinColorThreshold:
         
         ui = get_ui(self)
         self.window = ui.get_object(win_name(self))
-        self.hscRedMin = ui.get_object('hscRedMin')
-        self.hscRedMax = ui.get_object('hscRedMax')
-        self.hscBlueMin = ui.get_object('hscBlueMin')
-        self.hscBlueMax = ui.get_object('hscBlueMax')
-        self.hscGreenMin = ui.get_object('hscGreenMin')
-        self.hscGreenMax = ui.get_object('hscGreenMax')
+        self.hscc1min = ui.get_object('hscc1min')
+        self.hscc1max = ui.get_object('hscc1max')
+        self.hscc2min = ui.get_object('hscc2min')
+        self.hscc2max = ui.get_object('hscc2max')
+        self.hscc3min = ui.get_object('hscc3min')
+        self.hscc3max = ui.get_object('hscc3max')
         self.init_window()
         
     def init_window(self):
-        self.hscRedMin.set_range(0, 255)
-        self.hscRedMin.set_value(self.filtre.redmin.get_current_value())
-        self.hscRedMax.set_range(0, 255)
-        self.hscRedMax.set_value(self.filtre.redmax.get_current_value())
-        self.hscGreenMin.set_range(0, 255)
-        self.hscGreenMin.set_value(self.filtre.greenmin.get_current_value())
-        self.hscGreenMax.set_range(0, 255)
-        self.hscGreenMax.set_value(self.filtre.greenmax.get_current_value())
-        self.hscBlueMin.set_range(0, 255)
-        self.hscBlueMin.set_value(self.filtre.bluemin.get_current_value())
-        self.hscBlueMax.set_range(0, 255)
-        self.hscBlueMax.set_value(self.filtre.bluemax.get_current_value())
+        self.hscc1min.set_range(0, 255)
+        self.hscc1min.set_value(self.filtre.c1min.get_current_value())
+        self.hscc1max.set_range(0, 255)
+        self.hscc1max.set_value(self.filtre.c1max.get_current_value())
+        self.hscc2min.set_range(0, 255)
+        self.hscc2min.set_value(self.filtre.c2min.get_current_value())
+        self.hscc2max.set_range(0, 255)
+        self.hscc2max.set_value(self.filtre.c2max.get_current_value())
+        self.hscc3min.set_range(0, 255)
+        self.hscc3min.set_value(self.filtre.c3min.get_current_value())
+        self.hscc3max.set_range(0, 255)
+        self.hscc3max.set_value(self.filtre.c3max.get_current_value())
         
     def on_btnOK_clicked(self, widget):
         self.cb()
@@ -67,26 +67,26 @@ class WinColorThreshold:
         
         self.init_window()
         
-    def on_hscRedMin_value_changed(self, widget):
-        self.filtre.redmin.set_current_value(self.hscRedMin.get_value())
+    def on_hscc1min_value_changed(self, widget):
+        self.filtre.c1min.set_current_value(self.hscc1min.get_value())
         self.filtre.configure()
         
-    def on_hscRedMax_value_changed(self, widget):
-        self.filtre.redmax.set_current_value(self.hscRedMax.get_value())
+    def on_hscc1max_value_changed(self, widget):
+        self.filtre.c1max.set_current_value(self.hscc1max.get_value())
         self.filtre.configure()
         
-    def on_hscGreenMin_value_changed(self, widget):
-        self.filtre.greenmin.set_current_value(self.hscGreenMin.get_value())
+    def on_hscc2min_value_changed(self, widget):
+        self.filtre.c2min.set_current_value(self.hscc2min.get_value())
         self.filtre.configure()
 
-    def on_hscGreenMax_value_changed(self, widget):
-        self.filtre.greenmax.set_current_value(self.hscGreenMax.get_value())
+    def on_hscc2max_value_changed(self, widget):
+        self.filtre.c2max.set_current_value(self.hscc2max.get_value())
         self.filtre.configure()
 
-    def on_hscBlueMin_value_changed(self, widget):
-        self.filtre.bluemin.set_current_value(self.hscBlueMin.get_value())
+    def on_hscc3min_value_changed(self, widget):
+        self.filtre.c3min.set_current_value(self.hscc3min.get_value())
         self.filtre.configure()
 
-    def on_hscBlueMax_value_changed(self, widget):
-        self.filtre.bluemax.set_current_value(self.hscBlueMax.get_value())
+    def on_hscc3max_value_changed(self, widget):
+        self.filtre.c3max.set_current_value(self.hscc3max.get_value())
         self.filtre.configure()

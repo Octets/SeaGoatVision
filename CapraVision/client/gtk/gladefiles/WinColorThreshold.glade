@@ -23,7 +23,7 @@
               <object class="GtkLabel" id="lblRedMin">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Red Min :</property>
+                <property name="label" translatable="yes">Channel 1 Min:</property>
               </object>
               <packing>
                 <property name="x_options"></property>
@@ -34,7 +34,7 @@
               <object class="GtkLabel" id="lblRedMax">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Red Max :</property>
+                <property name="label" translatable="yes">Channel 1 Max:</property>
               </object>
               <packing>
                 <property name="top_attach">1</property>
@@ -47,7 +47,7 @@
               <object class="GtkLabel" id="lblGreenMin">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Green Min :</property>
+                <property name="label" translatable="yes">Channel 2Min:</property>
               </object>
               <packing>
                 <property name="top_attach">2</property>
@@ -60,7 +60,7 @@
               <object class="GtkLabel" id="lblGreenMax">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Green Max :</property>
+                <property name="label" translatable="yes">Channel 2 Max:</property>
               </object>
               <packing>
                 <property name="top_attach">3</property>
@@ -73,7 +73,7 @@
               <object class="GtkLabel" id="lblBlueMin">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Blue Min :</property>
+                <property name="label" translatable="yes">Channel 3 Min:</property>
               </object>
               <packing>
                 <property name="top_attach">4</property>
@@ -85,7 +85,7 @@
               <object class="GtkLabel" id="lblBlueMax">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Blue Max :</property>
+                <property name="label" translatable="yes">Channel 3 Max:</property>
               </object>
               <packing>
                 <property name="top_attach">5</property>
@@ -94,11 +94,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHScale" id="hscRedMin">
+              <object class="GtkHScale" id="hscc1min">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="round_digits">1</property>
-                <signal name="value-changed" handler="on_hscRedMin_value_changed" swapped="no"/>
+                <signal name="value-changed" handler="on_hscc1min_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -107,11 +107,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHScale" id="hscRedMax">
+              <object class="GtkHScale" id="hscc1max">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="round_digits">1</property>
-                <signal name="value-changed" handler="on_hscRedMax_value_changed" swapped="no"/>
+                <signal name="value-changed" handler="on_hscc1max_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -122,11 +122,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHScale" id="hscGreenMin">
+              <object class="GtkHScale" id="hscc2min">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="round_digits">1</property>
-                <signal name="value-changed" handler="on_hscGreenMin_value_changed" swapped="no"/>
+                <signal name="value-changed" handler="on_hscc2min_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -137,11 +137,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHScale" id="hscGreenMax">
+              <object class="GtkHScale" id="hscc2max">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="round_digits">1</property>
-                <signal name="value-changed" handler="on_hscGreenMax_value_changed" swapped="no"/>
+                <signal name="value-changed" handler="on_hscc2max_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -152,11 +152,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHScale" id="hscBlueMin">
+              <object class="GtkHScale" id="hscc3min">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="round_digits">1</property>
-                <signal name="value-changed" handler="on_hscBlueMin_value_changed" swapped="no"/>
+                <signal name="value-changed" handler="on_hscc3min_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -167,11 +167,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHScale" id="hscBlueMax">
+              <object class="GtkHScale" id="hscc3max">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="round_digits">1</property>
-                <signal name="value-changed" handler="on_hscBlueMax_value_changed" swapped="no"/>
+                <signal name="value-changed" handler="on_hscc3max_value_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
