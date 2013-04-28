@@ -174,17 +174,24 @@ class ControllerProtobuf():
 
             if response:
                 return response.execution
-                returnValue = []
-                for param in response.params:
-                    if param.HasField("value_int"):
-                        returnValue.append(Param(param.name, param.value_int))
-            else:
-                returnValue = False
-
         except Exception as ex:
             log.exception(ex)
 
-        return returnValue
+        return []
+
+    def get_execution_info(self, execution_name):
+        request = server_pb2.GetExecutionInfoRequest()
+        request.execution = execution_name
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.get_execution_info(request, timeout=10000)
+            if response:
+                return response
+        except Exception as ex:
+            log.exception(ex)
+
+        return None
 
     ##########################################################################
     ################################ SOURCE ##################################

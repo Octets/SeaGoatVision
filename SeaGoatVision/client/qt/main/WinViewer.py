@@ -51,11 +51,10 @@ class WinViewer(QtCore.QObject):
     newImage = QtCore.Signal(QtGui.QImage)
     closePreview = QtCore.Signal(object)
 
-    def __init__(self, controller, execution_name, source_name, filterchain_name, lst_filter_str, host):
+    def __init__(self, controller, execution_name, source_name, filterchain_name, host):
         super(WinViewer, self).__init__()
         self.host = host
         self.port = 5030
-        self.ui = get_ui(self, 'sourcesListStore', 'filterChainListStore')
 
         self.controller = controller
         self.execution_name = execution_name
@@ -68,13 +67,7 @@ class WinViewer(QtCore.QObject):
         self.lastSecondFps = None
         self.fpsCount = 0
 
-        self.newImage.connect(self.setPixmap)
-        self.ui.filterComboBox.currentIndexChanged.connect(self._changeFilter)
-        self.ui.closeButton.clicked.connect(self.__close)
-        self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
-
-        self._updateFilters(lst_filter_str)
-        self.actualFilter = self.ui.filterComboBox.currentText()
+        self.reload_ui()
 
         self.light_observer = self._get_light_observer()
 
@@ -82,6 +75,16 @@ class WinViewer(QtCore.QObject):
         self.__add_output_observer()
 
         self.light_observer.start()
+
+    def reload_ui(self):
+        self.ui = get_ui(self)
+        self.newImage.connect(self.setPixmap)
+        self.ui.filterComboBox.currentIndexChanged.connect(self._changeFilter)
+        self.ui.closeButton.clicked.connect(self.__close)
+        self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
+
+        self._updateFilters()
+        self.actualFilter = self.ui.filterComboBox.currentText()
 
     def closeEvent(self):
         # this is fake closeEvent, it's called by button close with signal
@@ -115,12 +118,13 @@ class WinViewer(QtCore.QObject):
         ########### TODO fait un thread de client dude
         self.controller.add_output_observer(self.execution_name)
 
-    def _updateFilters(self, lst_filter_str):
+    def _updateFilters(self):
+        lst_filter_str = self.controller.get_filter_list_from_filterchain(self.filterchain_name)
         self.ui.filterComboBox.clear()
         # First is original image
         self.ui.filterComboBox.addItem(get_filter_original_name())
         for sFilter in lst_filter_str:
-            self.ui.filterComboBox.addItem(sFilter)
+            self.ui.filterComboBox.addItem(sFilter.name)
         self.ui.filterComboBox.setCurrentIndex(self.ui.filterComboBox.count() - 1)
 
     def _changeFilter(self):

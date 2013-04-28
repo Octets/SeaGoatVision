@@ -101,9 +101,8 @@ class WinMain(QtGui.QMainWindow):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winSource.ui)
 
     def addPreview(self, execution_name, source_name, filterchain_name):
-        # TODO create signal to share the filter list
-        lst_filter_str = self.winFilterChain.get_filter_list()
-        winviewer = WinViewer(self.controller, execution_name, source_name, filterchain_name, lst_filter_str, self.host)
+        # TODO create signal to share the filter list to WinViewer
+        winviewer = WinViewer(self.controller, execution_name, source_name, filterchain_name, self.host)
         self.dct_preview[execution_name] = winviewer
         self.setCentralWidget(winviewer.ui)
         winviewer.closePreview.connect(self.removePreview)

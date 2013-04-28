@@ -67,8 +67,7 @@ def numpy_to_imageQt(image):
     loader.close()"""
     return imageQt
 
-def get_ui(widget, *args):
-    #apply(QtGui.QMainWindow.__init__, (widget) + args)
+def get_ui(widget):
     loader = QtUiTools.QUiLoader()
     uiPath = os.path.join('SeaGoatVision', 'client', 'qt', 'uifiles', win_name(widget) + '.ui')
     print uiPath

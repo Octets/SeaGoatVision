@@ -27,7 +27,7 @@ class WinMapper:
     """
 
     def __init__(self):
-        self.ui = get_ui(self, 'imageListStore', 'adjSize')
+        self.ui = get_ui(self)
         """self.window = ui.get_object(win_name(self))
         self.imageListStore = ui.get_object('imageListStore')
         self.txtFolder = ui.get_object('txtFolder')

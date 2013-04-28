@@ -105,7 +105,19 @@ class WinExecution(QtCore.QObject):
     ######################################################################
     def _on_selected_lstExecution_change(self):
         execution = self._get_selected_list(self.ui.lstExecution)
+        if execution:
+            self.ui.previewButton.setEnabled(True)
+        else:
+            self.ui.txtFilterchain.setText("")
+            self.ui.txtSource.setText("")
+            self.ui.txtExecution.setText("")
+            return
         self.ui.txtExecution.setText(execution)
+        exec_info = self.controller.get_execution_info(execution)
+        if not exec_info:
+            print("WinExecution Internal sync error with execution info :(")
+        self.ui.txtFilterchain.setText(exec_info.filterchain)
+        self.ui.txtSource.setText(exec_info.source)
 
     def _update_execution_list(self):
         self.ui.lstExecution.clear()

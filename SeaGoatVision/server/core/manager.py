@@ -34,7 +34,7 @@ class Manager:
     def __init__(self):
         """
             Structure of dct_thread
-            {"execution_name" : {"thread" : ref, "filterchain" : ref}}
+            {"execution_name" : {"thread" : ref, "filterchain" : ref, "source_name" : str}}
         """
         self.dct_thread = {}
         self.config = Configuration()
@@ -85,7 +85,7 @@ class Manager:
         thread.add_observer(filterchain.execute)
         thread.start(source)
 
-        self.dct_thread[execution_name] = {"thread": thread, "filterchain": filterchain}
+        self.dct_thread[execution_name] = {"thread": thread, "filterchain": filterchain, "source_name" : source_name}
 
         return True
 
@@ -119,6 +119,16 @@ class Manager:
 
     def get_execution_list(self):
         return self.dct_thread.keys()
+
+    def get_execution_info(self, execution_name):
+        exec_info = self.dct_thread.get(execution_name, None)
+        if not exec_info:
+            return None
+        class Exec_info: pass
+        o_exec_info = Exec_info()
+        setattr(o_exec_info, "source", exec_info["source_name"])
+        setattr(o_exec_info, "filterchain", exec_info["filterchain"].get_name())
+        return o_exec_info
 
     ##########################################################################
     ################################ SOURCE ##################################
