@@ -3,9 +3,32 @@
 
 #define DOCSTRING "C++ Example Test #1"
 
-cv::Mat execute(cv::Mat image)
-{
-    cv::cvtColor(image, image, CV_BGR2HSV);
-    //std::cout << image << std::endl;
-    return image;
-}
+class TestCPP1 : public Filter {
+
+	int x;
+
+public:
+
+	void init() {
+		std::cout << "minit" << std::endl;
+		x = ParameterAsInt("x", 0, 255, 30);
+		std::cout << "minit" << std::endl;
+	}
+
+	void configure() {
+		std::cout << "mconfig" << std::endl;
+		x = ParameterAsInt("x", 0, 255, 30);
+		std::cout << "config "<< x << std::endl;
+
+	}
+
+	cv::Mat execute(cv::Mat image)
+	{
+
+		std::cout << "exec " << x << std::endl;
+		cv::cvtColor(image, image, CV_BGR2HSV);
+		std::cout << "exec " << x << std::endl;
+		return image;
+	}
+
+};

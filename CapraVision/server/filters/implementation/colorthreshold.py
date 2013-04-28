@@ -17,6 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import cv2, cv
 import numpy as np
 from CapraVision.server.filters.parameter import  Parameter
 
@@ -27,34 +28,42 @@ class ColorThreshold:
         Everything else is black (0, 0, 0)"""
     def __init__(self):
         self.shift_hue_plane = Parameter("Shift Hue Plane",True,False,False)
-        self.bluemin = Parameter("Blue Min",1,256,20.0)
-        self.bluemax = Parameter("Blue Max",1,256,256.0)
-        self.greenmin = Parameter("Green Min",1,256,20.0)
-        self.greenmax = Parameter("Green Max",1,256,256.0)
-        self.redmin = Parameter("Red Min",1,256,20.0)
-        self.redmax = Parameter("Red Max",1,256,256.0)
-        self._barray = None
-        self._garray = None
-        self._rarray = None
-        self.configure()
+        self.c1min = Parameter("Channel 1 Min",1,256,20.0)
+        self.c1max = Parameter("Channel 1 Max",1,256,256.0)
+        self.c2min = Parameter("Channel 2 Min",1,256,20.0)
+        self.c2max = Parameter("Channel 2 Max",1,256,256.0)
+        self.c3min = Parameter("Channel 3 Min",1,256,20.0)
+        self.c3max = Parameter("Channel 3 Max",1,256,256.0)
+        #self._barray = None
+        #self._garray = None
+        #self._rarray = None
+        #self.configure()
     
     def configure(self):
-        self._barray = np.array(
-                        [self.get_binary_value(self.bluemin.get_current_value(), self.bluemax.get_current_value(), x) 
-                            for x in range(0, 256)], dtype=np.float32)
-        self._garray = np.array(
-                        [self.get_binary_value(self.greenmin.get_current_value(), self.greenmax.get_current_value(), x) 
-                            for x in range(0, 256)], dtype=np.float32)
-        self._rarray = np.array(
-                        [self.get_binary_value(self.redmin.get_current_value(), self.redmax.get_current_value(), x) 
-                            for x in range(0, 256)], dtype=np.float32)
+        pass
+    #    self._barray = np.array(
+    #                    [self.get_binary_value(self.bluemin.get_current_value(), self.bluemax.get_current_value(), x) 
+    #                        for x in range(0, 256)], dtype=np.float32)
+    #    self._garray = np.array(
+    #                    [self.get_binary_value(self.greenmin.get_current_value(), self.greenmax.get_current_value(), x) 
+    #                        for x in range(0, 256)], dtype=np.float32)
+    #    self._rarray = np.array(
+    #                    [self.get_binary_value(self.redmin.get_current_value(), self.redmax.get_current_value(), x) 
+    #                        for x in range(0, 256)], dtype=np.float32)
         
     def execute(self, image):
-        image[:,:, 0] = image[:,:, 1] = image[:,:, 2] = (
-                                            255 * self._barray[image[:,:, 0]] * 
-                                            self._garray[image[:,:, 1]] * 
-                                            self._rarray[image[:,:, 2]])
-        return image
+        #image[:,:, 0] = image[:,:, 1] = image[:,:, 2] = (
+        #                                    255 * self._barray[image[:,:, 0]] * 
+        #                                    self._garray[image[:,:, 1]] * 
+        #                                    self._rarray[image[:,:, 2]])
+
+        lower = np.zeros((1,3), dtype=np.uint8)
+        upper = np.zeros((1,3), dtype=np.uint8)
+        lower[0] = (self.c1min.get_current_value(), self.c2min.get_current_value(), self.c3min.get_current_value())
+        upper[0] = (self.c1max.get_current_value(), self.c2max.get_current_value(), self.c3max.get_current_value())
+        
+        result = cv2.inRange(image, lower, upper)
+        return cv2.cvtColor(result, cv.CV_GRAY2BGR)
 
     def get_binary_value(self, mini, maxi, val):
         if mini <= val <= maxi:

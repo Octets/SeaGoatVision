@@ -16,7 +16,6 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 from CapraVision.client.gtk import get_ui
 from CapraVision.client.gtk import tree_row_selected
 from CapraVision.client.gtk import tree_selected_index

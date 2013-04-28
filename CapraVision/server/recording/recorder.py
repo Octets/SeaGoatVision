@@ -60,23 +60,25 @@ class SimpleRecorder:
     
     def __init__(self, fps, size, thread):
         self.thread = None
-        print size
-        self.video = cv2.VideoWriter(self.get_file_name(), 
-                    cv.CV_FOURCC('V','P','8','0'), fps, size)
-        self.thread = thread
-        thread.add_observer(self.thread_observer)
+        if os.path.exists(self.get_record_path()):
+            self.video = cv2.VideoWriter(self.get_record_path() + "/" + self.get_file_name(), 
+                        cv.CV_FOURCC('D','I','V','X'), fps, size, True)
+            self.thread = thread
+            thread.add_observer(self.thread_observer)
+        else:
+            print "Error: record path not available"
         
     def thread_observer(self, image):
         self.video.write(image)
     
     def stop(self):
         self.thread.remove_observer(self.thread_observer)
-        self.video.release()
+    
+    def get_record_path(self):
+        path = os.path.join('..', 'videos')
+        return path
     
     def get_file_name(self):
-        x = os.path.join('.', 'data', 'videos', 
-                           strftime("%Y_%m_%d_%H_%M_%S", gmtime()))
-        x = '/home/capra/workspaces/vision/SeaGoatVision/data/videos/' + strftime("%Y_%m_%d_%H_%M_%S", gmtime()) 
-        print x
-        return x + '.avi'
+        name = strftime("%Y_%m_%d_%H_%M_%S", gmtime())
+        return name + '.avi'
         
