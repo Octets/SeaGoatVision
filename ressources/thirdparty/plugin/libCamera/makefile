@@ -13,7 +13,7 @@ camera.so: main.o camera.o
 			$(CC) -shared main.o camera.o -o camera.so x86/4.5/libPvAPI.a x86/4.5/libImagelib.a $(LDFLAGS)
 
 install:
-	cp camera.so /usr/lib/python2.7/
+	sudo cp camera.so /usr/lib/python2.7/
 	
 clean: 
 	rm -rf *.o camera.so

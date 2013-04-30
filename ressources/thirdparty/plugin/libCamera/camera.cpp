@@ -40,7 +40,6 @@ Camera::~Camera()
 {
     if(array!=NULL){
          this->stop();
-         delete array;
     }
     if(cam!=NULL){
        this->uninitialize();
@@ -56,7 +55,7 @@ void Camera::initialize()
 
     if(PvInitialize()==ePvErrSuccess)
     {
-        cout<<"Camera module for Manta G-95c version 0.9"<<endl;
+        cout<<"Camera module for Manta G-95c version 0.94"<<endl;
     } else {
         throw PvApiNotInitializeException();
     }
@@ -71,7 +70,10 @@ void Camera::initialize()
         seconds = difftime(currentTimer,initTimer);
     }
 
+
+
     if(seconds>=MAX_TIMEOUT){
+        PvUnInitialize();
         throw CameraNotInitializeException();
     }
 
@@ -173,6 +175,7 @@ void Camera::stop(){
         throw CameraNotInitializeException();
     }
      PvCommandRun(this->cam, "AcquisitionStop");
+     delete array;
 }
 
 
@@ -400,6 +403,9 @@ void Camera::setExposureValue(int value){
     if(em != exposureMode[exposure::Manual]){
         throw ExposureValueException();
     }
+    if(value < 45){
+        throw ExposureMinValueException();
+    }
     PvAttrUint32Set(this->cam,"ExposureValue",value);
 }
 
@@ -407,6 +413,34 @@ void Camera::setExposureAutoMode(exposure::ExposureAutoMode eam,int value){
     if(this->cam == NULL)
     {
         throw CameraNotInitializeException();
+    }
+
+    if(eam == exposure::ExposureAutoAlg){
+        throw ExposureAutoAlgException();
+    }
+
+    if(eam == exposure::ExposureAutoAdjustTol){
+        if(value<0 || value>50){
+            throw HalfPercentValueException();
+        }
+    }
+
+    if(eam == exposure::ExposureAutoMax || eam == exposure::ExposureAutoMin){
+        if(value < 45){
+            throw ExposureMinValueException();
+        }
+    }
+
+    if(eam == exposure::ExposureAutoOutliers){
+        if(value < 0 || value > 10000){
+            throw ExposureAutoOutliersException();
+        }
+    }
+
+    if(eam == exposure::ExposureAutoRate || eam == exposure::ExposureAutoTarget){
+        if(value < 0 || value > 100){
+            throw FullPercentValueException();
+        }
     }
 
     PvAttrUint32Set(this->cam,exposureAutoMode[eam],value);
@@ -420,6 +454,8 @@ int Camera::getExposureAutoMode(exposure::ExposureAutoMode eam){
     if(eam == exposure::ExposureAutoAlg){
         throw ExposureAutoAlgException();
     }
+
+
 
     tPvUint32 value;
     PvAttrUint32Get(this->cam,exposureAutoMode[eam],&value);
@@ -444,7 +480,7 @@ const char* Camera::getExposureAutoAlgMode(){
     }
     long size = 10;
     char table[size];
-    PvAttrEnumGet(this->cam,"ExposureAutoAlgMode",table,size,NULL);
+    PvAttrEnumGet(this->cam,"ExposureAutoAlg",table,size,NULL);
     string eaam(table);
     return eaam.c_str();
 }
@@ -500,6 +536,16 @@ void Camera::setGainValue(int value){
         throw GainValueException();
     }
     PvAttrUint32Set(this->cam,"GainValue",value);
+}
+
+int Camera::getGainValue(){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
+    }
+    tPvUint32 value;
+    PvAttrUint32Get(this->cam,"GainValue",&value);
+    return value;
 }
 /** End Gain Methods **/
 /** Hue methods **/

@@ -73,7 +73,7 @@ BOOST_PYTHON_MODULE(camera)
         .value(exposureAutoMode[exposure::ExposureAutoMin],exposure::ExposureAutoMin)
         .value(exposureAutoMode[exposure::ExposureAutoOutliers],exposure::ExposureAutoOutliers)
         .value(exposureAutoMode[exposure::ExposureAutoRate],exposure::ExposureAutoRate)
-        .value(exposureAutoMode[exposure::ExposureAutoTarger],exposure::ExposureAutoTarger)
+        .value(exposureAutoMode[exposure::ExposureAutoTarget],exposure::ExposureAutoTarget)
     ;
 
     enum_<exposure::ExposureAutoAlgMode>("ExposureAutoAlgMode")
@@ -153,6 +153,7 @@ BOOST_PYTHON_MODULE(camera)
         .def("setExposureValue",&Camera::setExposureValue)
         .def("getExposureValue",&Camera::getExposureValue)
         .def("getExposureAutoMode",&Camera::getExposureAutoMode)
+        .def("setExposureAutoMode",&Camera::setExposureAutoMode)
         .def("setExposureAutoAlgMode",&Camera::setExposureAutoAlgMode)
         .def("getExposureAutoAlgMode",&Camera::getExposureAutoAlgMode)
 

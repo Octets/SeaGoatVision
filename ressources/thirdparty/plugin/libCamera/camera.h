@@ -44,7 +44,7 @@ enum ConfigFileIndex {Factory,Index1,Index2,Index3,Index4,Index5};
 
 namespace exposure{
     enum ExposureMode{Manual,AutoOnce,Auto,External};
-    enum ExposureAutoMode{ExposureAutoAdjustTol,ExposureAutoAlg,ExposureAutoMax,ExposureAutoMin,ExposureAutoOutliers,ExposureAutoRate,ExposureAutoTarger};
+    enum ExposureAutoMode{ExposureAutoAdjustTol,ExposureAutoAlg,ExposureAutoMax,ExposureAutoMin,ExposureAutoOutliers,ExposureAutoRate,ExposureAutoTarget};
     enum ExposureAutoAlgMode{Mean,FitRange};
 }
 
@@ -61,7 +61,7 @@ namespace whitebal{
 static const char* pixelFormat[]={"Mono8","Bayer8","Bayer16","Rgb24","Bgr24","Rgba32","Bgra32"};
 static const char* configFileIndex[]={"Factory","1","2","3","4","5"};
 static const char* exposureMode[]={"Manual","AutoOnce","Auto","External"};
-static const char* exposureAutoMode[]={"ExposureAutoAdjustTol","ExposureAutoAlg","ExposureAutoMax","ExposureAutoMin","ExposureAutoOutliers","ExposureAutoRate","ExposureAutoTarger"};
+static const char* exposureAutoMode[]={"ExposureAutoAdjustTol","ExposureAutoAlg","ExposureAutoMax","ExposureAutoMin","ExposureAutoOutliers","ExposureAutoRate","ExposureAutoTarget"};
 static const char* exposureAutoAlgMode[]={"Mean","FitRange"};
 static const char* gainMode[]={"Manual","AutoOnce","Auto"};
 static const char* gainAutoMode[]={"GainAutoAdjustTol","GainAutoMax","GainAutoMin","GainAutoOutliers","GainAutoRate","GainAutoTarget"};
@@ -94,13 +94,25 @@ class PvApiNotInitializeException: public exception
 
 class ExposureAutoAlgException:public exception{
     virtual const char* what() const throw(){
-        return "ExposureAutoAlgMode have to be with ExposureAutoAlgMode.";
+        return "For setting or getting value of ExposureAutoAlg, you should use (get | set)ExposureAutoAlgMode";
     }
 };
 
 class ExposureValueException:public exception{
      virtual const char* what() const throw(){
         return "ExposureValue is only for Manual Mode.";
+    }
+};
+
+class ExposureAutoOutliersException:public exception{
+     virtual const char* what() const throw(){
+        return "Each unit of ExposureAutoOutliers represent 0.01%, so value have to be between 0 and 10 000.";
+    }
+};
+
+class ExposureMinValueException:public exception{
+     virtual const char* what() const throw(){
+        return "Manta G-095c have a minimum exposure time of 45 micro-secondes";
     }
 };
 
@@ -115,6 +127,18 @@ class SaturationOutOfRangeException:public exception{
         return "Saturation value have to be between 0.0 and 2.0";
     }
 
+};
+
+class FullPercentValueException:public exception{
+    virtual const char* what() const throw(){
+        return "This value is a percentage and have to be between 0 and 100";
+    }
+};
+
+class HalfPercentValueException:public exception{
+    virtual const char* what() const throw(){
+        return "This value is a percentage and have to be between 0 and 50";
+    }
 };
 /** End Declaration of Exception **/
 /** CAMERA_h **/
@@ -178,7 +202,7 @@ public:
     int getGainAutoMode(gain::GainAutoMode);
     void setGainAutoMode(gain::GainAutoMode,int);
     void setGainValue(int);
-    int getGainValue(int);
+    int getGainValue();
 
     //Hue methods
     int getHue();
