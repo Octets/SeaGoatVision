@@ -78,11 +78,11 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode):
         self.params[name] = param
         setattr(self, name, param)
 
-    image = np.zeros((1, 1), dtype=np.uint8)
-    params = {}
-    notify = None
-
-    # TODO check if cpp file contain execute function
+    code = "cv::Mat execute(cv::Mat "
+    if code not in cppcode:
+        code += "image)"
+        print("Error - Missing execute function into %s like \"%s\"" % (modname, code))
+        return
 
     # Compile filters
     # The included files are found in the .cpp file
@@ -93,35 +93,45 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode):
     mod.customize.add_header("<Python.h>")
     mod.customize.add_extra_link_arg("`pkg-config --cflags --libs opencv`")
 
-    func = ext_tools.ext_function('exec_' + modname, ext_code(), ['image', 'notify'])
-    func.customize.add_support_code(params_code())
-    func.customize.add_support_code(cppcode)
+    # help
+    func = ext_tools.ext_function('help_' + modname, help_code(), [])
     mod.add_function(func)
 
-    helpfunc = ext_tools.ext_function('help_' + modname, help_code(), [])
-    mod.add_function(helpfunc)
-
     # __init__
-    p = params
+    # Get the size of parameter
+    p = {}
     pip = py_init_param
-    initfunc = ext_tools.ext_function('init_' + modname, init_code("void init()" in cppcode), ['p', 'pip'])
-    initfunc.customize.add_support_code(params_code())
-    # initfunc.customize.add_support_code(cppcode)
-    mod.add_function(initfunc)
+    py_notify = Filter().notify_output_observers
+
+    func = ext_tools.ext_function('init_' + modname, init_code("void init()" in cppcode), ['p', 'pip', 'py_notify'])
+    func.customize.add_support_code(params_code())
+    func.customize.add_support_code(notify_code())
+    mod.add_function(func)
 
     # configure
     if "void configure()" in cppcode:
         has_configure = True
-        configfunc = ext_tools.ext_function('config_' + modname, config_code(), [])
-        configfunc.customize.add_support_code(params_code())
-        configfunc.customize.add_support_code(cppcode)
-        mod.add_function(configfunc)
+        func = ext_tools.ext_function('config_' + modname, config_code(), [])
+        func.customize.add_support_code(params_code())
+        func.customize.add_support_code(cppcode)
+        func.customize.add_support_code(notify_code())
+        mod.add_function(func)
     else:
         has_configure = False
 
+    # execute
+    # Get the size of parameter
+    image = np.zeros((1, 1), dtype=np.uint8)
+
+    func = ext_tools.ext_function('exec_' + modname, ext_code(), ['image'])
+    func.customize.add_support_code(params_code())
+    func.customize.add_support_code(cppcode)
+    func.customize.add_support_code(notify_code())
+    mod.add_function(func)
+
     try:
         if cpptimestamps.has_key(modname):
-        # Reloaded modules are saved in the reload folder for easy cleanup
+            # Reloaded modules are saved in the reload folder for easy cleanup
             mod.compile(RELOAD_DIR)
         else:
             mod.compile(BUILD_DIR)

@@ -3,11 +3,9 @@
 
 #define DOCSTRING "C++ Example Test #1"
 
-cv::Mat execute(cv::Mat image, py::object notify)
+cv::Mat execute(cv::Mat image)
 {
-    py::tuple notify_args(1);
-    notify_args[0] = "patatoum";
-    notify.call(notify_args);
+	notify("patatoum");
 
     //cv::cvtColor(image, image, CV_BGR2HSV);
     cv::cvtColor(image, image, CV_BGR2YUV);

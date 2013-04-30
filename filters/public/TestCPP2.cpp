@@ -3,7 +3,7 @@
 
 #define DOCSTRING "C++ Example Test #2"
 
-cv::Mat execute(cv::Mat image, py::object notify)
+cv::Mat execute(cv::Mat image)
 {
     cv::cvtColor(image, image, CV_BGR2YUV);
     //std::cout << image << std::endl;

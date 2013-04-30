@@ -25,8 +25,7 @@ def create_execute(cppfunc):
     created class that wraps the c++ filters
     """
     def execute(self, image):
-        notify = self.notify_output_observers
-        cppfunc(image, notify)
+        cppfunc(image)
         return image
     return execute
 
@@ -44,5 +43,5 @@ def create_init(cppfunc, params):
         # this class herit of Filter
         Filter.__init__(self)
         self.params = {}
-        cppfunc(self.params, self.py_init_param)
+        cppfunc(self.params, self.py_init_param, self.notify_output_observers)
     return __init__

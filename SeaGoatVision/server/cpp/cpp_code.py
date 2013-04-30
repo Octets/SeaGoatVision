@@ -17,17 +17,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def ext_code():
-    """
-    Return the code that calls a c++ filter
-    """
-    return """
-        cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
-        cv::Mat ret = execute(mat, notify);
-        if (mat.data != ret.data)
-            image = ret.data;
-    """
-
 def init_code(call_c_init):
     """
     This method returns the code to initialize the parameters
@@ -35,6 +24,7 @@ def init_code(call_c_init):
     code = """
         params = p;
         py_init_param = pip;
+        notify_py = py_notify;
     """
     if call_c_init:
         code += """
@@ -42,6 +32,16 @@ def init_code(call_c_init):
         """
     return code
 
+def ext_code():
+    """
+    Return the code that calls a c++ filter
+    """
+    return """
+        cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
+        cv::Mat ret = execute(mat);
+        if (mat.data != ret.data)
+            image = ret.data;
+    """
 
 def params_code():
     """
@@ -81,10 +81,11 @@ def notify_code():
     Notify send information to output observer.
     """
     return """
+        py::object notify_py;
         void notify(char *data) {
             py::tuple notify_args(1);
             notify_args[0] = data;
-            notify.call(notify_args);
+            notify_py.call(notify_args);
         }
     """
 
