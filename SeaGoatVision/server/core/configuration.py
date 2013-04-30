@@ -120,10 +120,9 @@ class Configuration(object):
         cfg = ConfigParser.ConfigParser()
         cfg.read(file_name)
         for section in cfg.sections():
-            # TODO mathben utilise configuration au lieu et deplace ce read
             filtre = self.create_filter(section)
             if not filtre:
-                print("Error : The filter %s doesn't exist on filterchain." % (section, filterchain_name))
+                print("Error : The filter %s doesn't exist on filterchain %s." % (section, filterchain_name))
                 continue
             # TODO refaire les parameter seulement
             for member in filtre.__dict__:
