@@ -3,32 +3,19 @@
 
 #define DOCSTRING "C++ Example Test #1"
 
-class TestCPP1 : public Filter {
+int x = 0;
 
-	int x;
+void init() {
+	x = ParameterAsInt("x", 0, 255, 30);
+}
 
-public:
+void configure() {
+	x = ParameterAsInt("x", 0, 255, 30);
+}
 
-	void init() {
-		std::cout << "minit" << std::endl;
-		x = ParameterAsInt("x", 0, 255, 30);
-		std::cout << "minit" << std::endl;
-	}
+cv::Mat execute(cv::Mat image)
+{
 
-	void configure() {
-		std::cout << "mconfig" << std::endl;
-		x = ParameterAsInt("x", 0, 255, 30);
-		std::cout << "config "<< x << std::endl;
-
-	}
-
-	cv::Mat execute(cv::Mat image)
-	{
-
-		std::cout << "exec " << x << std::endl;
-		cv::cvtColor(image, image, CV_BGR2HSV);
-		std::cout << "exec " << x << std::endl;
-		return image;
-	}
-
-};
+	cv::cvtColor(image, image, CV_BGR2HSV);
+	return image;
+}

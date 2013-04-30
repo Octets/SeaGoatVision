@@ -53,13 +53,6 @@ for f in os.listdir(os.path.dirname(__file__)):
 # C++ FILTERS IMPORT
 ##
 
-def capsule_template():
-    return weave.inline(
-    """
-    Prout p = Prout();
-    return_val = PyCapsule_New(&p, "Prout", NULL);    
-    """, support_code = "class Prout{};")
-
 def compile_cpp_filters():
     """
     This method finds and compile every c++ filters
@@ -78,37 +71,29 @@ def compile_cpp_filters():
 
     image = np.zeros((1,1), dtype=np.uint8)
     params = {}
-    capsule = capsule_template()
     
-    def ext_code(class_name):
+    def ext_code():
         """
         Return the code that calls a c++ filter
         """
         return """
-            class_name* p = static_cast<class_name*> (PyCapsule_GetPointer(capsule, "class_name"));
-            p->setInitParam(py_init_param);
-            std::cout << "debut" << std::endl;
-            p->setParams(params);
-            p->init();
             cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
-            cv::Mat ret = p->execute(mat);
+            cv::Mat ret = execute(mat);
             if (mat.data != ret.data) {
                 ret.copyTo(mat);
             }
 
-            """.replace("class_name", class_name)
+            """
     
-    def init_code(class_name):
+    def init_code():
         """
         This method returns the code to initialize the parameters
         """
         return """
-            {class_name} p;
-            p.setParams(params);
-            p.setInitParam(py_init_param);
-            p.init();
-            return_val = PyCapsule_New(&p, "{class_name}", NULL);            
-        """.replace("{class_name}", class_name)
+        params = p;
+        py_init_param = pip;
+        init();
+        """
         
     def params_code():
         """
@@ -117,51 +102,32 @@ def compile_cpp_filters():
         the python side to create the parameters in the python object.
         """
         return """
-            class Filter {
-                private:
-                    py::dict* params;
-                    py::object py_init_param;
-
-                    void init_param(char* name, int min, int max, int def_val) {
-                            py::tuple args(4);
-                            args[0] = name;
-                            args[1] = min;
-                            args[2] = max;
-                            args[3] = def_val;
-                            py_init_param.call(args);            
-                    } 
-                protected:
-                    
-                    long ParameterAsInt(char* name, int min, int max, int def_val) {
-                        std::cout << "paramasint" << std::endl;
-                        std::cout << name << std::endl;
-                        if(!params->has_key(name)) {
-                        std::cout << "hoho" << std::endl;
-                            init_param(name, min, max, def_val);
-                        }
-                        py::object o = params->get(name);
-                        o.mcall("get_current_value");
-                        int z = o.mcall("get_current_value");
-                        std::cout << PyInt_AsLong(o.mcall("get_current_value")) << std::endl;
-                        return PyInt_AsLong(o.mcall("get_current_value"));
-                    }
-                    
-                    bool ParameterAsBool(char* name, int min, int max, int def_val) {
-                        if(!params->has_key(name)) {
-                            init_param(name, min, max, def_val);
-                        }
-                        return PyInt_AsLong(params->get(name).mcall("get_current_value"));
-                    }
-                public:
-                    void setParams(py::dict p) {
-                        params = &p;
-                    }
-                    void setInitParam(py::object o) {
-                        py_init_param = o;
-                    }         
-            };
+            py::dict params;
+            py::object py_init_param;
+            void init_param(char* name, int min, int max, int def_val) {
+                    py::tuple args(4);
+                    args[0] = name;
+                    args[1] = min;
+                    args[2] = max;
+                    args[3] = def_val;
+                    py_init_param.call(args);            
+            } 
+            long ParameterAsInt(char* name, int min, int max, int def_val) {
+                if(!params.has_key(name)) {
+                    init_param(name, min, max, def_val);
+                }
+                py::object o = params.get(name);
+                return PyInt_AsLong(o.mcall("get_current_value"));
+            }
             
+            bool ParameterAsBool(char* name, int min, int max, int def_val) {
+                if(!params.has_key(name)) {
+                    init_param(name, min, max, def_val);
+                }
+                return PyInt_AsLong(params.get(name).mcall("get_current_value"));
+            }            
         """
+        
     def help_code():
         """
         Return the code that returns the help string from a c++ file
@@ -174,15 +140,13 @@ def compile_cpp_filters():
             #endif
             """
     
-    def config_code(class_name):
+    def config_code():
         """
+        Code to reconfigure the filter
         """
         return """
-            class_name* p = static_cast<class_name*> (PyCapsule_GetPointer(capsule, "class_name"));
-            p->setParams(params);
-            p->setInitParam(py_init_param);        
-            p->configure();
-        """.replace("class_name", class_name)
+            configure();
+        """
     
     def create_execute(cppfunc):
         """
@@ -190,9 +154,7 @@ def compile_cpp_filters():
         created class that wraps the c++ filters
         """
         def execute(self, image):
-            cppfunc(image, self.params, self.py_init_param, self.cppclass)
-            import cv2
-            cv2.imwrite("/home/capra/cpp.png", image)
+            cppfunc(image)
             return image
         return execute
         
@@ -200,14 +162,15 @@ def compile_cpp_filters():
         """
         """
         def configure(self):
-            cppfunc(self.params, self.py_init_param, self.cppclass)
+            cppfunc()
         return configure
     
     def create_init(cppfunc, params):
         """
         """
         def __init__(self):
-            self.cppclass = cppfunc(self.params, self.py_init_param)
+            self.params = {}
+            cppfunc(self.params, self.py_init_param)
         return __init__
     
     def py_init_param(self, name, min, max, def_val):
@@ -228,8 +191,6 @@ def compile_cpp_filters():
         if g.cppfiles.has_key(filename):
             if cppcode != g.cppfiles[filename]:
                 g.cpptimestamps[filename] = str(int(time.time()))
-        #cppcode = cppcode.replace('ParameterAsInt(', 'ParameterAsInt(params, py_init_param, ')
-        #cppcode = cppcode.replace('ParameterAsBool(', 'ParameterAsBool(params, py_init_param, ')
         
         g.cppfiles[filename] = cppcode
         
@@ -247,20 +208,22 @@ def compile_cpp_filters():
         mod.customize.add_header("<Python.h>")
         mod.customize.add_extra_link_arg("`pkg-config --cflags --libs opencv python`")
     
-        func = ext_tools.ext_function('exec_' + filename, ext_code(filename),['image', 'params', 'py_init_param', 'capsule'])
+        func = ext_tools.ext_function('exec_' + filename, ext_code(),['image'])
         func.customize.add_support_code(params_code())
         func.customize.add_support_code(cppcode)
         mod.add_function(func)
     
         helpfunc = ext_tools.ext_function('help_' + filename, help_code(), [])
         mod.add_function(helpfunc)
-    
-        initfunc = ext_tools.ext_function('init_' + filename, init_code(filename), ['params', 'py_init_param'])
+        
+        p = params
+        pip = py_init_param
+        initfunc = ext_tools.ext_function('init_' + filename, init_code(), ['p', 'pip'])
         initfunc.customize.add_support_code(params_code())
-        initfunc.customize.add_support_code(cppcode)
+        #initfunc.customize.add_support_code(cppcode)
         mod.add_function(initfunc)
         
-        configfunc = ext_tools.ext_function('config_' + filename, config_code(filename), ['params', 'py_init_param', 'capsule'])
+        configfunc = ext_tools.ext_function('config_' + filename, config_code(), [])
         configfunc.customize.add_support_code(params_code())
         configfunc.customize.add_support_code(cppcode)
         mod.add_function(configfunc)
@@ -283,8 +246,7 @@ def compile_cpp_filters():
                   'execute' : create_execute(
                                     getattr(cppmodule, 'exec_' + filename)),
                   'py_init_param' : py_init_param, 
-                  '__doc__' : getattr(cppmodule, 'help_' + filename)(), 
-                  'params' : params})
+                  '__doc__' : getattr(cppmodule, 'help_' + filename)()})
             
             setattr(sys.modules[__name__], filename, clazz)
             del clazz

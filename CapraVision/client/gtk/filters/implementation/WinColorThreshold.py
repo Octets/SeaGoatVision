@@ -58,12 +58,12 @@ class WinColorThreshold:
         self.window.destroy()
         
     def on_btnCancel_clicked(self, widget):
-        self.filtre.redmin = self.filtre_init.redmin
-        self.filtre.redmax = self.filtre_init.redmax
-        self.filtre.greenmin = self.filtre_init.greenmin
-        self.filtre.greenmax = self.filtre_init.greenmax
-        self.filtre.bluemin = self.filtre_init.bluemin
-        self.filtre.bluemax = self.filtre_init.bluemax
+        self.filtre.c1min = self.filtre_init.c1min
+        self.filtre.c1max = self.filtre_init.c1max
+        self.filtre.c2min = self.filtre_init.c2min
+        self.filtre.c2max = self.filtre_init.c2max
+        self.filtre.c3min = self.filtre_init.c3min
+        self.filtre.c3max = self.filtre_init.c3max
         
         self.init_window()
         
