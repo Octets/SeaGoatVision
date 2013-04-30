@@ -1,0 +1,3 @@
+This section regroup functionnality to use cpp filter and create python module.
+The interface use python scipy.weave.ext_tools
+Use this code when you import filter from __init__.py
