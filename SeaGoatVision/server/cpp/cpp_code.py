@@ -82,10 +82,19 @@ def notify_code():
     """
     return """
         py::object notify_py;
-        void notify(char *data) {
+        void notify(const char *format, ...) {
             py::tuple notify_args(1);
-            notify_args[0] = data;
-            notify_py.call(notify_args);
+            int done;
+            char buffer[512];
+            va_list args;
+
+            va_start(args, format);
+            done = vsnprintf(buffer, 512, format, args);
+            va_end(args);
+            if (done > 0) {
+                notify_args[0] = buffer;
+                notify_py.call(notify_args);
+            }
         }
     """
 
