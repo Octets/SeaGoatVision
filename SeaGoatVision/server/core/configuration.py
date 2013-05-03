@@ -27,6 +27,7 @@ import os
 import inspect
 import types
 import filters
+from filter import Filter
 import ConfigParser
 from SeaGoatVision.commun.param import Param
 from SeaGoatVision.commun.keys import *
@@ -38,6 +39,11 @@ class Configuration(object):
         self.dirFilterChain = "SeaGoatVision/server/configuration/filterchain/"
         self.extFilterChain = ".filterchain"
 
+        # {"filter_name" : class_filter }
+        self.dct_filter = {}
+        self.load_filters()
+
+    #### Filterchain
     def get_filterchain_list(self):
         class FilterChain: pass
         lstFilterChain = []
@@ -83,35 +89,19 @@ class Configuration(object):
         return False
 
     def create_filterchain(self, filterchain_name, lst_str_filters):
-        dct_all_filters = self.load_filters()
         chain = filterchain.FilterChain(filterchain_name)
-        for strFilter in lst_str_filters:
-            o_filter = dct_all_filters.get(strFilter, None)
+        for s_filter in lst_str_filters:
+            o_filter = self.create_filter(s_filter)
             if o_filter is None:
                 # error, cancel the transaction
                 return False
-            chain.add_filter(o_filter())
+            chain.add_filter(o_filter)
 
         self.write_filterchain(self._get_filename(filterchain_name), chain)
         return True
 
     def _get_filename(self, filterchain_name):
         return self.dirFilterChain + filterchain_name + self.extFilterChain
-
-    def load_filters(self):
-        # TODO the function name seems wrong?
-        return {name: filtre
-                for name, filtre in vars(filters).items()
-                if inspect.isclass(filtre)}
-
-    def create_filter(self, filter_name):
-        for name, filtre in self.load_filters().items():
-            if name == filter_name:
-                return filtre()
-        return None
-
-    def get_filter_from_filterName(self, filter_name):
-        return load_filters().get(filter_name, None)
 
     def read_filterchain(self, file_name):
         """Open a filtre chain file and load its content in a new filtre chain."""
@@ -172,3 +162,26 @@ class Configuration(object):
                     value = '\n'.join(['"%s"' % line for line in str.splitlines(value)])
                 cfg.set(fname, name, value)
         cfg.write(open(file_name, 'w'))
+
+    #### Filter
+    def get_filter_name_list(self):
+        return self.dct_filter.keys()
+
+    def load_filters(self):
+        # TODO : redo an import
+        # TODO "class" key is important?
+        # update list of filter
+        self.dct_filter = {name: filtre
+                        for name, filtre in vars(filters).items()
+                        if inspect.isclass(filtre)
+                        if issubclass(filtre, Filter)
+                        if "execute" in vars(filtre)}
+
+    def create_filter(self, filter_name):
+        o_filter = self.get_filter_from_filterName(filter_name)
+        if not o_filter:
+            return None
+        return o_filter()
+
+    def get_filter_from_filterName(self, filter_name):
+        return self.dct_filter.get(filter_name, None)

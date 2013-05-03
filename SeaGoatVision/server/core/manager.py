@@ -102,21 +102,6 @@ class Manager:
 
         return True
 
-    def get_params_filterchain(self, execution_name, filter_name):
-        # get actual filter from execution
-        o_filter = None
-        filterchain_item = None
-        thread = self.dct_thread.get(execution_name, None)
-        if not thread:
-            return None
-        filterchain = thread.get("filterchain", None)
-        if not filterchain:
-            return None
-        # if filterchain_item is None:
-        #    # search in config
-        #    o_filter = self.config.get_filter_from_filterName(filter_name=filter_name)
-        return filterchain.get_params(filter_name=filter_name)
-
     def get_execution_list(self):
         return self.dct_thread.keys()
 
@@ -226,7 +211,7 @@ class Manager:
         if dct_thread:
             filterchain = dct_thread.get("filterchain", None)
             if filterchain:
-                if filterchain.get_filter_output_observers():
+                if self.server_observer.send in filterchain.get_filter_output_observers():
                     return True
                 ret_value = filterchain.add_filter_output_observer(self.server_observer.send)
         return ret_value
@@ -283,6 +268,21 @@ class Manager:
             if filterchain:
                 filterchain.reload_filter(filtre)
 
+    def get_params_filterchain(self, execution_name, filter_name):
+        # get actual filter from execution
+        o_filter = None
+        filterchain_item = None
+        thread = self.dct_thread.get(execution_name, None)
+        if not thread:
+            return None
+        filterchain = thread.get("filterchain", None)
+        if not filterchain:
+            return None
+        # if filterchain_item is None:
+        #    # search in config
+        #    o_filter = self.config.get_filter_from_filterName(filter_name=filter_name)
+        return filterchain.get_params(filter_name=filter_name)
+
     def update_param(self, execution_name, filter_name, param_name, value):
         dct_thread = self.dct_thread.get(execution_name, {})
         if not dct_thread:
@@ -295,11 +295,11 @@ class Manager:
         if param:
             param.set(value)
             filter.configure()
-            return 0
-        return 1
+            return True
+        return False
 
     ##########################################################################
     ############################### FILTER  ##################################
     ##########################################################################
     def get_filter_list(self):
-        return self.config.load_filters().keys()
+        return self.config.get_filter_name_list()
