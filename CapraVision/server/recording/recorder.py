@@ -62,7 +62,7 @@ class SimpleRecorder:
         self.thread = None
         if os.path.exists(self.get_record_path()):
             self.video = cv2.VideoWriter(self.get_record_path() + "/" + self.get_file_name(), 
-                        cv.CV_FOURCC('D','I','V','X'), fps, size, True)
+                        cv.CV_FOURCC('D','I','B',' '), fps, size, True)
             self.thread = thread
             thread.add_observer(self.thread_observer)
         else:
