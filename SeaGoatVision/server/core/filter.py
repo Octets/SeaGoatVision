@@ -24,6 +24,9 @@ class Filter(object):
         for obs in self._output_observers:
             obs(data)
 
+    def get_list_output_observer(self):
+        return self._output_observers
+
     def add_output_observer(self, observer):
         self._output_observers.append(observer)
 

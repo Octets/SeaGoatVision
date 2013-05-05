@@ -258,10 +258,10 @@ class WinFilterChain(QtCore.QObject):
         self.ui.frame_editing.setVisible(status)
         self.ui.frame_editing_2.setVisible(status)
         self.ui.frame_filter_edit.setVisible(status)
-        self.qtWidgetFilterList.ui.addFilterButton.setEnabled(status)
         self.ui.frame_edit.setEnabled(not status)
         self.ui.sourceNameLineEdit.setReadOnly(not status)
         self.ui.filterchainListWidget.setEnabled(not status)
+        self.qtWidgetFilterList.ui.addFilterButton.setEnabled(status)
 
     def _list_filterchain_is_selected(self, isSelected=True):
         self.ui.editButton.setEnabled(isSelected)

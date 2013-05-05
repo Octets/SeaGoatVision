@@ -42,6 +42,7 @@ class Configuration(object):
         # {"filter_name" : class_filter }
         self.dct_filter = {}
         self.load_filters()
+        self.dct_filterchain = {}
 
     #### Filterchain
     def get_filterchain_list(self):
@@ -64,18 +65,28 @@ class Configuration(object):
         return False
 
     def delete_filterchain(self, filterchain_name):
+        if filterchain_name in self.dct_filterchain:
+            del self.dct_filterchain[filterchain_name]
         try:
             return os.remove(self._get_filename(filterchain_name))
         except OSError:
             return -1
 
     def get_filterchain(self, filterchain_name):
+        # check if already instance
+        o_filterchain = self.dct_filterchain.get(filterchain_name, None)
+        if o_filterchain:
+            return o_filterchain
+
         if filterchain_name and filterchain_name != get_empty_filterchain_name():
-            return self.read_filterchain(self._get_filename(filterchain_name))
-        return filterchain.FilterChain(get_empty_filterchain_name())
+            o_filterchain = self.read_filterchain(self._get_filename(filterchain_name))
+        else:
+            o_filterchain = filterchain.FilterChain(get_empty_filterchain_name())
+        self.dct_filterchain[filterchain_name] = o_filterchain
+        return o_filterchain
 
     def get_filters_from_filterchain(self, filterchain_name):
-        o_filterchain = self.read_filterchain(self._get_filename(filterchain_name))
+        o_filterchain = self.get_filterchain(filterchain_name)
         return o_filterchain.get_filter_list()
 
     def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
