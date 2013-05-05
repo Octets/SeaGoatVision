@@ -537,32 +537,6 @@ class ControllerProtobuf():
 
         return returnValue
 
-    def load_chain(self, file_name):
-        """
-            load Filter.
-            Param : file_name - path of filter to load into server
-        """
-        request = server_pb2.LoadChainRequest()
-        request.filterName = file_name
-        # Make an synchronous call
-        returnValue = None
-        try:
-            response = self.service.load_chain(request, timeout=10000)
-            if response:
-                returnValue = not response.status
-                if not returnValue:
-                    if response.HasField("message"):
-                        print("Error with load_chain : %s" % response.message)
-                    else:
-                        print("Error with load_chain.")
-            else:
-                returnValue = False
-
-        except Exception as ex:
-            log.exception(ex)
-
-        return returnValue
-
     def update_param(self, execution_name, filter_name, param_name, value):
         request = server_pb2.UpdateParamRequest()
         request.execution_name = execution_name

@@ -58,11 +58,6 @@ message StopFilterchainExecutionRequest
   required string execution_name = 1;
 }
 
-message LoadChainRequest
-{
-  required string filterName = 1;
-}
-
 message DeleteFilterChainRequest{
   required string filterchain_name = 1;
 }
@@ -216,7 +211,6 @@ service CommandService
 
   // action
   rpc reload_filter(ReloadFilterRequest) returns(StatusResponse);
-  rpc load_chain(LoadChainRequest) returns(StatusResponse);
   rpc delete_filterchain(DeleteFilterChainRequest) returns(StatusResponse);
   rpc upload_filterchain(UploadFilterChainRequest) returns(StatusResponse);
   rpc modify_filterchain(ModifyFilterChainRequest) returns(StatusResponse);

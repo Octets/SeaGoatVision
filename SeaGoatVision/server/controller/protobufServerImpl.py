@@ -293,21 +293,6 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
-    def load_chain(self, controller, request, done):
-        print("load_chain request %s" % str(request).replace("\n", " "))
-
-        # Create a reply
-        response = server_pb2.StatusResponse()
-        try:
-            response.status = int(not self.manager.load_chain(request.filterName))
-        except Exception, e:
-            print "Exception: ", e
-            response.status = -1
-
-        # We're done, call the run method of the done callback
-        done.run(response)
-
-
     def delete_filterchain(self, controller, request, done):
         print("delete_filterchain request %s" % str(request).replace("\n", " "))
 

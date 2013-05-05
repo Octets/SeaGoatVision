@@ -252,16 +252,6 @@ class Manager:
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################
-    def load_chain(self, file_name):
-        """
-            return if chain is correctly loading.
-        """
-        new_chain = self.config.read_filterchain(file_name)
-        if new_chain is not None and self.chain is not None:
-            self.hook_new_chain(new_chain)
-        self.chain = new_chain
-        return self.chain_exists()
-
     def reload_filter(self, filtre=None):
         for thread in self.dct_thread.values():
             filterchain = thread.get("filterchain", None)
