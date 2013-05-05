@@ -32,6 +32,9 @@ class Undistort:
         #technique 2
         newimage = numpy.matrix([])
         optimalMat, roi = cv2.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, size, 1)
-        newimage = cv2.undistort(image, cameraMatrix, distCoeffs, newimage, optimalMat)
+        
+        #The last parameter may be optimalMat if we want to keep all the original image.
+        #It will add a black zone where the distortion has impacted the image.
+        newimage = cv2.undistort(image, cameraMatrix, distCoeffs, newimage, cameraMatrix)
         
         return newimage
