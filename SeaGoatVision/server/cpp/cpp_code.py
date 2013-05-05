@@ -32,7 +32,7 @@ def init_code(call_c_init):
         """
     return code
 
-def ext_code():
+def execute_code():
     """
     Return the code that calls a c++ filter
     """

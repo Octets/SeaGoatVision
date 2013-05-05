@@ -135,7 +135,7 @@ class WinViewer(QtCore.QObject):
 
     def updateLog(self, data):
         data = str(data).strip()
-        print data
+        print("Qt output exec %s - %s" % (self.execution_name, data))
 
     def updateImage(self, image):
         self.light_observer.active_light()

@@ -123,7 +123,7 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode):
     # Get the size of parameter
     image = np.zeros((1, 1), dtype=np.uint8)
 
-    func = ext_tools.ext_function('exec_' + modname, ext_code(), ['image'])
+    func = ext_tools.ext_function('exec_' + modname, execute_code(), ['image'])
     func.customize.add_support_code(params_code())
     func.customize.add_support_code(cppcode)
     func.customize.add_support_code(notify_code())
