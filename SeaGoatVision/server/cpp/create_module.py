@@ -31,7 +31,7 @@ from python_code import *
 BUILD_DIR = 'build'
 RELOAD_DIR = os.path.join('build', 'reload')
 
-def import_all_cpp_filter(cppfiles, cpptimestamps, module, file):
+def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=[], extra_compile_arg=[]):
     """
     This method finds and compile every c++ filters
     If a c++ file changed, the file must be recompiled in a new .so file
@@ -61,7 +61,8 @@ def import_all_cpp_filter(cppfiles, cpptimestamps, module, file):
         else:
             modname = filename
 
-        compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode)
+        compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode,
+                    extra_link_arg=extra_link_arg, extra_compile_arg=extra_compile_arg)
 
 def create_build(cppfiles):
     if not os.path.exists(BUILD_DIR):
@@ -72,7 +73,7 @@ def create_build(cppfiles):
         for f in os.listdir(RELOAD_DIR):
             os.remove(os.path.join(RELOAD_DIR, f))
 
-def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode):
+def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_arg=[], extra_compile_arg=[]):
     def py_init_param(self, name, min, max, def_val):
         param = Param(name, def_val, min_v=min, max_v=max)
         self.params[name] = param
@@ -92,6 +93,10 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode):
                              if line.startswith('#include')]
     mod.customize.add_header("<Python.h>")
     mod.customize.add_extra_link_arg("`pkg-config --cflags --libs opencv`")
+    for extra_link in extra_link_arg:
+        mod.customize.add_extra_link_arg(extra_link)
+    for extra_compile in extra_compile_arg:
+        mod.customize.add_extra_compile_arg(extra_compile)
 
     # help
     func = ext_tools.ext_function('help_' + modname, help_code(), [])
