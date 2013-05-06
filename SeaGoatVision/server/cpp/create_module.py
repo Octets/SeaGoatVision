@@ -74,7 +74,7 @@ def create_build(cppfiles):
             os.remove(os.path.join(RELOAD_DIR, f))
 
 def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_arg=[], extra_compile_arg=[]):
-    def py_init_param(self, name, min, max, def_val):
+    def py_init_param(self, name, def_val, min, max):
         param = Param(name, def_val, min_v=min, max_v=max)
         self.params[name] = param
         setattr(self, name, param)
