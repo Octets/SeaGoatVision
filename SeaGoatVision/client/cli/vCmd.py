@@ -44,7 +44,7 @@ class VCmd(cmd.Cmd):
             self.controller = ControllerProtobuf(host, port, quiet=quiet)
 
         # Directly connected to the vision server
-        #self.controller = Manager()
+        # self.controller = Manager()
 
         if not self.controller.is_connected():
             print("Vision server is not accessible.")
@@ -86,12 +86,21 @@ class VCmd(cmd.Cmd):
         param = line.split()
         self.controller.add_output_observer(param[0])
 
+    def do_stop_output_observer(self, line):
+        # execution_name
+        param = line.split()
+        self.controller.remove_output_observer(param[0])
+
     def do_start_filterchain_execution(self, line):
         # execution_name, source_name, filterchain_name
         param = line.split()
         self.controller.start_filterchain_execution(param[0], param[1], param[2])
 
+    def do_stop_filterchain_exeuction(self, line):
+        # execution_name
+        param = line.split()
+        self.controller.stop_filterchain_execution(param[0])
+
     def do_EOF(self, line):
         # Redo last command
         return True
-
