@@ -76,11 +76,13 @@ def params_code():
             return PyInt_AsLong(o.mcall("get"));
         }
 
-        double param_double(std::string name, float value) {
+        double param_double(std::string name, double value, double min, double max) {
             if(!params.has_key(name)) {
-                py::tuple args(2);
+                py::tuple args(4);
                 args[0] = name;
                 args[1] = value;
+                args[2] = min;
+                args[3] = max;
                 py_init_param.call(args);
             }
             py::object o = params.get(name);

@@ -17,6 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# thanks for float_qslider.py : https://gist.github.com/justinfx/3427750
 
 from PySide import QtGui
 from PySide import QtCore
@@ -143,7 +144,69 @@ class WinFilter(QtGui.QDockWidget):
         return layout
 
     def getFloatWidget(self, param, cb_value_change):
-        print "float"
+        numberLabel = QtGui.QLabel()
+        value = param.get()
+        if type(value) is tuple:
+            numberLabel.setNum(value[0])
+            fake_value = value[0] * 100
+        else:
+            numberLabel.setNum(value)
+            fake_value = value * 100
+        self.setNum = numberLabel.setNum
+        self.cb_value_change = cb_value_change
+
+        slider = QtGui.QSlider()
+        slider.valueChanged.connect(self._float_value_change)
+        self.slider_float = slider
+        #slider.setBaseSize(100, 100)
+        if param.get_min() is not None:
+            slider.setMinimum(param.get_min() * 100)
+            self._new_slider_min = param.get_min()
+        if param.get_max() is not None:
+            slider.setMaximum(param.get_max() * 100)
+            self._new_slider_max = param.get_max()
+        slider.setTickInterval(1)
+        slider.setValue(fake_value)
+
+        slider.setTickPosition(QtGui.QSlider.TicksBothSides)
+        slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
+
+        layout = QtGui.QHBoxLayout()
+        layout.addWidget(slider)
+        layout.addWidget(numberLabel)
+        return layout
+
+    def fit(self, v, oldmin, oldmax, newmin=0.0, newmax=1.0):
+        """
+        Just a standard math fit/remap function
+
+            number v         - initial value from old range
+            number oldmin     - old range min value
+            number oldmax     - old range max value
+            number newmin     - new range min value
+            number newmax     - new range max value
+
+        Example:
+
+            fit(50, 0, 100, 0.0, 1.0)
+            # 0.5
+
+        """
+        scale = (float(v) - oldmin) / (oldmax - oldmin)
+        new_range = scale * (newmax - newmin)
+        if newmin < newmax:
+            return newmin + new_range
+        else:
+            return newmin - new_range
+
+    def _float_value_change(self, value):
+        newVal = self.fit(
+            value,
+            self.slider_float.minimum(), self.slider_float.maximum(),
+            self._new_slider_min, self._new_slider_max
+        )
+        self.setNum(newVal)
+        self.cb_value_change(newVal)
 
     def getStrWidget(self, param, cb_value_change):
         print "string"
