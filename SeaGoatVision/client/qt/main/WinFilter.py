@@ -30,10 +30,14 @@ class WinFilter(QtGui.QDockWidget):
         self.setWidget(QtGui.QWidget())
         self.lst_param = []
         self.controller = controller
+        self.cb_param = None
+        self.layout = None
 
     def setFilter(self, execution_name, filter_name):
         del self.lst_param[:]
         self.widget().destroy()
+        self.cb_param = None
+        self.layout = None
         self.setWidget(QtGui.QWidget())
         self.filter_name = filter_name
         self.execution_name = execution_name
@@ -45,6 +49,10 @@ class WinFilter(QtGui.QDockWidget):
         self.filter_param = self.controller.get_params_filterchain(self.execution_name, filter_name=self.filter_name)
 
         layout = QtGui.QVBoxLayout()
+        self.resetButton = QtGui.QPushButton()
+        self.resetButton.clicked.connect(self.reset)
+        self.resetButton.setText("Reset")
+        layout.addWidget(self.resetButton)
 
         if not self.filter_param:
             nothing = QtGui.QLabel()
@@ -53,15 +61,31 @@ class WinFilter(QtGui.QDockWidget):
             self.widget().setLayout(layout)
             return
 
-        for param in self.filter_param:
-            layout.addWidget(self.getWidget(param))
+        # for param in self.filter_param:
+        #    layout.addWidget(self.getWidget(param))
 
-        self.resetButton = QtGui.QPushButton()
-        self.resetButton.clicked.connect(self.reset)
-        self.resetButton.setText("Reset")
-        layout.addWidget(self.resetButton)
+        self.layout = layout
+        self.cb_param = QtGui.QComboBox()
+        for param in self.filter_param:
+            self.cb_param.addItem(param.get_name())
+            self.lst_param.append(param)
+        if self.filter_param:
+            self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+            layout.addWidget(self.cb_param)
+            self.on_cb_param_item_changed(0, first=True)
+
 
         self.widget().setLayout(layout)
+
+    def on_cb_param_item_changed(self, index, first=False):
+        if self.cb_param:
+            param_name = self.cb_param.currentText()
+            param_list = [param for param in self.lst_param if param.get_name() == param_name]
+            if param_list:
+                if not first:
+                    self.layout.removeItem(self.layout.itemAt(self.layout.count() - 1))
+                param = param_list[0]
+                self.layout.addWidget(self.getWidget(param))
 
     def getWidget(self, param):
         groupBox = QtGui.QGroupBox()
@@ -82,7 +106,6 @@ class WinFilter(QtGui.QDockWidget):
                 self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), value)
             return set
 
-        self.lst_param.append(param)
         layout = getWidget[param.get_type()](param, create_value_change(param))
         groupBox.setLayout(layout)
 
