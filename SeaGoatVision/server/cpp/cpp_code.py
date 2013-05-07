@@ -73,7 +73,7 @@ def params_code():
                 py_init_param.call(args);
             }
             py::object o = params.get(name);
-            return PyInt_AsLong(o.mcall("get"));
+            return (bool)(PyInt_AsLong(o.mcall("get")) != 0);
         }
 
         double param_double(std::string name, double value, double min, double max) {
@@ -85,6 +85,21 @@ def params_code():
                 args[3] = max;
                 py_init_param.call(args);
             }
+            py::object o = params.get(name);
+            return PyFloat_AsDouble(o.mcall("get"));
+        }
+
+        long param_get_int(std::string name) {
+            py::object o = params.get(name);
+            return PyInt_AsLong(o.mcall("get"));
+        }
+
+        bool param_get_bool(std::string name) {
+            py::object o = params.get(name);
+            return (bool)(PyInt_AsLong(o.mcall("get")) != 0);
+        }
+
+        double param_get_double(std::string name) {
             py::object o = params.get(name);
             return PyFloat_AsDouble(o.mcall("get"));
         }
