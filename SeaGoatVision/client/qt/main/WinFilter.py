@@ -108,62 +108,77 @@ class WinFilter(QtGui.QDockWidget):
                 self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), value)
             return set
 
-        layout = getWidget[param.get_type()](param, create_value_change(param))
+        cb_value_change = create_value_change(param)
+        self.cb_value_change = cb_value_change
+
+        layout = getWidget[param.get_type()](param, cb_value_change)
         groupBox.setLayout(layout)
 
         return groupBox
 
     def getIntegerWidget(self, param, cb_value_change):
-        numberLabel = QtGui.QLabel()
+        spinbox = QtGui.QSpinBox()
+        spinbox.setMaximumHeight(28)
+        spinbox.setMaximumWidth(100)
+
         value = param.get()
         if type(value) is tuple:
-            numberLabel.setNum(value[0])
+            spinbox.setValue(value[0])
+            fake_value = value[0]
         else:
-            numberLabel.setNum(value)
+            spinbox.setValue(value)
+            fake_value = value
+        self.setValue = spinbox.setValue
 
         slider = QtGui.QSlider()
         slider.setBaseSize(100, 100)
         if param.get_min() is not None:
             slider.setMinimum(param.get_min())
+            spinbox.setMinimum(param.get_min())
         if param.get_max() is not None:
             slider.setMaximum(param.get_max())
+            spinbox.setMaximum(param.get_max())
         slider.setTickInterval(1)
-        if type(value) is tuple:
-            slider.setValue(value[0])
-        else:
-            slider.setValue(value)
+        slider.setValue(fake_value)
+
+        self.slider = slider
         slider.setTickPosition(QtGui.QSlider.TicksBothSides)
         slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
 
-        slider.valueChanged.connect(numberLabel.setNum)
-        slider.valueChanged.connect(cb_value_change)
+        spinbox.valueChanged.connect(self._spin_value_change)
+        slider.valueChanged.connect(self._slider_value_change)
+        #slider.valueChanged.connect(spinbox.setNum)
+        #slider.valueChanged.connect(cb_value_change)
 
         layout = QtGui.QHBoxLayout()
         layout.addWidget(slider)
-        layout.addWidget(numberLabel)
+        layout.addWidget(spinbox)
         return layout
 
     def getFloatWidget(self, param, cb_value_change):
-        numberLabel = QtGui.QLabel()
+        spinbox = QtGui.QDoubleSpinBox()
+        spinbox.setMaximumHeight(28)
+        spinbox.setMaximumWidth(100)
+        spinbox.valueChanged.connect(self._float_spin_value_change)
+
         value = param.get()
         if type(value) is tuple:
-            numberLabel.setNum(value[0])
-            fake_value = value[0] * 100
+            spinbox.setValue(value[0])
+            fake_value = value[0]
         else:
-            numberLabel.setNum(value)
-            fake_value = value * 100
-        self.setNum = numberLabel.setNum
-        self.cb_value_change = cb_value_change
+            spinbox.setValue(value)
+            fake_value = value
+        self.setValueFloat = spinbox.setValue
 
         slider = QtGui.QSlider()
-        slider.valueChanged.connect(self._float_value_change)
+        slider.valueChanged.connect(self._float_slider_value_change)
         self.slider_float = slider
         #slider.setBaseSize(100, 100)
         if param.get_min() is not None:
-            slider.setMinimum(param.get_min() * 100)
+            slider.setMinimum(param.get_min())
             self._new_slider_min = param.get_min()
         if param.get_max() is not None:
-            slider.setMaximum(param.get_max() * 100)
+            slider.setMaximum(param.get_max())
             self._new_slider_max = param.get_max()
         slider.setTickInterval(1)
         slider.setValue(fake_value)
@@ -173,7 +188,7 @@ class WinFilter(QtGui.QDockWidget):
 
         layout = QtGui.QHBoxLayout()
         layout.addWidget(slider)
-        layout.addWidget(numberLabel)
+        layout.addWidget(spinbox)
         return layout
 
     def fit(self, v, oldmin, oldmax, newmin=0.0, newmax=1.0):
@@ -199,30 +214,39 @@ class WinFilter(QtGui.QDockWidget):
         else:
             return newmin - new_range
 
-    def _float_value_change(self, value):
+    def _float_slider_value_change(self, value):
         newVal = self.fit(
             value,
             self.slider_float.minimum(), self.slider_float.maximum(),
             self._new_slider_min, self._new_slider_max
         )
-        self.setNum(newVal)
+        self.setValueFloat(newVal)
         self.cb_value_change(newVal)
+
+    def _float_spin_value_change(self, value):
+        self.slider_float.setValue(value)
+        self.cb_value_change(value)
+
+    def _spin_value_change(self, value):
+        self.slider.setValue(value)
+        self.cb_value_change(value)
+
+    def _slider_value_change(self, value):
+        self.setValue(value)
+        self.cb_value_change(value)
 
     def getStrWidget(self, param, cb_value_change):
         print "string"
 
     def getBoolWidget(self, param, cb_value_change):
-        boolLabel = QtGui.QLabel()
-        boolLabel.setNum(param.get())
-
         checkbox = QtGui.QCheckBox()
+        checkbox.setTristate(False)
         if param.get():
-            checkbox.setCheckState(QtCore.Qt.PartiallyChecked)
+            checkbox.setCheckState(QtCore.Qt.Checked)
         checkbox.stateChanged.connect(cb_value_change)
 
         layout = QtGui.QHBoxLayout()
         layout.addWidget(checkbox)
-        layout.addWidget(boolLabel)
         return layout
 
     def reset(self):
