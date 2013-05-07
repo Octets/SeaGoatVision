@@ -177,9 +177,11 @@ class WinFilter(QtGui.QDockWidget):
         if param.get_min() is not None:
             slider.setMinimum(param.get_min())
             self._new_slider_min = param.get_min()
+            spinbox.setMinimum(param.get_min())
         if param.get_max() is not None:
             slider.setMaximum(param.get_max())
             self._new_slider_max = param.get_max()
+            spinbox.setMaximum(param.get_max())
         slider.setTickInterval(1)
         slider.setValue(fake_value)
 
