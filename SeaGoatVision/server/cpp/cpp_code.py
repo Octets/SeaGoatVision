@@ -52,27 +52,39 @@ def params_code():
     return """
         py::dict params;
         py::object py_init_param;
-        void init_param(char* name, int def_val, int min, int max) {
-            py::tuple args(4);
-            args[0] = name;
-            args[1] = def_val;
-            args[2] = min;
-            args[3] = max;
-            py_init_param.call(args);
-        }
-        long ParameterAsInt(char* name, int def_val, int min, int max) {
+        long param_int(std::string name, int value, int min, int max) {
             if(!params.has_key(name)) {
-                init_param(name, def_val, min, max);
+                py::tuple args(4);
+                args[0] = name;
+                args[1] = value;
+                args[2] = min;
+                args[3] = max;
+                py_init_param.call(args);
             }
             py::object o = params.get(name);
             return PyInt_AsLong(o.mcall("get"));
         }
 
-        bool ParameterAsBool(char* name, int def_val, int min, int max) {
+        bool param_bool(std::string name, bool value) {
             if(!params.has_key(name)) {
-                init_param(name, def_val, min, max);
+                py::tuple args(2);
+                args[0] = name;
+                args[1] = PyBool_FromLong(value);
+                py_init_param.call(args);
             }
-            return PyInt_AsLong(params.get(name).mcall("get"));
+            py::object o = params.get(name);
+            return PyInt_AsLong(o.mcall("get"));
+        }
+
+        double param_double(std::string name, float value) {
+            if(!params.has_key(name)) {
+                py::tuple args(2);
+                args[0] = name;
+                args[1] = value;
+                py_init_param.call(args);
+            }
+            py::object o = params.get(name);
+            return PyFloat_AsDouble(o.mcall("get"));
         }
     """
 

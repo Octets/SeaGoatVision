@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.server.core.filter import Filter
+from SeaGoatVision.commun.param import Param
 
 def create_execute(cppfunc):
     """
@@ -45,3 +46,8 @@ def create_init(cppfunc, params):
         self.params = {}
         cppfunc(self.params, self.py_init_param, self.notify_output_observers)
     return __init__
+
+def py_init_param(self, name, value, min=None, max=None):
+    param = Param(name, value, min_v=min, max_v=max)
+    self.params[name] = param
+    setattr(self, name, param)

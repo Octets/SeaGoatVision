@@ -24,7 +24,6 @@ import os
 import sys
 
 from SeaGoatVision.server.core.filter import Filter
-from SeaGoatVision.commun.param import Param
 from cpp_code import *
 from python_code import *
 
@@ -74,11 +73,6 @@ def create_build(cppfiles):
             os.remove(os.path.join(RELOAD_DIR, f))
 
 def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_arg=[], extra_compile_arg=[]):
-    def py_init_param(self, name, def_val, min, max):
-        param = Param(name, def_val, min_v=min, max_v=max)
-        self.params[name] = param
-        setattr(self, name, param)
-
     code = "cv::Mat execute(cv::Mat "
     if code not in cppcode:
         code += "image)"
