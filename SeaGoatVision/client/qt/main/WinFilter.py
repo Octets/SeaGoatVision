@@ -83,7 +83,8 @@ class WinFilter(QtGui.QDockWidget):
             param_list = [param for param in self.lst_param if param.get_name() == param_name]
             if param_list:
                 if not first:
-                    self.layout.removeItem(self.layout.itemAt(self.layout.count() - 1))
+                    b = self.layout.itemAt(self.layout.count() - 1)
+                    b.widget().deleteLater()
                 param = param_list[0]
                 self.layout.addWidget(self.getWidget(param))
 
