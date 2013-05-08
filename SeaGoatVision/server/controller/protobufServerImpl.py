@@ -206,10 +206,13 @@ class ProtobufServerImpl(server_pb2.CommandService):
             if ret is not None:
                 for item in ret:
                     if item.get_type() is int:
-                        response.params.add(name=item.get_name(), value_int=item.get(), max_v=item.get_max(), min_v=item.get_min())
+                        response.params.add(name=item.get_name(), value_int=item.get(), min_v=item.get_min(), max_v=item.get_max())
                     elif item.get_type() is bool:
                         response.params.add(name=item.get_name(), value_bool=item.get())
-                    #TODO complete me mathben
+                    elif item.get_type() is float:
+                        response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(), max_float_v=item.get_max())
+                    elif item.get_type() is unicode or item.get_type() is str:
+                         response.params.add(name=item.get_name(), value_str=item.get())
         except Exception, e:
             print "Exception: ", e
 
@@ -363,10 +366,16 @@ class ProtobufServerImpl(server_pb2.CommandService):
             value = None
             if request.param.HasField("value_int"):
                 value = request.param.value_int
+            if request.param.HasField("value_bool"):
+                value = request.param.value_bool
+            if request.param.HasField("value_float"):
+                value = request.param.value_float
+            if request.param.HasField("value_str"):
+                value = request.param.value_str
             try:
                 response.status = self.manager.update_param(request.execution_name, request.filter_name, request.param.name, value)
             except Exception, e:
-                reponse.status = 1
+                response.status = 1
                 response.message = e
         except Exception, e:
             print "Exception: ", e

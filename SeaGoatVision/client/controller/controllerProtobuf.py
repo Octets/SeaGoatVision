@@ -130,7 +130,6 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-
         except Exception as ex:
             log.exception(ex)
 
@@ -149,13 +148,13 @@ class ControllerProtobuf():
                 returnValue = []
                 for param in response.params:
                     if param.HasField("value_int"):
-                        returnValue.append(Param(param.name, param.value_int))
+                        returnValue.append(Param(param.name, param.value_int, min_v=param.min_v, max_v=param.max_v))
                     if param.HasField("value_bool"):
                         returnValue.append(Param(param.name, param.value_bool))
                     if param.HasField("value_str"):
                         returnValue.append(Param(param.name, param.value_str))
                     if param.HasField("value_float"):
-                        returnValue.append(Param(param.name, param.value_float))
+                        returnValue.append(Param(param.name, param.value_float, min_v=param.min_float_v, max_v=param.max_float_v))
                     # TODO complete with other param restriction
             else:
                 returnValue = False
@@ -546,6 +545,10 @@ class ControllerProtobuf():
             request.param.value_int = value
         if type(value) is bool:
             request.param.value_bool = value
+        if type(value) is float:
+            request.param.value_float = value
+        if type(value) is str:
+            request.param.value_str = value
 
         # Make an synchronous call
         returnValue = None
@@ -652,7 +655,7 @@ class Observer(threading.Thread):
 
                     sData += data[i + 1:]
                     for packet in range(1, nb_packet):
-                        data, _ = self.socket.recvfrom(self.buffer) # 262144 # 8192
+                        data, _ = self.socket.recvfrom(self.buffer)  # 262144 # 8192
                         if data[0] != "c":
                             print("wrong type index continue")
                             continue

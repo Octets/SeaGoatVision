@@ -184,6 +184,8 @@ message Param
   optional float value_float = 5;
   optional int32 min_v = 6;
   optional int32 max_v = 7;
+  optional float min_float_v = 8;
+  optional float max_float_v = 9;
 }
 //#############################################################
 //###################### SERVICE SECTION ######################

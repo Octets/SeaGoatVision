@@ -106,6 +106,7 @@ class WinFilter(QtGui.QDockWidget):
                 if param.get_type() is bool:
                     value = bool(value)
                 self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), value)
+                param.set(value)
             return set
 
         cb_value_change = create_value_change(param)
