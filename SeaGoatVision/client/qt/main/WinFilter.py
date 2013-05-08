@@ -121,6 +121,15 @@ class WinFilter(QtGui.QDockWidget):
         spinbox.setMaximumHeight(28)
         spinbox.setMaximumWidth(100)
 
+        slider = QtGui.QSlider()
+        if param.get_min() is not None:
+            slider.setMinimum(param.get_min())
+            spinbox.setMinimum(param.get_min())
+        if param.get_max() is not None:
+            slider.setMaximum(param.get_max())
+            spinbox.setMaximum(param.get_max())
+        slider.setTickInterval(1)
+
         value = param.get()
         if type(value) is tuple:
             spinbox.setValue(value[0])
@@ -129,16 +138,6 @@ class WinFilter(QtGui.QDockWidget):
             spinbox.setValue(value)
             fake_value = value
         self.setValue = spinbox.setValue
-
-        slider = QtGui.QSlider()
-        slider.setBaseSize(100, 100)
-        if param.get_min() is not None:
-            slider.setMinimum(param.get_min())
-            spinbox.setMinimum(param.get_min())
-        if param.get_max() is not None:
-            slider.setMaximum(param.get_max())
-            spinbox.setMaximum(param.get_max())
-        slider.setTickInterval(1)
         slider.setValue(fake_value)
 
         self.slider = slider
@@ -147,8 +146,6 @@ class WinFilter(QtGui.QDockWidget):
 
         spinbox.valueChanged.connect(self._spin_value_change)
         slider.valueChanged.connect(self._slider_value_change)
-        #slider.valueChanged.connect(spinbox.setNum)
-        #slider.valueChanged.connect(cb_value_change)
 
         layout = QtGui.QHBoxLayout()
         layout.addWidget(slider)
@@ -161,19 +158,9 @@ class WinFilter(QtGui.QDockWidget):
         spinbox.setMaximumWidth(100)
         spinbox.valueChanged.connect(self._float_spin_value_change)
 
-        value = param.get()
-        if type(value) is tuple:
-            spinbox.setValue(value[0])
-            fake_value = value[0]
-        else:
-            spinbox.setValue(value)
-            fake_value = value
-        self.setValueFloat = spinbox.setValue
-
         slider = QtGui.QSlider()
         slider.valueChanged.connect(self._float_slider_value_change)
         self.slider_float = slider
-        #slider.setBaseSize(100, 100)
         if param.get_min() is not None:
             slider.setMinimum(param.get_min())
             self._new_slider_min = param.get_min()
@@ -183,6 +170,15 @@ class WinFilter(QtGui.QDockWidget):
             self._new_slider_max = param.get_max()
             spinbox.setMaximum(param.get_max())
         slider.setTickInterval(1)
+
+        value = param.get()
+        if type(value) is tuple:
+            spinbox.setValue(value[0])
+            fake_value = value[0]
+        else:
+            spinbox.setValue(value)
+            fake_value = value
+        self.setValueFloat = spinbox.setValue
         slider.setValue(fake_value)
 
         slider.setTickPosition(QtGui.QSlider.TicksBothSides)
