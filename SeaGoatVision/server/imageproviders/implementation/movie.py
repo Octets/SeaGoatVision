@@ -90,7 +90,10 @@ class Movie:
         
         run, self.last_image = self.video.read()
         if run == False:
-            raise StopIteration
+            # TODO hack to loop
+            self.open_video_file(self.file_name)
+            return
+            #raise StopIteration
 
         self.notify_observers()
 

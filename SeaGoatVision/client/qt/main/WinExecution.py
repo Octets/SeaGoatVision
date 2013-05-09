@@ -53,6 +53,7 @@ class WinExecution(QtCore.QObject):
         self.ui.txtFilterchain.setReadOnly(True)
         self._mode_edit(self.mode_edit)
         self._update_execution_list()
+        self.file_name = None
 
     def set_filterchain(self, filterchain):
         self._enable_execution_button(True)
@@ -154,7 +155,7 @@ class WinExecution(QtCore.QObject):
                                       "The execution name \"%s\" already exist." % execution_name,
                                       QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
             return False
-        self.controller.start_filterchain_execution(execution_name, source_name, filterchain_name)
+        self.controller.start_filterchain_execution(execution_name, source_name, filterchain_name, self.file_name)
         self.ui.lstExecution.addItem(execution_name)
         self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
         self._mode_edit(False)
@@ -173,6 +174,7 @@ class WinExecution(QtCore.QObject):
             self.ui.txtFilterchain.setText(self.filterchain_txt)
             self.ui.txtExecution.setText("Execution-01")
             self.ui.txtSource.setText(self.winSource.get_selected_media())
+            self.file_name = self.winSource.get_file_path()
 
     def _enable_execution_button(self, status):
         # TODO fix temporary a bug, disable execute if already contain execution

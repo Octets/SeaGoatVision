@@ -63,7 +63,7 @@ class Manager:
     ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
-    def start_filterchain_execution(self, execution_name, source_name, filterchain_name):
+    def start_filterchain_execution(self, execution_name, source_name, filterchain_name, file_name=None):
         thread = self.dct_thread.get(execution_name, None)
 
         if thread:
@@ -80,6 +80,8 @@ class Manager:
             return None
 
         source = source()
+        if file_name:
+            source.open_video_file(file_name)
 
         thread = MainLoop()
         thread.add_observer(filterchain.execute)
@@ -122,9 +124,10 @@ class Manager:
         # TODO improve me
         # return imageproviders.load_sources().keys()
         return {"Webcam":get_source_type_streaming_name(),
-                "ImageSingle":get_source_type_video_name(),
-                "Video":get_source_type_video_name(),
-                "ImageFolder":get_source_type_video_name()}
+                # "SingleImage":get_source_type_video_name(),  # not supported
+                "Movie":get_source_type_video_name(),
+                # "ImageFolder":get_source_type_video_name()   # not supported
+                }
 
     def start_record(self, source_name):
         # Only record on webcam device

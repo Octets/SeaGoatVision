@@ -160,11 +160,16 @@ class FilterChain(object):
         # first image observator
         if self.original_image_observer:
             for observer in self.original_image_observer:
-                observer(np.copy(image))
+                self.send_image(image, observer)
         for f in self.filters:
             image = f.execute(image)
             lst_observer = self.image_observers.get(f.__class__.__name__, [])
             for observer in lst_observer:
-                # copy the picture because the next filter will modify him
-                observer(np.copy(image))
+                self.send_image(image, observer)
         return image
+
+    def send_image(self, image, observer):
+        if type(image) is not np.ndarray or not image.size:
+            return
+        # copy the picture because the next filter will modify him
+        observer(np.copy(image))

@@ -21,6 +21,8 @@ from SeaGoatVision.client.qt.utils import get_ui
 from PySide.QtGui import QIcon
 from SeaGoatVision.commun.keys import *
 
+from PySide.QtGui import QFileDialog
+
 from PySide import QtCore
 
 class WinSource(QtCore.QObject):
@@ -43,6 +45,7 @@ class WinSource(QtCore.QObject):
 
         self.ui.recordButton.clicked.connect(self.click_record_button)
         self.ui.cbSource.currentIndexChanged.connect(self._change_source)
+        self.ui.openButton.clicked.connect(self.open_media)
 
         self._set_record_icon()
         self._update_source()
@@ -86,6 +89,11 @@ class WinSource(QtCore.QObject):
             self.is_recorded = False
             self._set_record_icon()
 
+    def open_media(self):
+        filename = QFileDialog.getOpenFileName()[0]
+        if len(filename) > 0:
+            self.ui.movieLineEdit.setText(filename)
+
     def _set_record_icon(self):
         if not self.is_recorded:
             self.ui.recordButton.setIcon(self.record_icon)
@@ -96,3 +104,10 @@ class WinSource(QtCore.QObject):
         if not self.ui.cbSource.count():
             return "None"
         return self.ui.cbSource.currentText()
+
+    def get_file_path(self):
+        item_cbsource = self.ui.cbSource.currentText()
+        source_type = self.dct_source.get(item_cbsource, None)
+        if source_type != get_source_type_video_name():
+            return None
+        return self.ui.movieLineEdit.text()
