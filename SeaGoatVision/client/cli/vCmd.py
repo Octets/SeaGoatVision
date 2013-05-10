@@ -92,7 +92,7 @@ class VCmd(cmd.Cmd):
         self.controller.remove_output_observer(param[0])
 
     def do_start_filterchain_execution(self, line):
-        # execution_name, source_name, filterchain_name
+        # execution_name, media_name, filterchain_name
         param = line.split()
         self.controller.start_filterchain_execution(param[0], param[1], param[2])
 

@@ -21,7 +21,7 @@
 from SeaGoatVision.client.qt.utils import get_ui
 
 from WinFilterList import WinFilterList
-from WinSource import WinSource
+from WinMedia import WinMedia
 from WinViewer import WinViewer
 from WinFilterChain import WinFilterChain
 from WinExecution import WinExecution
@@ -42,22 +42,22 @@ class WinMain(QtGui.QMainWindow):
         # create dockWidgets
         self.winFilter = WinFilter(self.controller)
         self.winFilterList = WinFilterList(self.controller)
-        self.winSource = WinSource(self.controller, islocal)
-        self.winExecution = WinExecution(self.controller, self.winSource)
-        self.winFilterChain = WinFilterChain(self.controller, self.winFilterList, self.winSource, self.winExecution)
+        self.winMedia = WinMedia(self.controller, islocal)
+        self.winExecution = WinExecution(self.controller, self.winMedia)
+        self.winFilterChain = WinFilterChain(self.controller, self.winFilterList, self.winMedia, self.winExecution)
 
         # Add default widget
         self.show_win_filter()
         self.show_win_filterlist(first_time=True)
         self.show_win_filterchain(first_time=True)
-        self.show_win_source(first_time=True)
+        self.show_win_media(first_time=True)
         self.show_win_execution(first_time=True)
 
         # Signal
         self.winFilterList.onAddFilter.connect(self.winFilterChain.add_filter)
         self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
         self.winFilterChain.selectedFilterChainChanged.connect(self.winExecution.set_filterchain)
-        self.ui.btnSource.clicked.connect(self.show_win_source)
+        self.ui.btnMedia.clicked.connect(self.show_win_media)
         self.ui.btnFilterChain.clicked.connect(self.show_win_filterchain)
         self.ui.btnFilterList.clicked.connect(self.show_win_filterlist)
         self.ui.btnExecution.clicked.connect(self.show_win_execution)
@@ -94,15 +94,15 @@ class WinMain(QtGui.QMainWindow):
         self.winFilter.setFeatures(QtGui.QDockWidget.DockWidgetMovable or QtGui.QDockWidget.DockWidgetFloatable)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilter)
 
-    def show_win_source(self, first_time=False):
+    def show_win_media(self, first_time=False):
         if not first_time:
-            self.removeDockWidget(self.winSource.ui)
-            self.winSource.reload_ui()
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winSource.ui)
+            self.removeDockWidget(self.winMedia.ui)
+            self.winMedia.reload_ui()
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winMedia.ui)
 
-    def addPreview(self, execution_name, source_name, filterchain_name):
+    def addPreview(self, execution_name, media_name, filterchain_name):
         # TODO create signal to share the filter list to WinViewer
-        winviewer = WinViewer(self.controller, execution_name, source_name, filterchain_name, self.host)
+        winviewer = WinViewer(self.controller, execution_name, media_name, filterchain_name, self.host)
         self.dct_preview[execution_name] = winviewer
         self.setCentralWidget(winviewer.ui)
         winviewer.closePreview.connect(self.removePreview)

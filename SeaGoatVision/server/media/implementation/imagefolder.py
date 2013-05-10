@@ -17,10 +17,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import SeaGoatVision.server.imageproviders.utils
+from SeaGoatVision.server.media.media_video import Media_video
 import cv2
 
-class ImageFolder:
+class ImageFolder(Media_video):
     
     def __init__(self):
         self.folder_name = ''
@@ -39,7 +39,7 @@ class ImageFolder:
         self.position = value
         
     def read_folder(self, folder):
-        self.file_names = SeaGoatVision.server.imageproviders.utils.find_all_images(folder)
+        self.file_names = self.find_all_images(folder)
         self.folder_name = folder
         self.position = 0
         

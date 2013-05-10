@@ -49,7 +49,7 @@ message ReloadFilterRequest
 message StartFilterchainExecutionRequest
 {
   required string execution_name = 1;
-  required string source_name = 2;
+  required string media_name = 2;
   required string filterchain_name = 3;
 }
 
@@ -128,10 +128,10 @@ message GetFilterChainListResponse
   repeated FilterChain filterchains = 1;
 }
 
-message GetSourceListRequest{}
-message GetSourceListResponse
+message GetMediaListRequest{}
+message GetMediaListResponse
 {
-  repeated string source = 1;
+  repeated string media = 1;
   repeated string type = 2;
 }
 
@@ -157,7 +157,7 @@ message GetExecutionInfoRequest
 }
 message GetExecutionInfoResponse
 {
-  required string source = 1;
+  required string media = 1;
   required string filterchain = 2;
 }
 //############################################################
@@ -196,7 +196,7 @@ service CommandService
   rpc get_filter_list(GetFilterListRequest) returns(GetFilterListResponse);
   rpc get_filter_list_from_filterchain(GetFilterListFromFilterChainRequest) returns(GetFilterListFromFilterChainResponse);
   rpc get_filterchain_list(GetFilterChainListRequest) returns(GetFilterChainListResponse);
-  rpc get_source_list(GetSourceListRequest) returns(GetSourceListResponse);
+  rpc get_media_list(GetMediaListRequest) returns(GetMediaListResponse);
   rpc get_params_filterchain(GetParamsFilterchainRequest) returns(GetParamsFilterchainResponse);
   rpc get_execution_list(GetExecutionRequest) returns(GetExecutionResponse);
   rpc get_execution_info(GetExecutionInfoRequest) returns(GetExecutionInfoResponse);

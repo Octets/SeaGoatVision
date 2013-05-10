@@ -2,7 +2,7 @@
 
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+#    This filename is part of SeaGoatVision.
 #    
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,10 +17,22 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
+from SeaGoatVision.server.media.media_video import Media_video
+import cv2
 
-for f in os.listdir(os.path.dirname(__file__)):
-    if f.endswith(".pyc") or f.endswith(".py"):
-        file, _ = os.path.splitext(f)
-        code = 'from %(module)s import *' % {'module' : file}
-        exec code
+class SingleImage(Media_video):
+    
+    def __init__(self):
+        self.file = ''
+        self.image = None
+    
+    def set_image(self, filename):
+        self.file = filename
+        self.image = cv2.imread(self.file)
+        
+    def next(self):
+        if self.image is None:
+            return None
+        else:
+            return self.image.copy()
+    

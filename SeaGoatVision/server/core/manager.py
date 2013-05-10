@@ -24,7 +24,6 @@ Authors: Benoit Paquet
 Date : Novembre 2012
 """
 
-from SeaGoatVision.server import imageproviders
 from SeaGoatVision.server.core.mainloop import MainLoop
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
@@ -34,7 +33,7 @@ class Manager:
     def __init__(self):
         """
             Structure of dct_thread
-            {"execution_name" : {"thread" : ref, "filterchain" : ref, "source_name" : str}}
+            {"execution_name" : {"thread" : ref, "filterchain" : ref, "media_name" : str}}
         """
         self.dct_thread = {}
         self.config = Configuration()
@@ -42,7 +41,7 @@ class Manager:
         # tcp server for output observer
         self.server_observer = Server()
         self.server_observer.start("", 5030)
-        self.last_record_source = None
+        self.last_record_media = None
 
     def close(self):
         print("Close manager")
@@ -63,7 +62,7 @@ class Manager:
     ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
-    def start_filterchain_execution(self, execution_name, source_name, filterchain_name, file_name=None):
+    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None):
         thread = self.dct_thread.get(execution_name, None)
 
         if thread:
@@ -71,23 +70,24 @@ class Manager:
             print("The execution %s is already created." % execution_name)
             return None
 
-        source = imageproviders.load_sources().get(source_name, None)
+        media = self.config.get_media(media_name)
         filterchain = self.config.get_filterchain(filterchain_name)
 
-        if not(source and filterchain):
-            print("Erreur with the source \"%s\" or the filterchain \"%s\". Maybe they dont exist."
-                  % (source_name, filterchain_name))
+        if not(media and filterchain):
+            print("Error with the media \"%s\" or the Filterchain \"%s\". Maybe they don't exist."
+                  % (media_name, filterchain_name))
             return None
 
-        source = source()
-        if file_name:
-            source.open_video_file(file_name)
+        if media.is_media_video() and file_name:
+            media.open_video_file(file_name)
+        if media.is_media_streaming():
+            media.open()
 
         thread = MainLoop()
         thread.add_observer(filterchain.execute)
-        thread.start(source)
+        thread.start(media)
 
-        self.dct_thread[execution_name] = {"thread": thread, "filterchain": filterchain, "source_name" : source_name}
+        self.dct_thread[execution_name] = {"thread": thread, "filterchain": filterchain, "media_name" : media_name}
 
         return True
 
@@ -113,38 +113,33 @@ class Manager:
             return None
         class Exec_info: pass
         o_exec_info = Exec_info()
-        setattr(o_exec_info, "source", exec_info["source_name"])
+        setattr(o_exec_info, "media", exec_info["media_name"])
         setattr(o_exec_info, "filterchain", exec_info["filterchain"].get_name())
         return o_exec_info
 
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
-    def get_source_list(self):
-        # TODO improve me
-        # return imageproviders.load_sources().keys()
-        return {"Webcam":get_source_type_streaming_name(),
-                # "SingleImage":get_source_type_video_name(),  # not supported
-                "Movie":get_source_type_video_name(),
-                # "ImageFolder":get_source_type_video_name()   # not supported
-                }
+    def get_media_list(self):
+        return {name: self.config.get_media(name).get_type_media()
+                for name in self.config.get_media_name_list()}
 
-    def start_record(self, source_name):
+    def start_record(self, media_name):
         # Only record on webcam device
-        # TODO take the real instance of source and not this fake method
+        # TODO take the real instance of media and not this fake method
         if not self.dct_thread:
             return False
         dct = self.dct_thread.values()[0].get("thread", None)
         if not dct:
             return False
-        source = dct.get_source()
-        self.last_record_source = source
-        return source.start_record()
+        media = dct.get_media()
+        self.last_record_media = media
+        return media.start_record()
 
-    def stop_record(self, source_name):
-        if not self.last_record_source:
+    def stop_record(self, media_name):
+        if not self.last_record_media:
             return False
-        return self.last_record_source.stop_record()
+        return self.last_record_media.stop_record()
 
     ##########################################################################
     ############################### THREAD  ##################################

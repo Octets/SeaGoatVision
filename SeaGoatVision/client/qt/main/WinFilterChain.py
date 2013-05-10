@@ -32,12 +32,12 @@ class WinFilterChain(QtCore.QObject):
     selectedFilterChanged = QtCore.Signal(object, object)
     selectedFilterChainChanged = QtCore.Signal(object)
 
-    def __init__(self, controller, qtWidgetFilterList, qtWidgetSource, winExecution):
+    def __init__(self, controller, qtWidgetFilterList, qtWidgetMedia, winExecution):
         super(WinFilterChain, self).__init__()
 
         self.controller = controller
         self.qtWidgetFilterList = qtWidgetFilterList
-        self.qtWidgetSource = qtWidgetSource
+        self.qtWidgetMedia = qtWidgetMedia
         self.winExecution = winExecution
         self.lastRowFilterChainSelected = 0
 
@@ -108,7 +108,7 @@ class WinFilterChain(QtCore.QObject):
         print("Cancel changement.")
 
     def save(self):
-        newName = self.ui.sourceNameLineEdit.text()
+        newName = self.ui.filterchainEdit.text()
         oldName = self.ui.filterchainListWidget.currentItem().text()
         # validate new name
         newName = newName.strip()
@@ -119,7 +119,7 @@ class WinFilterChain(QtCore.QObject):
                                       QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
             return
 
-        self.ui.sourceNameLineEdit.setText(newName)
+        self.ui.filterchainEdit.setText(newName)
 
         lstFilter = self._get_listString_qList(self.ui.filterListWidget)
 
@@ -169,7 +169,7 @@ class WinFilterChain(QtCore.QObject):
         lstFiltreStr = self._get_listString_qList(self.ui.filterListWidget)
         self.ui.filterchainListWidget.insertItem(noRow + 1, filterchain_name)
         self.ui.filterchainListWidget.setCurrentRow(noRow + 1)
-        self.ui.sourceNameLineEdit.setText(filterchain_name)
+        self.ui.filterchainEdit.setText(filterchain_name)
 
         for item in lstFiltreStr:
             self.ui.filterListWidget.addItem(item)
@@ -187,7 +187,7 @@ class WinFilterChain(QtCore.QObject):
         # add new line
         self.ui.filterchainListWidget.addItem(filterchain_name)
         self.ui.filterchainListWidget.setCurrentRow(self.ui.filterchainListWidget.count() - 1)
-        self.ui.sourceNameLineEdit.setText(filterchain_name)
+        self.ui.filterchainEdit.setText(filterchain_name)
 
         self.ui.filterListWidget.clear()
 
@@ -199,7 +199,7 @@ class WinFilterChain(QtCore.QObject):
     def updateFilterChainList(self):
         self.ui.filterchainListWidget.clear()
         self.ui.filterListWidget.clear()
-        self.ui.sourceNameLineEdit.clear()
+        self.ui.filterchainEdit.clear()
         for filterlist in self.controller.get_filterchain_list():
             self.ui.filterchainListWidget.addItem(filterlist.name)
         self.ui.filterchainListWidget.addItem(get_empty_filterchain_name())
@@ -220,7 +220,7 @@ class WinFilterChain(QtCore.QObject):
         filterchain_name = self._get_selected_filterchain_name()
         if filterchain_name:
             # set the filters section
-            self.ui.sourceNameLineEdit.setText(filterchain_name)
+            self.ui.filterchainEdit.setText(filterchain_name)
             self.updateFiltersList(filterchain_name)
             self._list_filterchain_is_selected(True)
 
@@ -259,7 +259,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.frame_editing_2.setVisible(status)
         self.ui.frame_filter_edit.setVisible(status)
         self.ui.frame_edit.setEnabled(not status)
-        self.ui.sourceNameLineEdit.setReadOnly(not status)
+        self.ui.filterchainEdit.setReadOnly(not status)
         self.ui.filterchainListWidget.setEnabled(not status)
         self.qtWidgetFilterList.ui.addFilterButton.setEnabled(status)
 

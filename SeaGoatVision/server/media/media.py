@@ -2,8 +2,8 @@
 
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
-#    This filename is part of SeaGoatVision.
-#    
+#    This file is part of SeaGoatVision.
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -16,19 +16,20 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-This module contains the code for the sources.
-Sources are objects that returns file_names.  
-It can be a a webcam, list of files from the hard drive or anything else.
 
-Sources should implement the iterator protocol:
-    http://docs.python.org/library/stdtypes.html#iterator-types
-"""
+class Media:
+    def __iter__(self):
+        return self
+    
+    def open(self):
+        pass
+    
+    def next(self):
+        return None
+    
+    def close(self):
+        pass
 
-import os
-
-for f in os.listdir(os.path.dirname(__file__)):
-    if f.endswith(".pyc") or f.endswith(".py"):
-        filename, _ = os.path.splitext(f)
-        code = 'from %(module)s import *' % {'module' : filename} 
-        exec code
+    def get_type_media(self):
+        # type is Video or Streaming
+        pass

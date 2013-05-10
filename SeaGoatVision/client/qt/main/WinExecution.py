@@ -28,10 +28,10 @@ from PySide import QtGui
 class WinExecution(QtCore.QObject):
     onPreviewClick = QtCore.Signal(object, object, object)
 
-    def __init__(self, controller, winSource):
+    def __init__(self, controller, winMedia):
         super(WinExecution, self).__init__()
         self.controller = controller
-        self.winSource = winSource
+        self.winMedia = winMedia
 
         self.mode_edit = False
         self.last_index = -1
@@ -49,7 +49,7 @@ class WinExecution(QtCore.QObject):
         self.ui.stopButton.clicked.connect(self.stop)
         self.ui.lstExecution.currentItemChanged.connect(self._on_selected_lstExecution_change)
 
-        self.ui.txtSource.setReadOnly(True)
+        self.ui.txtMedia.setReadOnly(True)
         self.ui.txtFilterchain.setReadOnly(True)
         self._mode_edit(self.mode_edit)
         self._update_execution_list()
@@ -66,18 +66,18 @@ class WinExecution(QtCore.QObject):
         if not self.ui.lstExecution.count():
             self._mode_edit(True)
         execution_name = self.ui.txtExecution.text()
-        source_name = self.ui.txtSource.text()
+        media_name = self.ui.txtMedia.text()
         filterchain_name = self.ui.txtFilterchain.text()
         if self.mode_edit:
-            if not self._execute(execution_name, source_name, filterchain_name):
+            if not self._execute(execution_name, media_name, filterchain_name):
                 return
-        self.onPreviewClick.emit(execution_name, source_name, filterchain_name)
+        self.onPreviewClick.emit(execution_name, media_name, filterchain_name)
 
     def execute(self):
         execution_name = self.ui.txtExecution.text()
-        source_name = self.ui.txtSource.text()
+        media_name = self.ui.txtMedia.text()
         filterchain_name = self.ui.txtFilterchain.text()
-        self._execute(execution_name, source_name, filterchain_name)
+        self._execute(execution_name, media_name, filterchain_name)
 
     def stop(self):
         # remove an execution
@@ -110,7 +110,7 @@ class WinExecution(QtCore.QObject):
             self.ui.previewButton.setEnabled(True)
         else:
             self.ui.txtFilterchain.setText("")
-            self.ui.txtSource.setText("")
+            self.ui.txtMedia.setText("")
             self.ui.txtExecution.setText("")
             return
         self.ui.txtExecution.setText(execution)
@@ -118,7 +118,7 @@ class WinExecution(QtCore.QObject):
         if not exec_info:
             print("WinExecution Internal sync error with execution info :(")
         self.ui.txtFilterchain.setText(exec_info.filterchain)
-        self.ui.txtSource.setText(exec_info.source)
+        self.ui.txtMedia.setText(exec_info.media)
 
     def _update_execution_list(self):
         self.ui.lstExecution.clear()
@@ -148,14 +148,14 @@ class WinExecution(QtCore.QObject):
                 return False
         return True
 
-    def _execute(self, execution_name, source_name, filterchain_name):
+    def _execute(self, execution_name, media_name, filterchain_name):
         if not self._is_unique_execution_name(execution_name):
             QtGui.QMessageBox.warning(self.ui.centralwidget,
                                       "Wrong name",
                                       "The execution name \"%s\" already exist." % execution_name,
                                       QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
             return False
-        self.controller.start_filterchain_execution(execution_name, source_name, filterchain_name, self.file_name)
+        self.controller.start_filterchain_execution(execution_name, media_name, filterchain_name, self.file_name)
         self.ui.lstExecution.addItem(execution_name)
         self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
         self._mode_edit(False)
@@ -173,8 +173,8 @@ class WinExecution(QtCore.QObject):
         if status:
             self.ui.txtFilterchain.setText(self.filterchain_txt)
             self.ui.txtExecution.setText("Execution-01")
-            self.ui.txtSource.setText(self.winSource.get_selected_media())
-            self.file_name = self.winSource.get_file_path()
+            self.ui.txtMedia.setText(self.winMedia.get_selected_media())
+            self.file_name = self.winMedia.get_file_path()
 
     def _enable_execution_button(self, status):
         # TODO fix temporary a bug, disable execute if already contain execution
@@ -203,5 +203,5 @@ class WinExecution(QtCore.QObject):
     def _clear_form(self, status):
         if status:
             self.ui.txtExecution.clear()
-            self.ui.txtSource.clear()
+            self.ui.txtMedia.clear()
             self.ui.txtFilterchain.clear()

@@ -43,15 +43,15 @@ import threading
 import StringIO
 
 class WinViewer(QtCore.QObject):
-    """Show the source after being processed by the filter chain.
+    """Show the media after being processed by the filter chain.
     The window receives a filter in its constructor.
-    This is the last executed filter on the source.
+    This is the last executed filter on the media.
     """
 
     newImage = QtCore.Signal(QtGui.QImage)
     closePreview = QtCore.Signal(object)
 
-    def __init__(self, controller, execution_name, source_name, filterchain_name, host):
+    def __init__(self, controller, execution_name, media_name, filterchain_name, host):
         super(WinViewer, self).__init__()
         self.host = host
         self.port = 5030

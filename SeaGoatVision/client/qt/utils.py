@@ -22,24 +22,10 @@ from PySide import QtCore
 import Image
 import ImageQt
 
-import sources
-
 import inspect
 import os
 
 from filters.public.bgr2rgb import BGR2RGB
-
-def map_source_to_ui(source):
-    return map_object_to_ui(source, sources)
-
-def map_object_to_ui(object, module):
-    """Returns the appropriate window class to configure the object"""
-
-    for win in vars(module).values():
-        if inspect.isclass(win):
-            if win.__name__ == 'Win' + object.__class__.__name__:
-                return win
-    return None
 
 def tree_selected_index(treeview):
     (model, iter) = treeview.get_selection().get_selected()

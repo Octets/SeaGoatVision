@@ -18,6 +18,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """Contains not classable function"""
+import os
+import sys
 
 def isnumeric(string):
     # TODO in python3, use str.isnumeric()
@@ -33,3 +35,13 @@ def module_name(name):
     for comp in components[1:]:
         mod = getattr(mod, comp)
     return mod
+
+def add_filter_module(module, file):
+    # param :
+    # module like sys.modules[__name__]
+    # file is __file__ from __init__.py
+    for f in os.listdir(os.path.dirname(__file__)):
+        if f.endswith(".py") and "__init__" not in f:
+            filename, _ = os.path.splitext(f)
+            mod = __import__('filters.public', fromlist=["facedetect"])
+            pass

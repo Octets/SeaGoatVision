@@ -59,7 +59,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="btnSource">
+      <widget class="QToolButton" name="btnMedia">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
@@ -67,7 +67,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>source</string>
+        <string>media</string>
        </property>
       </widget>
      </item>

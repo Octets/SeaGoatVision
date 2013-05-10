@@ -34,9 +34,9 @@ class MainLoop:
         self.observers = []
         self.thread = None
 
-    def get_source(self):
+    def get_media(self):
         # TODO this is not suppose to be use
-        return self.thread.get_source()
+        return self.thread.get_media()
 
     def add_observer(self, observer):
         self.observers.append(observer)
@@ -48,9 +48,9 @@ class MainLoop:
         for observer in self.observers:
             observer(image)
 
-    def start(self, source=None):
+    def start(self, media=None):
         self.stop()
-        self.thread = ThreadMainLoop(source, self.sleep_time, self.notify_observers)
+        self.thread = ThreadMainLoop(media, self.sleep_time, self.notify_observers)
         self.thread.start()
 
     def stop(self):
@@ -75,25 +75,25 @@ class ThreadMainLoop(threading.Thread):
     """Main thread to process the images.
 
     Args:
-        source: the source to receive images from.
+        media: the media to receive images from.
         filterchain: the configured filterchain
         sleep_time: time to wait in seconds before getting the next image
     """
-    def __init__(self, source, sleep_time, observer):
+    def __init__(self, media, sleep_time, observer):
         threading.Thread.__init__(self)
         #self.daemon = True
-        self.source = source
+        self.media = media
         self.running = False
         self.observer = observer
         self.sleep_time = sleep_time
 
-    def get_source(self):
+    def get_media(self):
         # TODO this is not suppose to be use
-        return self.source
+        return self.media
 
     def run(self):
         self.running = True
-        for image in self.source:            
+        for image in self.media:            
             if image is None:
                 time.sleep(self.sleep_time)
                 continue
@@ -112,6 +112,6 @@ class ThreadMainLoop(threading.Thread):
         self.observer(None)
 
     def stop(self):
-        # TODO : check if other filterchain don't use this source
-        self.source.close()
+        # TODO : check if other filterchain don't use this media
+        self.media.close()
         self.running = False

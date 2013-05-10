@@ -17,10 +17,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from SeaGoatVision.server.media.media_video import Media_video
 import cv2
 import cv2.cv as cv
 
-class Movie:
+class Movie(Media_video):
     
     def __init__(self):
         self.video = None

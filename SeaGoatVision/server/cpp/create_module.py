@@ -91,6 +91,8 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_ar
         mod.customize.add_extra_link_arg(extra_link)
     for extra_compile in extra_compile_arg:
         mod.customize.add_extra_compile_arg(extra_compile)
+    # add debug symbol
+    mod.customize.add_extra_compile_arg("-g")
 
     # help
     func = ext_tools.ext_function('help_' + modname, help_code(), [])

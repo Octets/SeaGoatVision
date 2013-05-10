@@ -33,6 +33,7 @@ from SeaGoatVision.commun.param import Param
 from SeaGoatVision.commun.keys import *
 from SeaGoatVision.server.core import filterchain
 from SeaGoatVision.server.core import utils
+from SeaGoatVision.server import media
 
 class Configuration(object):
     def __init__(self):
@@ -43,6 +44,8 @@ class Configuration(object):
         self.dct_filter = {}
         self.load_filters()
         self.dct_filterchain = {}
+        self.dct_media = {}
+        self.load_media()
 
     #### Filterchain
     def get_filterchain_list(self):
@@ -196,3 +199,19 @@ class Configuration(object):
 
     def get_filter_from_filterName(self, filter_name):
         return self.dct_filter.get(filter_name, None)
+
+    #### Media
+    def load_media(self):
+        self.dct_media = {name: media_class()
+            for name, media_class in vars(media).items()
+            if inspect.isclass(media_class)
+            if issubclass(media_class, media.media_streaming.Media_streaming) or 
+                issubclass(media_class, media.media_video.Media_video)
+            if media_class is not media.media_video.Media_video and 
+                media_class is not media.media_streaming.Media_streaming}
+
+    def get_media_name_list(self):
+        return self.dct_media.keys() 
+
+    def get_media(self, name):
+        return self.dct_media.get(name, None)

@@ -77,16 +77,16 @@ class ControllerProtobuf():
     ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
-    def start_filterchain_execution(self, execution_name, source_name, filterchain_name):
+    def start_filterchain_execution(self, execution_name, media_name, filterchain_name):
         """
             Start a filterchain on the server.
             Param : str - The unique execution name
-                    str - The unique source name
+                    str - The unique media name
                     str - The unique filterchain name
         """
         request = server_pb2.StartFilterchainExecutionRequest()
         request.execution_name = execution_name
-        request.source_name = source_name
+        request.media_name = media_name
         request.filterchain_name = filterchain_name
 
         # Make an synchronous call
@@ -195,22 +195,22 @@ class ControllerProtobuf():
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
-    def get_source_list(self):
+    def get_media_list(self):
         """
             Get the list for image provider.
         """
-        request = server_pb2.GetSourceListRequest()
+        request = server_pb2.GetMediaListRequest()
         # Make an synchronous call
         returnResponse = {}
         try:
-            response = self.service.get_source_list(request, timeout=10000)
+            response = self.service.get_media_list(request, timeout=10000)
             if response:
                 i = 0
-                for key in response.source:
+                for key in response.media:
                     returnResponse[key] = response.type[i]
                     i += 1
             else:
-                print("No answer on get_source_list")
+                print("No answer on get_media_list")
         except Exception as ex:
             log.exception(ex)
 

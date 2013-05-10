@@ -20,10 +20,10 @@
 def get_filter_original_name():
     return "-- original --"
 
-def get_source_type_streaming_name():
+def get_media_type_streaming_name():
     return "Streaming"
 
-def get_source_type_video_name():
+def get_media_type_video_name():
     return "Video"
 
 def get_empty_filterchain_name():

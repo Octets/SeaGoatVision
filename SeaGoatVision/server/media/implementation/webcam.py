@@ -2,8 +2,8 @@
 
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
-#    This filename is part of SeaGoatVision.
-#    
+#    This file is part of SeaGoatVision.
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -18,27 +18,32 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
+import cv
+from time import gmtime, strftime
 
-class SingleImage:
-    
+from SeaGoatVision.server.media.media_streaming import Media_streaming
+
+class Webcam(Media_streaming):
+    """Return images from the webcam."""
+
     def __init__(self):
-        self.file = ''
-        self.image = None
-        
-    def __iter__(self):
-        return self
-    
-    def set_image(self, filename):
-        self.file = filename
-        self.image = cv2.imread(self.file)
+        self.writer = None
+        self.run = True
+        self.camera_number = 0
+        self.video = None
+
+    def open(self):
+        self.video = cv2.VideoCapture(self.camera_number)
+        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 320)
+        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 240)
         
     def next(self):
-        if self.image is None:
-            return None
-        else:
-            return self.image.copy()
-    
+        run, image = self.video.read()
+        if run == False:
+            raise StopIteration
+        if self.writer:
+            self.writer.write(image)
+        return image
+
     def close(self):
-        pass
-    
-    
+        self.video.release()

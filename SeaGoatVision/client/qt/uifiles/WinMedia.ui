@@ -28,7 +28,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QComboBox" name="cbSource"/>
+     <widget class="QComboBox" name="cbMedia"/>
     </item>
     <item>
      <layout class="QGridLayout" name="gridLayout_2">
@@ -282,7 +282,7 @@
          <x>0</x>
          <y>0</y>
          <width>401</width>
-         <height>31</height>
+         <height>32</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">

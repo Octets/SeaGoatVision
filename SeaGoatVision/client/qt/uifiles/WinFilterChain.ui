@@ -293,7 +293,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="sourceNameLineEdit"/>
+           <widget class="QLineEdit" name="filterchainEdit"/>
           </item>
          </layout>
         </widget>

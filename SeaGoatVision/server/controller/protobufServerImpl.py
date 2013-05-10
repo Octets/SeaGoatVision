@@ -63,7 +63,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             # dont start a filterchain execution if it already exist
-            response.status = int(not self.manager.start_filterchain_execution(request.execution_name, request.source_name, request.filterchain_name))
+            response.status = int(not self.manager.start_filterchain_execution(request.execution_name, request.media_name, request.filterchain_name))
             if response.status:
                 response.message = "This filterchain_execution already exist."
         except Exception, e:
@@ -241,7 +241,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         try:
             o_exec = self.manager.get_execution_info(request.execution)
             response.filterchain = o_exec.filterchain
-            response.source = o_exec.source
+            response.media = o_exec.media
         except Exception, e:
             print "Exception: ", e
 
@@ -251,12 +251,12 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ##########################################################################
     ################################ SOURCE ##################################
     ##########################################################################
-    def get_source_list(self, controller, request, done):
-        print("get_source_list request %s" % str(request).replace("\n", " "))
+    def get_media_list(self, controller, request, done):
+        print("get_media_list request %s" % str(request).replace("\n", " "))
 
-        response = server_pb2.GetSourceListResponse()
-        for key, item in self.manager.get_source_list().items():
-            response.source.append(key)
+        response = server_pb2.GetMediaListResponse()
+        for key, item in self.manager.get_media_list().items():
+            response.media.append(key)
             response.type.append(item)
 
         done.run(response)
