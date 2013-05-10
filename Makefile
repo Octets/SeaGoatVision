@@ -21,6 +21,8 @@
 all:
 	./filters/build_cpp_filter.py
 
-clean:
+clean_python:
 	find . -type f -name '*.pyc' -exec rm {} \;
+
+clean: clean_python
 	rm -Rf ./build
