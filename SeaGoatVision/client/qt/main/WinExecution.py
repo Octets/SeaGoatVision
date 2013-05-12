@@ -87,7 +87,6 @@ class WinExecution(QtCore.QObject):
             self.controller.stop_filterchain_execution(execution_name)
             self.ui.lstExecution.takeItem(noLine)
             self._enable_stop_button(True)
-            self._enable_execution_button(True)
         else:
             print("Bug internal system - winExecution - fix me please")
 
@@ -125,9 +124,6 @@ class WinExecution(QtCore.QObject):
         for execution_name in self.controller.get_execution_list():
             self.ui.lstExecution.addItem(execution_name)
         contain_execution = bool(self.ui.lstExecution.count())
-        self._enable_stop_button(contain_execution)
-        # TODO fix temporary a bug, enable execute
-        self._enable_execution_button(not contain_execution)
 
     def _get_selected_list(self, uiList):
         # TODO it's duplicated fct
@@ -159,8 +155,6 @@ class WinExecution(QtCore.QObject):
         self.ui.lstExecution.addItem(execution_name)
         self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
         self._mode_edit(False)
-        # TODO fix temporary a bug, disable execute
-        self._enable_execution_button(False)
         return True
 
     def _mode_edit(self, status):
@@ -175,18 +169,6 @@ class WinExecution(QtCore.QObject):
             self.ui.txtExecution.setText("Execution-01")
             self.ui.txtMedia.setText(self.winMedia.get_selected_media())
             self.file_name = self.winMedia.get_file_path()
-
-    def _enable_execution_button(self, status):
-        # TODO fix temporary a bug, disable execute if already contain execution
-        already_contain_exe = bool(self.ui.lstExecution.count())
-        # with preview button
-        active_button = bool(status and self.filterchain_txt)
-        self.ui.newButton.setEnabled(active_button and not self.mode_edit)
-        self.ui.executeButton.setEnabled(active_button and not already_contain_exe)
-        # Exception, if execution list is empty, we can preview
-        if not self.ui.lstExecution.count():
-            active_button = True
-        self.ui.previewButton.setEnabled(active_button and not already_contain_exe)
 
     def _enable_stop_button(self, status):
         if status and self.ui.lstExecution.count():

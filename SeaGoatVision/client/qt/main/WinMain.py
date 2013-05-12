@@ -25,6 +25,7 @@ from WinMedia import WinMedia
 from WinViewer import WinViewer
 from WinFilterChain import WinFilterChain
 from WinExecution import WinExecution
+from WinMainViewer import WinMainViewer
 from WinFilter import WinFilter
 from PySide import QtGui
 from PySide import QtCore
@@ -38,6 +39,7 @@ class WinMain(QtGui.QMainWindow):
         self.controller = controller
         self.dct_preview = {}
         self.ui = get_ui(self)
+        self.uid_iter = 0
 
         # create dockWidgets
         self.winFilter = WinFilter(self.controller)
@@ -45,6 +47,7 @@ class WinMain(QtGui.QMainWindow):
         self.winMedia = WinMedia(self.controller, islocal)
         self.winExecution = WinExecution(self.controller, self.winMedia)
         self.winFilterChain = WinFilterChain(self.controller, self.winFilterList, self.winMedia, self.winExecution)
+        self.WinMainViewer = WinMainViewer()
 
         # Add default widget
         self.show_win_filter()
@@ -64,6 +67,8 @@ class WinMain(QtGui.QMainWindow):
         self.winExecution.onPreviewClick.connect(self.addPreview)
 
         self._addToolBar()
+
+        self.setCentralWidget(self.WinMainViewer.ui)
 
     def _addToolBar(self):
         self.toolbar = QtGui.QToolBar()
@@ -102,17 +107,19 @@ class WinMain(QtGui.QMainWindow):
 
     def addPreview(self, execution_name, media_name, filterchain_name):
         # TODO create signal to share the filter list to WinViewer
-        winviewer = WinViewer(self.controller, execution_name, media_name, filterchain_name, self.host)
-        self.dct_preview[execution_name] = winviewer
-        self.setCentralWidget(winviewer.ui)
+        winviewer = WinViewer(self.controller, execution_name, media_name, filterchain_name, self.host, self.uid_iter)
+        self.dct_preview[self.uid_iter] = winviewer
+        self.uid_iter += 1
+        self.WinMainViewer.grid.addWidget(winviewer.ui)
         winviewer.closePreview.connect(self.removePreview)
 
-    def removePreview(self, execution_name):
-        viewer = self.dct_preview.get(execution_name, None)
+    def removePreview(self, uid):
+        viewer = self.dct_preview.get(uid, None)
         if viewer:
             viewer.closeEvent()
+            #self.WinMainViewer.grid.removeWidget(viewer.ui)
             self.removeDockWidget(viewer.ui)
-            del self.dct_preview[execution_name]
+            del self.dct_preview[uid]
         else:
             print("Don't find DockWidget %s" % execution_name)
 

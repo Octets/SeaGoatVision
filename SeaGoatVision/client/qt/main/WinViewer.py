@@ -51,13 +51,14 @@ class WinViewer(QtCore.QObject):
     newImage = QtCore.Signal(QtGui.QImage)
     closePreview = QtCore.Signal(object)
 
-    def __init__(self, controller, execution_name, media_name, filterchain_name, host):
+    def __init__(self, controller, execution_name, media_name, filterchain_name, host, uid):
         super(WinViewer, self).__init__()
         self.host = host
         self.port = 5030
 
         self.controller = controller
         self.execution_name = execution_name
+        self.uid = uid
         self.filterchain_name = filterchain_name
 
         self.actualFilter = None
@@ -110,7 +111,7 @@ class WinViewer(QtCore.QObject):
         return Light_observer(light_widget)
 
     def __close(self):
-        self.closePreview.emit(self.execution_name)
+        self.closePreview.emit(self.uid)
 
     def __add_output_observer(self):
         self.thread_output = Listen_output(self.updateLog, self.host, self.port)
