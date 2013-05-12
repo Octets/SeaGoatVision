@@ -23,6 +23,9 @@
 					<Add library="x86/4.5/libPvAPI.a" />
 					<Add library="x86/4.5/libImagelib.a" />
 				</Linker>
+				<ExtraCommands>
+					<Add after="sudo cp camera.so /usr/lib/python2.7/" />
+				</ExtraCommands>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/libCamera" prefix_auto="1" extension_auto="1" />

@@ -11,8 +11,6 @@
  *      I use boost::python framework to make this interface
  **********************************************************************************************/
 
-
-
 #include "camera.h"
 #include <iostream>
 #include <boost/python.hpp>
@@ -104,9 +102,8 @@ BOOST_PYTHON_MODULE(camera)
 
     enum_<whitebal::WhitebalAutoMode>("WhitebalAutoMode")
         .value(whiteAutoMode[whitebal::WhiteAutoRate],whitebal::WhiteAutoRate)
-        .value(whitebalMode[whitebal::WhitebalAutoAdjustTol],whitebal::WhitebalAutoAdjustTol)
+        .value(whiteAutoMode[whitebal::WhitebalAutoAdjustTol],whitebal::WhitebalAutoAdjustTol)
     ;
-
 
     /*************************************************************************************
         This is the definition of Camera class to python camera module.
