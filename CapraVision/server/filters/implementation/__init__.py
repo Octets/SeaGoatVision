@@ -42,11 +42,17 @@ from CapraVision.server.filters.parameter import  Parameter
 # PYTHON FILTERS IMPORT
 ##
 for root, subFolders, files in os.walk(os.path.dirname(__file__)):
+    folders = root.split("/")
+    module = ""
+    if folders[-1] != "implementation":
+        index = folders.index("implementation") + 1
+        module = '.'.join(folders[index:]) + "."
     for f in files:
         if not f.endswith(".py"):
             continue
         filename, _ = os.path.splitext(f)
-        code = 'from %(module)s import *' % {'module' : filename} 
+        code = 'from %(module)s import *' % {'module' : module + filename} 
+        print code
         exec code
 
 

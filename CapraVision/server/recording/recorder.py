@@ -87,7 +87,7 @@ class PNGRecorder:
     def __init__(self, fps, size, thread):
         self.time = gmtime()
         self.thread = thread
-        os.mkdir(self.get_record_path())
+        os.makedirs(self.get_record_path())
             
         self.number = 0
         thread.add_observer(self.thread_observer)
