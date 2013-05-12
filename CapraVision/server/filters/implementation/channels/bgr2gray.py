@@ -20,10 +20,16 @@
 import cv2
 import cv2.cv as cv
 
+from CapraVision.server.filters.parameter import Parameter
+
 class BGR2Grayscale:
     """Convert to grayscale then convert back to BGR"""
     
+    def __init__(self):
+        self.single_channel = Parameter("Single channel", 0, 1, 1)
+        
     def execute(self, image):
         image = cv2.cvtColor(image, cv.CV_BGR2GRAY)
-        image = cv2.cvtColor(image, cv.CV_GRAY2BGR)
+        if self.single_channel.get_current_value() == 0:
+            image = cv2.cvtColor(image, cv.CV_GRAY2BGR)
         return image
