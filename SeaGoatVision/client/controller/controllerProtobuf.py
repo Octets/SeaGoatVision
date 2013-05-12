@@ -77,7 +77,7 @@ class ControllerProtobuf():
     ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
-    def start_filterchain_execution(self, execution_name, media_name, filterchain_name):
+    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name):
         """
             Start a filterchain on the server.
             Param : str - The unique execution name
