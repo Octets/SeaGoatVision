@@ -96,10 +96,30 @@ class VCmd(cmd.Cmd):
         param = line.split()
         self.controller.start_filterchain_execution(param[0], param[1], param[2])
 
-    def do_stop_filterchain_exeuction(self, line):
+    def do_stop_filterchain_execution(self, line):
         # execution_name
         param = line.split()
         self.controller.stop_filterchain_execution(param[0])
+
+    def do_start_record(self, line):
+        # media_name
+        param = line.split()
+        self.controller.start_record(param[0])
+
+    def do_stop_record(self, line):
+        # media_name
+        param = line.split()
+        self.controller.stop_record(param[0])
+
+    def do_get_media_list(self, line):
+        lst_media = self.controller.get_media_list()
+        if not self.quiet:
+            if lst_media is not None:
+                print("Media list : %s" % lst_media)
+            else:
+                print("No media")
+        else:
+            print(lst_media)
 
     def do_EOF(self, line):
         # Redo last command

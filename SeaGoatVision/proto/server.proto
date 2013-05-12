@@ -105,6 +105,17 @@ message UpdateParamRequest
   required string filter_name = 2;
   required Param param = 3;
 }
+
+message StartRecordRequest
+{
+  required string media = 1;
+}
+
+message StopRecordRequest
+{
+  required string media = 1;
+}
+
 //############################################################
 //######################## GET SECTION #######################
 //############################################################
@@ -219,4 +230,6 @@ service CommandService
   rpc start_filterchain_execution(StartFilterchainExecutionRequest) returns(StatusResponse);
   rpc stop_filterchain_execution(StopFilterchainExecutionRequest) returns(StatusResponse);
   rpc update_param(UpdateParamRequest) returns(StatusResponse);
+  rpc start_record(StartRecordRequest) returns(StatusResponse);
+  rpc stop_record(StopRecordRequest) returns(StatusResponse);
 }

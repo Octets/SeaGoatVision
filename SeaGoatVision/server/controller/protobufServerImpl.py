@@ -249,7 +249,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     ##########################################################################
-    ################################ SOURCE ##################################
+    ################################ MEDIA ###################################
     ##########################################################################
     def get_media_list(self, controller, request, done):
         print("get_media_list request %s" % str(request).replace("\n", " "))
@@ -258,6 +258,22 @@ class ProtobufServerImpl(server_pb2.CommandService):
         for key, item in self.manager.get_media_list().items():
             response.media.append(key)
             response.type.append(item)
+
+        done.run(response)
+
+    def start_record(self, controller, request, done):
+        print("start_record request %s" % str(request).replace("\n", " "))
+
+        response = server_pb2.StatusResponse()
+        response.status = int(not self.manager.start_record(request.media))
+
+        done.run(response)
+
+    def stop_record(self, controller, request, done):
+        print("stop_record request %s" % str(request).replace("\n", " "))
+
+        response = server_pb2.StatusResponse()
+        response.status = int(not self.manager.stop_record(request.media))
 
         done.run(response)
 

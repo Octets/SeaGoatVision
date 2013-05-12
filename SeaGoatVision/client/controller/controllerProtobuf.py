@@ -77,7 +77,7 @@ class ControllerProtobuf():
     ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
-    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name):
+    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None):
         """
             Start a filterchain on the server.
             Param : str - The unique execution name
@@ -193,7 +193,7 @@ class ControllerProtobuf():
         return None
 
     ##########################################################################
-    ################################ SOURCE ##################################
+    ################################ MEDIA ##################################
     ##########################################################################
     def get_media_list(self):
         """
@@ -216,9 +216,45 @@ class ControllerProtobuf():
 
         return returnResponse
 
-    ##########################################################################
-    ############################### THREAD  ##################################
-    ##########################################################################
+    def start_record(self, media_name):
+        request = server_pb2.StartRecordRequest()
+        request.media = media_name
+        # Make an synchronous call
+        try:
+            response = self.service.start_record(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with start_record : %s" % response.message)
+                    else:
+                        print("Error with start_record.")
+            else:
+                returnValue = False
+        except Exception as ex:
+            log.exception(ex)
+
+        return returnValue
+
+    def stop_record(self, media_name):
+        request = server_pb2.StopRecordRequest()
+        request.media = media_name
+        # Make an synchronous call
+        try:
+            response = self.service.stop_record(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with stop_record : %s" % response.message)
+                    else:
+                        print("Error with stop_record.")
+            else:
+                returnValue = False
+        except Exception as ex:
+            log.exception(ex)
+
+        return returnValue
 
     ##########################################################################
     ##########################  CONFIGURATION  ###############################

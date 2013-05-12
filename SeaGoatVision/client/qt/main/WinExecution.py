@@ -49,14 +49,15 @@ class WinExecution(QtCore.QObject):
         self.ui.stopButton.clicked.connect(self.stop)
         self.ui.lstExecution.currentItemChanged.connect(self._on_selected_lstExecution_change)
 
-        self.ui.txtMedia.setReadOnly(True)
-        self.ui.txtFilterchain.setReadOnly(True)
+        #TODO need to be actived
+        #self.ui.txtMedia.setReadOnly(True)
+        #self.ui.txtFilterchain.setReadOnly(True)
+
         self._mode_edit(self.mode_edit)
         self._update_execution_list()
         self.file_name = None
 
     def set_filterchain(self, filterchain):
-        self._enable_execution_button(True)
         self.filterchain_txt = filterchain
         if self.mode_edit:
             self.ui.txtFilterchain.setText(filterchain)
