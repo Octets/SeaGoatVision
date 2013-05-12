@@ -43,7 +43,10 @@ def run(local=False, host="localhost", port=8090):
     app = QApplication(sys.argv)
     win = main.WinMain(c, host=host, islocal=local)
     win.show()
-    rint = app.exec_()
+    try:
+        rint = app.exec_()
+    except Exeption as e:
+        print("Exit error : %s" % e)
     # close the server
     win.quit()
     c.close()
