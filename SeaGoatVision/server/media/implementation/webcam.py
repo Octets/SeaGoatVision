@@ -18,15 +18,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-import cv
-from time import gmtime, strftime
-
 from SeaGoatVision.server.media.media_streaming import Media_streaming
 
 class Webcam(Media_streaming):
     """Return images from the webcam."""
 
     def __init__(self):
+        Media_streaming.__init__(self)
         self.writer = None
         self.run = True
         self.camera_number = 0
@@ -36,7 +34,9 @@ class Webcam(Media_streaming):
         self.video = cv2.VideoCapture(self.camera_number)
         self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 320)
         self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 240)
-        
+        # call open when video is ready
+        Media_streaming.open(self)
+
     def next(self):
         run, image = self.video.read()
         if run == False:
@@ -46,4 +46,5 @@ class Webcam(Media_streaming):
         return image
 
     def close(self):
+        Media_streaming.close(self)
         self.video.release()

@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
 #    This filename is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -21,18 +21,18 @@ from SeaGoatVision.server.media.media_video import Media_video
 import cv2
 
 class SingleImage(Media_video):
-    
+
     def __init__(self):
+        Media_video.__init__(self)
         self.file = ''
         self.image = None
-    
+
     def set_image(self, filename):
         self.file = filename
         self.image = cv2.imread(self.file)
-        
+
     def next(self):
         if self.image is None:
             return None
         else:
             return self.image.copy()
-    

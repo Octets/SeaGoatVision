@@ -19,6 +19,9 @@
 
 from media import Media
 from SeaGoatVision.commun.keys import get_media_type_streaming_name
+import time
+import cv2
+import cv
 
 class Media_streaming(Media):
     def is_media_streaming(self):
@@ -31,10 +34,11 @@ class Media_streaming(Media):
         return get_media_type_streaming_name()
 
     def start_record(self):
+        # TODO manage multiple record
         # manage only one record at time
         if self.writer:
             self.stop_record()
-        name = "%s.avi" % strftime("%Y_%m_%d_%H_%M_%S", gmtime())
+        name = "%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
         fps = 8
         frame_size = (320, 240)
         # fourcc = cv.CV_FOURCC('D','I','V','X')

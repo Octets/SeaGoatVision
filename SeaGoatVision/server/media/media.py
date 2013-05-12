@@ -17,19 +17,67 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from thread_media import Thread_media
+
 class Media:
-    def __iter__(self):
-        return self
-    
-    def open(self):
+    def __init__(self):
+        self.sleep_time = 1 / 30.0
+        self.lst_observer = []
+        self.thread = None
+        self.media_name = None
+
+    def is_media_streaming(self):
+        # complete it into media_streaming and media_video
         pass
-    
-    def next(self):
-        return None
-    
-    def close(self):
+
+    def is_media_video(self):
+        # complete it into media_streaming and media_video
         pass
 
     def get_type_media(self):
+        # complete it into media_streaming and media_video
         # type is Video or Streaming
         pass
+
+    def __iter__(self):
+        return self
+
+    def open(self):
+        # IMPORTANT, if inherit, call this at the end
+        # the thread need to be start when device is ready
+        if self.thread:
+            return
+        self.thread = Thread_media(self, self.sleep_time)
+        self.thread.start()
+
+    def next(self):
+        # edit me in child
+        pass
+
+    def close(self):
+        if not self.thread:
+            return
+        self.thread.stop()
+        self.thread = None
+
+    def change_sleep_time(self, sleep_time):
+        self.sleep_time = sleep_time
+        if self.thread is not None:
+            self.thread.sleep_time = sleep_time
+
+    def add_observer(self, observer):
+        start_media = False
+        if not self.lst_observer:
+            start_media = True
+        self.lst_observer.append(observer)
+        if start_media:
+            self.open()
+
+    def remove_observer(self, observer):
+        self.lst_observer.remove(observer)
+        if not self.lst_observer:
+            self.close()
+
+    def notify_observer(self, image):
+        for observer in self.lst_observer:
+            observer(image)

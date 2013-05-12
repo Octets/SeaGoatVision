@@ -22,8 +22,9 @@ from SeaGoatVision.commun.keys import get_media_type_video_name
 
 class Media_video(Media):
     def __init__(self):
+        Media.__init__(self)
         self.file_name = None
-    
+
     def is_media_streaming(self):
         return False
 
@@ -35,7 +36,7 @@ class Media_video(Media):
 
     def set_file(self, file_name):
         # a file can be a directory
-        self.file_name = file_name        
+        self.file_name = file_name
 
     def find_all_images(self, folder):
         """Receive a directory as parameter.

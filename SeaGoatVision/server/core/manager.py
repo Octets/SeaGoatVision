@@ -24,29 +24,30 @@ Authors: Benoit Paquet
 Date : Novembre 2012
 """
 
-from SeaGoatVision.server.core.mainloop import MainLoop
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
 from SeaGoatVision.commun.keys import *
 
+KEY_MEDIA = "media"
+KEY_FILTERCHAIN = "filterchain"
+
 class Manager:
     def __init__(self):
         """
-            Structure of dct_thread
-            {"execution_name" : {"thread" : ref, "filterchain" : ref, "media_name" : str}}
+            Structure of dct_execution
+            {"execution_name" : {KEY_FILTERCHAIN : ref, KEY_MEDIA : ref}}
         """
-        self.dct_thread = {}
+        self.dct_exec = {}
         self.config = Configuration()
 
         # tcp server for output observer
         self.server_observer = Server()
         self.server_observer.start("", 5030)
-        self.last_record_media = None
 
     def close(self):
         print("Close manager")
-        for thread in self.dct_thread.values():
-            thread["thread"].quit()
+        for execution in self.dct_exec.values():
+            execution[KEY_MEDIA].close()
         self.server_observer.stop()
 
     ##########################################################################
@@ -63,10 +64,10 @@ class Manager:
     ######################## EXECUTION FILTER ################################
     ##########################################################################
     def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None):
-        thread = self.dct_thread.get(execution_name, None)
+        execution = self.dct_exec.get(execution_name, None)
 
-        if thread:
-            # change this, return the actual thread
+        if execution:
+            # change this, return the actual execution
             print("The execution %s is already created." % execution_name)
             return None
 
@@ -79,42 +80,38 @@ class Manager:
             return None
 
         if media.is_media_video() and file_name:
-            media.open_video_file(file_name)
-        if media.is_media_streaming():
-            media.open()
+            media.set_file(file_name)
 
-        thread = MainLoop()
-        thread.add_observer(filterchain.execute)
-        thread.start(media)
+        media.add_observer(filterchain.execute)
 
-        self.dct_thread[execution_name] = {"thread": thread, "filterchain": filterchain, "media_name" : media_name}
+        self.dct_exec[execution_name] = {KEY_FILTERCHAIN: filterchain, KEY_MEDIA : media}
 
         return True
 
     def stop_filterchain_execution(self, execution_name):
-        thread = self.dct_thread.get(execution_name, None)
+        execution = self.dct_exec.get(execution_name, None)
 
-        if not thread:
-            # change this, return the actual thread
+        if not execution:
+            # change this, return the actual execution
             print("The execution %s is already stopped." % execution_name)
-            return None
+            return False
 
-        thread["thread"].quit()
-        del self.dct_thread[execution_name]
+        execution[KEY_MEDIA].remove_observer(execution[KEY_FILTERCHAIN].execute)
+        del self.dct_exec[execution_name]
 
         return True
 
     def get_execution_list(self):
-        return self.dct_thread.keys()
+        return self.dct_exec.keys()
 
     def get_execution_info(self, execution_name):
-        exec_info = self.dct_thread.get(execution_name, None)
+        exec_info = self.dct_exec.get(execution_name, None)
         if not exec_info:
             return None
         class Exec_info: pass
         o_exec_info = Exec_info()
-        setattr(o_exec_info, "media", exec_info["media_name"])
-        setattr(o_exec_info, "filterchain", exec_info["filterchain"].get_name())
+        setattr(o_exec_info, "media", exec_info[KEY_MEDIA].__class__.__name__)
+        setattr(o_exec_info, "filterchain", exec_info[KEY_FILTERCHAIN].get_name())
         return o_exec_info
 
     ##########################################################################
@@ -125,25 +122,20 @@ class Manager:
                 for name in self.config.get_media_name_list()}
 
     def start_record(self, media_name):
-        # Only record on webcam device
-        # TODO take the real instance of media and not this fake method
-        if not self.dct_thread:
+        media = self.config.get_media(media_name)
+        if not media:
             return False
-        dct = self.dct_thread.values()[0].get("thread", None)
-        if not dct:
+        if media.is_media_video():
             return False
-        media = dct.get_media()
-        self.last_record_media = media
         return media.start_record()
 
     def stop_record(self, media_name):
-        if not self.last_record_media:
+        media = self.config.get_media(media_name)
+        if not media:
             return False
-        return self.last_record_media.stop_record()
-
-    ##########################################################################
-    ############################### THREAD  ##################################
-    ##########################################################################
+        if media.is_media_video():
+            return False
+        return media.stop_record()
 
     ##########################################################################
     #############################  OBSERVER  #################################
@@ -157,9 +149,9 @@ class Manager:
                 - string, filter_name to select the filter
         """
         ret_value = False
-        dct_thread = self.dct_thread.get(execution_name, {})
-        if dct_thread:
-            filterchain = dct_thread.get("filterchain", None)
+        dct_execution = self.dct_exec.get(execution_name, {})
+        if dct_execution:
+            filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
             if filterchain:
                 ret_value = filterchain.add_image_observer(observer, filter_name)
         return ret_value
@@ -175,9 +167,9 @@ class Manager:
         """
         ret_value = False
         if filter_name_old != filter_name_new:
-            dct_thread = self.dct_thread.get(execution_name, {})
-            if dct_thread:
-                filterchain = dct_thread.get("filterchain", None)
+            dct_execution = self.dct_exec.get(execution_name, {})
+            if dct_execution:
+                filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
                 if filterchain:
                     filterchain.remove_image_observer(observer, filter_name_old)
                     ret_value = filterchain.add_image_observer(observer, filter_name_new)
@@ -192,9 +184,9 @@ class Manager:
                 - string, filter_name , filter to remove
         """
         ret_value = False
-        dct_thread = self.dct_thread.get(execution_name, {})
-        if dct_thread:
-            filterchain = dct_thread.get("filterchain", None)
+        dct_execution = self.dct_exec.get(execution_name, {})
+        if dct_execution:
+            filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
             if filterchain:
                 ret_value = filterchain.remove_image_observer(observer, filter_name)
         return ret_value
@@ -205,9 +197,9 @@ class Manager:
             supported only one observer. Add observer to tcp_server
         """
         ret_value = False
-        dct_thread = self.dct_thread.get(execution_name, {})
-        if dct_thread:
-            filterchain = dct_thread.get("filterchain", None)
+        dct_execution = self.dct_exec.get(execution_name, {})
+        if dct_execution:
+            filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
             if filterchain:
                 if self.server_observer.send in filterchain.get_filter_output_observers():
                     return True
@@ -220,9 +212,9 @@ class Manager:
             supported only one observer. remove observer to tcp_server
         """
         ret_value = False
-        dct_thread = self.dct_thread.get(execution_name, {})
-        if dct_thread:
-            filterchain = dct_thread.get("filterchain", None)
+        dct_execution = self.dct_exec.get(execution_name, {})
+        if dct_execution:
+            filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
             if filterchain:
                 if not filterchain.get_filter_output_observers():
                     return True
@@ -251,8 +243,8 @@ class Manager:
     ############################ FILTERCHAIN  ################################
     ##########################################################################
     def reload_filter(self, filtre=None):
-        for thread in self.dct_thread.values():
-            filterchain = thread.get("filterchain", None)
+        for execution in self.dct_exec.values():
+            filterchain = execution.get(KEY_FILTERCHAIN, None)
             if filterchain:
                 filterchain.reload_filter(filtre)
 
@@ -260,22 +252,23 @@ class Manager:
         # get actual filter from execution
         o_filter = None
         filterchain_item = None
-        thread = self.dct_thread.get(execution_name, None)
-        if not thread:
+        execution = self.dct_exec.get(execution_name, None)
+        if not execution:
             return None
-        filterchain = thread.get("filterchain", None)
+        filterchain = execution.get(KEY_FILTERCHAIN, None)
         if not filterchain:
             return None
+        # TODO else give config param
         # if filterchain_item is None:
         #    # search in config
         #    o_filter = self.config.get_filter_from_filterName(filter_name=filter_name)
         return filterchain.get_params(filter_name=filter_name)
 
     def update_param(self, execution_name, filter_name, param_name, value):
-        dct_thread = self.dct_thread.get(execution_name, {})
-        if not dct_thread:
+        dct_execution = self.dct_exec.get(execution_name, {})
+        if not dct_execution:
             return None
-        filterchain = dct_thread.get("filterchain", None)
+        filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
         if not filterchain:
             return None
         filter = filterchain.get_filter(name=filter_name)
