@@ -125,6 +125,13 @@ def notify_code():
                 notify_py.call(notify_args);
             }
         }
+        void notify_str(const std::string message) {
+            py::tuple notify_args(1);
+
+            notify_args[0] = message;
+            notify_py.call(notify_args);
+
+        }
     """
 
 def help_code():
