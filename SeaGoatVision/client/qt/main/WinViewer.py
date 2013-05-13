@@ -37,8 +37,6 @@ from PySide.QtGui import QPainter
 from PySide.QtGui import QColor
 from PySide.QtGui import QPen
 from PySide.QtCore import Qt
-import cv2
-import cv2.cv as cv
 import socket
 import threading
 import StringIO
@@ -162,7 +160,6 @@ class WinViewer(QtCore.QObject):
         self.ui.imageLabel.setPixmap(pix)
 
     def numpy_to_QImage(self, image):
-        cv2.cvtColor(image, cv.CV_BGR2RGB)
         img = Image.fromarray(image)
         buff = StringIO.StringIO()
         img.save(buff, 'ppm')

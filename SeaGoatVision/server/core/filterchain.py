@@ -24,6 +24,8 @@ from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.server.core import utils
 from SeaGoatVision.commun.param import Param
 from SeaGoatVision.commun.keys import *
+import cv2
+import cv2.cv as cv
 import ConfigParser
 import numpy as np
 
@@ -172,4 +174,6 @@ class FilterChain(object):
         if type(image) is not np.ndarray or not image.size:
             return
         # copy the picture because the next filter will modify him
+        # transform it in rgb
+        cv2.cvtColor(image, cv.CV_BGR2RGB, image)
         observer(np.copy(image))
