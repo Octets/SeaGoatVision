@@ -29,7 +29,6 @@ Date : december 2012
 import time
 
 from SeaGoatVision.client.qt.utils import get_ui
-from filters.public.bgr2rgb import BGR2RGB
 from SeaGoatVision.commun.keys import *
 import Image
 from PySide import QtCore
@@ -38,6 +37,8 @@ from PySide.QtGui import QPainter
 from PySide.QtGui import QColor
 from PySide.QtGui import QPen
 from PySide.QtCore import Qt
+import cv2
+import cv2.cv as cv
 import socket
 import threading
 import StringIO
@@ -161,9 +162,8 @@ class WinViewer(QtCore.QObject):
         self.ui.imageLabel.setPixmap(pix)
 
     def numpy_to_QImage(self, image):
-        bgr2rgb = BGR2RGB()
-        imageRGB = bgr2rgb.execute(image)
-        img = Image.fromarray(imageRGB)
+        cv2.cvtColor(image, cv.CV_BGR2RGB)
+        img = Image.fromarray(image)
         buff = StringIO.StringIO()
         img.save(buff, 'ppm')
         data = buff.getvalue()
@@ -261,10 +261,10 @@ class LightWidget(QtGui.QWidget):
 
         pen = QPen()
         pen.setWidth(dot)
-        #pen.setStyle(Qt.SolidLine)
+        # pen.setStyle(Qt.SolidLine)
         pen.setBrush(self.color)
-        #pen.setCapStyle(Qt.RoundCap)
-        #pen.setJoinStyle(Qt.RoundJoin)
+        # pen.setCapStyle(Qt.RoundCap)
+        # pen.setJoinStyle(Qt.RoundJoin)
         qp.setPen(pen)
 
         qp.drawLine(dot, dot, dot, dot)

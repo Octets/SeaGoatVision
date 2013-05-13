@@ -23,12 +23,12 @@ Date : November 2012
 """
 import sys
 
-from SeaGoatVision.server.core.manager import Manager
 from PySide.QtGui import QApplication
 import main
 
 def run(local=False, host="localhost", port=8090):
     if local:
+        from SeaGoatVision.server.core.manager import Manager
         # Directly connected to the vision server
         c = Manager()
     else:

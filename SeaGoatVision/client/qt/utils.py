@@ -19,13 +19,8 @@
 
 from PySide import QtUiTools
 from PySide import QtCore
-import Image
-import ImageQt
 
-import inspect
 import os
-
-from filters.public.bgr2rgb import BGR2RGB
 
 def tree_selected_index(treeview):
     (model, iter) = treeview.get_selection().get_selected()
@@ -38,21 +33,6 @@ def tree_row_selected(treeview):
     (model, iter) = treeview.get_selection().get_selected()
     return iter is not None
 
-def numpy_to_imageQt(image):
-    bgr2rgb = BGR2RGB()
-    image = bgr2rgb.execute(image)
-    img = Image.fromarray(image)
-    imageQt = ImageQt.ImageQt(img)
-    """ buff = StringIO.StringIO()
-    img.save(buff, 'ppm')
-    contents = buff.getvalue()
-    buff.close()
-    loader = GdkPixbuf.PixbufLoader()
-    loader.write(contents)
-    pixbuf = loader.get_pixbuf()
-    loader.close()"""
-    return imageQt
-
 def get_ui(widget):
     loader = QtUiTools.QUiLoader()
     uiPath = os.path.join('SeaGoatVision', 'client', 'qt', 'uifiles', win_name(widget) + '.ui')
@@ -63,12 +43,3 @@ def get_ui(widget):
 
 def win_name(window):
     return window.__class__.__name__
-
-class WindowState:
-    """Enumeration for the main window state
-        Empty = No file to edit
-        CreateNew = User created a new filter chain
-        ShowExisting = User opened a file and he did not modify anything yet
-        ExistingModified = File exists and the user made modifications
-    """
-    Empty, Create, Show, Modified = range(4)
