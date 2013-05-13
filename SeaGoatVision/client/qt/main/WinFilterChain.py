@@ -262,6 +262,8 @@ class WinFilterChain(QtCore.QObject):
         self.ui.filterchainEdit.setReadOnly(not status)
         self.ui.filterchainListWidget.setEnabled(not status)
         self.qtWidgetFilterList.ui.addFilterButton.setEnabled(status)
+        if status:
+            self.ui.filterchainEdit.setFocus()
 
     def _list_filterchain_is_selected(self, isSelected=True):
         self.ui.editButton.setEnabled(isSelected)
