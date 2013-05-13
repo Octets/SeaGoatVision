@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python2.7
 
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
@@ -26,5 +26,5 @@ import os
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.sys.path.append(parent_dir)
 
-from private import *
 from public import *
+from private import *

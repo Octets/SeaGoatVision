@@ -35,7 +35,7 @@ if 'cpptimestamps' not in globals():
 
 # PYTHON FILTERS IMPORT
 for f in os.listdir(os.path.dirname(__file__)):
-    if not f.endswith(".py"):
+    if not f.endswith(".py") or f == "__init__.py":
         continue
     filename, _ = os.path.splitext(f)
     code = 'from %(module)s import *' % {'module' : filename}

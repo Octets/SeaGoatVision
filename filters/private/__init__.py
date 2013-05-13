@@ -40,11 +40,12 @@ for f in os.listdir(act_dir):
     code = 'from %(module)s import *' % {'module' : filename}
     exec code
 
+
 # add_filter_module(sys.modules[__name__], __file__)
 
 # PYTHON FILTERS IMPORT
 for f in os.listdir(os.path.dirname(__file__)):
-    if not f.endswith(".py"):
+    if not f.endswith(".py") or f == "__init__.py":
         continue
     filename, _ = os.path.splitext(f)
     code = 'from %(module)s import *' % {'module' : filename}

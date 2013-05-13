@@ -131,6 +131,7 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_ar
     mod.add_function(func)
 
     try:
+        print("Cpp: begin compile %s." % modname)
         if cpptimestamps.has_key(modname):
             # Reloaded modules are saved in the reload folder for easy cleanup
             mod.compile(RELOAD_DIR)
