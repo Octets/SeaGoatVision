@@ -67,7 +67,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                     request.media_name, request.filterchain_name, file_name=request.file_name))
             if response.status:
                 response.message = "This filterchain_execution already exist."
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -84,7 +84,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             response.status = int(not self.manager.stop_filterchain_execution(request.execution_name))
             if response.status:
                 response.message = "This filterchain_execution is already close."
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -108,7 +108,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             else:
                 response.status = 1
                 response.message = "This add_image_observer can't add observer."
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -127,7 +127,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             else:
                 response.status = 1
                 response.message = "This set_image_observer can't change observer."
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -148,7 +148,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.message = "This remove_image_observer can't remove observer."
 
 
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -172,7 +172,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             else:
                 response.status = 1
                 response.message = "This add_output_observer can't add observer."
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -190,7 +190,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             else:
                 response.status = 1
                 response.message = "This remove_output_observer can't add observer."
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -214,7 +214,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                         response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(), max_float_v=item.get_max())
                     elif item.get_type() is unicode or item.get_type() is str:
                          response.params.add(name=item.get_name(), value_str=item.get())
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
 
         # We're done, call the run method of the done callback
@@ -228,7 +228,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         try:
             for execution in self.manager.get_execution_list():
                 response.execution.append(execution)
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
 
         # We're done, call the run method of the done callback
@@ -243,7 +243,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             o_exec = self.manager.get_execution_info(request.execution)
             response.filterchain = o_exec.filterchain
             response.media = o_exec.media
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
 
         # We're done, call the run method of the done callback
@@ -320,7 +320,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             response.status = int(not self.manager.delete_filterchain(request.filterchain_name))
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -335,7 +335,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             response.status = int(not self.manager.upload_filterchain(request.filterchain_name, request.s_file_contain))
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -351,7 +351,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         try:
             lstStrFilter = [filter.name for filter in request.lst_str_filters]
             response.status = int(not self.manager.modify_filterchain(request.old_filterchain_name, request.new_filterchain_name, lstStrFilter))
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -367,7 +367,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         try:
             self.manager.reload_filter(request.filterName[0])
             response.status = 0
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -391,10 +391,10 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 value = request.param.value_str
             try:
                 response.status = self.manager.update_param(request.execution_name, request.filter_name, request.param.name, value)
-            except Exception, e:
+            except Exception as e:
                 response.status = 1
                 response.message = e
-        except Exception, e:
+        except Exception as e:
             print "Exception: ", e
             response.status = -1
 
@@ -455,7 +455,7 @@ class Observer(threading.Thread):
                         self.socket.sendto(sData, self.address)
                     else:
                         break
-                except Exception, e:
+                except Exception as e:
                     # Don't print error if we suppose to stop the socket
                     if not self.__stop:
                         print(e)

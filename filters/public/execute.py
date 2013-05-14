@@ -42,7 +42,7 @@ class Exec(Filter):
             self.code = code
             if self.is_python:
                 self._ccode = compile(code, '<string>', 'exec')
-        except Exception, e:
+        except Exception as e:
             sys.stderr.write(str(e) + '\n')
             self._has_error = True
 
@@ -76,7 +76,7 @@ class Exec(Filter):
                 image = self.exec_python(image)
             else:
                 image = self.exec_cpp(image)
-        except Exception, e:
+        except Exception as e:
             sys.stderr.write(str(e) + '\n')
             self._has_error = True
         return image
