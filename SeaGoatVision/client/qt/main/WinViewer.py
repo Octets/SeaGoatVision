@@ -180,15 +180,20 @@ class Listen_output(threading.Thread):
         self.observer = observer
         self.host = host
         self.port = port
+        self.count_empty_message = 0
 
     def run(self):
         self.socket.connect((self.host, self.port))
         while not self.is_stopped:
             try:
-                txt, addr = self.socket.recvfrom(2048)
-                if not addr:
-                    self.is_stopped = True
-                    break
+                txt = self.socket.recv(2048)
+                if not txt:
+                    self.count_empty_message += 1
+                    if self.count_empty_message > 6:
+                        self.is_stopped = True
+                        break
+                    continue
+
                 self.observer(txt)
             except:
                 self.is_stopped = True
