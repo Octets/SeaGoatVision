@@ -34,6 +34,8 @@ class WinFilter(QtGui.QDockWidget):
         self.cb_param = None
         self.layout = None
 
+        self.setValueFloat = None
+
     def setFilter(self, execution_name, filter_name):
         del self.lst_param[:]
         self.widget().destroy()
@@ -219,7 +221,8 @@ class WinFilter(QtGui.QDockWidget):
             self.slider_float.minimum(), self.slider_float.maximum(),
             self._new_slider_min, self._new_slider_max
         )
-        self.setValueFloat(newVal)
+        if self.setValueFloat:
+            self.setValueFloat(newVal)
         self.cb_value_change(newVal)
 
     def _float_spin_value_change(self, value):
