@@ -21,9 +21,6 @@
 
 """
 Description : Windows to "view" a filterchain execution
-Authors: Mathieu Benoit (mathben963@gmail.com)
-         Junior Gregoire (junior.gregoire@gmail.com)
-Date : december 2012
 """
 
 import time

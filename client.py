@@ -18,8 +18,6 @@
 
 """
 Description : launch vision client. Can choose multiple client
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
 """
 
 import sys

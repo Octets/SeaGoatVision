@@ -19,8 +19,6 @@
 
 """
 Description : Configuration manage all configuration file.
-Authors: Mathieu Benoit <mathben963@gmail.com>
-Date : December 2012
 """
 
 import os

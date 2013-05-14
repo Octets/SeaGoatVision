@@ -19,9 +19,6 @@
 
 """
 Description :
-Authors: Benoit Paquet
-         Mathieu Benoit <mathben963@gmail.com>
-Date : Novembre 2012
 """
 
 from SeaGoatVision.server.tcp_server import Server

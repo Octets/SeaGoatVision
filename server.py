@@ -18,8 +18,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 Description : Run the vision server
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
 """
 import argparse
 

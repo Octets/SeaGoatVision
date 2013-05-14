@@ -19,8 +19,6 @@
 
 """
 Description : Run the command line interface to communicate with the SeaGoatVision Server
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
 """
 import sys
 import fileinput

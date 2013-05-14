@@ -19,8 +19,6 @@
 
 """
 Description : Start the Vision Server
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
 """
 
 import os

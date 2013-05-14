@@ -19,8 +19,6 @@
 
 """
 Description : Implementation of cmd, command line of python
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
 """
 
 from SeaGoatVision.server.core.manager import Manager
