@@ -217,6 +217,8 @@ class WinFilterChain(QtCore.QObject):
             self.selectedFilterChanged.emit(self.winExecution.get_execution_name(), filter_name)
 
     def onSelectedFilterchainChanged(self):
+        if self.edit_mode:
+            return
         filterchain_name = self._get_selected_filterchain_name()
         if filterchain_name:
             # set the filters section

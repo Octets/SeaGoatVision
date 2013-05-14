@@ -49,10 +49,6 @@ class WinExecution(QtCore.QObject):
         self.ui.stopButton.clicked.connect(self.stop)
         self.ui.lstExecution.currentItemChanged.connect(self._on_selected_lstExecution_change)
 
-        #TODO need to be actived
-        #self.ui.txtMedia.setReadOnly(True)
-        #self.ui.txtFilterchain.setReadOnly(True)
-
         self._mode_edit(self.mode_edit)
         self._update_execution_list()
         self.file_name = None

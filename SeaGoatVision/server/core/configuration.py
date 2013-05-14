@@ -112,6 +112,7 @@ class Configuration(object):
             chain.add_filter(o_filter)
 
         self.write_filterchain(self._get_filename(filterchain_name), chain)
+        self.dct_filterchain[filterchain_name] = chain
         return True
 
     def _get_filename(self, filterchain_name):
