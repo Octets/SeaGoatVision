@@ -63,7 +63,8 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             # dont start a filterchain execution if it already exist
-            response.status = int(not self.manager.start_filterchain_execution(request.execution_name, request.media_name, request.filterchain_name))
+            response.status = int(not self.manager.start_filterchain_execution(request.execution_name,
+                    request.media_name, request.filterchain_name, file_name=request.file_name))
             if response.status:
                 response.message = "This filterchain_execution already exist."
         except Exception, e:

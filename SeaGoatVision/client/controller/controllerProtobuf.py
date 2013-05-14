@@ -88,6 +88,8 @@ class ControllerProtobuf():
         request.execution_name = execution_name
         request.media_name = media_name
         request.filterchain_name = filterchain_name
+        if file_name:
+            request.file_name = file_name
 
         # Make an synchronous call
         returnValue = None

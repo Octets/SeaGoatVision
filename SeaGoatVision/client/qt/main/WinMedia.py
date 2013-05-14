@@ -30,7 +30,7 @@ class WinMedia(QtCore.QObject):
         super(WinMedia, self).__init__()
         self.ressource_icon_path = "SeaGoatVision/client/ressource/img/"
         self.controller = controller
-        self.islocal = islocal
+        #self.islocal = islocal
 
         self.is_recorded = False
         self.record_icon = QIcon(self.ressource_icon_path + "RecordVideoAction.png")
