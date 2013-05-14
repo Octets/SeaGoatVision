@@ -187,7 +187,14 @@ class Listen_output(threading.Thread):
     def run(self):
         self.socket.connect((self.host, self.port))
         while not self.is_stopped:
-            self.observer(self.socket.recv(2048))
+            try:
+                txt, addr = self.socket.recvfrom(2048)
+                if not addr:
+                    self.is_stopped = True
+                    break
+                self.observer(txt)
+            except:
+                self.is_stopped = True
 
     def stop(self):
         self.is_stopped = True
