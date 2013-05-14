@@ -226,6 +226,10 @@ class WinFilterChain(QtCore.QObject):
 
             filterchain_name = self._get_selected_filterchain_name()
             self.selectedFilterChainChanged.emit(filterchain_name)
+
+            # Exception, don't edit or delete special empty filterchain
+            self.ui.deleteButton.setEnabled(filterchain_name != get_empty_filterchain_name())
+            self.ui.editButton.setEnabled(filterchain_name != get_empty_filterchain_name())
         else:
             self._list_filterchain_is_selected(False)
 
