@@ -407,8 +407,10 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         # Create a reply
         response = server_pb2.GetFilterListResponse()
-        for filter in self.manager.get_filter_list():
+        dct_filter = self.manager.get_filter_list()
+        for filter in dct_filter.keys():
             response.filters.append(filter)
+            response.doc.append(dct_filter[filter])
 
         # We're done, call the run method of the done callback
         done.run(response)

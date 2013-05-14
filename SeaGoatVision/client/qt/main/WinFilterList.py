@@ -33,16 +33,19 @@ class WinFilterList(QtCore.QObject):
         self.ui.addFilterButton.clicked.connect(self._addFilter)
         self.ui.reloadFilterButton.clicked.connect(self._reloadFilter)
         self.ui.filterListWidget.doubleClicked.connect(self._addFilter)
+        self.ui.filterListWidget.currentItemChanged.connect(self._selectedFilterChanged)
         self.reload_list_filter(self.controller.get_filter_list())
 
-    def reload_list_filter(self, lst_filter):
-        lst_filter_sort = lst_filter[:]
+    def reload_list_filter(self, dct_filter):
+        self.dct_filter = dct_filter
+        lst_filter_sort = dct_filter.keys()[:]
         lst_filter_sort.sort()
         for name in lst_filter_sort:
             self.ui.filterListWidget.addItem(name)
 
     def _selectedFilterChanged(self):
-        self.selectedFilterChanged.emit(self.ui.filterListWidget.currentItem().text())
+        filter_name = self.ui.filterListWidget.currentItem().text()
+        self.ui.lbl_doc.setText("Description: %s" % self.dct_filter[filter_name])
 
     def _addFilter(self):
         self.onAddFilter.emit(self.ui.filterListWidget.currentItem().text())

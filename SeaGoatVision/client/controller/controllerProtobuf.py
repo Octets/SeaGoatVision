@@ -53,7 +53,6 @@ class ControllerProtobuf():
             observer.stop()
         print("Closed connection.")
 
-
     ##########################################################################
     ################################ CLIENT ##################################
     ##########################################################################
@@ -653,7 +652,7 @@ class ControllerProtobuf():
         returnValue = None
         try:
             response = self.service.get_filter_list(request, timeout=10000)
-            returnValue = response.filters
+            returnValue = {response.filters[i]:response.doc[i] for i in range(len(response.filters))}
 
         except Exception as ex:
             log.exception(ex)

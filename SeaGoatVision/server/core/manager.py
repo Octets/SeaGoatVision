@@ -280,4 +280,4 @@ class Manager:
     ############################### FILTER  ##################################
     ##########################################################################
     def get_filter_list(self):
-        return self.config.get_filter_name_list()
+        return self.config.get_filter_info_list()

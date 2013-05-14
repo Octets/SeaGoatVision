@@ -125,6 +125,7 @@ message GetFilterListRequest{}
 message GetFilterListResponse
 {
   repeated string filters = 1;
+  repeated string doc = 2;
 }
 
 message GetFilterListFromFilterChainRequest

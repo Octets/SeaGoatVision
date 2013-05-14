@@ -177,6 +177,15 @@ class Configuration(object):
         cfg.write(open(file_name, 'w'))
 
     #### Filter
+    def get_filter_info_list(self):
+        dct_info = {}
+        for name in self.dct_filter.keys():
+            doc = self.dct_filter[name].__doc__
+            if doc is None:
+                doc = ""
+            dct_info[name] = doc
+        return dct_info
+
     def get_filter_name_list(self):
         return self.dct_filter.keys()
 
