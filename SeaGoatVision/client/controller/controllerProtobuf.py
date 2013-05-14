@@ -216,9 +216,11 @@ class ControllerProtobuf():
 
         return returnResponse
 
-    def start_record(self, media_name):
+    def start_record(self, media_name, path=None):
         request = server_pb2.StartRecordRequest()
         request.media = media_name
+        if path:
+            request.path = path
         # Make an synchronous call
         try:
             response = self.service.start_record(request, timeout=10000)

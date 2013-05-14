@@ -20,6 +20,7 @@
 from media import Media
 from SeaGoatVision.commun.keys import get_media_type_streaming_name
 import time
+import os
 import cv2
 import cv
 
@@ -33,12 +34,22 @@ class Media_streaming(Media):
     def get_type_media(self):
         return get_media_type_streaming_name()
 
-    def start_record(self):
+    def start_record(self, path=None):
         # TODO manage multiple record
         # manage only one record at time
         if self.writer:
             self.stop_record()
-        name = "%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
+        add_format_name = False
+        name = ""
+        if path:
+            name = path
+            if os.path.isdir(path):
+                add_format_name = True
+        else:
+            add_format_name = True
+        if add_format_name:
+            name += "/%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
+
         fps = 8
         frame_size = (320, 240)
         # fourcc = cv.CV_FOURCC('D','I','V','X')

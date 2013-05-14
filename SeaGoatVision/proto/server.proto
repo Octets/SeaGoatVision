@@ -109,6 +109,7 @@ message UpdateParamRequest
 message StartRecordRequest
 {
   required string media = 1;
+  optional string path = 2;
 }
 
 message StopRecordRequest

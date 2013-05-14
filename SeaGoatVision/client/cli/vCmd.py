@@ -104,7 +104,10 @@ class VCmd(cmd.Cmd):
     def do_start_record(self, line):
         # media_name
         param = line.split()
-        self.controller.start_record(param[0])
+        path = None
+        if len(param) > 1:
+            path = param[1]
+        self.controller.start_record(param[0], path=path)
 
     def do_stop_record(self, line):
         # media_name

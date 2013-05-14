@@ -265,7 +265,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         print("start_record request %s" % str(request).replace("\n", " "))
 
         response = server_pb2.StatusResponse()
-        response.status = int(not self.manager.start_record(request.media))
+        response.status = int(not self.manager.start_record(request.media, path=request.path))
 
         done.run(response)
 

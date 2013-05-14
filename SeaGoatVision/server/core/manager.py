@@ -121,13 +121,13 @@ class Manager:
         return {name: self.config.get_media(name).get_type_media()
                 for name in self.config.get_media_name_list()}
 
-    def start_record(self, media_name):
+    def start_record(self, media_name, path=None):
         media = self.config.get_media(media_name)
         if not media:
             return False
         if media.is_media_video():
             return False
-        return media.start_record()
+        return media.start_record(path=path)
 
     def stop_record(self, media_name):
         media = self.config.get_media(media_name)
