@@ -175,5 +175,6 @@ class FilterChain(object):
             return
         # copy the picture because the next filter will modify him
         # transform it in rgb
-        cv2.cvtColor(image, cv.CV_BGR2RGB, image)
-        observer(np.copy(image))
+        image2 = np.copy(image)
+        cv2.cvtColor(np.copy(image), cv.CV_BGR2RGB, image2)
+        observer(image2)
