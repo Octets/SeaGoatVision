@@ -41,6 +41,12 @@ def execute_code():
         cv::Mat ret = execute(mat);
         if (mat.data != ret.data)
             image = ret.data;
+def set_original_image_code():
+    return """
+        cv::Mat mat_original(Nimage_original[0], Nimage_original[1], CV_8UC(3), image_original);
+        original_image = mat_original;
+    """
+
     """
 
 def params_code():
@@ -102,6 +108,11 @@ def params_code():
         double param_get_double(std::string name) {
             py::object o = params.get(name);
             return PyFloat_AsDouble(o.mcall("get"));
+        }
+        cv::Mat original_image;
+        cv::Mat get_image_original(cv::Mat image) {
+            original_image.copyTo(image);
+            return image;
         }
     """
 

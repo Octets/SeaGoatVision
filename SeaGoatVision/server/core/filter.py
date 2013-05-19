@@ -22,6 +22,7 @@ from SeaGoatVision.commun.param import Param
 class Filter(object):
     def __init__(self):
         self._output_observers = list()
+        self.original_image = None
 
     def configure(self):
         pass
@@ -38,6 +39,12 @@ class Filter(object):
             else:
                 params.append(var)
         return params
+
+    def set_original_image(self, image):
+        self.original_image = image
+
+    def get_original_image(self):
+        return self.original_image
 
     def notify_output_observers(self, data):
         for obs in self._output_observers:

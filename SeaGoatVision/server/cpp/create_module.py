@@ -79,6 +79,14 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_ar
         print("Error - Missing execute function into %s like \"%s\"" % (modname, code))
         return
 
+    # param variable size
+    p = {}
+    pip = py_init_param
+    py_notify = Filter().notify_output_observers
+    image = np.zeros((1, 1), dtype=np.uint8)
+    image_original = np.zeros((1, 1), dtype=np.uint8)
+    my_string_original = ""
+
     # Compile filters
     # The included files are found in the .cpp file
     mod = ext_tools.ext_module(modname)
@@ -99,11 +107,6 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_ar
     mod.add_function(func)
 
     # __init__
-    # Get the size of parameter
-    p = {}
-    pip = py_init_param
-    py_notify = Filter().notify_output_observers
-
     func = ext_tools.ext_function('init_' + modname, init_code("void init()" in cppcode), ['p', 'pip', 'py_notify'])
     func.customize.add_support_code(params_code())
     func.customize.add_support_code(notify_code())
@@ -120,10 +123,12 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_ar
     else:
         has_configure = False
 
+    # set original image
+    func = ext_tools.ext_function('set_original_image_' + modname, set_original_image_code(), ['image_original'])
+    mod.add_function(func)
+
     # execute
     # Get the size of parameter
-    image = np.zeros((1, 1), dtype=np.uint8)
-
     func = ext_tools.ext_function('exec_' + modname, execute_code(), ['image'])
     func.customize.add_support_code(params_code())
     func.customize.add_support_code(cppcode)
@@ -143,6 +148,7 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_ar
         dct_fct = {'__init__' : create_init(getattr(cppmodule, 'init_' + modname), params),
                     'execute' : create_execute(getattr(cppmodule, 'exec_' + modname)),
                     'py_init_param' : py_init_param,
+                    'set_original_image' : create_set_original_image(getattr(cppmodule, 'set_original_image_' + modname)),
                     '__doc__' : getattr(cppmodule, 'help_' + modname)()
                 }
         if has_configure:

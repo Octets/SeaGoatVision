@@ -47,6 +47,11 @@ def create_init(cppfunc, params):
         cppfunc(self.params, self.py_init_param, self.notify_output_observers)
     return __init__
 
+def create_set_original_image(cppfunc):
+    def set_original_image(self, image_original):
+        cppfunc(image_original)
+    return set_original_image
+
 def py_init_param(self, name, value, min=None, max=None):
     param = Param(name, value, min_v=min, max_v=max)
     self.params[name] = param

@@ -158,12 +158,14 @@ class FilterChain(object):
         return True
 
     def execute(self, image):
+        original_image = np.copy(image);
         # TODO Optimize for multiple observer, only one copy
         # first image observator
         if self.original_image_observer:
             for observer in self.original_image_observer:
                 self.send_image(image, observer)
         for f in self.filters:
+            f.set_original_image(original_image)
             image = f.execute(image)
             lst_observer = self.image_observers.get(f.__class__.__name__, [])
             for observer in lst_observer:
