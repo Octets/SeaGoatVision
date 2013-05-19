@@ -159,24 +159,23 @@ class FilterChain(object):
 
     def execute(self, image):
         original_image = np.copy(image);
-        # TODO Optimize for multiple observer, only one copy
         # first image observator
         if self.original_image_observer:
-            for observer in self.original_image_observer:
-                self.send_image(image, observer)
+            self.send_image(original_image, self.original_image_observer)
+
         for f in self.filters:
             f.set_original_image(original_image)
             image = f.execute(image)
             lst_observer = self.image_observers.get(f.__class__.__name__, [])
-            for observer in lst_observer:
-                self.send_image(image, observer)
+            self.send_image(image, lst_observer)
         return image
 
-    def send_image(self, image, observer):
+    def send_image(self, image, lst_observer):
         if type(image) is not np.ndarray or not image.size:
             return
         # copy the picture because the next filter will modify him
         # transform it in rgb
         image2 = np.copy(image)
         cv2.cvtColor(np.copy(image), cv.CV_BGR2RGB, image2)
-        observer(image2)
+        for observer in lst_observer:
+            observer(image2)

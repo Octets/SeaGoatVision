@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from thread_media import Thread_media
+import numpy as np
 
 class Media:
     def __init__(self):
@@ -79,5 +80,6 @@ class Media:
             self.close()
 
     def notify_observer(self, image):
+        # be sure the image is different for all observer
         for observer in self.lst_observer:
-            observer(image)
+            observer(np.copy(image))
