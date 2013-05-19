@@ -182,7 +182,7 @@ class WinFilterChain(QtCore.QObject):
         filterchain_name = "new"
         while not self._is_unique_filterchain_name(filterchain_name):
             i += 1
-            filterchain_name = "new - %s" % i
+            filterchain_name = "new-%s" % i
 
         # add new line
         self.ui.filterchainListWidget.addItem(filterchain_name)
