@@ -13,13 +13,12 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-#include "PvApi.h"
-#include <opencv2/opencv.hpp>
-
 #define PY_UFUNC_UNIQUE_SYMBOL
 #define CHANNEL 3
 #define MAX_TIMEOUT 5
 
+#include "PvApi.h"
+#include <opencv2/opencv.hpp>
 #include "ImageLib.h"
 #include <stdio.h>
 #include <queue>
@@ -30,13 +29,10 @@
 #include <boost/python/tuple.hpp>
 #include <ndarrayobject.h>
 
-
-
 using namespace std;
 using namespace boost::python;
 
 enum AcquisitionMode {Continuous,SingleFrame,MultiFrame,Recorder};
-static const char* acquisitionMode[]={"Continuous","SingleFrame","MultiFrame","Recorder"};
 
 enum PixelFormat {Mono8,Bayer8,Bayer16,Rgb24,Bgr24,Rgba32,Bgra32};
 
@@ -58,6 +54,7 @@ namespace whitebal{
     enum WhitebalAutoMode{WhitebalAutoAdjustTol,WhiteAutoRate};
 }
 
+static const char* acquisitionMode[]={"Continuous","SingleFrame","MultiFrame","Recorder"};
 static const char* pixelFormat[]={"Mono8","Bayer8","Bayer16","Rgb24","Bgr24","Rgba32","Bgra32"};
 static const char* configFileIndex[]={"Factory","1","2","3","4","5"};
 static const char* exposureMode[]={"Manual","AutoOnce","Auto","External"};
@@ -66,7 +63,7 @@ static const char* exposureAutoAlgMode[]={"Mean","FitRange"};
 static const char* gainMode[]={"Manual","AutoOnce","Auto"};
 static const char* gainAutoMode[]={"GainAutoAdjustTol","GainAutoMax","GainAutoMin","GainAutoOutliers","GainAutoRate","GainAutoTarget"};
 static const char* whitebalMode[]={"Manual","Auto","AutoOnce"};
-static const char* whiteAutoMode[]={"WhitebalAutoAdjustTol","WhiteAutoRate"};
+static const char* whiteAutoMode[]={"WhitebalAutoAdjustTol","WhitebalAutoRate"};
 
 /** Declarations of Exceptions**/
 class CameraNotInitializeException: public exception
@@ -122,11 +119,23 @@ class GainValueException:public exception{
     }
 };
 
+class GainOutOfRangeException:public exception{
+    virtual const char* what() const throw(){
+        return "GainValue should be between 0 and 32.";
+    }
+};
+
 class SaturationOutOfRangeException:public exception{
     virtual const char* what() const throw(){
         return "Saturation value have to be between 0.0 and 2.0";
     }
 
+};
+
+class GammaOutOfRangeException:public exception{
+    virtual const char* what() const throw(){
+        return "Gamma can have only three values 0.45, 0.5, 0.7 and 1.0 (Disable gamma correction)";
+    }
 };
 
 class FullPercentValueException:public exception{
@@ -138,6 +147,24 @@ class FullPercentValueException:public exception{
 class HalfPercentValueException:public exception{
     virtual const char* what() const throw(){
         return "This value is a percentage and have to be between 0 and 50";
+    }
+};
+
+class HueOutOfRangeException:public exception{
+    virtual const char* what() const throw(){
+        return "Hue value should be between -40° to 40°";
+    }
+};
+
+class WhitebalModeException:public exception{
+     virtual const char* what() const throw(){
+        return "This white balance value is only for Manual Mode.";
+    }
+};
+
+class WhitebalValueException:public exception{
+     virtual const char* what() const throw(){
+        return "This white balance value has to be between 80 to 300.";
     }
 };
 /** End Declaration of Exception **/
@@ -205,8 +232,8 @@ public:
     int getGainValue();
 
     //Hue methods
-    int getHue();
-    void setHue(int);
+    float getHue();
+    void setHue(float);
 
     //Saturation methods
     float getSaturation();
@@ -231,9 +258,13 @@ private:
     int channel;
     char* array;
 
-
     //private methods
     void setChannel(PixelFormat);
+    void checkIfValueIsAPercent(int);
+    void checkIfValueIsAHalfPercent(int);
+    bool checkFloatValue(float,float);
+    void checkWhitebalValue(int);
+    void checkIfCameraIsInitialized();
 
 };
 

@@ -6,6 +6,10 @@ from camera import ExposureMode
 from camera import ExposureAutoMode
 from camera import ExposureAutoAlgMode
 from camera import GainMode
+from camera import GainAutoMode
+from camera import WhitebalMode
+from camera import WhitebalAutoMode
+
 import time
 import unittest
 
@@ -119,9 +123,24 @@ class TestCamera(unittest.TestCase):
 	#End Tests for ROI methods
 		
 	def testGamma(self):
-		self.cam.setGamma(0)
+		with self.assertRaises(RuntimeError):
+			self.cam.setGamma(0)
+			
+		self.cam.setGamma(0.45)
 		g = self.cam.getGamma()
-		self.assertEqual(g,0)
+		self.assertTrue(0.449 < g and g < 0.451)
+		
+		self.cam.setGamma(0.5)
+		g = self.cam.getGamma()
+		self.assertTrue(0.499 < g and g < 0.501)
+		
+		self.cam.setGamma(0.7)
+		g = self.cam.getGamma()
+		self.assertTrue(0.699 < g and g < 0.701)
+		
+		self.cam.setGamma(1)
+		g = self.cam.getGamma()
+		self.assertTrue(0.999 < g and g < 1.001)
 	
 	#Tests for Exposure methods
 	def testExposureMode(self):
@@ -224,38 +243,136 @@ class TestCamera(unittest.TestCase):
 		eaam = self.cam.getExposureAutoAlgMode()		
 		self.assertEqual(eaam,"Mean")
 		
-	"""
+	
 	#End tests for Exposure methods
 	#Tests for Gain methods
 	
 	def testGainMode(self):
-		pass
+		self.cam.setGainMode(GainMode.Manual)
+		gm = self.cam.getGainMode()
+		self.assertEqual(gm,"Manual")
+		
+		self.cam.setGainMode(GainMode.Auto)
+		gm =self.cam.getGainMode()
+		self.assertEqual(gm,"Auto")
+		
+		self.cam.setGainMode(GainMode.AutoOnce)
+		gm = self.cam.getGainMode()
+		self.assertEqual(gm, "AutoOnce")		
+			
 	
 	def testGainAutoMode(self):
-		pass
+		with self.assertRaises(RuntimeError):
+			self.cam.setGainAutoMode(GainAutoMode.GainAutoAdjustTol,-1)
+			
+		with self.assertRaises(RuntimeError):
+			self.cam.setGainAutoMode(GainAutoMode.GainAutoAdjustTol,101)
+			
+		self.cam.setGainAutoMode(GainAutoMode.GainAutoAdjustTol,45)
+		gaat = self.cam.getGainAutoMode(GainAutoMode.GainAutoAdjustTol)
+		self.assertEqual(gaat,45)
+		
+		
+		
+		
 	
 	def testGainValue(self):
-		pass
-	#End Tests for Gain methods
+		self.cam.setGainValue(5)
+		gv = self.cam.getGainValue()
+		self.assertTrue(gv,5)
 		
+		with self.assertRaises(RuntimeError):
+			self.cam.setGainValue(-1)
+		
+		with self.assertRaises(RuntimeError):
+			self.cam.setGainValue(33)
+		
+		
+	#End Tests for Gain methods
+	
 	def testHue(self):
-		pass
+		with self.assertRaises(RuntimeError):
+			self.cam.setHue(-41)
+		
+		with self.assertRaises(RuntimeError):
+			self.cam.setHue(41)
+			
+		self.cam.setHue(30)
+		h = self.cam.getHue()
+		self.assertEqual(h,30)
+		
 			
 	def testSaturation(self):
-		pass
-
-	def testWhitebalMode(self):
-		pass
+		with self.assertRaises(RuntimeError):
+			self.cam.setSaturation(-1)
+		with self.assertRaises(RuntimeError):
+			self.cam.setSaturation(2.5)
+		self.cam.setSaturation(0.5)
+		s = self.cam.getSaturation()
 		
+		self.assertEqual(s,0.5)		
+		
+	def testWhitebalMode(self):
+		self.cam.setWhitebalMode(WhitebalMode.Manual)
+		wbm = self.cam.getWhitebalMode()
+		self.assertEqual(wbm,"Manual")
+		
+		self.cam.setWhitebalMode(WhitebalMode.Auto)
+		wbm = self.cam.getWhitebalMode()
+		self.assertEqual(wbm,"Auto")
+		
+		self.cam.setWhitebalMode(WhitebalMode.AutoOnce)
+		wbm = self.cam.getWhitebalMode()
+		self.assertEqual(wbm,"AutoOnce")		
+		
+	
 	#Tests for White balance methods
 	def testWhitebalAutoMode(self):
-		pass
+		with self.assertRaises(RuntimeError):
+			self.cam.setWhitebalAutoMode(WhitebalAutoMode.WhitebalAutoAdjustTol,-1)
+			
+		with self.assertRaises(RuntimeError):
+			self.cam.setWhitebalAutoMode(WhitebalAutoMode.WhitebalAutoAdjustTol,51)
+			
+		with self.assertRaises(RuntimeError):
+			self.cam.setWhitebalAutoMode(WhitebalAutoMode.WhitebalAutoRate,-1)
+			
+		with self.assertRaises(RuntimeError):
+			self.cam.setWhitebalAutoMode(WhitebalAutoMode.WhitebalAutoRate,101)
+			
+		self.cam.setWhitebalAutoMode(WhitebalAutoMode.WhitebalAutoAdjustTol,49)
+		waam = self.cam.getWhitebalAutoMode(WhitebalAutoMode.WhitebalAutoAdjustTol)
 		
-	def testWhitebalRedValue(self):
-		pass
+		self.assertEqual(waam,49)
 		
-	def testWhitebalBlueValue(self):
-		pass"""
+		self.cam.setWhitebalAutoMode(WhitebalAutoMode.WhitebalAutoRate,51)
+		waam = self.cam.getWhitebalAutoMode(WhitebalAutoMode.WhitebalAutoRate)
+		
+		self.assertEqual(waam,51)
+		
+		
+	def testWhitebalValueRed(self):
+		with self.assertRaises(RuntimeError):
+			self.cam.setWhitebalValueRed(79)
+			
+		with self.assertRaises(RuntimeError):
+			self.cam.setWhitebalValueRed(301)
+			
+		self.cam.setWhitebalValueRed(100)
+		wbrv = self.cam.getWhitebalValueRed();
+		self.assertEqual(wbrv,100)
+		
+	
+	def testWhitebalValueBlue(self):
+		with self.assertRaises(RuntimeError):
+			self.cam.setWhitebalValueBlue(79)
+			
+		with self.assertRaises(RuntimeError):
+			self.cam.setWhitebalValueBlue(301)
+			
+		self.cam.setWhitebalValueBlue(90)
+		wbvb = self.cam.getWhitebalValueBlue();
+		self.assertEqual(wbvb,90)
 		
 	
 if __name__ == "__main__":
