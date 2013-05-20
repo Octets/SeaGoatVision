@@ -52,8 +52,10 @@ for root, subFolders, files in os.walk(os.path.dirname(__file__)):
             continue
         filename, _ = os.path.splitext(f)
         code = 'from %(module)s import *' % {'module' : module + filename} 
-        print code
-        exec code
+        try:
+            exec code
+        except Exception as e:
+            pass
 
 
 ##
