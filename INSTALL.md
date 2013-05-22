@@ -36,15 +36,16 @@ Don't forget to active the "community" repositorie. See https://wiki.archlinux.o
 #### Windows : ####
 Install the following dependencies :
 
- - Python:     http://python.org/ftp/python/2.7.3/python-2.7.3.msi
- - Numpy: 	http://sourceforge.net/projects/numpy/files/NumPy/	# Choose the installer
+ - Python:	http://python.org/ftp/python/2.7.3/python-2.7.3.msi
+ - Numpy:	http://sourceforge.net/projects/numpy/files/NumPy/	# Choose the installer
  - Scipy:	http://sourceforge.net/projects/scipy/files/scipy/	# Choose the installer
  - PyQt4:	http://www.riverbankcomputing.co.uk/software/pyqt/download
- - PySide: 	http://qt-project.org/wiki/PySide_Binaries_Windows
+ - PySide:	http://qt-project.org/wiki/PySide_Binaries_Windows
  - PIL:		http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe
- - OpenCV: 	http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv	# OpenCV installer for Windows.
+ - OpenCV:	http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv	# OpenCV installer for Windows.
 
 ### C. Install OpenCV 2.4 ###
+If your package management has opencv 2.4, it's not necessary to follow this section.
 
 1. Install required OpenCV dependencies
 	sudo apt-get install cmake cmake-gui gcc pkg-config libavformat-dev libswscale-dev
@@ -70,6 +71,13 @@ Install the following dependencies :
 7. Do crazy stuff!
 
 More information is available here: http://opencv.willowgarage.com/wiki/InstallGuide
+
+### D. Compile the project ###
+On the root of the project:
+
+	git submodule init
+	git submodule update
+	make
 
 FAQ
 ---

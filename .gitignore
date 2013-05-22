@@ -2,9 +2,10 @@
 .project
 .pydevproject
 .settings
+
 build
-ressources/thirdparty
 filters/private
+thirdparty/private
 
 # text editor
 *.swp

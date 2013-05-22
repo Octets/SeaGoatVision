@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.server.media.media_streaming import Media_streaming
-import video1394
+from thirdparty.public.pydc1394 import video1394
 import numpy as np
 import Image
 
@@ -32,6 +32,9 @@ class Firewire(Media_streaming):
 
     def open(self):
         self.ctx = video1394.DC1394Context()
+        if not self.ctx.numberOfDevices:
+            print("No firewire camera detected.")
+            return
         camera = self.ctx.createCamera(0)
         camera.resetBus()
         if self.is_rgb:
@@ -62,4 +65,5 @@ class Firewire(Media_streaming):
 
     def close(self):
         Media_streaming.close(self)
-        self.camera.stop()
+        if self.camera:
+            self.camera.stop()

@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
 #    This filename is part of SeaGoatVision.
@@ -15,20 +17,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# This Makefile manage filter in cpp situate in folder filters.
-# Build is done into directory build
 
-all: third_party
-	./filters/build_cpp_filter.py
 
-third_party:
-	make -C thirdparty/public/pydc1394
-
-clean_python:
-	find . -type f -name '*.pyc' -exec rm {} \;
-
-clean_third_party:
-	make -C thirdparty/public/pydc1394 clean
-
-clean: clean_python clean_third_party
-	rm -Rf ./build
+# Everything is added in this directory will be ignore for commit.
