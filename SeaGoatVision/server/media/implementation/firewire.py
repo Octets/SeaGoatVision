@@ -21,6 +21,8 @@ from SeaGoatVision.server.media.media_streaming import Media_streaming
 from thirdparty.public.pydc1394 import video1394
 import numpy as np
 import Image
+import cv2
+import cv2.cv as cv
 
 class Firewire(Media_streaming):
     """Return images from the webcam."""
@@ -29,31 +31,42 @@ class Firewire(Media_streaming):
         self.camera = None
         Media_streaming.__init__(self)
         self.is_rgb = True
+        self.is_mono = False
+        self.is_format_7 = False
+        self.no_camera = 0
 
     def open(self):
         self.ctx = video1394.DC1394Context()
         if not self.ctx.numberOfDevices:
             print("No firewire camera detected.")
             return
-        camera = self.ctx.createCamera(0)
+        camera = self.ctx.createCamera(self.no_camera)
         camera.resetBus()
-        if self.is_rgb:
+        if self.is_format_7:
+            # not supported
+            camera.mode = video1394.VIDEO_MODE_FORMAT7_0
+        elif self.is_rgb:
             camera.mode = video1394.VIDEO_MODE_800x600_RGB8
+        elif self.is_mono:
+            camera.mode = video1394.VIDEO_MODE_800x600_MONO8
         else:
             camera.mode = video1394.VIDEO_MODE_800x600_YUV422
+
         camera.framerate = video1394.FRAMERATE_15
         camera.isoSpeed = video1394.ISO_SPEED_400
         self.camera = camera
-        self.camera.start()
+        self.camera.start(force_rgb8=True)
         self.camera.grabEvent.addObserver(self.camera_observer)
         # call open when video is ready
         Media_streaming.open(self)
 
     def camera_observer(self, im, timestamp):
-        if self.is_rgb:
+        if self.is_rgb or not self.is_mono:
             image = Image.fromarray(im, "RGB")
             image2 = np.asarray(image, dtype="uint8")
-        else:
+            #transform it to bgr
+            cv2.cvtColor(np.copy(image), cv.CV_BGR2RGB, image2)
+        elif self.is_mono:
             image2 = im
         #shape = (im.shape[0], im.shape[1], 3)
         #rgb = np.zeros(shape, dtype=np.uint8)
