@@ -25,8 +25,9 @@ import os
 # Import required RPC modules
 import protobuf.socketrpc.server as server_rpc
 from controller import protobufServerImpl as impl
+from configuration import config
 
-def run(port=8090):
+def run(p_port=None):
     # recheck if its locked because the last check is maybe a false lock
     pid = os.getpid()
     sFileLockName = "/tmp/SeaGoat.lock"
@@ -36,6 +37,11 @@ def run(port=8090):
     fileLock = open(sFileLockName, "w")
     fileLock.write("%s" % pid)
     fileLock.close()
+
+    if not p_port:
+        port = config.port_tcp_output
+    else:
+        port = p_port
 
     # Create and register the service
     # Note that this is an instantiation of the implementation class,

@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python
 
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
@@ -16,17 +16,8 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-Description : Run the vision server
-"""
-import argparse
 
-from SeaGoatVision.server.mainserver import run
+# This file contain configuration about server.py
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Vision Server')
-    parser.add_argument('--port', type=int, default="0", help='Port of the host.')
-    args = parser.parse_args()
-    port = args.port if args.port else None
-    run(p_port=port)
+port_tcp_output = 8090
 
