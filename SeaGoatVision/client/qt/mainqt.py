@@ -43,7 +43,7 @@ def run(local=False, host="localhost", port=8090):
     win.show()
     try:
         rint = app.exec_()
-    except Exeption as e:
+    except Exception as e:
         print("Exit error : %s" % e)
     # close the server
     win.quit()
