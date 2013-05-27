@@ -17,17 +17,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# This file contain configuration about server.py
+from SeaGoatVision.server.media.implementation.webcam import Webcam
 
-from template_media.conf_webcam import Conf_webcam
-
-## Networking
-### Server tcp ouput notification
-port_tcp_output = 8090
-
-## Media
-lst_media = []
-
-# add camera webcam with default value
-lst_media.append(Conf_webcam())
-
+class Conf_webcam:
+    def __init__(self):
+        self.media = Webcam
+        self.name = "Webcam"
+        self.no_camera = -1
+        self.default_fps = None

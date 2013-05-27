@@ -17,17 +17,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# This file contain configuration about server.py
+from SeaGoatVision.server.media.implementation.firewire import Firewire
 
-from template_media.conf_webcam import Conf_webcam
+class Con_firewire:
+    def __init__(self):
+        self.media = Firewire
+        self.name = "Firewire"
+        self.no_camera = None
+        self.default_fps = None
 
-## Networking
-### Server tcp ouput notification
-port_tcp_output = 8090
-
-## Media
-lst_media = []
-
-# add camera webcam with default value
-lst_media.append(Conf_webcam())
-
+        # specific for firewire device
+        # to complete

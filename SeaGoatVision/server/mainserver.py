@@ -25,9 +25,10 @@ import os
 # Import required RPC modules
 import protobuf.socketrpc.server as server_rpc
 from controller import protobufServerImpl as impl
-from configuration import config
+from core.configuration import Configuration
 
 def run(p_port=None):
+    config = Configuration().get_config()
     # recheck if its locked because the last check is maybe a false lock
     pid = os.getpid()
     sFileLockName = "/tmp/SeaGoat.lock"
@@ -96,3 +97,4 @@ def check_pid(pid):
         return False
     else:
         return True
+

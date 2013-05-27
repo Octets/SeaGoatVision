@@ -20,7 +20,7 @@
 from SeaGoatVision.client.qt.utils import get_ui
 from PySide.QtGui import QIcon
 from SeaGoatVision.commun.keys import *
-
+from SeaGoatVision.client.qt import config
 from PySide.QtGui import QFileDialog
 
 from PySide import QtCore
@@ -56,10 +56,9 @@ class WinMedia(QtCore.QObject):
         self.dct_media = self.controller.get_media_list()
         for media in self.dct_media.keys():
             self.ui.cbMedia.addItem(media)
-        # TODO improve me
-        pos = self.dct_media.keys().index("Webcam")
-        #self.ui.cbMedia.setCurrentIndex(self.ui.cbMedia.count() - 1)
-        self.ui.cbMedia.setCurrentIndex(pos)
+        if config.default_media_selected in self.dct_media.keys():
+            pos = self.dct_media.keys().index(config.default_media_selected)
+            self.ui.cbMedia.setCurrentIndex(pos)
         self._change_media()
 
     def _change_media(self):

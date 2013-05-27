@@ -23,15 +23,16 @@ from SeaGoatVision.server.media.media_streaming import Media_streaming
 class Webcam(Media_streaming):
     """Return images from the webcam."""
 
-    def __init__(self):
+    def __init__(self, config):
+        # Go into configuration/template_media for more information
         Media_streaming.__init__(self)
         self.writer = None
         self.run = True
-        self.camera_number = 0
         self.video = None
+        self.config = config
 
     def open(self):
-        self.video = cv2.VideoCapture(self.camera_number)
+        self.video = cv2.VideoCapture(self.config.no_camera)
         self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 320)
         self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 240)
         # call open when video is ready

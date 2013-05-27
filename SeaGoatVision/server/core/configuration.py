@@ -32,9 +32,13 @@ from SeaGoatVision.commun.keys import *
 from SeaGoatVision.server.core import filterchain
 from SeaGoatVision.server.core import utils
 from SeaGoatVision.server import media
+from SeaGoatVision.server.configuration import config
+
 
 class Configuration(object):
+    # TODO do a singleton
     def __init__(self):
+        self.config = config
         self.dirFilterChain = "SeaGoatVision/server/configuration/filterchain/"
         self.extFilterChain = ".filterchain"
 
@@ -44,6 +48,11 @@ class Configuration(object):
         self.dct_filterchain = {}
         self.dct_media = {}
         self.load_media()
+
+
+    #### General config
+    def get_config(self):
+        return self.config
 
     #### Filterchain
     def get_filterchain_list(self):
@@ -210,16 +219,31 @@ class Configuration(object):
 
     #### Media
     def load_media(self):
-        self.dct_media = {name: media_class()
-            for name, media_class in vars(media).items()
-            if inspect.isclass(media_class)
-            if issubclass(media_class, media.media_streaming.Media_streaming) or 
-                issubclass(media_class, media.media_video.Media_video)
-            if media_class is not media.media_video.Media_video and 
-                media_class is not media.media_streaming.Media_streaming}
+        # update list of media
+        dct_media = {}
+        for name, media_class in vars(media).items():
+            # only class can be a media
+            if not inspect.isclass(media_class):
+                continue
+            # don't add first subclass, it's not a device
+            if not(media_class is not media.media_video.Media_video and
+                media_class is not media.media_streaming.Media_streaming):
+                continue
+            # add only subclass
+            # ignore media.media_streaming.Media_streaming
+            if issubclass(media_class, media.media_video.Media_video):
+                dct_media[name] = media_class()
+        # Create personalize media
+        for conf_media in self.config.lst_media:
+            name = conf_media.name
+            if name in dct_media.keys():
+                print("Error, media %s already exist." % name)
+                continue
+            dct_media[name] = conf_media.media(conf_media)
+        self.dct_media = dct_media
 
     def get_media_name_list(self):
-        return self.dct_media.keys() 
+        return self.dct_media.keys()
 
     def get_media(self, name):
         return self.dct_media.get(name, None)
