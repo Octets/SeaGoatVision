@@ -16,9 +16,11 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+try:
+    from thirdparty.public.pydc1394 import video1394
+except Exception as e:
+    pass
 from SeaGoatVision.server.media.media_streaming import Media_streaming
-from thirdparty.public.pydc1394 import video1394
 import numpy as np
 import Image
 import cv2
