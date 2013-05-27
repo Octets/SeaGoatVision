@@ -49,8 +49,8 @@ class WinExecution(QtCore.QObject):
         self.ui.stopButton.clicked.connect(self.stop)
         self.ui.lstExecution.currentItemChanged.connect(self._on_selected_lstExecution_change)
 
-        self._mode_edit(self.mode_edit)
         self._update_execution_list()
+        self._mode_edit(self.mode_edit)
         self.file_name = None
 
     def set_filterchain(self, filterchain):
@@ -59,7 +59,16 @@ class WinExecution(QtCore.QObject):
             self.ui.txtFilterchain.setText(filterchain)
 
     def preview(self):
-        # feature, if list is empty, we are create a new execution
+        # TODO improve this duplicate code with intersignal!!
+        # feature, if not into edit mode, we are create a new execution
+        if self.mode_edit:
+           execution_name = self.ui.txtExecution.text()
+           media_name = self.ui.txtMedia.text()
+           filterchain_name = self.ui.txtFilterchain.text()
+           self._execute(execution_name, media_name, filterchain_name)
+           self.onPreviewClick.emit(execution_name, media_name, filterchain_name)
+           return
+
         if not self.ui.lstExecution.count():
             self._mode_edit(True)
         execution_name = self.ui.txtExecution.text()
@@ -123,13 +132,6 @@ class WinExecution(QtCore.QObject):
         contain_execution = bool(self.ui.lstExecution.count())
 
     def _get_selected_list(self, uiList):
-        # TODO it's duplicated fct
-        noLine = uiList.currentRow()
-        if noLine >= 0:
-            return uiList.item(noLine).text()
-        return None
-
-    def _get_selected_list(self, uiList):
         noLine = uiList.currentRow()
         if noLine >= 0:
             return uiList.item(noLine).text()
@@ -154,24 +156,21 @@ class WinExecution(QtCore.QObject):
         self._mode_edit(False)
         return True
 
-    def _mode_edit(self, status):
-        self.mode_edit = status
-        self.ui.frameEdit.setVisible(status)
-        self._clear_form(status)
-        self.ui.txtExecution.setReadOnly(not status)
-        self.ui.newButton.setEnabled(not status)
-        self._enable_stop_button(not status)
-        if status:
+    def _mode_edit(self, mode_edit):
+        self.mode_edit = mode_edit
+        self.ui.frameEdit.setVisible(mode_edit)
+        self._clear_form(mode_edit)
+        self.ui.txtExecution.setReadOnly(not mode_edit)
+        self.ui.newButton.setEnabled(not mode_edit)
+        self._enable_stop_button(mode_edit)
+        if mode_edit:
             self.ui.txtFilterchain.setText(self.filterchain_txt)
-            self.ui.txtExecution.setText("Execution-01")
+            self.ui.txtExecution.setText("Execution-%d" % self.ui.lstExecution.count())
             self.ui.txtMedia.setText(self.winMedia.get_selected_media())
             self.file_name = self.winMedia.get_file_path()
 
-    def _enable_stop_button(self, status):
-        if status and self.ui.lstExecution.count():
-            self.ui.stopButton.setEnabled(True)
-        else:
-            self.ui.stopButton.setEnabled(False)
+    def _enable_stop_button(self, mode_edit):
+        self.ui.stopButton.setEnabled(bool(not mode_edit and self.ui.lstExecution.count() + 1))
 
     def _get_selected_execution_name(self):
         noLine = self.ui.lstExecution.currentRow()
@@ -179,8 +178,8 @@ class WinExecution(QtCore.QObject):
             return self.ui.lstExecution.item(noLine).text()
         return None
 
-    def _clear_form(self, status):
-        if status:
+    def _clear_form(self, mode_edit):
+        if mode_edit:
             self.ui.txtExecution.clear()
             self.ui.txtMedia.clear()
             self.ui.txtFilterchain.clear()
