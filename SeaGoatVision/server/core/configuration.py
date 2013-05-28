@@ -27,8 +27,8 @@ import types
 import filters
 from filter import Filter
 import ConfigParser
-from SeaGoatVision.commun.param import Param
-from SeaGoatVision.commun.keys import *
+from SeaGoatVision.commons.param import Param
+from SeaGoatVision.commons.keys import *
 from SeaGoatVision.server.core import filterchain
 from SeaGoatVision.server.core import utils
 from SeaGoatVision.server import media

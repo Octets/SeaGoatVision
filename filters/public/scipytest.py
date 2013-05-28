@@ -2,7 +2,7 @@
 from scipy import weave
 import cv
 import numpy
-from SeaGoatVision.commun.param import Param
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
 class ScipyExample(Filter):

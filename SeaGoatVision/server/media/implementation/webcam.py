@@ -25,11 +25,11 @@ class Webcam(Media_streaming):
 
     def __init__(self, config):
         # Go into configuration/template_media for more information
+        self.config = config
         Media_streaming.__init__(self)
         self.writer = None
         self.run = True
         self.video = None
-        self.config = config
 
     def open(self):
         self.video = cv2.VideoCapture(self.config.no_camera)

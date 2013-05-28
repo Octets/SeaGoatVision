@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from media import Media
-from SeaGoatVision.commun.keys import get_media_type_video_name
+from SeaGoatVision.commons.keys import get_media_type_video_name
 
 class Media_video(Media):
     def __init__(self):

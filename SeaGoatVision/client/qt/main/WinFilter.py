@@ -21,7 +21,7 @@
 
 from PySide import QtGui
 from PySide import QtCore
-from SeaGoatVision.commun.param import Param
+from SeaGoatVision.commons.param import Param
 
 class WinFilter(QtGui.QDockWidget):
     selectedFilterChanged = QtCore.Signal(object)

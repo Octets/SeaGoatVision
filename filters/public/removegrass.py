@@ -19,7 +19,7 @@
 
 import cv2
 import numpy as np
-from SeaGoatVision.commun.param import  Param
+from SeaGoatVision.commons.param import  Param
 from SeaGoatVision.server.core.filter import Filter
 
 class RemoveGrass(Filter):

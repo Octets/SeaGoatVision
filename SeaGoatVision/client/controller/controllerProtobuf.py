@@ -27,7 +27,7 @@ import numpy as np
 from thirdparty.public.protobuf.socketrpc import RpcService
 import socket
 import threading
-from SeaGoatVision.commun.param import Param
+from SeaGoatVision.commons.param import Param
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 

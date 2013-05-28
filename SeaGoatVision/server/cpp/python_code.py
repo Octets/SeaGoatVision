@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.server.core.filter import Filter
-from SeaGoatVision.commun.param import Param
+from SeaGoatVision.commons.param import Param
 
 def create_execute(cppfunc):
     """

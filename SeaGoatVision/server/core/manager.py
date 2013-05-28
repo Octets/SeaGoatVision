@@ -23,7 +23,7 @@ Description :
 
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
-from SeaGoatVision.commun.keys import *
+from SeaGoatVision.commons.keys import *
 
 KEY_MEDIA = "media"
 KEY_FILTERCHAIN = "filterchain"

@@ -2,7 +2,7 @@
 import cv2
 import cv2.cv as cv
 
-from SeaGoatVision.commun.param import  Param
+from SeaGoatVision.commons.param import  Param
 from SeaGoatVision.server.core.filter import Filter
 
 class RemoveObstacle(Filter):

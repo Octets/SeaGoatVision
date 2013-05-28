@@ -26,7 +26,7 @@ Description : Windows to "view" a filterchain execution
 import time
 
 from SeaGoatVision.client.qt.utils import get_ui
-from SeaGoatVision.commun.keys import *
+from SeaGoatVision.commons.keys import *
 import Image
 from PySide import QtCore
 from PySide import QtGui

@@ -19,7 +19,7 @@
 
 from SeaGoatVision.client.qt.utils import get_ui
 from PySide.QtGui import QIcon
-from SeaGoatVision.commun.keys import *
+from SeaGoatVision.commons.keys import *
 from SeaGoatVision.client.qt import config
 from PySide.QtGui import QFileDialog
 

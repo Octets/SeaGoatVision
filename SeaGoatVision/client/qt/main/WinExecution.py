@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
-from SeaGoatVision.commun.keys import *
+from SeaGoatVision.commons.keys import *
 
 from PySide import QtCore
 from PySide import QtGui
