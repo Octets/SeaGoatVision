@@ -40,11 +40,11 @@ from time import time
 import threading
 
 # Third party imports
-from protobuf.socketrpc.channel import SocketRpcChannel
-from protobuf.socketrpc.error import RpcError
+from thirdparty.public.protobuf.socketrpc.channel import SocketRpcChannel
+from thirdparty.public.protobuf.socketrpc.error import RpcError
 
 # Module imports
-from protobuf.socketrpc import logger
+from thirdparty.public.protobuf.socketrpc import logger
 
 log = logger.getLogger(__name__)
 

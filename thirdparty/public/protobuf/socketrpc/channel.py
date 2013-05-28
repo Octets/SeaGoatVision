@@ -41,9 +41,9 @@ import google.protobuf.service as service
 
 # Module imports
 import rpc_pb2 as rpc_pb
-from protobuf.socketrpc import logger
-from protobuf.socketrpc.controller import SocketRpcController
-from protobuf.socketrpc import error
+from thirdparty.public.protobuf.socketrpc import logger
+from thirdparty.public.protobuf.socketrpc.controller import SocketRpcController
+from thirdparty.public.protobuf.socketrpc import error
 
 # Configure package logging
 log = logger.getLogger(__name__)

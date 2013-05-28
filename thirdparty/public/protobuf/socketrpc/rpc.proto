@@ -22,7 +22,7 @@
 //
 // Protobufs needed for socket rpcs.
 
-package protobuf.socketrpc;
+package thirdparty.public.protobuf.socketrpc;
 
 option java_package = "com.googlecode.protobuf.socketrpc";
 option java_outer_classname = "SocketRpcProtos";

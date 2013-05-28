@@ -37,7 +37,7 @@ May 2009, Nov 2010
 import google.protobuf.service as service
 
 # Module imports
-from protobuf.socketrpc import logger
+from thirdparty.public.protobuf.socketrpc import logger
 
 
 class SocketRpcController(service.RpcController):

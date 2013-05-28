@@ -32,7 +32,7 @@ May 2009, Nov 2010
 '''
 
 # Module imports
-from protobuf.socketrpc import rpc_pb2 as rpc_pb
+from thirdparty.public.protobuf.socketrpc import rpc_pb2 as rpc_pb
 
 
 class ProtobufError(Exception):

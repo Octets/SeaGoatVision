@@ -47,9 +47,9 @@ import socket
 # Third-party imports
 
 # Module imports
-from protobuf.socketrpc import rpc_pb2 as rpc_pb
-from protobuf.socketrpc.controller import SocketRpcController
-from protobuf.socketrpc import error
+from thirdparty.public.protobuf.socketrpc import rpc_pb2 as rpc_pb
+from thirdparty.public.protobuf.socketrpc.controller import SocketRpcController
+from thirdparty.public.protobuf.socketrpc import error
 
 
 class NullHandler(logging.Handler):

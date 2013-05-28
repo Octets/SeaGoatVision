@@ -23,7 +23,7 @@ Description : Start the Vision Server
 
 import os
 # Import required RPC modules
-import protobuf.socketrpc.server as server_rpc
+import thirdparty.public.protobuf.socketrpc.server as server_rpc
 from controller import protobufServerImpl as impl
 from core.configuration import Configuration
 

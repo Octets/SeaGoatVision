@@ -24,7 +24,7 @@ Description : This controller use protobuf to communicate to the vision server
 from SeaGoatVision.proto import server_pb2
 import logging
 import numpy as np
-from protobuf.socketrpc import RpcService
+from thirdparty.public.protobuf.socketrpc import RpcService
 import socket
 import threading
 from SeaGoatVision.commun.param import Param
