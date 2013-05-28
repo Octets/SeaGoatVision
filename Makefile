@@ -22,13 +22,13 @@ all: third_party
 	./filters/build_cpp_filter.py
 
 third_party:
-	make -C thirdparty/public/pydc1394
+	-make -C thirdparty/public/pydc1394
 
 clean_python:
 	find . -type f -name '*.pyc' -exec rm {} \;
 
 clean_third_party:
-	make -C thirdparty/public/pydc1394 clean
+	-make -C thirdparty/public/pydc1394 clean
 
 clean: clean_python clean_third_party
-	rm -Rf ./build
+	-rm -Rf ./build
