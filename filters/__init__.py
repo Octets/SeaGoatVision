@@ -17,5 +17,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from public import *
+from SeaGoatVision.server.core.configuration import Configuration
+config = Configuration()
+
+if config.get_is_show_public_filter():
+    from public import *
 from private import *

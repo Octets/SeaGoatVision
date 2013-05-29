@@ -22,12 +22,26 @@
 from SeaGoatVision.server.configuration.template_media.conf_webcam import Conf_webcam
 from SeaGoatVision.server.configuration.template_media.conf_firewire import Conf_firewire
 
+# keep always true for public configuration
+# It's useful if you need to disable private config
+active_configuration = True
+
 ## Networking
-### Server tcp ouput notification
+### Server tcp output notification
 port_tcp_output = 8090
+
 
 ## Media
 lst_media = []
 
 # add camera webcam with default value
 lst_media.append(Conf_webcam())
+
+
+## Filterchain
+show_public_filterchain = True
+
+
+## Filter
+show_public_filter = True
+

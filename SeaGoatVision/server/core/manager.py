@@ -23,6 +23,7 @@ Description :
 
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
+from resource import Resource
 from SeaGoatVision.commons.keys import *
 
 KEY_MEDIA = "media"
@@ -36,6 +37,7 @@ class Manager:
         """
         self.dct_exec = {}
         self.config = Configuration()
+        self.resource = Resource()
 
         # tcp server for output observer
         self.server_observer = Server()
@@ -68,8 +70,8 @@ class Manager:
             print("The execution %s is already created." % execution_name)
             return None
 
-        media = self.config.get_media(media_name)
-        filterchain = self.config.get_filterchain(filterchain_name)
+        media = self.resource.get_media(media_name)
+        filterchain = self.resource.get_filterchain(filterchain_name)
 
         if not(media and filterchain):
             print("Error with the media \"%s\" or the Filterchain \"%s\". Maybe they don't exist."
@@ -115,11 +117,11 @@ class Manager:
     ################################ SOURCE ##################################
     ##########################################################################
     def get_media_list(self):
-        return {name: self.config.get_media(name).get_type_media()
-                for name in self.config.get_media_name_list()}
+        return {name: self.resource.get_media(name).get_type_media()
+                for name in self.resource.get_media_name_list()}
 
     def start_record(self, media_name, path=None):
-        media = self.config.get_media(media_name)
+        media = self.resource.get_media(media_name)
         if not media:
             return False
         if media.is_media_video():
@@ -127,7 +129,7 @@ class Manager:
         return media.start_record(path=path)
 
     def stop_record(self, media_name):
-        media = self.config.get_media(media_name)
+        media = self.resource.get_media(media_name)
         if not media:
             return False
         if media.is_media_video():
@@ -222,19 +224,19 @@ class Manager:
     ########################## CONFIGURATION  ################################
     ##########################################################################
     def get_filterchain_list(self):
-        return self.config.get_filterchain_list()
+        return self.resource.get_filterchain_list()
 
     def upload_filterchain(self, filterchain_name, s_file_contain):
-        return self.config.upload_filterchain(filterchain_name, s_file_contain)
+        return self.resource.upload_filterchain(filterchain_name, s_file_contain)
 
     def delete_filterchain(self, filterchain_name):
-        return self.config.delete_filterchain(filterchain_name)
+        return self.resource.delete_filterchain(filterchain_name)
 
     def get_filter_list_from_filterchain(self, filterchain_name):
-        return self.config.get_filters_from_filterchain(filterchain_name)
+        return self.resource.get_filters_from_filterchain(filterchain_name)
 
     def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
-        return self.config.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters)
+        return self.resource.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters)
 
     ##########################################################################
     ############################ FILTERCHAIN  ################################
@@ -258,7 +260,7 @@ class Manager:
         # TODO else give config param
         # if filterchain_item is None:
         #    # search in config
-        #    o_filter = self.config.get_filter_from_filterName(filter_name=filter_name)
+        #    o_filter = self.resource.get_filter_from_filterName(filter_name=filter_name)
         return filterchain.get_params(filter_name=filter_name)
 
     def update_param(self, execution_name, filter_name, param_name, value):
@@ -280,4 +282,4 @@ class Manager:
     ############################### FILTER  ##################################
     ##########################################################################
     def get_filter_list(self):
-        return self.config.get_filter_info_list()
+        return self.resource.get_filter_info_list()

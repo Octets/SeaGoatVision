@@ -28,7 +28,7 @@ from controller import protobufServerImpl as impl
 from core.configuration import Configuration
 
 def run(p_port=None):
-    config = Configuration().get_config()
+    config = Configuration()
     # recheck if its locked because the last check is maybe a false lock
     pid = os.getpid()
     sFileLockName = "/tmp/SeaGoat.lock"
@@ -40,7 +40,7 @@ def run(p_port=None):
     fileLock.close()
 
     if not p_port:
-        port = config.port_tcp_output
+        port = config.get_tcp_output_config()
     else:
         port = p_port
 
