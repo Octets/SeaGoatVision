@@ -33,25 +33,35 @@ from SeaGoatVision.server import media
 import filters
 from filter import Filter
 
-class Resource:
-    # TODO do a singleton
+class Resource(object):
+    _instance = None
+
+    def __new__(cls):
+        # Singleton
+        if not cls._instance:
+            #first instance
+            cls.config = Configuration()
+            cls.dct_filter = {}
+            cls.dct_media = {}
+
+            if cls.config.get_is_show_public_filterchain():
+                cls.dir_filterchain = "SeaGoatVision/server/configuration/public/filterchain/"
+            else:
+                cls.dir_filterchain = "SeaGoatVision/server/configuration/private/filterchain/"
+            cls.extFilterChain = ".filterchain"
+
+            # {"filter_name" : class_filter}
+            cls.dct_filterchain = {}
+
+            #instance class
+            cls._instance = super(Resource, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self):
-        self.config = Configuration()
-
-        self.dct_filter = {}
-        self._load_filters()
-        
-        self.dct_media = {}
-        self.load_media()
-        
-        if self.config.get_is_show_public_filterchain():
-            self.dir_filterchain = "SeaGoatVision/server/configuration/public/filterchain/"
-        else:
-            self.dir_filterchain = "SeaGoatVision/server/configuration/private/filterchain/"
-        self.extFilterChain = ".filterchain"
-
-        # {"filter_name" : class_filter}
-        self.dct_filterchain = {}
+        if not self.dct_filter:
+            self._load_filters()
+        if not self.dct_media:
+            self.load_media()
 
 #### Filterchain
     def get_filterchain_list(self):

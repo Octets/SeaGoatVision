@@ -19,7 +19,6 @@
 
 """Contains the FilterChain class and helper functions to work with the filter chain."""
 
-import filters
 from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.server.core import utils
 from SeaGoatVision.commons.param import Param

@@ -27,17 +27,25 @@ try:
 except:
     pass
 
-class Configuration:
-    # TODO do a singleton
-    def __init__(self):
-        self.public_config = public_config
-        try:
-            if private_config.active_configuration:
-                self.private_config = private_config
-            else:
-                self.private_config = None
-        except:
-            self.private_config = None
+class Configuration(object):
+    _instance = None
+
+    def __new__(cls):
+        # Singleton
+        if not cls._instance:
+            #first instance
+            cls.public_config = public_config
+            try:
+                if private_config.active_configuration:
+                    cls.private_config = private_config
+                else:
+                    cls.private_config = None
+            except:
+                cls.private_config = None
+
+            #instance class
+            cls._instance = super(Configuration, cls).__new__(cls)
+        return cls._instance
 
     #### General config
     def get_tcp_output_config(self):
@@ -71,4 +79,3 @@ class Configuration:
             except:
                 return self.public_config.show_public_filter
         return self.public_config.show_public_filter
-
