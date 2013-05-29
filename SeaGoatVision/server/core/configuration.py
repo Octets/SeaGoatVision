@@ -32,14 +32,14 @@ from SeaGoatVision.commons.keys import *
 from SeaGoatVision.server.core import filterchain
 from SeaGoatVision.server.core import utils
 from SeaGoatVision.server import media
-from SeaGoatVision.server.configuration import config
+from SeaGoatVision.server.configuration.public import config
 
 
 class Configuration(object):
     # TODO do a singleton
     def __init__(self):
         self.config = config
-        self.dirFilterChain = "SeaGoatVision/server/configuration/filterchain/"
+        self.dirFilterChain = "SeaGoatVision/server/configuration/public/filterchain/"
         self.extFilterChain = ".filterchain"
 
         # {"filter_name" : class_filter }

@@ -6,6 +6,7 @@
 build
 filters/private
 thirdparty/private
+SeaGoatVision/server/configuration/private
 
 # text editor
 *.swp
