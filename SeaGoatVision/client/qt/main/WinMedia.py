@@ -30,11 +30,13 @@ class WinMedia(QtCore.QObject):
         super(WinMedia, self).__init__()
         self.ressource_icon_path = "SeaGoatVision/client/ressource/img/"
         self.controller = controller
-        #self.islocal = islocal
 
         self.is_recorded = False
+        self.is_pause = False
         self.record_icon = QIcon(self.ressource_icon_path + "RecordVideoAction.png")
         self.save_record_icon = QIcon(self.ressource_icon_path + "SaveServerImageAction.png")
+        self.play_icon = QIcon("/usr/share/icons/gnome/24x24/actions/player_play.png")
+        self.pause_icon = QIcon("/usr/share/icons/gnome/24x24/actions/player_pause.png")
 
         self.dct_media = None
 
@@ -47,9 +49,9 @@ class WinMedia(QtCore.QObject):
         self.ui.cbMedia.currentIndexChanged.connect(self._change_media)
         self.ui.openButton.clicked.connect(self.open_media)
         self.ui.btnplay.clicked.connect(self.play)
-        self.ui.btnpause.clicked.connect(self.pause)
 
         self._set_record_icon()
+        self._set_play_icon()
         self._update_media()
 
     def _update_media(self):
@@ -96,10 +98,21 @@ class WinMedia(QtCore.QObject):
             self.ui.movieLineEdit.setText(filename)
 
     def play(self):
-        self.movie.play()
+        media_name = self.ui.cbMedia.currentText()
+        if self.is_pause:
+            if self.controller.cmd_to_media(media_name, get_key_media_play()):
+                self.is_pause = False
+                self._set_play_icon()
+        else:
+            if self.controller.cmd_to_media(media_name, get_key_media_pause()):
+                self.is_pause = True
+                self._set_play_icon()
 
-    def pause(self):
-        self.movie.pause()
+    def _set_play_icon(self):
+        if not self.is_pause:
+            self.ui.btnplay.setIcon(self.pause_icon)
+        else:
+            self.ui.btnplay.setIcon(self.play_icon)
 
     def _set_record_icon(self):
         if not self.is_recorded:

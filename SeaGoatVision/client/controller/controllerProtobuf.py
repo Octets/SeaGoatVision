@@ -257,6 +257,27 @@ class ControllerProtobuf():
 
         return returnValue
 
+    def cmd_to_media(self, media_name, cmd):
+        request = server_pb2.CmdMediaRequest()
+        request.media_name = media_name
+        request.cmd = cmd
+        # Make an synchronous call
+        try:
+            response = self.service.cmd_to_media(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with cmd_to_media : %s" % response.message)
+                    else:
+                        print("Error with cmd_to_media.")
+            else:
+                returnValue = False
+        except Exception as ex:
+            log.exception(ex)
+
+        return returnValue
+
     ##########################################################################
     ##########################  CONFIGURATION  ###############################
     ##########################################################################

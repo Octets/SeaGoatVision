@@ -28,3 +28,9 @@ def get_media_type_video_name():
 
 def get_empty_filterchain_name():
     return "-- empty filterchain --"
+
+def get_key_media_play():
+    return "play"
+
+def get_key_media_pause():
+    return "pause"

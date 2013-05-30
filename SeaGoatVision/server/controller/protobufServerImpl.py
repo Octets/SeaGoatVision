@@ -276,6 +276,14 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         done.run(response)
 
+    def cmd_to_media(self, controller, request, done):
+        print("cmd_to_media request %s" % str(request).replace("\n", " "))
+
+        response = server_pb2.StatusResponse()
+        response.status = int(not self.manager.cmd_to_media(request.media_name, request.cmd))
+
+        done.run(response)
+
     ##########################################################################
     ############################### THREAD  ##################################
     ##########################################################################

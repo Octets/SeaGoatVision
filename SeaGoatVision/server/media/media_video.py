@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from media import Media
-from SeaGoatVision.commons.keys import get_media_type_video_name
+from SeaGoatVision.commons.keys import *
 
 class Media_video(Media):
     def __init__(self):
@@ -31,6 +31,19 @@ class Media_video(Media):
     def is_media_video(self):
         return True
 
+    def do_cmd(self, action):
+        if not self.thread:
+            return False
+        if action == get_key_media_play():
+            if self.thread.pause:
+                self.thread.pause = False
+                return True
+        elif action == get_key_media_pause():
+            if not self.thread.pause:
+                self.thread.pause = True
+                return True
+        return False
+
     def get_type_media(self):
         return get_media_type_video_name()
 
@@ -40,7 +53,7 @@ class Media_video(Media):
 
     def find_all_images(self, folder):
         """Receive a directory as parameter.
-            Find all files that are images in all subdirectories.
+            Find all files that are images in all sub-directory.
             Returns a list of those files"""
         images = []
         for root, _, files in os.walk(folder):

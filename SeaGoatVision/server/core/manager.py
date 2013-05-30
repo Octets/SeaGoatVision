@@ -63,10 +63,10 @@ class Manager:
     ######################## EXECUTION FILTER ################################
     ##########################################################################
     def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None):
+        # if file_name != None, it's a media video!
         execution = self.dct_exec.get(execution_name, None)
 
         if execution:
-            # change this, return the actual execution
             print("The execution %s is already created." % execution_name)
             return None
 
@@ -116,11 +116,19 @@ class Manager:
         return o_exec_info
 
     ##########################################################################
-    ################################ SOURCE ##################################
+    ################################ MEDIA ###################################
     ##########################################################################
     def get_media_list(self):
         return {name: self.resource.get_media(name).get_type_media()
                 for name in self.resource.get_media_name_list()}
+
+    def cmd_to_media(self, media_name, cmd):
+        media = self.resource.get_media(media_name)
+        if not media:
+            return False
+        if media.is_media_streaming():
+            return False
+        return media.do_cmd(cmd)
 
     def start_record(self, media_name, path=None):
         media = self.resource.get_media(media_name)

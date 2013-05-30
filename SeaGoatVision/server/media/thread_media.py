@@ -28,6 +28,7 @@ class Thread_media(threading.Thread):
         self.media = media
         self.running = False
         self.sleep_time = sleep_time
+        self.pause = False
 
     def run(self):
         self.running = True
@@ -35,6 +36,10 @@ class Thread_media(threading.Thread):
             if image is None:
                 time.sleep(self.sleep_time)
                 continue
+
+            # take a break if in pause
+            while self.pause:
+                time.sleep(self.sleep_time)
 
             start_time = time.time()
             self.media.notify_observer(image)

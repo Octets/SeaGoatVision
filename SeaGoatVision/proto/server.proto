@@ -118,6 +118,12 @@ message StopRecordRequest
   required string media = 1;
 }
 
+message CmdMediaRequest
+{
+  required string media_name = 1;
+  required string cmd = 2;
+}
+
 //############################################################
 //######################## GET SECTION #######################
 //############################################################
@@ -235,4 +241,5 @@ service CommandService
   rpc update_param(UpdateParamRequest) returns(StatusResponse);
   rpc start_record(StartRecordRequest) returns(StatusResponse);
   rpc stop_record(StopRecordRequest) returns(StatusResponse);
+  rpc cmd_to_media(CmdMediaRequest) returns(StatusResponse);
 }
