@@ -19,12 +19,13 @@
 
 from SeaGoatVision.server.media.implementation.firewire import Firewire
 
-class Con_firewire:
+class Conf_firewire:
     def __init__(self):
         self.media = Firewire
         self.name = "Firewire"
-        self.no_camera = None
+        self.no = -1
         self.default_fps = None
 
         # specific for firewire device
-        # to complete
+        self.guid = None
+

@@ -23,5 +23,5 @@ class Conf_webcam:
     def __init__(self):
         self.media = Webcam
         self.name = "Webcam"
-        self.no_camera = -1
+        self.no = -1
         self.default_fps = None

@@ -30,9 +30,13 @@ class Webcam(Media_streaming):
         self.writer = None
         self.run = True
         self.video = None
+        video = cv2.VideoCapture(self.config.no)
+        if video.isOpened():
+            self.isOpened = True
+            video.release()
 
     def open(self):
-        self.video = cv2.VideoCapture(self.config.no_camera)
+        self.video = cv2.VideoCapture(self.config.no)
         self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 320)
         self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 240)
         # call open when video is ready

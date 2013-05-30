@@ -35,7 +35,8 @@ port_tcp_output = 8090
 lst_media = []
 
 # add camera webcam with default value
-lst_media.append(Conf_webcam())
+cam = Conf_webcam()
+lst_media.append(cam)
 
 
 ## Filterchain

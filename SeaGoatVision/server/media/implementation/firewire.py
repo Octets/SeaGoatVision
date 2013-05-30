@@ -16,10 +16,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-try:
-    from thirdparty.public.pydc1394 import video1394
-except Exception as e:
-    pass
+from thirdparty.public.pydc1394 import video1394
 from SeaGoatVision.server.media.media_streaming import Media_streaming
 import numpy as np
 import Image
@@ -27,22 +24,36 @@ import cv2
 import cv2.cv as cv
 
 class Firewire(Media_streaming):
-    """Return images from the webcam."""
+    """Return images from a Firewire device."""
 
-    def __init__(self):
+    def __init__(self, config):
+        # Go into configuration/template_media for more information
+        self.config = config
+
+        ctx = video1394.DC1394Context()
         self.camera = None
-        Media_streaming.__init__(self)
-        self.is_rgb = True
+        if not ctx.numberOfDevices:
+            print("No Firewire camera detected.")
+        else:
+            if config.guid:
+                for cam in ctx.enumerateCameras():
+                    if cam['guid'] == config.guid:
+                        self.camera = video1394.DC1394Camera(cam['guid'], unit=cam['unit'])
+                        self.isOpened = True
+                        break
+            else:
+                if self.config.no < ctx.numberOfDevices:
+                    self.camera = ctx.createCamera(self.config.no)
+                    self.isOpened = True
+
+        self.is_rgb = False
         self.is_mono = False
         self.is_format_7 = False
-        self.no_camera = 0
+        Media_streaming.__init__(self)
 
     def open(self):
-        self.ctx = video1394.DC1394Context()
-        if not self.ctx.numberOfDevices:
-            print("No firewire camera detected.")
-            return
-        camera = self.ctx.createCamera(self.no_camera)
+        ctx = video1394.DC1394Context()
+        camera = self.camera
         camera.resetBus()
         if self.is_format_7:
             # not supported
@@ -56,9 +67,9 @@ class Firewire(Media_streaming):
 
         camera.framerate = video1394.FRAMERATE_15
         camera.isoSpeed = video1394.ISO_SPEED_400
-        self.camera = camera
-        self.camera.start(force_rgb8=True)
-        self.camera.grabEvent.addObserver(self.camera_observer)
+
+        camera.start(force_rgb8=True)
+        camera.grabEvent.addObserver(self.camera_observer)
         # call open when video is ready
         Media_streaming.open(self)
 
@@ -66,13 +77,13 @@ class Firewire(Media_streaming):
         if self.is_rgb or not self.is_mono:
             image = Image.fromarray(im, "RGB")
             image2 = np.asarray(image, dtype="uint8")
-            #transform it to bgr
+            # transform it to bgr
             cv2.cvtColor(np.copy(image), cv.CV_BGR2RGB, image2)
         elif self.is_mono:
             image2 = im
-        #shape = (im.shape[0], im.shape[1], 3)
-        #rgb = np.zeros(shape, dtype=np.uint8)
-        #np.copyto(rgb, im, casting="no")
+        # shape = (im.shape[0], im.shape[1], 3)
+        # rgb = np.zeros(shape, dtype=np.uint8)
+        # np.copyto(rgb, im, casting="no")
         self.notify_observer(image2)
 
     def next(self):

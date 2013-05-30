@@ -25,11 +25,18 @@ import cv2
 import cv
 
 class Media_streaming(Media):
+    def __init__(self):
+        self.isOpened = False
+        Media.__init__(self)
+
     def is_media_streaming(self):
         return True
 
     def is_media_video(self):
         return False
+
+    def is_opened(self):
+        return self.isOpened
 
     def get_type_media(self):
         return get_media_type_streaming_name()

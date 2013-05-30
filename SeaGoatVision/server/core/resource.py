@@ -246,9 +246,13 @@ class Resource(object):
         for conf_media in self.config.get_lst_media_config():
             name = conf_media.name
             if name in dct_media.keys():
-                print("Error, media %s already exist." % name)
+                print("Error: media %s already exist." % name)
                 continue
-            dct_media[name] = conf_media.media(conf_media)
+            o_media = conf_media.media(conf_media)
+            if o_media.is_opened():
+                dct_media[name] = o_media
+            else:
+                print("Error: Camera not detected %s" % name)
         self.dct_media = dct_media
 
     def get_media_name_list(self):
