@@ -65,13 +65,16 @@ class WinExecution(QtCore.QObject):
            execution_name = self.ui.txtExecution.text()
            media_name = self.ui.txtMedia.text()
            filterchain_name = self.ui.txtFilterchain.text()
-           self._execute(execution_name, media_name, filterchain_name)
+           if not self._execute(execution_name, media_name, filterchain_name):
+               return
            self.onPreviewClick.emit(execution_name, media_name, filterchain_name)
            return
 
         if not self.ui.lstExecution.count():
             self._mode_edit(True)
         execution_name = self.ui.txtExecution.text()
+        if not execution_name:
+            return
         media_name = self.ui.txtMedia.text()
         filterchain_name = self.ui.txtFilterchain.text()
         if self.mode_edit:
@@ -92,7 +95,7 @@ class WinExecution(QtCore.QObject):
             execution_name = self.ui.txtExecution.text()
             self.controller.stop_filterchain_execution(execution_name)
             self.ui.lstExecution.takeItem(noLine)
-            self._enable_stop_button(True)
+            self._enable_stop_button(False)
         else:
             print("Bug internal system - winExecution - fix me please")
 
@@ -101,7 +104,7 @@ class WinExecution(QtCore.QObject):
 
     def cancel(self):
         self._mode_edit(False)
-        self._clear_form(True)
+        self._on_selected_lstExecution_change()
 
     def get_execution_name(self):
         return self._get_selected_execution_name()
@@ -165,12 +168,12 @@ class WinExecution(QtCore.QObject):
         self._enable_stop_button(mode_edit)
         if mode_edit:
             self.ui.txtFilterchain.setText(self.filterchain_txt)
-            self.ui.txtExecution.setText("Execution-%d" % self.ui.lstExecution.count())
+            self.ui.txtExecution.setText("Execution-%d" % (self.ui.lstExecution.count() + 1))
             self.ui.txtMedia.setText(self.winMedia.get_selected_media())
             self.file_name = self.winMedia.get_file_path()
 
     def _enable_stop_button(self, mode_edit):
-        self.ui.stopButton.setEnabled(bool(not mode_edit and self.ui.lstExecution.count() + 1))
+        self.ui.stopButton.setEnabled(bool(not mode_edit and self.ui.lstExecution.count()))
 
     def _get_selected_execution_name(self):
         noLine = self.ui.lstExecution.currentRow()
