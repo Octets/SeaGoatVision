@@ -16,7 +16,10 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from thirdparty.public.pydc1394 import video1394
+try:
+    from thirdparty.public.pydc1394 import video1394
+except:
+    pass
 from SeaGoatVision.server.media.media_streaming import Media_streaming
 import numpy as np
 import Image
@@ -29,8 +32,11 @@ class Firewire(Media_streaming):
     def __init__(self, config):
         # Go into configuration/template_media for more information
         self.config = config
-
-        ctx = video1394.DC1394Context()
+        try:
+            ctx = video1394.DC1394Context()
+        except:
+            print("Error: Lib1394 is not supported.")
+            return
         self.camera = None
         if not ctx.numberOfDevices:
             print("No Firewire camera detected.")
