@@ -71,11 +71,13 @@ class Manager:
             return None
 
         media = self.resource.get_media(media_name)
-        filterchain = self.resource.get_filterchain(filterchain_name)
+        if not media:
+            print("Error with the media \"%s\". Maybe it not exist." % media_name)
+            return None
 
-        if not(media and filterchain):
-            print("Error with the media \"%s\" or the Filterchain \"%s\". Maybe they don't exist."
-                  % (media_name, filterchain_name))
+        filterchain = self.resource.get_filterchain(filterchain_name, force_new_filterchain=True)
+        if not filterchain:
+            print("Error with the Filterchain \"%s\". Maybe it not exist." % filterchain_name)
             return None
 
         if media.is_media_video() and file_name:

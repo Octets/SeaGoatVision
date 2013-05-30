@@ -39,7 +39,7 @@ class Resource(object):
     def __new__(cls):
         # Singleton
         if not cls._instance:
-            #first instance
+            # first instance
             cls.config = Configuration()
             cls.dct_filter = {}
             cls.dct_media = {}
@@ -53,7 +53,7 @@ class Resource(object):
             # {"filter_name" : class_filter}
             cls.dct_filterchain = {}
 
-            #instance class
+            # instance class
             cls._instance = super(Resource, cls).__new__(cls)
         return cls._instance
 
@@ -94,11 +94,12 @@ class Resource(object):
         except OSError:
             return -1
 
-    def get_filterchain(self, filterchain_name):
+    def get_filterchain(self, filterchain_name, force_new_filterchain=False):
         # check if already instance
-        o_filterchain = self.dct_filterchain.get(filterchain_name, None)
-        if o_filterchain:
-            return o_filterchain
+        if not force_new_filterchain:
+            o_filterchain = self.dct_filterchain.get(filterchain_name, None)
+            if o_filterchain:
+                return o_filterchain
 
         if filterchain_name and filterchain_name != get_empty_filterchain_name():
             o_filterchain = self.read_filterchain(self._get_filename(filterchain_name))
