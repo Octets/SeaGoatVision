@@ -21,12 +21,14 @@ Description : Run the vision server
 """
 import argparse
 
+import sys
+argument = sys.argv[1:]
 from SeaGoatVision.server.mainserver import run
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Vision Server')
     parser.add_argument('--port', type=int, default="0", help='Port of the host.')
-    args = parser.parse_args()
+    args = parser.parse_args(args=argument)
     port = args.port if args.port else None
     run(p_port=port)
 
