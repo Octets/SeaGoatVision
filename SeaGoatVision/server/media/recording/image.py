@@ -20,8 +20,8 @@
 import cv2
 import os
 
+# not supported
 class ImageRecorder:
-    
     def __init__(self, savepath, filtre):
         self.savepath = savepath
         self.filtre = filtre
@@ -36,4 +36,3 @@ class ImageRecorder:
     def save(self, image):
         cv2.imwrite(self.next_filename(), image)
         
-    

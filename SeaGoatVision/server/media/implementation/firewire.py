@@ -31,31 +31,30 @@ class Firewire(Media_streaming):
 
     def __init__(self, config):
         # Go into configuration/template_media for more information
+        Media_streaming.__init__(self)
         self.config = config
+        self.camera = None
         try:
             ctx = video1394.DC1394Context()
         except:
             print("Error: Lib1394 is not supported.")
             return
-        self.camera = None
-        if not ctx.numberOfDevices:
-            print("No Firewire camera detected.")
+
+        if config.guid:
+            self.camera = ctx.createCamera(guid=config.guid)
         else:
-            if config.guid:
-                for cam in ctx.enumerateCameras():
-                    if cam['guid'] == config.guid:
-                        self.camera = video1394.DC1394Camera(cam['guid'], unit=cam['unit'])
-                        self.isOpened = True
-                        break
-            else:
-                if self.config.no < ctx.numberOfDevices:
-                    self.camera = ctx.createCamera(self.config.no)
-                    self.isOpened = True
+            self.camera = ctx.createCamera(cid=self.config.no)
+
+        if self.camera is not None:
+            self.isOpened = True
+        else:
+            print("No Firewire camera detected.")
+
+        self.shape = (800, 600)
 
         self.is_rgb = False
         self.is_mono = False
         self.is_format_7 = False
-        Media_streaming.__init__(self)
 
     def open(self):
         ctx = video1394.DC1394Context()

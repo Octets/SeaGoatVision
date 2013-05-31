@@ -27,18 +27,18 @@ class Webcam(Media_streaming):
         # Go into configuration/template_media for more information
         self.config = config
         Media_streaming.__init__(self)
-        self.writer = None
         self.run = True
         self.video = None
         video = cv2.VideoCapture(self.config.no)
         if video.isOpened():
             self.isOpened = True
             video.release()
+        self.shape = (320, 240)
 
     def open(self):
         self.video = cv2.VideoCapture(self.config.no)
-        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 320)
-        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 240)
+        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, self.shape[0])
+        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, self.shape[1])
         # call open when video is ready
         Media_streaming.open(self)
 
@@ -46,8 +46,6 @@ class Webcam(Media_streaming):
         run, image = self.video.read()
         if run == False:
             raise StopIteration
-        if self.writer:
-            self.writer.write(image)
         return image
 
     def close(self):

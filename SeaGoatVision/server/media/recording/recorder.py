@@ -17,33 +17,36 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import cv2
-import os
+# not supported
+class Recorder:
+    def __init__(self):
+        self.savepath = ''
+        self.saver_class = None
+        self.savers = {}
+        self.running = False
 
-class VideoRecorder():
-    
-    def __init__(self, savepath, filtre, fps=30):
-        self.videowriter = None
+    def set_saver_class(self, saver):
+        self.saver_class = saver
+
+    def set_save_path(self, savepath):
         self.savepath = savepath
-        self.filtre = filtre
-        self.fps = fps
         
-    def file_name(self):
-        return os.path.join(
-            self.savepath, 
-            self.filtre.__class__.__name__ + '.avi')
-        
-    def init_writer(self, image):
-        return cv2.VideoWriter(
-            self.file_name(),
-            cv2.cv.CV_FOURCC('F', 'L', 'V', '1'), 
-            self.fps, 
-            (image.shape[1], image.shape[0])
-        )
-        
-    def save(self, image):
-        if self.videowriter is None:
-            self.videowriter = self.init_writer(image)
-        self.videowriter.write(image)
-        
+    def start(self):
+        self.running = True
+    
+    def stop(self):
+        self.running = False
+    
+    def add_filter(self, filtre):
+        self.savers[filtre] = self.saver_class(self.savepath, filtre)
+    
+    def remove_filter(self, filtre):
+        del self.savers[filtre]
+    
+    def filter_observer(self, filtre, image):
+        if not self.running:
+            return
+
+        if self.saver is not None and filtre in self.filters.keys:
+            self.saver.save(filtre, image)
     
