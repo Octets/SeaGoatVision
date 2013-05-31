@@ -97,6 +97,8 @@ class FilterChain(object):
     def get_params(self, filter=None, filter_name=None):
         if filter_name:
             filter = self.get_filter(name=filter_name)
+            if not filter:
+                return None
         if filter:
             return filter.get_params()
         return [(filter.__class__.__name__, filter.get_params()) for filter in self.filters]

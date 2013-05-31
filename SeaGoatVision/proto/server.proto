@@ -124,6 +124,11 @@ message CmdMediaRequest
   required string cmd = 2;
 }
 
+message SaveParamsRequest
+{
+  required string execution_name = 1;
+}
+
 //############################################################
 //######################## GET SECTION #######################
 //############################################################
@@ -242,4 +247,5 @@ service CommandService
   rpc start_record(StartRecordRequest) returns(StatusResponse);
   rpc stop_record(StopRecordRequest) returns(StatusResponse);
   rpc cmd_to_media(CmdMediaRequest) returns(StatusResponse);
+  rpc save_params(SaveParamsRequest) returns(StatusResponse);
 }

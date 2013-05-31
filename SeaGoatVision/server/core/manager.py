@@ -265,24 +265,23 @@ class Manager:
         o_filter = None
         filterchain_item = None
         execution = self.dct_exec.get(execution_name, None)
-        if not execution:
-            return None
-        filterchain = execution.get(KEY_FILTERCHAIN, None)
-        if not filterchain:
-            return None
-        # TODO else give config param
+        if execution:
+            filterchain = execution.get(KEY_FILTERCHAIN, None)
+            if filterchain:
+                return filterchain.get_params(filter_name=filter_name)
+        # Try on configuration
+
         # if filterchain_item is None:
         #    # search in config
         #    o_filter = self.resource.get_filter_from_filterName(filter_name=filter_name)
-        return filterchain.get_params(filter_name=filter_name)
 
     def update_param(self, execution_name, filter_name, param_name, value):
         dct_execution = self.dct_exec.get(execution_name, {})
         if not dct_execution:
-            return None
+            return False
         filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
         if not filterchain:
-            return None
+            return False
         filter = filterchain.get_filter(name=filter_name)
         param = filter.get_params(param_name=param_name)
         if param:
@@ -290,6 +289,16 @@ class Manager:
             filter.configure()
             return True
         return False
+
+    def save_params(self, execution_name):
+        "Force serialization and overwrite config"
+        dct_execution = self.dct_exec.get(execution_name, {})
+        if not dct_execution:
+            return False
+        filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
+        if not filterchain:
+            return False
+        return self.config.write_filterchain(filterchain)
 
     ##########################################################################
     ############################### FILTER  ##################################

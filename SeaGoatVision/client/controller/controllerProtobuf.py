@@ -616,9 +616,32 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        print("Error with reload_filter : %s" % response.message)
+                        print("Error with update_param : %s" % response.message)
                     else:
-                        print("Error with reload_filter.")
+                        print("Error with update_param.")
+            else:
+                returnValue = False
+
+        except Exception as ex:
+            log.exception(ex)
+
+        return returnValue
+
+    def save_params(self, execution_name):
+        request = server_pb2.SaveParamsRequest()
+        request.execution_name = execution_name
+
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.save_params(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with save_params : %s" % response.message)
+                    else:
+                        print("Error with save_params.")
             else:
                 returnValue = False
 

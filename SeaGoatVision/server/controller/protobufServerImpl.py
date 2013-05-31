@@ -407,6 +407,21 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
+    def save_params(self, controller, request, done):
+        print("save_params request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            response.status = self.manager.save_params(request.execution_name)
+        except Exception as e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+
     ##########################################################################
     ############################### FILTER  ##################################
     ##########################################################################

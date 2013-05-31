@@ -52,10 +52,16 @@ class WinFilter(QtGui.QDockWidget):
         self.filter_param = self.controller.get_params_filterchain(self.execution_name, filter_name=self.filter_name)
 
         layout = QtGui.QVBoxLayout()
+
         self.resetButton = QtGui.QPushButton()
         self.resetButton.clicked.connect(self.reset)
         self.resetButton.setText("Reset")
         layout.addWidget(self.resetButton)
+
+        self.saveButton = QtGui.QPushButton()
+        self.saveButton.clicked.connect(self.save)
+        self.saveButton.setText("Save")
+        layout.addWidget(self.saveButton)
 
         if not self.filter_param:
             nothing = QtGui.QLabel()
@@ -255,3 +261,6 @@ class WinFilter(QtGui.QDockWidget):
         for param in self.lst_param:
             param.reset()
         self.setFilter(self.execution_name, self.filter_name)
+
+    def save(self):
+        self.controller.save_params(self.execution_name)

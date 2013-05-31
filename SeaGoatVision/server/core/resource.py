@@ -69,7 +69,11 @@ class Resource(object):
         return lstFilterChain
 
     def upload_filterchain(self, filterchain_name, s_contain):
-        return self.config.create_filterchain(filterchain_name, s_contain)
+        o_filterchain = filterchain.FilterChain("System - Empty")
+        status = o_filterchain.deserialize(filterchain_name, s_contain, self.create_filter)
+        if not status:
+            return status
+        return self.config.write_filterchain(o_filterchain)
 
     def delete_filterchain(self, filterchain_name):
         if filterchain_name in self.dct_filterchain:
@@ -185,4 +189,3 @@ class Resource(object):
 
     def get_media(self, name):
         return self.dct_media.get(name, None)
-
