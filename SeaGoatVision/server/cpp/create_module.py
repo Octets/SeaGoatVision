@@ -123,6 +123,14 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_ar
     else:
         has_configure = False
 
+    # destroy
+    if "void destroy()" in cppcode:
+        has_destroy = True
+        func = ext_tools.ext_function('destroy_' + modname, destroy_code(), [])
+        mod.add_function(func)
+    else:
+        has_destroy = False
+
     # set original image
     func = ext_tools.ext_function('set_original_image_' + modname, set_original_image_code(), ['image_original'])
     mod.add_function(func)
@@ -153,6 +161,8 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_ar
                 }
         if has_configure:
             dct_fct['configure'] = create_configure(getattr(cppmodule, 'config_' + modname))
+        if has_destroy:
+            dct_fct['destroy'] = create_destroy(getattr(cppmodule, 'destroy_' + modname))
 
         clazz = type(modname,
                      (Filter,),

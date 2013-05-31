@@ -32,6 +32,14 @@ def init_code(call_c_init):
         """
     return code
 
+def destroy_code():
+    """
+    call the destructor
+    """
+    return """
+        destroy();
+    """
+
 def execute_code():
     """
     Return the code that calls a c++ filter

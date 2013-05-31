@@ -97,7 +97,10 @@ class Manager:
             print("The execution %s is already stopped." % execution_name)
             return False
 
+        # Remove execution image observer from media
         execution[KEY_MEDIA].remove_observer(execution[KEY_FILTERCHAIN].execute)
+        # Destroy all memory
+        execution[KEY_FILTERCHAIN].destroy()
         del self.dct_exec[execution_name]
 
         return True
@@ -111,8 +114,8 @@ class Manager:
             return None
         class Exec_info: pass
         o_exec_info = Exec_info()
-        setattr(o_exec_info, "media", exec_info[KEY_MEDIA].__class__.__name__)
-        setattr(o_exec_info, "filterchain", exec_info[KEY_FILTERCHAIN].get_name())
+        setattr(o_exec_info, KEY_MEDIA, exec_info[KEY_MEDIA].__class__.__name__)
+        setattr(o_exec_info, KEY_FILTERCHAIN, exec_info[KEY_FILTERCHAIN].get_name())
         return o_exec_info
 
     ##########################################################################

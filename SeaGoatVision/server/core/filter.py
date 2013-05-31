@@ -24,6 +24,10 @@ class Filter(object):
         self._output_observers = list()
         self.original_image = None
 
+    def destroy(self):
+        # It's called just before to be destroyed
+        pass
+
     def configure(self):
         pass
 

@@ -36,10 +36,26 @@ class FilterChain(object):
     """
     def __init__(self, filterchain_name):
         self.filters = []
+        # {"filter_name":[observator,]}
         self.image_observers = {}
         self.filter_output_observers = []
         self.filterchain_name = filterchain_name
         self.original_image_observer = []
+
+    def destroy(self):
+        # clean everything!
+        for obs in self.filter_output_observers:
+            self.remove_filter_output_observer(obs)
+
+        for obs in self.original_image_observer:
+            self.remove_image_observer(obs, get_filter_original_name())
+
+        for filter_name, lst_obs in self.image_observers.items():
+            for obs in lst_obs:
+                self.remove_image_observer(obs, filter_name)
+
+        for filter in self.filters:
+            filter.destroy()
 
     def count(self):
         return len(self.filters)

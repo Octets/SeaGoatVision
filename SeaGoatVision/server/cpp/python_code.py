@@ -41,11 +41,19 @@ def create_init(cppfunc, params):
     """
     """
     def __init__(self):
-        # this class herit of Filter
+        # this subclass of Filter
         Filter.__init__(self)
         self.params = {}
         cppfunc(self.params, self.py_init_param, self.notify_output_observers)
     return __init__
+
+def create_destroy(cppfunc):
+    """
+    Just call the destructor
+    """
+    def destroy(self):
+        cppfunc()
+    return destroy
 
 def create_set_original_image(cppfunc):
     def set_original_image(self, image_original):
