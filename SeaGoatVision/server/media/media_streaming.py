@@ -26,7 +26,7 @@ class Media_streaming(Media):
         self.isOpened = False
         self.writer = None
         self.shape = None
-        self.recorder = Video_recorder()
+        self.recorder = Video_recorder(self)
         Media.__init__(self)
 
     def is_media_streaming(self):

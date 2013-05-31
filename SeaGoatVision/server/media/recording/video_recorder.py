@@ -23,8 +23,9 @@ import os
 import time
 
 class Video_recorder:
-    def __init__(self):
+    def __init__(self, media):
         self.writer = None
+        self.media = media
         
     def start(self, shape, path=None, savepath="./", fps=30):
         # TODO manage multiple record
@@ -51,7 +52,7 @@ class Video_recorder:
         fourcc = cv.CV_FOURCC('I', 'Y', 'U', 'V')  # Uncompressed YUV, 4:2:0 chroma subsampled , same of 'I420'
         self.writer = cv2.VideoWriter(filename=name, fourcc=fourcc, fps=fps, frameSize=shape, isColor=1)
         self.writer.open(name, fourcc, fps, shape, 1)
-        self.add_observer(self.writer.write)
+        self.media.add_observer(self.writer.write)
         return True
         
     def stop(self):
