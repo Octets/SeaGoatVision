@@ -20,6 +20,8 @@
 """
 Description : Configuration manage configuration file.
 """
+import os
+import json
 
 from SeaGoatVision.server.configuration.public import config as public_config
 try:
@@ -33,7 +35,7 @@ class Configuration(object):
     def __new__(cls):
         # Singleton
         if not cls._instance:
-            #first instance
+            # first instance
             cls.public_config = public_config
             try:
                 if private_config.active_configuration:
@@ -43,9 +45,16 @@ class Configuration(object):
             except:
                 cls.private_config = None
 
-            #instance class
+            # instance class
             cls._instance = super(Configuration, cls).__new__(cls)
         return cls._instance
+
+    def __init__(self):
+        if self.get_is_show_public_filterchain():
+            self.dir_filterchain = "SeaGoatVision/server/configuration/public/filterchain/"
+        else:
+            self.dir_filterchain = "SeaGoatVision/server/configuration/private/filterchain/"
+        self.extFilterChain = ".filterchain"
 
     #### General config
     def get_tcp_output_config(self):
@@ -79,3 +88,40 @@ class Configuration(object):
             except:
                 return self.public_config.show_public_filter
         return self.public_config.show_public_filter
+
+    #### Filterchain
+    def list_filterchain(self):
+        if not os.path.isdir(self.dir_filterchain):
+            return []
+        return [files[:-len(self.extFilterChain)] for files in os.listdir(self.dir_filterchain) if files.endswith(self.extFilterChain)]
+
+    def read_filterchain(self, filterchain_name):
+        file_name = self._get_filterchain_filename(filterchain_name)
+        f = open(file_name, "r")
+        if not f:
+            print("Error, file not exist or other reason : %s" % file_name)
+            return None
+        str_value = f.readlines()
+        value = json.loads("".join(str_value))
+        f.close()
+        return value
+
+    def write_filterchain(self, filterchain):
+        file_name = self._get_filterchain_filename(filterchain.get_name())
+        f = open(file_name, "w")
+        if not f:
+            return False
+        str_value = json.dumps(filterchain.serialize(), indent=4)
+        f.write(str_value)
+        f.close()
+        return True
+
+    def delete_filterchain(self, filterchain_name):
+        file_name = self._get_filterchain_filename(filterchain_name)
+        try:
+            return os.remove(file_name)
+        except OSError:
+            return False
+
+    def _get_filterchain_filename(self, filterchain_name):
+        return "%s%s%s" % (self.dir_filterchain, filterchain_name, self.extFilterChain)

@@ -41,7 +41,7 @@ class Param(object):
     If you want specific type, cast it to basic type and use force_type
     Param manager type : bool, str, int and float
     """
-    def __init__(self, name, value, min_v=None, max_v=None, lst_value=None,\
+    def __init__(self, name, value, min_v=None, max_v=None, lst_value=None, \
                 force_type=None, thres_h=None):
         if type(name) is not str and type(name) is not unicode:
             raise Exception("Name must be string value.")
@@ -53,6 +53,9 @@ class Param(object):
         self.type_t = None
         self.thres_h = None
         self.force_type = None
+        self._init_param(value, min_v, max_v, lst_value, force_type, thres_h)
+
+    def _init_param(self, value, min_v, max_v, lst_value, force_type, thres_h):
         self._valid_param(value, min_v, max_v, lst_value, thres_h)
         self.set(value)
         self.default_value = self.value
@@ -92,6 +95,30 @@ class Param(object):
         self.type_t = type_t
         self.thres_h = thres_h
 
+    def serialize(self):
+        # Force_type is not supported
+        return {"name":self.name,
+                "value":self.value,
+                "min_v":self.min_v,
+                "max_v":self.max_v,
+                "lst_value":self.lst_value,
+                #"force_type":self.force_type,
+                "thres_h":self.thres_h}
+
+    def deserialize(self, value):
+        if type(value) is not dict:
+            return False
+        name = value.get("name", None)
+        if not name:
+            return False
+        self._init_param(value.get("value", None),
+                         value.get("min_v", None),
+                         value.get("max_v", None),
+                         value.get("lst_value", None),
+                         value.get("force_type", None),
+                         value.get("thres_h", None))
+        return True
+
     def reset(self):
         self.value = self.default_value
 
@@ -110,7 +137,7 @@ class Param(object):
         return self.force_type(self.value)
 
     def set(self, value, thres_h=None):
-        #exception for bool
+        # exception for bool
         if self.type_t is bool:
             value = bool(value)
         if self.type_t is int and type(value) is float:

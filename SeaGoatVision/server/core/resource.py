@@ -44,12 +44,6 @@ class Resource(object):
             cls.dct_filter = {}
             cls.dct_media = {}
 
-            if cls.config.get_is_show_public_filterchain():
-                cls.dir_filterchain = "SeaGoatVision/server/configuration/public/filterchain/"
-            else:
-                cls.dir_filterchain = "SeaGoatVision/server/configuration/private/filterchain/"
-            cls.extFilterChain = ".filterchain"
-
             # {"filter_name" : class_filter}
             cls.dct_filterchain = {}
 
@@ -67,32 +61,20 @@ class Resource(object):
     def get_filterchain_list(self):
         class FilterChain: pass
         lstFilterChain = []
-        if not os.path.isdir(self.dir_filterchain):
-            return lstFilterChain
-
-        for files in os.listdir(self.dir_filterchain):
-            if files.endswith(self.extFilterChain):
+        for fc_name in self.config.list_filterchain():
                 filterChain = FilterChain()
-                setattr(filterChain, "name", files[:-len(self.extFilterChain)])
+                setattr(filterChain, "name", fc_name)
                 setattr(filterChain, "doc", None)
                 lstFilterChain.append(filterChain)
         return lstFilterChain
 
     def upload_filterchain(self, filterchain_name, s_contain):
-        f = open(self._get_filename(filterchain_name), "w")
-        if f:
-            f.write(s_contain)
-            f.close()
-            return True
-        return False
+        return self.config.create_filterchain(filterchain_name, s_contain)
 
     def delete_filterchain(self, filterchain_name):
         if filterchain_name in self.dct_filterchain:
             del self.dct_filterchain[filterchain_name]
-        try:
-            return os.remove(self._get_filename(filterchain_name))
-        except OSError:
-            return -1
+        self.config.delete_filterchain(filterchain_name)
 
     def get_filterchain(self, filterchain_name, force_new_filterchain=False):
         # check if already instance
@@ -102,7 +84,12 @@ class Resource(object):
                 return o_filterchain
 
         if filterchain_name and filterchain_name != get_empty_filterchain_name():
-            o_filterchain = self.read_filterchain(self._get_filename(filterchain_name))
+            data = self.config.read_filterchain(filterchain_name)
+            if not data:
+                return
+            # Temporary name - empty
+            o_filterchain = filterchain.FilterChain("System - Empty")
+            o_filterchain.deserialize(filterchain_name, data, self.create_filter)
         else:
             o_filterchain = filterchain.FilterChain(get_empty_filterchain_name())
         self.dct_filterchain[filterchain_name] = o_filterchain
@@ -131,72 +118,9 @@ class Resource(object):
                 return False
             chain.add_filter(o_filter)
 
-        self.write_filterchain(self._get_filename(filterchain_name), chain)
+        self.config.write_filterchain(chain)
         self.dct_filterchain[filterchain_name] = chain
         return True
-
-    def _get_filename(self, filterchain_name):
-        return self.dir_filterchain + filterchain_name + self.extFilterChain
-
-    def read_filterchain(self, file_name):
-        """Open a filtre chain file and load its content in a new filtre chain."""
-        filterchain_name = file_name[file_name.rfind("/") + 1:file_name.rfind(".")]
-        new_chain = filterchain.FilterChain(filterchain_name)
-        cfg = ConfigParser.ConfigParser()
-        cfg.read(file_name)
-        for section in cfg.sections():
-            filtre = self.create_filter(section)
-            if not filtre:
-                print("Error : The filter %s doesn't exist on filterchain %s." % (section, filterchain_name))
-                continue
-            # TODO refaire les parameter seulement
-            for member in filtre.__dict__:
-                param = getattr(filtre, member)
-                if not isinstance(param, Param):
-                    continue
-                try:
-                    val = cfg.get(section, member)
-                except:
-                    # the file didn't contain the param
-                    continue
-                if val == "True" or val == "False":
-                    param.set(cfg.getboolean(section, member))
-                elif val.isdigit():
-                    param.set(cfg.getint(section, member))
-                elif utils.isnumeric(val):
-                    f_value = cfg.getfloat(section, member)
-                    # exception, if the param want int, we will cast it
-                    if param.get_type() is int:
-                        param.set(int(f_value))
-                    else:
-                        param.set(f_value)
-                elif val[0] == "(":
-                    # It's a tuple!
-                    if val.find("."):
-                        val = tuple(map(float, val[1:-1].split(',')))
-                    else:
-                        val = tuple(map(int, val[1:-1].split(',')))
-                    param.set(val[0], thres_h=val[1])
-                else:
-                    val = '\n'.join([line[1:-1] for line in str.splitlines(val)])
-                    param.set(val)
-            if hasattr(filtre, 'configure'):
-                filtre.configure()
-            new_chain.add_filter(filtre)
-        return new_chain
-
-    def write_filterchain(self, file_name, chain):
-        """Save the content of the filter chain in a file."""
-        cfg = ConfigParser.ConfigParser()
-        for fname, params in chain.get_params():
-            cfg.add_section(fname)
-            for param in params:
-                value = param.get()
-                name = param.get_name()
-                if isinstance(value, str):
-                    value = '\n'.join(['"%s"' % line for line in str.splitlines(value)])
-                cfg.set(fname, name, value)
-        cfg.write(open(file_name, 'w'))
 
     #### Filter
     def get_filter_info_list(self):

@@ -57,6 +57,24 @@ class FilterChain(object):
         for filter in self.filters:
             filter.destroy()
 
+    def serialize(self):
+        # Keep list of filter with param
+        return {"lst_filter":[filter.serialize() for filter in self.filters]}
+
+    def deserialize(self, name, value, fct_create_filter):
+        status = True
+        self.filterchain_name = name
+        lst_filter = value.get("lst_filter", [])
+        self.filters = []
+        for filter_to_ser in lst_filter:
+            filter_name = filter_to_ser.get("name", None)
+            o_filter = fct_create_filter(filter_name)
+            if not o_filter:
+                continue
+            status &= o_filter.deserialize(filter_to_ser)
+            self.filters.append(o_filter)
+        return status
+
     def count(self):
         return len(self.filters)
 
