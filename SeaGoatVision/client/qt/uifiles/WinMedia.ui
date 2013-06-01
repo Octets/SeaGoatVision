@@ -101,9 +101,20 @@
          <widget class="QLineEdit" name="movieLineEdit"/>
         </item>
         <item>
-         <widget class="QPushButton" name="openButton">
+         <widget class="QPushButton" name="openDirButton">
           <property name="text">
-           <string>Open</string>
+           <string>Dir</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../../../../../../usr/share/icons/gnome/24x24/actions/document-open.png</normaloff>../../../../../../../../usr/share/icons/gnome/24x24/actions/document-open.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="openFileButton">
+          <property name="text">
+           <string>File</string>
           </property>
           <property name="icon">
            <iconset>
@@ -231,7 +242,7 @@
           <item>
            <widget class="QCheckBox" name="loopchb">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>

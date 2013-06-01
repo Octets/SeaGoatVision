@@ -47,8 +47,10 @@ class WinMedia(QtCore.QObject):
 
         self.ui.recordButton.clicked.connect(self.click_record_button)
         self.ui.cbMedia.currentIndexChanged.connect(self._change_media)
-        self.ui.openButton.clicked.connect(self.open_media)
+        self.ui.openDirButton.clicked.connect(self.open_directory)
+        self.ui.openFileButton.clicked.connect(self.open_file)
         self.ui.btnplay.clicked.connect(self.play)
+        self.ui.loopchb.clicked.connect(self.active_loop)
 
         self._set_record_icon()
         self._set_play_icon()
@@ -92,7 +94,12 @@ class WinMedia(QtCore.QObject):
             self.is_recorded = False
             self._set_record_icon()
 
-    def open_media(self):
+    def open_directory(self):
+        filename = QFileDialog.getExistingDirectory()
+        if len(filename) > 0:
+            self.ui.movieLineEdit.setText(filename)
+
+    def open_file(self):
         filename = QFileDialog.getOpenFileName()[0]
         if len(filename) > 0:
             self.ui.movieLineEdit.setText(filename)
@@ -107,6 +114,10 @@ class WinMedia(QtCore.QObject):
             if self.controller.cmd_to_media(media_name, get_key_media_pause()):
                 self.is_pause = True
                 self._set_play_icon()
+
+    def active_loop(self):
+        media_name = self.ui.cbMedia.currentText()
+        self.controller.cmd_to_media(media_name, get_key_media_loop())
 
     def _set_play_icon(self):
         if not self.is_pause:

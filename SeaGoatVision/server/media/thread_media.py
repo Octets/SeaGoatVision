@@ -49,8 +49,6 @@ class Thread_media(threading.Thread):
                 sleep_time = self.sleep_time - (time.time() - start_time)
                 if sleep_time > 0:
                     time.sleep(sleep_time)
-                else:
-                    time.sleep(0)
         self.running = False
 
     def stop(self):

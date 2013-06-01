@@ -159,6 +159,7 @@ class Resource(object):
     def load_media(self):
         # update list of media
         dct_media = {}
+        """
         for name, media_class in vars(media).items():
             # only class can be a media
             if not inspect.isclass(media_class):
@@ -171,6 +172,7 @@ class Resource(object):
             # ignore media.media_streaming.Media_streaming
             if issubclass(media_class, media.media_video.Media_video):
                 dct_media[name] = media_class()
+        """
         # Create personalize media
         for conf_media in self.config.get_lst_media_config():
             name = conf_media.name
@@ -182,6 +184,9 @@ class Resource(object):
                 dct_media[name] = o_media
             else:
                 print("Error: Camera not detected %s" % name)
+        # Force media_video
+        dct_media["File"] = media.media_video.Media_video()
+
         self.dct_media = dct_media
 
     def get_media_name_list(self):

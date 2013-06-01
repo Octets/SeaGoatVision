@@ -34,3 +34,6 @@ def get_key_media_play():
 
 def get_key_media_pause():
     return "pause"
+
+def get_key_media_loop():
+    return "toggle_loop"
