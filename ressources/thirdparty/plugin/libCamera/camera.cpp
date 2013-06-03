@@ -22,24 +22,31 @@ Camera::Camera()
     cam=NULL;
     frame = tPvFrame();
     array = NULL;
+    started = false;
+    initialized = false;
 }
 
 Camera::~Camera()
 {
+    cout << "destructor is called!"<<endl;
     if(array!=NULL){
          this->stop();
     }
     if(cam!=NULL){
        this->uninitialize();
     }
+    _
 }
 
 /** begin Commands methods **/
 void Camera::initialize()
 {
+    if(this->cam != NULL){
+        return;
+    }
     if(PvInitialize()==ePvErrSuccess)
     {
-        cout<<"Camera module for Manta G-95c version 0.98"<<endl;
+        cout<<"Camera module for Manta G-95c version 0.99"<<endl;
     } else {
         throw PvApiNotInitializeException();
     }
@@ -93,13 +100,19 @@ void Camera::initialize()
     {
         std::cout<<"camera not found!\n";
     }
+    initialized = true;
 }
 
 void Camera::uninitialize(){
+    if(this->cam == NULL){
+        return;
+    }
     PvCaptureQueueClear(this->cam);
     PvCameraClose(this->cam);
     PvCaptureEnd(this->cam);
     PvUnInitialize();
+    this->cam = NULL;
+    initialized = false;
 }
 
 PyObject* Camera::getFrame()
@@ -141,12 +154,18 @@ void Camera::start()
     array = new char[frameSize];
 
     frame.ImageBuffer=array;
+    started = true;
 }
 
 void Camera::stop(){
+    if(array == NULL){
+        return;
+    }
     checkIfCameraIsInitialized();
     PvCommandRun(this->cam, "AcquisitionStop");
     delete array;
+    array = NULL;
+    started = false;
 }
 
 
@@ -158,6 +177,14 @@ void Camera::loadConfigFile(){
 void Camera::saveConfigFile(){
     checkIfCameraIsInitialized();
     PvCommandRun(this->cam,"ConfigFileSave");
+}
+
+bool Camera::isInitialized(){
+    return initialized;
+}
+
+bool Camera::isStarted(){
+    return started;
 }
 
 /** end Commands methods **/

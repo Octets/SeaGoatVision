@@ -177,6 +177,8 @@ public:
     void initialize();
     void uninitialize();
     PyObject* getFrame();
+    bool isInitialized();
+    bool isStarted();
 
     //Commands
     void start();
@@ -257,6 +259,8 @@ private:
     npy_intp dims[CHANNEL];
     int channel;
     char* array;
+    bool started;
+    bool initialized;
 
     //private methods
     void setChannel(PixelFormat);

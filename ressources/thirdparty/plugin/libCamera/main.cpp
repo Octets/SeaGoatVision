@@ -121,6 +121,9 @@ BOOST_PYTHON_MODULE(camera)
         .def("loadConfigFile",&Camera::loadConfigFile)
         .def("saveConfigFile",&Camera::saveConfigFile)
 
+        .def("isStarted",&Camera::isStarted)
+        .def("isInitialized",&Camera::isInitialized)
+
         /**Condifurations methods**/
         .def("setPixelFormat",&Camera::setPixelFormat)
         .def("getPixelFormat",&Camera::getPixelFormat)
