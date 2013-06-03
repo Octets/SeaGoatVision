@@ -66,9 +66,14 @@ class FilterChain(object):
         self.filterchain_name = name
         lst_filter = value.get("lst_filter", [])
         self.filters = []
+        index = 0
         for filter_to_ser in lst_filter:
-            filter_name = filter_to_ser.get("name", None)
-            o_filter = fct_create_filter(filter_name)
+            filter_name = filter_to_ser.get("filter_name", None)
+            # TODO deprecated - "name"
+            if not filter_name:
+                filter_name = filter_to_ser.get("name", None)
+            o_filter = fct_create_filter(filter_name, index)
+            index += 1
             if not o_filter:
                 continue
             status &= o_filter.deserialize(filter_to_ser)
@@ -89,7 +94,7 @@ class FilterChain(object):
         retValue = []
         for item in self.filters:
             filter = Filter()
-            setattr(filter, "name", item.__class__.__name__)
+            setattr(filter, "name", item.get_name())
             setattr(filter, "doc", item.__doc__)
             retValue.append(filter)
         return retValue
@@ -201,7 +206,7 @@ class FilterChain(object):
         for f in self.filters:
             f.set_original_image(original_image)
             image = f.execute(image)
-            lst_observer = self.image_observers.get(f.__class__.__name__, [])
+            lst_observer = self.image_observers.get(f.get_name(), [])
             self.send_image(image, lst_observer)
         return image
 

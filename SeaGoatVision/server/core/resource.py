@@ -117,8 +117,10 @@ class Resource(object):
 
     def create_filterchain(self, filterchain_name, lst_str_filters):
         chain = filterchain.FilterChain(filterchain_name)
+        index = 0
         for s_filter in lst_str_filters:
-            o_filter = self.create_filter(s_filter)
+            o_filter = self.create_filter(s_filter, index)
+            index += 1
             if o_filter is None:
                 # error, cancel the transaction
                 return False
@@ -148,11 +150,13 @@ class Resource(object):
                         if issubclass(filtre, Filter)
                         if "execute" in vars(filtre)}
 
-    def create_filter(self, filter_name):
-        o_filter = self.get_filter_from_filterName(filter_name)
-        if not o_filter:
+    def create_filter(self, filter_name, index):
+        filter_class = self.get_filter_from_filterName(filter_name)
+        if not filter_class:
             return None
-        return o_filter()
+        o_filter = filter_class()
+        o_filter.set_name("%s-%s" % (filter_name, index))
+        return o_filter
 
     def get_filter_from_filterName(self, filter_name):
         return self.dct_filter.get(filter_name, None)

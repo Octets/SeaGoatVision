@@ -23,19 +23,29 @@ class Filter(object):
     def __init__(self):
         self._output_observers = list()
         self.original_image = None
+        self.name = None
 
     def serialize(self):
-        return {"name":self.__class__.__name__, "lst_param":[param.serialize() for param in self.get_params()]}
+        return {"filter_name":self.__class__.__name__, "lst_param":[param.serialize() for param in self.get_params()]}
 
     def deserialize(self, value):
         status = True
         for param_ser in value.get("lst_param"):
-            param_name = param_ser.get("name", None)
+            param_name = param_ser.get("filter_name", None)
             if not param_name:
-                continue
+                # TODO: deprecated - name doesn't exist
+                param_name = param_ser.get("name", None)
+                if not param_name:
+                    continue
             param = self.get_params(param_name=param_name)
             status &= param.deserialize(param_ser)
         return status
+
+    def get_name(self):
+        return self.name
+
+    def set_name(self, name):
+        self.name = name
 
     def destroy(self):
         # It's called just before to be destroyed
