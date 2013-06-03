@@ -90,7 +90,7 @@ class Resource(object):
         if filterchain_name and filterchain_name != get_empty_filterchain_name():
             data = self.config.read_filterchain(filterchain_name)
             if not data:
-                return
+                return None
             # Temporary name - empty
             o_filterchain = filterchain.FilterChain("System - Empty")
             o_filterchain.deserialize(filterchain_name, data, self.create_filter)
@@ -101,6 +101,8 @@ class Resource(object):
 
     def get_filters_from_filterchain(self, filterchain_name):
         o_filterchain = self.get_filterchain(filterchain_name)
+        if o_filterchain is None:
+            return []
         return o_filterchain.get_filter_list()
 
     def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):

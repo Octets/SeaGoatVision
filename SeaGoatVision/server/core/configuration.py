@@ -102,7 +102,11 @@ class Configuration(object):
             print("Error, file not exist or other reason : %s" % file_name)
             return None
         str_value = f.readlines()
-        value = json.loads("".join(str_value))
+        try:
+            value = json.loads("".join(str_value))
+        except:
+            print("Error, the file %s not contain json data." % file_name)
+            value = None
         f.close()
         return value
 

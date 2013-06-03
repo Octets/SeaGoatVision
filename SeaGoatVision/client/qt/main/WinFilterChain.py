@@ -150,6 +150,8 @@ class WinFilterChain(QtCore.QObject):
             else:
                 print("Cancel delete %s" % filterchain_name)
         self._modeEdit(False)
+        # update the widget
+        self.onSelectedFilterchainChanged()
 
     def copy(self):
         self.edit()
