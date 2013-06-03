@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CameraConfigWindow</class>
+ <widget class="QMainWindow" name="CameraConfigWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>493</width>
+    <height>301</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Camera Config Window</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="imagesLabel">
+      <property name="text">
+       <string>No Images</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>493</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuCommands">
+    <property name="title">
+     <string>Commands</string>
+    </property>
+    <addaction name="actionStart"/>
+    <addaction name="actionStop"/>
+   </widget>
+   <widget class="QMenu" name="menuConfig_Files">
+    <property name="title">
+     <string>Config Files</string>
+    </property>
+    <widget class="QMenu" name="menuLoad_Config_File">
+     <property name="title">
+      <string>Load Config File</string>
+     </property>
+     <addaction name="actionFactory"/>
+     <addaction name="actionIndex_1"/>
+     <addaction name="actionIndex_2"/>
+     <addaction name="actionIndex_3"/>
+     <addaction name="actionIndex_4"/>
+     <addaction name="actionIndex_5"/>
+    </widget>
+    <widget class="QMenu" name="menuSaves_Config_File">
+     <property name="title">
+      <string>Saves Config File</string>
+     </property>
+     <addaction name="actionIndex_6"/>
+     <addaction name="actionIndex_7"/>
+     <addaction name="actionIndex_8"/>
+     <addaction name="actionIndex_9"/>
+     <addaction name="actionIndex_10"/>
+    </widget>
+    <addaction name="menuLoad_Config_File"/>
+    <addaction name="menuSaves_Config_File"/>
+   </widget>
+   <widget class="QMenu" name="menuSet_Image">
+    <property name="title">
+     <string>Set Image</string>
+    </property>
+    <widget class="QMenu" name="menuPixel_Format">
+     <property name="title">
+      <string>Pixel Format</string>
+     </property>
+     <addaction name="actionMono8"/>
+     <addaction name="actionBayer8"/>
+     <addaction name="actionBayer16"/>
+     <addaction name="actionBrg24"/>
+     <addaction name="actionRgba36"/>
+     <addaction name="actionRgba32"/>
+     <addaction name="actionBgra32"/>
+    </widget>
+    <widget class="QMenu" name="menuExposure">
+     <property name="title">
+      <string>Exposure</string>
+     </property>
+     <widget class="QMenu" name="menuExposure_Mode">
+      <property name="title">
+       <string>Exposure Mode</string>
+      </property>
+      <addaction name="actionManual"/>
+      <addaction name="actionAuto"/>
+      <addaction name="actionAuto_Once"/>
+     </widget>
+     <addaction name="menuExposure_Mode"/>
+     <addaction name="actionAuto_Exposure_Settings"/>
+     <addaction name="actionExposure_Value"/>
+    </widget>
+    <widget class="QMenu" name="menuGain">
+     <property name="title">
+      <string>Gain</string>
+     </property>
+     <widget class="QMenu" name="menuGain_Mode">
+      <property name="title">
+       <string>Gain Mode</string>
+      </property>
+      <addaction name="actionManual_2"/>
+      <addaction name="actionAuto_2"/>
+      <addaction name="actionAuto_Once_2"/>
+     </widget>
+     <addaction name="menuGain_Mode"/>
+     <addaction name="actionAuto_Gain_Settings"/>
+     <addaction name="actionGain_Value"/>
+    </widget>
+    <widget class="QMenu" name="menuWhite_Balance">
+     <property name="title">
+      <string>White Balance</string>
+     </property>
+     <widget class="QMenu" name="menuWhite_Balance_Mode">
+      <property name="title">
+       <string>White Balance Mode</string>
+      </property>
+      <addaction name="actionManual_3"/>
+      <addaction name="actionAuto_3"/>
+      <addaction name="actionAuto_Once_3"/>
+     </widget>
+     <addaction name="menuWhite_Balance_Mode"/>
+     <addaction name="actionAuto_White_Balance_Settings"/>
+     <addaction name="actionManual_White_Balance_Settings"/>
+    </widget>
+    <widget class="QMenu" name="menuGamma">
+     <property name="title">
+      <string>Gamma</string>
+     </property>
+     <addaction name="action0_45"/>
+     <addaction name="action0_5"/>
+     <addaction name="action0_7"/>
+     <addaction name="action1"/>
+    </widget>
+    <addaction name="menuPixel_Format"/>
+    <addaction name="actionHue"/>
+    <addaction name="menuGain"/>
+    <addaction name="menuGamma"/>
+    <addaction name="actionROI"/>
+    <addaction name="menuExposure"/>
+    <addaction name="menuWhite_Balance"/>
+    <addaction name="actionSaturation"/>
+   </widget>
+   <addaction name="menuCommands"/>
+   <addaction name="menuConfig_Files"/>
+   <addaction name="menuSet_Image"/>
+  </widget>
+  <action name="actionStart">
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionShow_frames">
+   <property name="text">
+    <string>Show frames</string>
+   </property>
+  </action>
+  <action name="actionHue">
+   <property name="text">
+    <string>Hue</string>
+   </property>
+  </action>
+  <action name="actionROI">
+   <property name="text">
+    <string>ROI</string>
+   </property>
+  </action>
+  <action name="actionSaturation">
+   <property name="text">
+    <string>Saturation</string>
+   </property>
+  </action>
+  <action name="actionFactory">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Factory</string>
+   </property>
+  </action>
+  <action name="actionIndex_1">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Index 1</string>
+   </property>
+  </action>
+  <action name="actionIndex_2">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Index 2</string>
+   </property>
+  </action>
+  <action name="actionIndex_3">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Index 3</string>
+   </property>
+  </action>
+  <action name="actionIndex_4">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Index 4</string>
+   </property>
+  </action>
+  <action name="actionIndex_5">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Index 5</string>
+   </property>
+  </action>
+  <action name="actionIndex_6">
+   <property name="text">
+    <string>Index 1</string>
+   </property>
+  </action>
+  <action name="actionIndex_7">
+   <property name="text">
+    <string>Index 2</string>
+   </property>
+  </action>
+  <action name="actionIndex_8">
+   <property name="text">
+    <string>Index 3</string>
+   </property>
+  </action>
+  <action name="actionIndex_9">
+   <property name="text">
+    <string>Index 4</string>
+   </property>
+  </action>
+  <action name="actionIndex_10">
+   <property name="text">
+    <string>Index 5</string>
+   </property>
+  </action>
+  <action name="actionMono8">
+   <property name="text">
+    <string>Mono8</string>
+   </property>
+  </action>
+  <action name="actionBayer8">
+   <property name="text">
+    <string>Bayer8</string>
+   </property>
+  </action>
+  <action name="actionBayer16">
+   <property name="text">
+    <string>Bayer16</string>
+   </property>
+  </action>
+  <action name="actionBrg24">
+   <property name="text">
+    <string>Rgb24</string>
+   </property>
+  </action>
+  <action name="actionRgba36">
+   <property name="text">
+    <string>Bgr24</string>
+   </property>
+  </action>
+  <action name="actionRgba32">
+   <property name="text">
+    <string>Rgba32</string>
+   </property>
+  </action>
+  <action name="actionBgra32">
+   <property name="text">
+    <string>Bgra32</string>
+   </property>
+  </action>
+  <action name="actionAuto_Exposure_Settings">
+   <property name="text">
+    <string>Auto Exposure Settings</string>
+   </property>
+  </action>
+  <action name="actionExposure_Value">
+   <property name="text">
+    <string>Exposure Value</string>
+   </property>
+  </action>
+  <action name="actionManual">
+   <property name="text">
+    <string>Manual</string>
+   </property>
+  </action>
+  <action name="actionAuto">
+   <property name="text">
+    <string>Auto</string>
+   </property>
+  </action>
+  <action name="actionAuto_Once">
+   <property name="text">
+    <string>Auto Once</string>
+   </property>
+  </action>
+  <action name="actionAuto_Gain_Settings">
+   <property name="text">
+    <string>Auto Gain Settings</string>
+   </property>
+  </action>
+  <action name="actionGain_Value">
+   <property name="text">
+    <string>Gain Value</string>
+   </property>
+  </action>
+  <action name="actionManual_2">
+   <property name="text">
+    <string>Manual </string>
+   </property>
+  </action>
+  <action name="actionAuto_2">
+   <property name="text">
+    <string>Auto</string>
+   </property>
+  </action>
+  <action name="actionAuto_Once_2">
+   <property name="text">
+    <string>Auto Once</string>
+   </property>
+  </action>
+  <action name="actionAuto_White_Balance_Settings">
+   <property name="text">
+    <string>Auto White Balance Settings</string>
+   </property>
+  </action>
+  <action name="actionManual_White_Balance_Settings">
+   <property name="text">
+    <string>Manual White Balance Settings</string>
+   </property>
+  </action>
+  <action name="action0_45">
+   <property name="text">
+    <string>0.45</string>
+   </property>
+  </action>
+  <action name="action0_5">
+   <property name="text">
+    <string>0.5</string>
+   </property>
+  </action>
+  <action name="action0_7">
+   <property name="text">
+    <string>0.7</string>
+   </property>
+  </action>
+  <action name="action1">
+   <property name="text">
+    <string>1</string>
+   </property>
+  </action>
+  <action name="actionManual_3">
+   <property name="text">
+    <string>Manual</string>
+   </property>
+  </action>
+  <action name="actionAuto_3">
+   <property name="text">
+    <string>Auto</string>
+   </property>
+  </action>
+  <action name="actionAuto_Once_3">
+   <property name="text">
+    <string>Auto Once</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
