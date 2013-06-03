@@ -114,7 +114,7 @@ class Manager:
             return None
         class Exec_info: pass
         o_exec_info = Exec_info()
-        setattr(o_exec_info, KEY_MEDIA, exec_info[KEY_MEDIA].__class__.__name__)
+        setattr(o_exec_info, KEY_MEDIA, exec_info[KEY_MEDIA].get_name())
         setattr(o_exec_info, KEY_FILTERCHAIN, exec_info[KEY_FILTERCHAIN].get_name())
         return o_exec_info
 

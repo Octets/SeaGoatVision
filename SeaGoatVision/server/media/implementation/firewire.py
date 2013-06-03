@@ -34,6 +34,7 @@ class Firewire(Media_streaming):
         Media_streaming.__init__(self)
         self.config = config
         self.camera = None
+        self.media_name = config.name
         try:
             ctx = video1394.DC1394Context()
         except:

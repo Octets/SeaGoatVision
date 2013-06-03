@@ -57,7 +57,7 @@ class Resource(object):
         if not self.dct_media:
             self.load_media()
 
-#### Filterchain
+    #### Filterchain
     def get_filterchain_list(self):
         class FilterChain: pass
         lstFilterChain = []
@@ -185,7 +185,7 @@ class Resource(object):
             else:
                 print("Error: Camera not detected %s" % name)
         # Force media_video
-        dct_media["File"] = media.media_video.Media_video()
+        dct_media["File"] = media.media_video.Media_video("File")
 
         self.dct_media = dct_media
 

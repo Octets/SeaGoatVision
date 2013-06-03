@@ -27,6 +27,7 @@ class Webcam(Media_streaming):
         # Go into configuration/template_media for more information
         self.config = config
         Media_streaming.__init__(self)
+        self.media_name = config.name
         self.run = True
         self.video = None
         video = cv2.VideoCapture(self.config.no)

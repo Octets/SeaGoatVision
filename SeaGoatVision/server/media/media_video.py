@@ -23,8 +23,9 @@ from media import Media
 from SeaGoatVision.commons.keys import *
 
 class Media_video(Media):
-    def __init__(self):
+    def __init__(self, name):
         Media.__init__(self)
+        self.media_name = name
         self.file_name = None
         self.lst_file = []
         self.pos = 0

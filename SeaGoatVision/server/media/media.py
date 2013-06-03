@@ -40,6 +40,9 @@ class Media:
         # type is Video or Streaming
         pass
 
+    def get_name(self):
+        return self.media_name
+
     def __iter__(self):
         return self
 
