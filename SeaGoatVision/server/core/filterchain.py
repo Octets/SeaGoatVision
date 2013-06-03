@@ -41,6 +41,7 @@ class FilterChain(object):
         self.filter_output_observers = []
         self.filterchain_name = filterchain_name
         self.original_image_observer = []
+        self.lst_global_param = []
 
     def destroy(self):
         # clean everything!
@@ -77,7 +78,7 @@ class FilterChain(object):
             if not o_filter:
                 continue
             status &= o_filter.deserialize(filter_to_ser)
-            self.filters.append(o_filter)
+            self.add_filter(o_filter)
         return status
 
     def count(self):
@@ -123,6 +124,7 @@ class FilterChain(object):
 
     def add_filter(self, filter):
         self.filters.append(filter)
+        filter.set_global_params(self.lst_global_param)
 
     def remove_filter(self, filter):
         self.filters.remove(filter)

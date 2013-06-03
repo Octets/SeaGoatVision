@@ -24,6 +24,7 @@ class Filter(object):
         self._output_observers = list()
         self.original_image = None
         self.name = None
+        self.lst_global_param = []
 
     def serialize(self):
         return {"filter_name":self.__class__.__name__, "lst_param":[param.serialize() for param in self.get_params()]}
@@ -53,6 +54,18 @@ class Filter(object):
 
     def configure(self):
         pass
+
+    def set_global_params(self, lst_global_param):
+        # complete the list and point on it
+        for param in self.lst_global_param:
+            lst_global_param.append(param)
+        self.lst_global_param = lst_global_param[:]
+
+    def get_global_params(self, param_name):
+        for param in self.lst_global_param:
+            if param.get_name() == param_name:
+                return param
+        return None
 
     def get_params(self, param_name=None):
         params = []

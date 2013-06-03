@@ -29,7 +29,7 @@ from SeaGoatVision.server.core.filter import Filter
 # Reserved function
 # self.add_output_observer(observer) to add a function observer
 # self.remove_output_observer(observer) to remove a function observer
- 
+
 class FaceDetection(Filter):
     """Detect faces and eyes"""
 
@@ -45,6 +45,11 @@ class FaceDetection(Filter):
         self.eye_cascade.load(self.eye_detect_name)
         self.face_cascade.load(self.face_detect_name)
         self.show_rectangle = Param("show_rectangle", True)
+
+        # To share parameter between filter, create it with :
+        self.lst_global_param.append(Param("width", 3, min_v=1, max_v=10))
+        # On the execution, use it like this :
+        param = self.get_global_params("width")
 
     def configure(self):
         # This is called when param is modify
