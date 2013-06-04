@@ -61,12 +61,15 @@ class LineOrientation(dataextract.DataExtractor):
             cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
             
     def send_lines(self, lines):
+        toSend = ""
         for l, t in lines:
             vx, vy, x, y = l
             point1 = (x - t * vx, y - t * vy)
             point2 = (x + t * vx, y + t * vy)
-            toSend = self.filter_name + " x1=" + str(int(point1[0][0])) + " y1=" + str(int(point1[1][0])) + " x2=" + str(int(point2[0][0])) + " y2=" + str(int(point2[1][0])) + " \n"
-            self.notify_output_observers(toSend)
+            toSend += self.filter_name + " x1=" + str(int(point1[0][0])) + " y1=" + str(int(point1[1][0])) + " x2=" + str(int(point2[0][0])) + " y2=" + str(int(point2[1][0])) + " \n"
+            
+        toSend += "=\n"
+        self.notify_output_observers(toSend)
                         
     def find_lines(self, contours, image):
         lines = []
