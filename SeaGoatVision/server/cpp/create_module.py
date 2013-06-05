@@ -29,6 +29,8 @@ from python_code import *
 
 BUILD_DIR = 'build'
 RELOAD_DIR = os.path.join('build', 'reload')
+has_configure = False
+has_destroy = False
 
 def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=[], extra_compile_arg=[]):
     """
@@ -38,7 +40,7 @@ def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=
     # param :
     # module like sys.modules[__name__]
     # file is __file__ from __init__.py
-    create_build(cppfiles)
+    _create_build(cppfiles)
 
     dirname = os.path.dirname(file)
     for f in os.listdir(dirname):
@@ -46,6 +48,12 @@ def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=
             continue
         filename, _ = os.path.splitext(f)
         cppcode = open(os.path.join(dirname, f)).read()
+
+        code = "cv::Mat execute(cv::Mat "
+        if code not in cppcode:
+            code += "image)"
+            print("Error - Missing execute function into %s like \"%s\"" % (modname, code))
+            continue
 
         # Verify if there are changes in the c++ code file.  If there are
         # changes, add a timestamp to the filter .so file name to force a
@@ -60,10 +68,13 @@ def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=
         else:
             modname = filename
 
-        compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode,
-                    extra_link_arg=extra_link_arg, extra_compile_arg=extra_compile_arg)
+        mod = _compile_cpp(modname, cppcode, extra_link_arg, extra_compile_arg)
 
-def create_build(cppfiles):
+        _create_python_code(mod, modname, cppcode)
+
+        _create_module(cpptimestamps, module, modname, mod)
+
+def _create_build(cppfiles):
     if not os.path.exists(BUILD_DIR):
         os.mkdir(BUILD_DIR)
     if not os.path.exists(RELOAD_DIR):
@@ -72,35 +83,44 @@ def create_build(cppfiles):
         for f in os.listdir(RELOAD_DIR):
             os.remove(os.path.join(RELOAD_DIR, f))
 
-def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_arg=[], extra_compile_arg=[]):
-    code = "cv::Mat execute(cv::Mat "
-    if code not in cppcode:
-        code += "image)"
-        print("Error - Missing execute function into %s like \"%s\"" % (modname, code))
-        return
+def _create_module(cpptimestamps, module, modname, mod):
+    try:
+        print("Cpp: begin compile %s." % modname)
+        if cpptimestamps.has_key(modname):
+            # Reloaded modules are saved in the reload folder for easy cleanup
+            mod.compile(RELOAD_DIR)
+        else:
+            mod.compile(BUILD_DIR)
 
+        cppmodule = __import__(modname)
+        params = {}
+        dct_fct = {'__init__' : create_init(getattr(cppmodule, 'init_' + modname), params),
+                    'execute' : create_execute(getattr(cppmodule, 'exec_' + modname)),
+                    'py_init_param' : py_init_param,
+                    'set_original_image' : create_set_original_image(getattr(cppmodule, 'set_original_image_' + modname)),
+                    '__doc__' : getattr(cppmodule, 'help_' + modname)()
+                }
+        if has_configure:
+            dct_fct['configure'] = create_configure(getattr(cppmodule, 'config_' + modname))
+        if has_destroy:
+            dct_fct['destroy'] = create_destroy(getattr(cppmodule, 'destroy_' + modname))
+
+        clazz = type(modname,
+                     (Filter,),
+                     dct_fct)
+        setattr(module, modname, clazz)
+        del clazz
+    except Exception as e:
+        sys.stderr.write(str(e) + '\n')
+        sys.stderr.write(traceback.format_exc() + "\n")
+
+def _create_python_code(mod, modname, cppcode):
     # param variable size
     p = {}
     pip = py_init_param
     py_notify = Filter().notify_output_observers
     image = np.zeros((1, 1), dtype=np.uint8)
     image_original = np.zeros((1, 1), dtype=np.uint8)
-    my_string_original = ""
-
-    # Compile filters
-    # The included files are found in the .cpp file
-    mod = ext_tools.ext_module(modname)
-    [mod.customize.add_header(line.replace('#include ', ''))
-                             for line in cppcode.split('\n')
-                             if line.startswith('#include')]
-    mod.customize.add_header("<Python.h>")
-    mod.customize.add_extra_link_arg("`pkg-config --cflags --libs opencv`")
-    for extra_link in extra_link_arg:
-        mod.customize.add_extra_link_arg(extra_link)
-    for extra_compile in extra_compile_arg:
-        mod.customize.add_extra_compile_arg(extra_compile)
-    # add debug symbol
-    mod.customize.add_extra_compile_arg("-g")
 
     # help
     func = ext_tools.ext_function('help_' + modname, help_code(), [])
@@ -143,32 +163,21 @@ def compile_cpp(cppfiles, cpptimestamps, module, modname, cppcode, extra_link_ar
     func.customize.add_support_code(notify_code())
     mod.add_function(func)
 
-    try:
-        print("Cpp: begin compile %s." % modname)
-        if cpptimestamps.has_key(modname):
-            # Reloaded modules are saved in the reload folder for easy cleanup
-            mod.compile(RELOAD_DIR)
-        else:
-            mod.compile(BUILD_DIR)
+def _compile_cpp(modname, cppcode, lst_extra_link, lst_extra_compile):
+    # Compile filters
+    # The included files are found in the .cpp file
+    mod = ext_tools.ext_module(modname)
 
-        cppmodule = __import__(modname)
-        params = {}
-        dct_fct = {'__init__' : create_init(getattr(cppmodule, 'init_' + modname), params),
-                    'execute' : create_execute(getattr(cppmodule, 'exec_' + modname)),
-                    'py_init_param' : py_init_param,
-                    'set_original_image' : create_set_original_image(getattr(cppmodule, 'set_original_image_' + modname)),
-                    '__doc__' : getattr(cppmodule, 'help_' + modname)()
-                }
-        if has_configure:
-            dct_fct['configure'] = create_configure(getattr(cppmodule, 'config_' + modname))
-        if has_destroy:
-            dct_fct['destroy'] = create_destroy(getattr(cppmodule, 'destroy_' + modname))
+    for line in cppcode.split('\n'):
+        if line.startswith('#include'):
+            mod.customize.add_header(line.replace('#include ', ''))
+    mod.customize.add_header("<Python.h>")
+    mod.customize.add_extra_link_arg("`pkg-config --cflags --libs opencv`")
+    for extra_link in lst_extra_link:
+        mod.customize.add_extra_link_arg(extra_link)
+    for extra_compile in lst_extra_compile:
+        mod.customize.add_extra_compile_arg(extra_compile)
+    # add debug symbol
+    mod.customize.add_extra_compile_arg("-g")
 
-        clazz = type(modname,
-                     (Filter,),
-                     dct_fct)
-        setattr(module, modname, clazz)
-        del clazz
-    except Exception as e:
-        sys.stderr.write(str(e) + '\n')
-        sys.stderr.write(traceback.format_exc() + "\n")
+    return mod
