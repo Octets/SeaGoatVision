@@ -125,6 +125,7 @@ class WinExecution(QtCore.QObject):
         exec_info = self.controller.get_execution_info(execution)
         if not exec_info:
             print("WinExecution Internal sync error with execution info :(")
+            return
         self.ui.txtFilterchain.setText(exec_info.filterchain)
         self.ui.txtMedia.setText(exec_info.media)
 
@@ -153,7 +154,10 @@ class WinExecution(QtCore.QObject):
                                       "The execution name \"%s\" already exist." % execution_name,
                                       QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
             return False
-        self.controller.start_filterchain_execution(execution_name, media_name, filterchain_name, self.file_name)
+        status = self.controller.start_filterchain_execution(execution_name, media_name, filterchain_name, self.file_name)
+        if not status:
+            self.cancel()
+            return False
         self.ui.lstExecution.addItem(execution_name)
         self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
         self._mode_edit(False)

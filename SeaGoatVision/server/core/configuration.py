@@ -97,9 +97,12 @@ class Configuration(object):
 
     def read_filterchain(self, filterchain_name):
         file_name = self._get_filterchain_filename(filterchain_name)
+        if not os.path.isfile(file_name):
+            print("Error, the filterchain config %s not exist." % file_name)
+            return None
         f = open(file_name, "r")
         if not f:
-            print("Error, file not exist or other reason : %s" % file_name)
+            print("Error, can't open filterchain %s." % file_name)
             return None
         str_value = f.readlines()
         try:
