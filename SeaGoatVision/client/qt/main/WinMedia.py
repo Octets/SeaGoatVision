@@ -55,6 +55,7 @@ class WinMedia(QtCore.QObject):
         self._set_record_icon()
         self._set_play_icon()
         self._update_media()
+        self.set_info()
 
     def _update_media(self):
         self.dct_media = self.controller.get_media_list()
@@ -103,6 +104,12 @@ class WinMedia(QtCore.QObject):
         filename = QFileDialog.getOpenFileName()[0]
         if len(filename) > 0:
             self.ui.movieLineEdit.setText(filename)
+
+    def set_info(self):
+        info = self.controller.get_info_media(self.get_selected_media())
+        self.ui.lblframe.setText("/%s" % info.get("nb_frame"))
+        self.ui.txtframe.setText("0")
+        self.ui.lblFPS.setText("%s" % info.get("fps"))
 
     def play(self):
         media_name = self.ui.cbMedia.currentText()

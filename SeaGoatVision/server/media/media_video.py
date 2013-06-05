@@ -47,6 +47,13 @@ class Media_video(Media):
         Media.open(self)
         self.play()
 
+    def get_total_frames(self):
+        if self.lst_file:
+            return len(self.lst_file)
+        if self.video:
+            return self.video.get(cv.CV_CAP_PROP_FRAME_COUNT)
+        return -1
+
     def _open_video(self):
         video = cv2.VideoCapture(self.file_name)
         if video:
@@ -54,7 +61,7 @@ class Media_video(Media):
             return True
         return False
 
-    def do_cmd(self, action):
+    def do_cmd(self, action, value):
         if not self.thread:
             return False
         if action == get_key_media_play():

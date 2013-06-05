@@ -46,6 +46,12 @@ class Media:
     def __iter__(self):
         return self
 
+    def get_total_frames(self):
+        return -1
+
+    def get_info(self):
+        return {"fps" : int(1/self.sleep_time), "nb_frame" : self.get_total_frames()}
+
     def open(self):
         # IMPORTANT, if inherit, call this at the end
         # the thread need to be start when device is ready

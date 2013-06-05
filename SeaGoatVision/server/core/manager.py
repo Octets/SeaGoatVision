@@ -125,13 +125,19 @@ class Manager:
         return {name: self.resource.get_media(name).get_type_media()
                 for name in self.resource.get_media_name_list()}
 
-    def cmd_to_media(self, media_name, cmd):
+    def cmd_to_media(self, media_name, cmd, value=None):
         media = self.resource.get_media(media_name)
         if not media:
             return False
         if media.is_media_streaming():
             return False
-        return media.do_cmd(cmd)
+        return media.do_cmd(cmd, value)
+
+    def get_info_media(self, media_name):
+        media = self.resource.get_media(media_name)
+        if not media:
+            return False
+        return media.get_info()
 
     def start_record(self, media_name, path=None):
         media = self.resource.get_media(media_name)
