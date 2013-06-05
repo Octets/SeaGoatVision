@@ -107,7 +107,7 @@ class FilterChain(object):
                 return None
         if filter:
             return filter.get_params()
-        return [(filter.__class__.__name__, filter.get_params()) for filter in self.filters]
+        return [(filter.get_name(), filter.get_params()) for filter in self.filters]
 
     def __getitem__(self, index):
         return self.filters[index]
@@ -117,7 +117,7 @@ class FilterChain(object):
             # TODO not better return self[index] ??
             return self.filters[index]
         elif name is not None:
-            lst_filter = [o_filter for o_filter in self.filters if o_filter.__class__.__name__ == name]
+            lst_filter = [o_filter for o_filter in self.filters if o_filter.get_name() == name]
             if lst_filter:
                 return lst_filter[0]
         return None
@@ -130,6 +130,7 @@ class FilterChain(object):
         self.filters.remove(filter)
 
     def reload_filter(self, filtre):
+        # TODO: not working because module name change
         # example of __module__:
         index = 0
         for item in self.filters:
