@@ -396,7 +396,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             if request.param.HasField("value_str"):
                 value = request.param.value_str
             try:
-                response.status = self.manager.update_param(request.execution_name, request.filter_name, request.param.name, value)
+                response.status = not(self.manager.update_param(request.execution_name, request.filter_name, request.param.name, value))
             except Exception as e:
                 response.status = 1
                 response.message = e

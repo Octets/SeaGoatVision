@@ -241,7 +241,6 @@ class WinFilter(QtGui.QDockWidget):
 
     def _slider_value_change(self, value):
         self.setValue(value)
-        self.cb_value_change(value)
 
     def getStrWidget(self, param, cb_value_change):
         print "string"
