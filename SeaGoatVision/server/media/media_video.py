@@ -27,7 +27,7 @@ class Media_video(Media):
         Media.__init__(self)
         self.media_name = name
         self.file_name = None
-        self.lst_file = []
+        self.lst_image = []
         self.pos = 0
         self.video = None
         self.last_image = None
@@ -48,8 +48,8 @@ class Media_video(Media):
         self.play()
 
     def get_total_frames(self):
-        if self.lst_file:
-            return len(self.lst_file)
+        if self.lst_image:
+            return len(self.lst_image)
         if self.video:
             return self.video.get(cv.CV_CAP_PROP_FRAME_COUNT)
         return -1
