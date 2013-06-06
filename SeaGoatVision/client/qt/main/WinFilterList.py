@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
+from SeaGoatVision.client.qt.shared_info import Shared_info
 from PySide import QtCore
 
 class WinFilterList(QtCore.QObject):
@@ -26,7 +27,13 @@ class WinFilterList(QtCore.QObject):
     def __init__(self, controller):
         super(WinFilterList, self).__init__()
         self.controller = controller
+        self.shared_info = Shared_info()
+        self.shared_info.connect("filterchain_edit_mode", self._filterchain_edit_mode)
         self.reload_ui()
+
+    def _filterchain_edit_mode(self):
+        is_edit = self.shared_info.get("filterchain_edit_mode")
+        self.ui.addFilterButton.setEnabled(bool(is_edit))
 
     def reload_ui(self):
         self.ui = get_ui(self)

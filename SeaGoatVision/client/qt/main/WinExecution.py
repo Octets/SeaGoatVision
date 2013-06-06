@@ -19,6 +19,7 @@
 
 from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.commons.keys import *
+from SeaGoatVision.client.qt.shared_info import Shared_info
 
 from PySide import QtCore
 from PySide import QtGui
@@ -27,15 +28,17 @@ from PySide import QtGui
 
 class WinExecution(QtCore.QObject):
     onPreviewClick = QtCore.Signal(object, object, object)
+    onExecutionChanged = QtCore.Signal(object)
 
-    def __init__(self, controller, winMedia):
+    def __init__(self, controller):
         super(WinExecution, self).__init__()
         self.controller = controller
-        self.winMedia = winMedia
+        self.shared_info = Shared_info()
+        self.shared_info.connect("media", self._change_media)
+        self.shared_info.connect("filterchain", self._change_filterchain)
 
         self.mode_edit = False
         self.last_index = -1
-        self.filterchain_txt = ""
 
         self.reload_ui()
 
@@ -48,38 +51,32 @@ class WinExecution(QtCore.QObject):
         self.ui.previewButton.clicked.connect(self.preview)
         self.ui.stopButton.clicked.connect(self.stop)
         self.ui.lstExecution.currentItemChanged.connect(self._on_selected_lstExecution_change)
+        self.ui.lstExecution.itemClicked.connect(self._lst_execution_clicked)
 
         self._update_execution_list()
         self._mode_edit(self.mode_edit)
-        self.file_name = None
-
-    def set_filterchain(self, filterchain):
-        self.filterchain_txt = filterchain
-        if self.mode_edit:
-            self.ui.txtFilterchain.setText(filterchain)
 
     def preview(self):
-        # TODO improve this duplicate code with intersignal!!
         # feature, if not into edit mode, we are create a new execution
-        if self.mode_edit:
-           execution_name = self.ui.txtExecution.text()
-           media_name = self.ui.txtMedia.text()
-           filterchain_name = self.ui.txtFilterchain.text()
-           if not self._execute(execution_name, media_name, filterchain_name):
-               return
-           self.onPreviewClick.emit(execution_name, media_name, filterchain_name)
-           return
+        if not self.mode_edit:
+            if not self.ui.lstExecution.count():
+                self._mode_edit(True)
+            execution_name = self.ui.txtExecution.text()
+            if not execution_name:
+                return
+        else:
+            execution_name = self.ui.txtExecution.text()
 
-        if not self.ui.lstExecution.count():
-            self._mode_edit(True)
-        execution_name = self.ui.txtExecution.text()
-        if not execution_name:
-            return
         media_name = self.ui.txtMedia.text()
         filterchain_name = self.ui.txtFilterchain.text()
-        if self.mode_edit:
+        first_filterchain_name = filterchain_name
+        if not filterchain_name:
+            filterchain_name = get_empty_filterchain_name()
+        if self.mode_edit or not first_filterchain_name:
             if not self._execute(execution_name, media_name, filterchain_name):
                 return
+            else:
+                self._lst_execution_clicked()
         self.onPreviewClick.emit(execution_name, media_name, filterchain_name)
 
     def execute(self):
@@ -112,6 +109,12 @@ class WinExecution(QtCore.QObject):
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################
     ######################################################################
+    def _lst_execution_clicked(self):
+        execution_name = self.ui.txtExecution.text()
+        filterchain_name = self.ui.txtFilterchain.text()
+        self.shared_info.set("execution", execution_name)
+        self.onExecutionChanged.emit(filterchain_name)
+
     def _on_selected_lstExecution_change(self):
         execution = self._get_selected_list(self.ui.lstExecution)
         if execution:
@@ -154,7 +157,8 @@ class WinExecution(QtCore.QObject):
                                       "The execution name \"%s\" already exist." % execution_name,
                                       QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
             return False
-        status = self.controller.start_filterchain_execution(execution_name, media_name, filterchain_name, self.file_name)
+        file_name = self.shared_info.get("path_media")
+        status = self.controller.start_filterchain_execution(execution_name, media_name, filterchain_name, file_name)
         if not status:
             self.cancel()
             return False
@@ -171,10 +175,13 @@ class WinExecution(QtCore.QObject):
         self.ui.newButton.setEnabled(not mode_edit)
         self._enable_stop_button(mode_edit)
         if mode_edit:
-            self.ui.txtFilterchain.setText(self.filterchain_txt)
+            filterchain_name = self.shared_info.get("filterchain")
+            if filterchain_name:
+                self.ui.txtFilterchain.setText(filterchain_name)
             self.ui.txtExecution.setText("Execution-%d" % (self.ui.lstExecution.count() + 1))
-            self.ui.txtMedia.setText(self.winMedia.get_selected_media())
-            self.file_name = self.winMedia.get_file_path()
+            media_name = self.shared_info.get("media")
+            if media_name:
+                self.ui.txtMedia.setText(media_name)
 
     def _enable_stop_button(self, mode_edit):
         self.ui.stopButton.setEnabled(bool(not mode_edit and self.ui.lstExecution.count()))
@@ -190,3 +197,15 @@ class WinExecution(QtCore.QObject):
             self.ui.txtExecution.clear()
             self.ui.txtMedia.clear()
             self.ui.txtFilterchain.clear()
+
+    def _change_media(self):
+        if self.mode_edit:
+            media_name = self.shared_info.get("media")
+            if media_name:
+                self.ui.txtMedia.setText(media_name)
+
+    def _change_filterchain(self):
+        if self.mode_edit:
+            filterchain_name = self.shared_info.get("filterchain")
+            if filterchain_name:
+                self.ui.txtFilterchain.setText(filterchain_name)

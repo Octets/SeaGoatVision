@@ -19,6 +19,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
+from SeaGoatVision.client.qt.shared_info import Shared_info
 
 from WinFilterList import WinFilterList
 from WinMedia import WinMedia
@@ -44,9 +45,9 @@ class WinMain(QtGui.QMainWindow):
         # create dockWidgets
         self.winFilter = WinFilter(self.controller)
         self.winFilterList = WinFilterList(self.controller)
-        self.winMedia = WinMedia(self.controller, islocal)
-        self.winExecution = WinExecution(self.controller, self.winMedia)
-        self.winFilterChain = WinFilterChain(self.controller, self.winFilterList, self.winMedia, self.winExecution)
+        self.winMedia = WinMedia(self.controller)
+        self.winExecution = WinExecution(self.controller)
+        self.winFilterChain = WinFilterChain(self.controller)
         self.WinMainViewer = WinMainViewer()
 
         # Add default widget
@@ -58,13 +59,12 @@ class WinMain(QtGui.QMainWindow):
 
         # Signal
         self.winFilterList.onAddFilter.connect(self.winFilterChain.add_filter)
-        self.winFilterChain.selectedFilterChanged.connect(self.winFilter.setFilter)
-        self.winFilterChain.selectedFilterChainChanged.connect(self.winExecution.set_filterchain)
         self.ui.btnMedia.clicked.connect(self.show_win_media)
         self.ui.btnFilterChain.clicked.connect(self.show_win_filterchain)
         self.ui.btnFilterList.clicked.connect(self.show_win_filterlist)
         self.ui.btnExecution.clicked.connect(self.show_win_execution)
         self.winExecution.onPreviewClick.connect(self.addPreview)
+        self.winExecution.onExecutionChanged.connect(self.winFilterChain.select_filterchain)
 
         self._addToolBar()
 

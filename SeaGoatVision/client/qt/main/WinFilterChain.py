@@ -19,27 +19,21 @@
 
 from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.commons.keys import *
+from SeaGoatVision.client.qt.shared_info import Shared_info
 
 from PySide import QtGui
 from PySide import QtCore
 
 class WinFilterChain(QtCore.QObject):
-
     """Main window
     Allow the user to create, edit and test filter chains
     """
-
-    selectedFilterChanged = QtCore.Signal(object, object)
-    selectedFilterChainChanged = QtCore.Signal(object)
-
-    def __init__(self, controller, qtWidgetFilterList, qtWidgetMedia, winExecution):
+    def __init__(self, controller):
         super(WinFilterChain, self).__init__()
 
         self.controller = controller
-        self.qtWidgetFilterList = qtWidgetFilterList
-        self.qtWidgetMedia = qtWidgetMedia
-        self.winExecution = winExecution
         self.lastRowFilterChainSelected = 0
+        self.shared_info = Shared_info()
 
         self.reload_ui()
 
@@ -131,7 +125,6 @@ class WinFilterChain(QtCore.QObject):
             print("Error with saving edit on filterchain %s." % newName)
             self.cancel()
 
-
     def delete(self):
         self._modeEdit(True)
         noLine = self.ui.filterchainListWidget.currentRow()
@@ -216,7 +209,9 @@ class WinFilterChain(QtCore.QObject):
         filter_name = self._get_selected_filter_name()
         self.ui.frame_filter_edit.setEnabled(filter_name is not None)
         if filter_name:
-            self.selectedFilterChanged.emit(self.winExecution.get_execution_name(), filter_name)
+            self.shared_info.set("filter", filter_name)
+        else:
+            self.shared_info.set("filter", None)
 
     def onSelectedFilterchainChanged(self):
         if self.edit_mode:
@@ -229,20 +224,29 @@ class WinFilterChain(QtCore.QObject):
             self._list_filterchain_is_selected(True)
 
             filterchain_name = self._get_selected_filterchain_name()
-            self.selectedFilterChainChanged.emit(filterchain_name)
 
             # Exception, don't edit or delete special empty filterchain
             self.ui.deleteButton.setEnabled(filterchain_name != get_empty_filterchain_name())
             self.ui.editButton.setEnabled(filterchain_name != get_empty_filterchain_name())
+            self.shared_info.set("filterchain", filterchain_name)
         else:
             self._list_filterchain_is_selected(False)
+            self.shared_info.set("filterchain", None)
 
     def get_filter_list(self):
         return self._get_listString_qList(self.ui.filterListWidget)
 
+    def select_filterchain(self, filterchain_name):
+        items = self.ui.filterchainListWidget.findItems(filterchain_name, QtCore.Qt.MatchExactly)
+        if not items:
+            return
+        self.ui.filterchainListWidget.setCurrentItem(items[0])
+        self.ui.filterListWidget.setCurrentRow(0)
+
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################
     ######################################################################
+
     def _is_unique_filterchain_name(self, filterchain_name):
         for noLine in range(self.ui.filterchainListWidget.count()):
             if self.ui.filterchainListWidget.item(noLine).text() == filterchain_name:
@@ -269,7 +273,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.frame_edit.setEnabled(not status)
         self.ui.filterchainEdit.setReadOnly(not status)
         self.ui.filterchainListWidget.setEnabled(not status)
-        self.qtWidgetFilterList.ui.addFilterButton.setEnabled(status)
+        self.shared_info.set("filterchain_edit_mode", status)
         if status:
             self.ui.filterchainEdit.setFocus()
 

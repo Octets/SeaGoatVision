@@ -22,13 +22,14 @@
 from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.commons.param import Param
+from SeaGoatVision.client.qt.shared_info import Shared_info
 
 class WinFilter(QtGui.QDockWidget):
-    selectedFilterChanged = QtCore.Signal(object)
-
     def __init__(self, controller):
         super(WinFilter, self).__init__()
         self.setWidget(QtGui.QWidget())
+        self.shared_info = Shared_info()
+
         self.lst_param = []
         self.controller = controller
         self.cb_param = None
@@ -36,7 +37,12 @@ class WinFilter(QtGui.QDockWidget):
 
         self.setValueFloat = None
 
-    def setFilter(self, execution_name, filter_name):
+        self.shared_info.connect("filter", self.setFilter)
+        #self.shared_info.connect("execution", self.setFilter)
+
+    def setFilter(self):
+        execution_name = self.shared_info.get("execution")
+        filter_name = self.shared_info.get("filter")
         del self.lst_param[:]
         self.widget().destroy()
         self.cb_param = None
@@ -47,7 +53,8 @@ class WinFilter(QtGui.QDockWidget):
         self.construct_widget()
 
     def construct_widget(self):
-        # TODO when self.execution_name is None, show configuration filterchain params
+        if not self.filter_name:
+            return
         self.setWindowTitle("%s - %s" % (self.filter_name, self.execution_name))
         self.filter_param = self.controller.get_params_filterchain(self.execution_name, filter_name=self.filter_name)
 
@@ -259,7 +266,7 @@ class WinFilter(QtGui.QDockWidget):
     def reset(self):
         for param in self.lst_param:
             param.reset()
-        self.setFilter(self.execution_name, self.filter_name)
+        self.setFilter()
 
     def save(self):
         self.controller.save_params(self.execution_name)

@@ -18,6 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
+from SeaGoatVision.client.qt.shared_info import Shared_info
 from PySide.QtGui import QIcon
 from SeaGoatVision.commons.keys import *
 from SeaGoatVision.client.qt import config
@@ -26,10 +27,11 @@ from PySide.QtGui import QFileDialog
 from PySide import QtCore
 
 class WinMedia(QtCore.QObject):
-    def __init__(self, controller, islocal):
+    def __init__(self, controller):
         super(WinMedia, self).__init__()
         self.ressource_icon_path = "SeaGoatVision/client/ressource/img/"
         self.controller = controller
+        self.shared_info = Shared_info()
 
         self.is_recorded = False
         self.is_pause = False
@@ -51,6 +53,7 @@ class WinMedia(QtCore.QObject):
         self.ui.openFileButton.clicked.connect(self.open_file)
         self.ui.btnplay.clicked.connect(self.play)
         self.ui.loopchb.clicked.connect(self.active_loop)
+        self.ui.movieLineEdit.textChanged.connect(self._movie_changed)
 
         self._set_record_icon()
         self._set_play_icon()
@@ -75,11 +78,17 @@ class WinMedia(QtCore.QObject):
 
         media_type = self.dct_media.get(item_cbmedia, None)
         if not media_type:
+            self.shared_info.set("media", None)
             return
         if media_type == get_media_type_video_name():
             frame_video.setVisible(True)
         elif media_type == get_media_type_streaming_name():
             frame_webcam.setVisible(True)
+            self.shared_info.set("path_media", None)
+        self.shared_info.set("media", self.ui.cbMedia.currentText())
+
+    def _movie_changed(self):
+        self.shared_info.set("path_media", self.ui.movieLineEdit.text())
 
     def click_record_button(self):
         if not self.is_recorded:
@@ -106,7 +115,10 @@ class WinMedia(QtCore.QObject):
             self.ui.movieLineEdit.setText(filename)
 
     def set_info(self):
-        info = self.controller.get_info_media(self.get_selected_media())
+        media_name = self.shared_info.get("media")
+        if not media_name:
+            return
+        info = self.controller.get_info_media(media_name)
         self.ui.lblframe.setText("/%s" % info.get("nb_frame"))
         self.ui.txtframe.setText("0")
         self.ui.lblFPS.setText("%s" % info.get("fps"))
@@ -137,11 +149,6 @@ class WinMedia(QtCore.QObject):
             self.ui.recordButton.setIcon(self.record_icon)
         else:
             self.ui.recordButton.setIcon(self.save_record_icon)
-
-    def get_selected_media(self):
-        if not self.ui.cbMedia.count():
-            return "None"
-        return self.ui.cbMedia.currentText()
 
     def get_file_path(self):
         item_cbmedia = self.ui.cbMedia.currentText()
