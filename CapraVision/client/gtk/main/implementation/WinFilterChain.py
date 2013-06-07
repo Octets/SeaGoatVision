@@ -136,11 +136,21 @@ class WinFilterChain:
     def load_settings(self):
         if os.path.exists(self.SETTINGS_FILE):
             import settings
-            self.load_chain(settings.filterchain)    
+            
+            #chain
+            self.load_chain(settings.filterchain)
+            
+            #source
+            source_index = settings.source
+            self.cboSource.set_active(source_index)
+            source = self.source_list[self.sourcesListStore[source_index][0]]
+            self.controler.change_source(source)
+            
     
     def save_settings(self):
         file = open(self.SETTINGS_FILE, 'w')
-        file.write("filterchain='" + self.txtFilterChain.get_text() + "'")
+        file.write("filterchain='" + self.txtFilterChain.get_text() + "'\n")
+        file.write("source=" + str(self.cboSource.get_active()))
        # file.write("source=" + self.txtFilterChain.get_text())
         file.close()
 
