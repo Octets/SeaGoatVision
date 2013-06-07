@@ -32,6 +32,7 @@ class WinMedia(QtCore.QObject):
         self.ressource_icon_path = "SeaGoatVision/client/ressource/img/"
         self.controller = controller
         self.shared_info = Shared_info()
+        self.shared_info.connect("start_execution", self.set_info)
 
         self.is_recorded = False
         self.is_pause = False
@@ -58,7 +59,6 @@ class WinMedia(QtCore.QObject):
         self._set_record_icon()
         self._set_play_icon()
         self._update_media()
-        self.set_info()
 
     def _update_media(self):
         self.dct_media = self.controller.get_media_list()
@@ -86,6 +86,7 @@ class WinMedia(QtCore.QObject):
             frame_webcam.setVisible(True)
             self.shared_info.set("path_media", None)
         self.shared_info.set("media", self.ui.cbMedia.currentText())
+        self.set_info()
 
     def _movie_changed(self):
         self.shared_info.set("path_media", self.ui.movieLineEdit.text())

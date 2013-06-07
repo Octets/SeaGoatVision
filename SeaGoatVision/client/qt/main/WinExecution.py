@@ -38,7 +38,7 @@ class WinExecution(QtCore.QObject):
         self.shared_info.connect("filterchain", self._change_filterchain)
 
         self.mode_edit = False
-        self.last_index = -1
+        self.last_index = 0
 
         self.reload_ui()
 
@@ -165,6 +165,7 @@ class WinExecution(QtCore.QObject):
         self.ui.lstExecution.addItem(execution_name)
         self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
         self._mode_edit(False)
+        self.shared_info.set("start_execution", None)
         return True
 
     def _mode_edit(self, mode_edit):
@@ -174,11 +175,13 @@ class WinExecution(QtCore.QObject):
         self.ui.txtExecution.setReadOnly(not mode_edit)
         self.ui.newButton.setEnabled(not mode_edit)
         self._enable_stop_button(mode_edit)
+        self.ui.lstExecution.setEnabled(not mode_edit)
         if mode_edit:
             filterchain_name = self.shared_info.get("filterchain")
             if filterchain_name:
                 self.ui.txtFilterchain.setText(filterchain_name)
-            self.ui.txtExecution.setText("Execution-%d" % (self.ui.lstExecution.count() + 1))
+            self.last_index += 1
+            self.ui.txtExecution.setText("Execution-%d" % (self.last_index))
             media_name = self.shared_info.get("media")
             if media_name:
                 self.ui.txtMedia.setText(media_name)

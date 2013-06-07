@@ -19,6 +19,7 @@
 
 import os
 import cv2
+import cv
 from media import Media
 from SeaGoatVision.commons.keys import *
 
@@ -51,7 +52,7 @@ class Media_video(Media):
         if self.lst_image:
             return len(self.lst_image)
         if self.video:
-            return self.video.get(cv.CV_CAP_PROP_FRAME_COUNT)
+            return int(self.video.get(cv.CV_CAP_PROP_FRAME_COUNT))
         return -1
 
     def _open_video(self):

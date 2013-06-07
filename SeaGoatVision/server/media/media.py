@@ -50,7 +50,8 @@ class Media:
         return -1
 
     def get_info(self):
-        return {"fps" : int(1/self.sleep_time), "nb_frame" : self.get_total_frames()}
+        fps = int(1/self.sleep_time) if self.thread else -1
+        return {"fps" : fps, "nb_frame" : self.get_total_frames()}
 
     def open(self):
         # IMPORTANT, if inherit, call this at the end
