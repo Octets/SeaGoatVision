@@ -81,4 +81,33 @@ class SimpleRecorder:
     def get_file_name(self):
         name = strftime("%Y_%m_%d_%H_%M_%S", gmtime())
         return name + '.avi'
+
+class PNGRecorder:
+    
+    def __init__(self, fps, size, thread):
+        self.time = gmtime()
+        self.thread = thread
+        os.makedirs(self.get_record_path())
+            
+        self.number = 0
+        thread.add_observer(self.thread_observer)
         
+    def thread_observer(self, image):
+        cv2.imwrite(os.path.join(self.get_record_path(), 
+                                 self.get_file_name()), image)
+    
+    def stop(self):
+        self.thread.remove_observer(self.thread_observer)
+    
+    def get_record_path(self):
+        path = os.path.join('..', 'videos', self.get_dir_name())
+        return path
+    
+    def get_dir_name(self):
+        name = strftime("%Y_%m_%d_%H_%M_%S", self.time)
+        return name
+
+    def get_file_name(self):
+        self.number += 1
+        return str.rjust(str(self.number), 10, '0') + '.png'
+                        
