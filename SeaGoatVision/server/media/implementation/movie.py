@@ -17,21 +17,19 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.server.media.media_video import Media_video
 import cv2
 import cv2.cv as cv
 
-class Movie(Media_video):
-
-    def __init__(self):
-        Media_video.__init__(self)
+class Movie:
+    def __init__(self, file_name):
         self.video = None
         self.isplaying = True
         self.last_image = None
+        self.file_name = file_name
+        self.open_file()
 
     def open(self):
         Media_video.open(self)
-        self.open_file()
         self.play()
 
     def open_file(self):
@@ -73,6 +71,9 @@ class Movie(Media_video):
     def get_total_frames(self):
         return self.video.get(cv.CV_CAP_PROP_FRAME_COUNT)
 
+    def reset(self):
+        self.open_file()
+
     def next(self):
         if self.video is None or not self.video.isOpened():
             return None
@@ -81,11 +82,7 @@ class Movie(Media_video):
 
         run, self.last_image = self.video.read()
         if not run:
-            # TODO hack to loop
-            self.open_file()
-            run, self.last_image = self.video.read()
-            if not run:
-                raise StopIteration
+            raise StopIteration
 
         return self.last_image.copy()
 

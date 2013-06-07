@@ -19,27 +19,30 @@
 
 import os
 import cv2
-import cv
 from media import Media
+from implementation.movie import Movie
+from implementation.imagefolder import ImageFolder
 from SeaGoatVision.commons.keys import *
 
 class Media_video(Media):
     def __init__(self, name):
         Media.__init__(self)
+        self.movie = None
+        self.imagefolder = None
+
         self.media_name = name
         self.file_name = None
-        self.lst_image = []
-        self.pos = 0
-        self.video = None
-        self.last_image = None
         self.is_playing = False
-        self.active_loop = True
 
     def is_media_streaming(self):
         return False
 
     def is_media_video(self):
         return True
+
+    def reset(self):
+        if self.movie:
+            self.movie.reset()
 
     def get_type_media(self):
         return get_media_type_video_name()
@@ -49,18 +52,11 @@ class Media_video(Media):
         self.play()
 
     def get_total_frames(self):
-        if self.lst_image:
-            return len(self.lst_image)
-        if self.video:
-            return int(self.video.get(cv.CV_CAP_PROP_FRAME_COUNT))
+        if self.movie:
+            return self.movie.get_total_frames()
+        elif self.imagefolder:
+            return self.imagefolder.get_total_frames()
         return -1
-
-    def _open_video(self):
-        video = cv2.VideoCapture(self.file_name)
-        if video:
-            self.video = video
-            return True
-        return False
 
     def do_cmd(self, action, value):
         if not self.thread:
@@ -81,19 +77,21 @@ class Media_video(Media):
         self.file_name = file_name
         # a file can be a directory
         if os.path.isdir(file_name):
-            self.lst_image = self.find_all_images(file_name)
+            self.imagefolder = ImageFolder()
+            self.imagefolder.read_folder(file_name)
             return True
         # check if it's an image
         image = cv2.imread(file_name)
         if image is not None:
-            self.pos = 0
-            self.lst_image = [file_name]
+            self.imagefolder = ImageFolder()
+            self.imagefolder.read_image(file_name)
             return True
         # check if it's supported video
-        return self._open_video()
-
-    def set_loop_enable(self, enable):
-        self.active_loop = enable
+        video = cv2.VideoCapture(file_name)
+        if video:
+            self.movie = Movie(file_name)
+            return True
+        return False
 
     def play(self):
         self.is_playing = True
@@ -102,40 +100,8 @@ class Media_video(Media):
         self.is_playing = False
 
     def next(self):
-        if self.video:
-            if not self.is_playing:
-                if self.last_image:
-                    return self.last_image.copy()
-                else:
-                    return None
-            run, image = self.video.read()
-            if not run:
-                if not self.active_loop or not self._open_video():
-                    return None
-                run, image = self.video.read()
-                if not run:
-                    raise StopIteration
-            self.last_image = image
-            return self.last_image.copy()
-
-        if not self.lst_image:
-            return None
-        if self.pos >= len(self.lst_image):
-            self.pos = 0
-        image = cv2.imread(self.lst_image[self.pos])
-        self.pos += 1
-        return image.copy()
-
-    def find_all_images(self, folder):
-        """Receive a directory as parameter.
-            Find all files that are images in all sub-directory.
-            Returns a list of those files"""
-        images = []
-        for root, _, files in os.walk(folder):
-            for filename in files:
-                path = os.path.join(root, filename)
-                image = cv2.imread(path)
-                if image is not None:
-                    images.append(path)
-        list.sort(images)
-        return images
+        if self.movie:
+            return self.movie.next()
+        if self.imagefolder:
+            return self.imagefolder.next()
+        return None

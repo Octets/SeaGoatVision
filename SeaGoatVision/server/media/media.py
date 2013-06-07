@@ -26,6 +26,7 @@ class Media:
         self.lst_observer = []
         self.thread = None
         self.media_name = None
+        self.active_loop = True
 
     def is_media_streaming(self):
         # complete it into media_streaming and media_video
@@ -58,11 +59,15 @@ class Media:
         # the thread need to be start when device is ready
         if self.thread:
             return
-        self.thread = Thread_media(self, self.sleep_time)
+        self.thread = Thread_media(self)
         self.thread.start()
 
     def next(self):
         # edit me in child
+        pass
+
+    def reset(self):
+        # restore the media
         pass
 
     def close(self):
@@ -73,8 +78,6 @@ class Media:
 
     def change_sleep_time(self, sleep_time):
         self.sleep_time = sleep_time
-        if self.thread is not None:
-            self.thread.sleep_time = sleep_time
 
     def add_observer(self, observer):
         start_media = False
@@ -93,3 +96,6 @@ class Media:
         # be sure the image is different for all observer
         for observer in self.lst_observer:
             observer(np.copy(image))
+
+    def set_loop_enable(self, enable):
+        self.active_loop = enable

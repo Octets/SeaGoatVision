@@ -22,31 +22,52 @@ import threading
 class Thread_media(threading.Thread):
     """Media thread to process the images.
     """
-    def __init__(self, media, sleep_time):
+    def __init__(self, media):
         threading.Thread.__init__(self)
         # self.daemon = True
         self.media = media
         self.running = False
-        self.sleep_time = sleep_time
         self.pause = False
 
     def run(self):
+        sleep_time_per_fps = self.media.sleep_time
         self.running = True
-        for image in self.media:
+        protection_max_reset = 3
+        no_reset = 0
+        while self.running:
+            try:
+                image = self.media.next()
+                no_reset = 0
+            except StopIteration:
+                if self.media.active_loop:
+                    self.media.reset()
+                    no_reset += 1
+                    if no_reset >= protection_max_reset:
+                        self.running = False
+                        print("Error: max reset - close media %s" % self.media.get_name())
+                    continue
+                else:
+                    while not self.media.active_loop:
+                        if not self.running:
+                            return
+                        time.sleep(sleep_time_per_fps)
+
             if image is None:
-                time.sleep(self.sleep_time)
+                time.sleep(sleep_time_per_fps)
                 continue
 
             # take a break if in pause
             while self.pause:
-                time.sleep(self.sleep_time)
+                if not self.running:
+                    return
+                time.sleep(sleep_time_per_fps)
 
             start_time = time.time()
             self.media.notify_observer(image)
             if not self.running:
                 break
-            if self.sleep_time >= 0:
-                sleep_time = self.sleep_time - (time.time() - start_time)
+            if sleep_time_per_fps > 0:
+                sleep_time = sleep_time_per_fps - (time.time() - start_time)
                 if sleep_time > 0:
                     time.sleep(sleep_time)
         self.running = False
