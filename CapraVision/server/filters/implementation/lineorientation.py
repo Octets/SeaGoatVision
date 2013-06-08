@@ -53,21 +53,29 @@ class LineOrientation(dataextract.DataExtractor):
         return image
     
     def draw_lines(self, lines, image):
-        for l, t in lines:
-            vx, vy, x, y = l
-            point1 = (x - t * vx, y - t * vy)
-            point2 = (x + t * vx, y + t * vy)
+        for l in lines:
+            x1, y1, x2, y2 = l
+            point1 = (x1,y1)
+            point2 = (x2,y2)
             cv2.line(image, point1, point2, (0, 0, 255), 3, -1)
-            cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
+            #cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
             
     def send_lines(self, lines):
-        for l, t in lines:
-            vx, vy, x, y = l
-            point1 = (x - t * vx, y - t * vy)
-            point2 = (x + t * vx, y + t * vy)
-            toSend = self.filter_name + " x1=" + str(int(point1[0][0])) + " y1=" + str(int(point1[1][0])) + " x2=" + str(int(point2[0][0])) + " y2=" + str(int(point2[1][0])) + " \n"
-            self.notify_output_observers(toSend)
-                        
+        toSend = ""
+        for l in lines:
+            x1, y1, x2, y2 = l
+            toSend += self.filter_name + " x1=" + str(int(x1)) + " y1=" + str(int(y1)) + " x2=" + str(int(x2)) + " y2=" + str(int(y2)) + " \n"
+            
+        toSend += "=\n"
+        self.notify_output_observers(toSend)
+    
+    def is_point_intersecting (self, point, image):
+        x,y = point
+        if x >= 0 and y >= 0 and x < image.shape[1] and y < image.shape[0]:
+            if not image[y][x][0] == 0:
+                return True
+        return False
+                       
     def find_lines(self, contours, image):
         lines = []
         for contour in contours:
@@ -77,8 +85,29 @@ class LineOrientation(dataextract.DataExtractor):
             if self.area_min.get_current_value() < area < self.area_max.get_current_value():
                 line_values = cv2.fitLine(approx, cv.CV_DIST_L2, 0, 0.01, 0.01)
                 rect = cv2.boundingRect(approx)
-                t = math.sqrt((rect[2]**2 + rect[3]**2) / 2.0)
-                lines.append((line_values, t))
+                t0 = t1 = math.sqrt((rect[2]**2 + rect[3]**2) / 2.0)
+                
+                vx,vy,x,y = line_values
+
+                # CHEAP FIX
+                limit1Found = limit2Found = False
+
+                while not (limit1Found and limit2Found) and t0 > 0 and t1 > 0:
+                    if not limit1Found:
+                        if not self.is_point_intersecting((int(x - t0 * vx),int( y - t0 * vy)), image):
+                            t0 = t0 - 20
+                        else:
+                            limit1Found = True
+                            
+                    if not limit2Found:
+                        if not self.is_point_intersecting((int(x + t1 * vx),int( y + t1 * vy)), image):
+                            t1 = t1 - 20 
+                        else:
+                            limit2Found = True     
+                
+                line = (x - t0 * vx, y - t0 * vy, x + t1 * vx, y + t1 * vy )
+                
+                lines.append(line)
                 cv2.drawContours(image, contour, -1, (255, 255, 0))
 
         return lines

@@ -45,7 +45,7 @@ class WinLineOrientation:
         self.spnMax.set_value(self.filtre_init.area_max.get_current_value())
     
     def create_adj(self):
-        return Gtk.Adjustment(1, 1, 65535, 1, 10, 0)
+        return Gtk.Adjustment(1, 1, 350000, 1, 10, 0)
 
     def on_btnCancel_clicked(self, widget):
         self.filtre.area_min = self.filtre_init.area_min

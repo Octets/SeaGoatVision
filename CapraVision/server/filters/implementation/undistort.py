@@ -26,12 +26,17 @@ class Undistort:
     def execute(self, image):
     
         distCoeffs = numpy.array([-0.34, 0.085, 0, 0, -0.007])
-        cameraMatrix = numpy.matrix([[630.79035702238025, 0, 645.50000000000000],[0, 630.79035702238025, 366.50000000000000],[0, 0, 1]])
+        cameraMatrix = numpy.matrix([[630.79035702238025, 0, 645.50000000000000],
+                                     [0, 630.79035702238025, 366.50000000000000],
+                                     [0,                  0,                  1]])
         size = (1292, 734)
         
         #technique 2
         newimage = numpy.matrix([])
-        optimalMat, roi = cv2.getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, size, 1)
+        largeCameraMatrix = numpy.matrix([[630.79035702238025, 0, 645.50000000000000],
+                                          [0, 630.79035702238025, 366.50000000000000],
+                                          [0,                  0,                  1]])
+        optimalMat, roi = cv2.getOptimalNewCameraMatrix(largeCameraMatrix, distCoeffs, size, 1)
         
         #The last parameter may be optimalMat if we want to keep all the original image.
         #It will add a black zone where the distortion has impacted the image.

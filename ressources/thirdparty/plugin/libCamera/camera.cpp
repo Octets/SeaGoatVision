@@ -14,12 +14,6 @@
 #include "camera.h"
 #include <iostream>
 
-
-
-//These string arrays exist to simplify convertion of enums to string
-
-
-
 Camera::Camera()
 {
     //This is necessary to use numpy array
@@ -27,35 +21,32 @@ Camera::Camera()
 
     cam=NULL;
     frame = tPvFrame();
-    //camNotInit = CameraNotInitializeException();
-    //camNotStart = CameraNotStartException();
-    //pvApiNotInit  = PvApiNotInitializeException();
-
-
     array = NULL;
-
+    started = false;
+    initialized = false;
 }
 
 Camera::~Camera()
 {
+    cout << "destructor is called!"<<endl;
     if(array!=NULL){
          this->stop();
     }
     if(cam!=NULL){
        this->uninitialize();
     }
-
-
+    _
 }
 
 /** begin Commands methods **/
 void Camera::initialize()
 {
-
-
+    if(this->cam != NULL){
+        return;
+    }
     if(PvInitialize()==ePvErrSuccess)
     {
-        cout<<"Camera module for Manta G-95c version 0.94"<<endl;
+        cout<<"Camera module for Manta G-95c version 0.99"<<endl;
     } else {
         throw PvApiNotInitializeException();
     }
@@ -109,22 +100,24 @@ void Camera::initialize()
     {
         std::cout<<"camera not found!\n";
     }
+    initialized = true;
 }
 
 void Camera::uninitialize(){
+    if(this->cam == NULL){
+        return;
+    }
     PvCaptureQueueClear(this->cam);
     PvCameraClose(this->cam);
     PvCaptureEnd(this->cam);
     PvUnInitialize();
+    this->cam = NULL;
+    initialized = false;
 }
 
 PyObject* Camera::getFrame()
 {
-
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     if(array==NULL)
     {
         throw CameraNotStartException();
@@ -132,19 +125,13 @@ PyObject* Camera::getFrame()
 
     PvCaptureWaitForFrameDone(this->cam, &frame, PVINFINITE);
     PvCaptureQueueFrame(this->cam, &frame, NULL);
-
-
-
     return PyArray_SimpleNewFromData(CHANNEL,dims,NPY_UINT8,array);
 }
 
 
 void Camera::start()
 {
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
 
     //start camera receiving frame triggers
     PvCommandRun(this->cam, "AcquisitionStart");
@@ -167,50 +154,49 @@ void Camera::start()
     array = new char[frameSize];
 
     frame.ImageBuffer=array;
+    started = true;
 }
 
 void Camera::stop(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
+    if(array == NULL){
+        return;
     }
-     PvCommandRun(this->cam, "AcquisitionStop");
-     delete array;
+    checkIfCameraIsInitialized();
+    PvCommandRun(this->cam, "AcquisitionStop");
+    delete array;
+    array = NULL;
+    started = false;
 }
 
 
 void Camera::loadConfigFile(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     PvCommandRun(this->cam,"ConfigFileLoad");
 }
 
 void Camera::saveConfigFile(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     PvCommandRun(this->cam,"ConfigFileSave");
+}
+
+bool Camera::isInitialized(){
+    return initialized;
+}
+
+bool Camera::isStarted(){
+    return started;
 }
 
 /** end Commands methods **/
 /** Begin Configurations methods **/
 void Camera::setPixelFormat(PixelFormat pf){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     PvAttrEnumSet(this->cam,"PixelFormat",pixelFormat[pf]);
     setChannel(pf);
 }
 
 const char* Camera::getPixelFormat(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     long size = 10;
     char table[size];
     PvAttrEnumGet(this->cam,"PixelFormat",table,size,NULL);
@@ -219,18 +205,12 @@ const char* Camera::getPixelFormat(){
 }
 
 void Camera::setAcquisitionMode(AcquisitionMode am){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     PvAttrEnumSet(this->cam,"AcquisitionMode",acquisitionMode[am]);
 }
 
 const char* Camera::getAcquisitionMode(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     long size = 20;
     char table[size];
     PvAttrEnumGet(this->cam,"AcquisitionMode",table,size,NULL);
@@ -239,18 +219,12 @@ const char* Camera::getAcquisitionMode(){
 }
 
 void Camera::setConfigFileIndex(ConfigFileIndex cfi){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
-     PvAttrEnumSet(this->cam,"ConfigFileIndex",configFileIndex[cfi]);
+    checkIfCameraIsInitialized();
+    PvAttrEnumSet(this->cam,"ConfigFileIndex",configFileIndex[cfi]);
 }
 
 const char* Camera::getConfigFileIndex(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     long size = 10;
     char table[size];
     PvAttrEnumGet(this->cam,"ConfigFileIndex",table,size,NULL);
@@ -259,10 +233,7 @@ const char* Camera::getConfigFileIndex(){
 }
 
 int Camera::getTotalBytesPerFrame(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvUint32 frameSize;
     PvAttrUint32Get(this->cam, "TotalBytesPerFrame", &frameSize);
     return frameSize;
@@ -273,102 +244,75 @@ int Camera::getTotalBytesPerFrame(){
 /** Begin ROI methods**/
 
 int Camera::getHeight(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvUint32 height;
     PvAttrUint32Get(this->cam, "Height", &height);
     return height;
 }
 
 void Camera::setHeight(int height){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     PvAttrUint32Set(this->cam,"Height",height);
 }
 
 int Camera::getWidth(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvUint32 width;
     PvAttrUint32Get(this->cam,"Width",&width);
     return width;
 }
 
 void Camera::setWidth(int width){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     PvAttrUint32Set(this->cam,"Width",width);
 }
 
 int Camera::getRegionX(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvUint32 regionX;
     PvAttrUint32Get(this->cam,"RegionX",&regionX);
     return regionX;
 }
 
 void Camera::setRegiontX(int regionX){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     PvAttrUint32Set(this->cam,"RegionX",regionX);
 }
 
 int Camera::getRegionY(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvUint32 regionY;
     PvAttrUint32Get(this->cam,"RegionY",&regionY);
     return regionY;
 }
 
 void Camera::setRegionY(int regionY){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     PvAttrUint32Set(this->cam,"RegionY",regionY);
 }
 /** End ROI Methods **/
 /** Begin Gamma methods **/
 float Camera::getGamma(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvFloat32 gamma;
     PvAttrFloat32Get(this->cam,"Gamma",&gamma);
     return gamma;
 }
 
 void Camera::setGamma(float gamma){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
+    checkIfCameraIsInitialized();
+    if(!checkFloatValue(gamma,0.45)
+       && !checkFloatValue(gamma,0.5)
+       && !checkFloatValue(gamma,0.7)
+       && !checkFloatValue(gamma,1.0)){
+        throw GammaOutOfRangeException();
     }
     PvAttrFloat32Set(this->cam,"Gamma",gamma);
 }
 /** End Gamma Methods **/
 /** Begin Exposure methods **/
 const char* Camera::getExposureMode(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     long size = 20;
     char table[size];
     PvAttrEnumGet(this->cam,"ExposureMode",table,size,NULL);
@@ -377,28 +321,19 @@ const char* Camera::getExposureMode(){
 }
 
 void Camera::setExposureMode(exposure::ExposureMode em){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     PvAttrEnumSet(this->cam,"ExposureMode",exposureMode[em]);
 }
 
 int Camera::getExposureValue(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvUint32 exposureValue;
     PvAttrUint32Get(this->cam,"ExposureValue",&exposureValue);
     return exposureValue;
 }
 
 void Camera::setExposureValue(int value){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     string em = getExposureMode();
     if(em != exposureMode[exposure::Manual]){
         throw ExposureValueException();
@@ -410,19 +345,14 @@ void Camera::setExposureValue(int value){
 }
 
 void Camera::setExposureAutoMode(exposure::ExposureAutoMode eam,int value){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
 
     if(eam == exposure::ExposureAutoAlg){
         throw ExposureAutoAlgException();
     }
 
     if(eam == exposure::ExposureAutoAdjustTol){
-        if(value<0 || value>50){
-            throw HalfPercentValueException();
-        }
+        checkIfValueIsAHalfPercent(value);
     }
 
     if(eam == exposure::ExposureAutoMax || eam == exposure::ExposureAutoMin){
@@ -438,24 +368,17 @@ void Camera::setExposureAutoMode(exposure::ExposureAutoMode eam,int value){
     }
 
     if(eam == exposure::ExposureAutoRate || eam == exposure::ExposureAutoTarget){
-        if(value < 0 || value > 100){
-            throw FullPercentValueException();
-        }
+        checkIfValueIsAPercent(value);
     }
 
     PvAttrUint32Set(this->cam,exposureAutoMode[eam],value);
 }
 
 int Camera::getExposureAutoMode(exposure::ExposureAutoMode eam){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     if(eam == exposure::ExposureAutoAlg){
         throw ExposureAutoAlgException();
     }
-
-
 
     tPvUint32 value;
     PvAttrUint32Get(this->cam,exposureAutoMode[eam],&value);
@@ -463,21 +386,12 @@ int Camera::getExposureAutoMode(exposure::ExposureAutoMode eam){
 }
 
 void Camera::setExposureAutoAlgMode(exposure::ExposureAutoAlgMode eaa){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
-
+    checkIfCameraIsInitialized();
     PvAttrEnumSet(this->cam,exposureAutoMode[exposure::ExposureAutoAlg],exposureAutoAlgMode[eaa]);
-
-
 }
 
 const char* Camera::getExposureAutoAlgMode(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     long size = 10;
     char table[size];
     PvAttrEnumGet(this->cam,"ExposureAutoAlg",table,size,NULL);
@@ -487,10 +401,7 @@ const char* Camera::getExposureAutoAlgMode(){
 /** End Exposure Methods **/
 /** Begin Gain methods **/
 const char* Camera::getGainMode(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     long size = 10;
     char table[size];
     PvAttrEnumGet(this->cam,"GainMode",table,size,NULL);
@@ -499,26 +410,30 @@ const char* Camera::getGainMode(){
 }
 
 void Camera::setGainMode(gain::GainMode gm){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     PvAttrEnumSet(this->cam,"GainMode",gainMode[gm]);
 }
 
 void Camera::setGainAutoMode(gain::GainAutoMode gam ,int value){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
+    checkIfCameraIsInitialized();
+    if(gam == gain::GainAutoAdjustTol){
+        checkIfValueIsAHalfPercent(value);
+    }
+
+    if(gam == gain::GainAutoOutliers || gam == gain::GainAutoRate || gam == gain::GainAutoTarget){
+        checkIfValueIsAPercent(value);
+    }
+
+    if(gam == gain::GainAutoMax || gam == gain::GainAutoMin){
+        if(value <0 || value > 32){
+            throw GainOutOfRangeException();
+        }
     }
     PvAttrUint32Set(this->cam,gainAutoMode[gam],value);
 }
 
 int Camera::getGainAutoMode(gain::GainAutoMode gam){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvUint32 value;
     PvAttrUint32Get(this->cam,gainAutoMode[gam],&value);
 
@@ -526,55 +441,49 @@ int Camera::getGainAutoMode(gain::GainAutoMode gam){
 }
 
 void Camera::setGainValue(int value){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
 
     string gm = getGainMode();
-    if(gm != gainMode[gain::Manual]){
+    if(gm == gainMode[gain::Auto]){
         throw GainValueException();
     }
+
+    if(value <0 || value > 32){
+        throw GainOutOfRangeException();
+    }
+
     PvAttrUint32Set(this->cam,"GainValue",value);
 }
 
 int Camera::getGainValue(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvUint32 value;
     PvAttrUint32Get(this->cam,"GainValue",&value);
     return value;
 }
 /** End Gain Methods **/
 /** Hue methods **/
-int Camera::getHue(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+float Camera::getHue(){
+    checkIfCameraIsInitialized();
 
-    tPvUint32 value;
-    PvAttrUint32Get(this->cam,"Hue",&value);
+    tPvFloat32 value;
+    PvAttrFloat32Get(this->cam,"Hue",&value);
     return value;
 }
 
-void Camera::setHue(int hue){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
+void Camera::setHue(float hue){
+    checkIfCameraIsInitialized();
+
+    if(hue < -40 || hue > 40 ){
+        throw HueOutOfRangeException();
     }
 
-    PvAttrUint32Set(this->cam,"Hue",hue);
+    PvAttrFloat32Set(this->cam,"Hue",hue);
 }
 
 /** Saturation methods **/
 float Camera::getSaturation(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvFloat32 value;
     PvAttrFloat32Get(this->cam,"Saturation",&value);
     return value;
@@ -582,10 +491,7 @@ float Camera::getSaturation(){
 
 
 void Camera::setSaturation(float value){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
 
     if(value > 2 || value < 0){
         throw SaturationOutOfRangeException();
@@ -596,10 +502,7 @@ void Camera::setSaturation(float value){
 
 /** WhiteBalance methods **/
 const char* Camera::getWhitebalMode(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     long size = 10;
     char table[size];
     PvAttrEnumGet(this->cam,"WhitebalMode",table,size,NULL);
@@ -608,18 +511,20 @@ const char* Camera::getWhitebalMode(){
 }
 
 void Camera::setWhitebalMode(whitebal::WhitebalMode wb){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
 
     PvAttrEnumSet(this->cam,"WhitebalMode",whitebalMode[wb]);
 }
 
 void Camera::setWhitebalAutoMode(whitebal::WhitebalAutoMode wam,int value){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
+    checkIfCameraIsInitialized();
+
+    if(wam == whitebal::WhitebalAutoAdjustTol){
+        checkIfValueIsAHalfPercent(value);
+    }
+
+    if(wam == whitebal::WhiteAutoRate){
+        checkIfValueIsAPercent(value);
     }
 
     PvAttrUint32Set(this->cam,whiteAutoMode[wam],value);
@@ -627,10 +532,7 @@ void Camera::setWhitebalAutoMode(whitebal::WhitebalAutoMode wam,int value){
 
 
 int Camera::getWhitebalAutoMode(whitebal::WhitebalAutoMode wam){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
 
     tPvUint32 value;
     PvAttrUint32Get(this->cam,whiteAutoMode[wam],&value);
@@ -639,40 +541,33 @@ int Camera::getWhitebalAutoMode(whitebal::WhitebalAutoMode wam){
 }
 
 int Camera::getWhitebalValueRed(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvUint32 value;;
     PvAttrUint32Get(this->cam,"WhitebalValueRed",&value);
     return value;
 }
 
 void Camera::setWhitebalValueRed(int value){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
+    checkWhitebalValue(value);
     PvAttrUint32Set(this->cam,"WhitebalValueRed",value);
 }
 
 int Camera::getWhitebalValueBlue(){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
     tPvUint32 value;
     PvAttrUint32Get(this->cam,"WhitebalValueBlue",&value);
     return value;
 }
 
 void Camera::setWhitebalValueBlue(int value){
-    if(this->cam == NULL)
-    {
-        throw CameraNotInitializeException();
-    }
+    checkIfCameraIsInitialized();
+    checkWhitebalValue(value);
+    checkIfValueIsAPercent(value);
     PvAttrUint32Set(this->cam,"WhitebalValueBlue",value);
 }
+
+
 
 /** private methods **/
 void Camera::setChannel(PixelFormat pf){
@@ -692,6 +587,50 @@ void Camera::setChannel(PixelFormat pf){
             break;
         default:
             channel = 0;
+    }
+}
+
+void Camera::checkIfValueIsAPercent(int value){
+    if(value < 0 || value > 100){
+        throw FullPercentValueException();
+    }
+}
+
+void Camera::checkIfValueIsAHalfPercent(int value){
+     if(value < 0 || value > 50){
+        throw HalfPercentValueException();
+    }
+}
+
+bool Camera::checkFloatValue(float value, float ref){
+    float sigma = 0.01;
+    if(value < ref - sigma){
+        return false;
+    }
+
+    else if (value > ref+sigma){
+        return false;
+    }
+
+    else {
+        return true;
+    }
+}
+
+void Camera::checkWhitebalValue(int value){
+    const char* wbm = getWhitebalMode();
+    if(wbm == whitebalMode[whitebal::Auto]){
+        throw WhitebalModeException();
+    }
+    if(value <80 || value > 300){
+        throw WhitebalValueException();
+    }
+}
+
+void Camera::checkIfCameraIsInitialized(){
+    if(this->cam == NULL)
+    {
+        throw CameraNotInitializeException();
     }
 }
 

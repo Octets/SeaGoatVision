@@ -27,7 +27,7 @@ from CapraVision.client.gtk.imageproviders import map_source_to_ui
 
 from CapraVision.server import imageproviders
 from CapraVision.server import filters
-from CapraVision.server.recording.recorder import SimpleRecorder
+from CapraVision.server.recording.recorder import PNGRecorder
 
 from WinFilterSel import WinFilterSel
 from WinLineTest import WinLineTest
@@ -136,11 +136,21 @@ class WinFilterChain:
     def load_settings(self):
         if os.path.exists(self.SETTINGS_FILE):
             import settings
-            self.load_chain(settings.filterchain)    
+            
+            #chain
+            self.load_chain(settings.filterchain)
+            
+            #source
+            source_index = settings.source
+            self.cboSource.set_active(source_index)
+            source = self.source_list[self.sourcesListStore[source_index][0]]
+            self.controler.change_source(source)
+            
     
     def save_settings(self):
         file = open(self.SETTINGS_FILE, 'w')
-        file.write("filterchain='" + self.txtFilterChain.get_text() + "'")
+        file.write("filterchain='" + self.txtFilterChain.get_text() + "'\n")
+        file.write("source=" + str(self.cboSource.get_active()))
        # file.write("source=" + self.txtFilterChain.get_text())
         file.close()
 
@@ -433,7 +443,7 @@ class WinFilterChain:
 
     def on_btnRecord_toggled(self, widget):
         if self.btnRecord.get_active():
-            self.recorder = SimpleRecorder(int(self.spnFPS.get_value()), 
+            self.recorder = PNGRecorder(int(self.spnFPS.get_value()), 
                                 self.image_size, self.controler.get_thread())
         else:
             self.recorder.stop()

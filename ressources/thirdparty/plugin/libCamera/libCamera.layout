@@ -2,12 +2,12 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
 	<File name="camera.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="9951" topLine="121" />
+		<Cursor position="772" topLine="18" />
 	</File>
 	<File name="camera.h" open="1" top="0" tabpos="3">
-		<Cursor position="3916" topLine="115" />
+		<Cursor position="7648" topLine="13" />
 	</File>
 	<File name="main.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="2488" topLine="98" />
+		<Cursor position="554" topLine="172" />
 	</File>
 </CodeBlocks_layout_file>
