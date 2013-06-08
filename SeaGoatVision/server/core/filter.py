@@ -24,7 +24,7 @@ class Filter(object):
         self._output_observers = list()
         self.original_image = None
         self.name = None
-        self.lst_global_param = []
+        self.dct_global_param = {}
 
     def serialize(self):
         return {"filter_name":self.__class__.__name__, "lst_param":[param.serialize() for param in self.get_params()]}
@@ -55,17 +55,28 @@ class Filter(object):
     def configure(self):
         pass
 
-    def set_global_params(self, lst_global_param):
+    def set_global_params(self, dct_global_param):
         # complete the list and point on it
-        for param in self.lst_global_param:
-            lst_global_param.append(param)
-        self.lst_global_param = lst_global_param[:]
+        for key, param in self.dct_global_param.items():
+            if key in dct_global_param:
+                print("Error duplicate key on dct_global_param : %s" % key)
+                continue
+            dct_global_param[key] = param
+        self.dct_global_param = dct_global_param.copy()
+        self.set_global_params_cpp(self.dct_global_param)
+
+    def set_global_params_cpp(self, dct_global_param):
+        pass
+
+    def add_global_params(self, param):
+        name = param.get_name()
+        if name in self.dct_global_param:
+            print("Error, this param is already in the list : %s" % name)
+            return
+        self.dct_global_param[name] = param
 
     def get_global_params(self, param_name):
-        for param in self.lst_global_param:
-            if param.get_name() == param_name:
-                return param
-        return None
+        return self.dct_global_param.get(param_name, None)
 
     def get_params(self, param_name=None):
         params = []

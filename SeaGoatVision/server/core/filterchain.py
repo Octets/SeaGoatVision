@@ -41,7 +41,7 @@ class FilterChain(object):
         self.filter_output_observers = []
         self.filterchain_name = filterchain_name
         self.original_image_observer = []
-        self.lst_global_param = []
+        self.dct_global_param = {}
 
     def destroy(self):
         # clean everything!
@@ -124,7 +124,7 @@ class FilterChain(object):
 
     def add_filter(self, filter):
         self.filters.append(filter)
-        filter.set_global_params(self.lst_global_param)
+        filter.set_global_params(self.dct_global_param)
 
     def remove_filter(self, filter):
         self.filters.remove(filter)
