@@ -44,7 +44,7 @@ def create_init(cppfunc, params):
         # this subclass of Filter
         Filter.__init__(self)
         self.params = {}
-        cppfunc(self.params, self.py_init_param, self.notify_output_observers)
+        cppfunc(self.params, self.py_init_param, self.notify_output_observers, self.dct_global_param, self.py_init_global_param)
     return __init__
 
 def create_destroy(cppfunc):
@@ -59,6 +59,16 @@ def create_set_original_image(cppfunc):
     def set_original_image(self, image_original):
         cppfunc(image_original)
     return set_original_image
+
+def create_set_global_params(cppfunc):
+    def set_global_params(self, dct_global_param):
+        self.dct_global_param = dct_global_param
+        cppfunc(dct_global_param)
+    return set_global_params
+
+def py_init_global_param(self, name, value, min=None, max=None):
+    param = Param(name, value, min_v=min, max_v=max)
+    self.dct_global_param[name] = param
 
 def py_init_param(self, name, value, min=None, max=None):
     param = Param(name, value, min_v=min, max_v=max)

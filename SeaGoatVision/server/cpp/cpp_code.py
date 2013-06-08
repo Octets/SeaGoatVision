@@ -23,7 +23,9 @@ def init_code(call_c_init):
     """
     code = """
         params = p;
+        global_param = dct_global_param;
         py_init_param = pip;
+        py_init_global_param = pip_global;
         notify_py = py_notify;
     """
     if call_c_init:
@@ -57,6 +59,11 @@ def set_original_image_code():
         original_image = mat_original;
     """
 
+def set_global_params_code():
+    return """
+        global_param = dct_global_param;
+    """
+
 def params_code():
     """
     Support code to declare parameters in the C++ filters
@@ -64,8 +71,10 @@ def params_code():
     the python side to create the parameters in the python object.
     """
     return """
+        py::dict global_param;
         py::dict params;
         py::object py_init_param;
+        py::object py_init_global_param;
         long param_int(std::string name, int value, int min, int max) {
             if(!params.has_key(name)) {
                 py::tuple args(4);
@@ -120,6 +129,49 @@ def params_code():
         cv::Mat original_image;
         cv::Mat get_image_original() {
             return original_image;
+        }
+
+        // define global param
+        /*cv::Mat global_param_mat(std::string name, cv::Mat value) {
+            if(!global_param.has_key(name)) {
+                py::tuple args(2);
+                args[0] = name;
+                args[1] = value;
+                py_init_global_param.call(args);
+            }
+            py::object o = global_param.get(name);
+            return PyInt_AsLong(o.mcall("get"));
+        }*/
+
+        long global_param_int(std::string name, int value, int min, int max) {
+            if(!global_param.has_key(name)) {
+                py::tuple args(4);
+                args[0] = name;
+                args[1] = value;
+                args[2] = min;
+                args[3] = max;
+                py_init_global_param.call(args);
+            }
+            py::object o = global_param.get(name);
+            return PyInt_AsLong(o.mcall("get"));
+        }
+
+        int global_param_get_int(std::string name) {
+            if(!global_param.has_key(name)) {
+                //printf("key %s not exist.", name);
+                return 0;
+            }
+            py::object o = global_param.get(name);
+            return PyInt_AsLong(o.mcall("get"));
+        }
+        cv::Mat global_param_get_mat(std::string name) {
+            if(!global_param.has_key(name))
+                return cv::Mat();
+            py::object o = global_param.get(name);
+            //cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
+            o = o.mcall("get");
+            //cv::Mat image =
+            return cv::Mat();
         }
     """
 

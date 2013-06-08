@@ -97,7 +97,9 @@ def _create_module(cpptimestamps, module, modname, mod):
         dct_fct = {'__init__' : create_init(getattr(cppmodule, 'init_' + modname), params),
                     'execute' : create_execute(getattr(cppmodule, 'exec_' + modname)),
                     'py_init_param' : py_init_param,
+                    'py_init_global_param' : py_init_global_param,
                     'set_original_image' : create_set_original_image(getattr(cppmodule, 'set_original_image_' + modname)),
+                    'set_global_params_cpp' : create_set_global_params(getattr(cppmodule, 'set_global_params_' + modname)),
                     '__doc__' : getattr(cppmodule, 'help_' + modname)()
                 }
         if has_configure:
@@ -118,16 +120,18 @@ def _create_python_code(mod, modname, cppcode):
     # param variable size
     p = {}
     pip = py_init_param
+    pip_global = py_init_global_param
     py_notify = Filter().notify_output_observers
     image = np.zeros((1, 1), dtype=np.uint8)
     image_original = np.zeros((1, 1), dtype=np.uint8)
+    dct_global_param = {}
 
     # help
     func = ext_tools.ext_function('help_' + modname, help_code(), [])
     mod.add_function(func)
 
     # __init__
-    func = ext_tools.ext_function('init_' + modname, init_code("void init()" in cppcode), ['p', 'pip', 'py_notify'])
+    func = ext_tools.ext_function('init_' + modname, init_code("void init()" in cppcode), ['p', 'pip', 'py_notify', 'dct_global_param', 'pip_global'])
     func.customize.add_support_code(params_code())
     func.customize.add_support_code(notify_code())
     mod.add_function(func)
@@ -153,6 +157,10 @@ def _create_python_code(mod, modname, cppcode):
 
     # set original image
     func = ext_tools.ext_function('set_original_image_' + modname, set_original_image_code(), ['image_original'])
+    mod.add_function(func)
+
+    # set global params
+    func = ext_tools.ext_function('set_global_params_' + modname, set_global_params_code(), ['dct_global_param'])
     mod.add_function(func)
 
     # execute
