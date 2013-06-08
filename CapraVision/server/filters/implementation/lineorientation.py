@@ -47,26 +47,38 @@ class LineOrientation(dataextract.DataExtractor):
                                             cv2.RETR_TREE, 
                                             cv2.CHAIN_APPROX_SIMPLE)
         lines = self.find_lines(contours, image)
-        self.draw_lines(lines, image)
-        self.send_lines(lines)
+        lines_points = self.draw_lines(lines, image)
+        self.send_lines(lines_points)
         
         return image
     
     def draw_lines(self, lines, image):
-        for l, t in lines:
+        lines_points = []
+        for l, t, contour in lines:
             vx, vy, x, y = l
             point1 = (x - t * vx, y - t * vy)
             point2 = (x + t * vx, y + t * vy)
+            
+            t_max_point1 = t
+            while cv2.pointPolygonTest(contour,point1,False) ==-1:
+                t_max_point1 -= 20;
+                point1 = (x - t_max_point1 * vx, y - t_max_point1 * vy)
+            
+            t_max_point2 = t
+            while cv2.pointPolygonTest(contour,point2,False) ==-1:
+                t_max_point2 -= 20;
+                point2 = (x + t_max_point2 * vx, y + t_max_point2 * vy)
+            
+            
+            lines_points.append((point1,point2))
             cv2.line(image, point1, point2, (0, 0, 255), 3, -1)
             cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
+        return lines_points
             
-    def send_lines(self, lines):
+    def send_lines(self, lines_points):
         toSend = ""
-        for l, t in lines:
-            vx, vy, x, y = l
-            point1 = (x - t * vx, y - t * vy)
-            point2 = (x + t * vx, y + t * vy)
-            toSend += self.filter_name + " x1=" + str(int(point1[0][0])) + " y1=" + str(int(point1[1][0])) + " x2=" + str(int(point2[0][0])) + " y2=" + str(int(point2[1][0])) + " \n"
+        for p1,p2 in lines_points:
+            toSend += self.filter_name + " x1=" + str(int(p1[0][0])) + " y1=" + str(int(p1[1][0])) + " x2=" + str(int(p2[0][0])) + " y2=" + str(int(p2[1][0])) + " \n"
             
         toSend += "=\n"
         self.notify_output_observers(toSend)
@@ -81,8 +93,9 @@ class LineOrientation(dataextract.DataExtractor):
                 line_values = cv2.fitLine(approx, cv.CV_DIST_L2, 0, 0.01, 0.01)
                 rect = cv2.boundingRect(approx)
                 t = math.sqrt((rect[2]**2 + rect[3]**2) / 2.0)
-                lines.append((line_values, t))
+                lines.append((line_values, t, contour))
                 cv2.drawContours(image, contour, -1, (255, 255, 0))
+
 
         return lines
     

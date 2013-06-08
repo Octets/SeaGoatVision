@@ -35,7 +35,6 @@ class Crop():
         y1 = 0#int(f.readline())
         y2 = 1292#int(f.readline())
         
-        print x1
         image = image[x1:x2, y1:y2]
         return image
     
