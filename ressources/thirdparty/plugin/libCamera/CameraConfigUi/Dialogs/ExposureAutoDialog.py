@@ -46,7 +46,7 @@ class ExposureAutoDialog:
         self.exposureAutoTarget = self.cam.getExposureAutoMode(ExposureAutoMode.ExposureAutoTarget)
     
     def _setupExposureAutoAlgGroup(self,exposureAutoAlg):
-        if exposureAutoAlg == "Mean":
+        if exposureAutoAlg == ExposureAutoAlgMode.Mean:
             self.ui.meanRadioButton.setChecked(True)
         else:
             self.ui.fitRangeRadioButton.setChecked(True)
@@ -60,16 +60,16 @@ class ExposureAutoDialog:
         self.ui.setVisible(False)
     
     def setExposureAutoAlgMean(self):
-        self.setExposureAutoAlg("Mean")
+        self.setExposureAutoAlg(ExposureAutoAlgMode.Mean)
         
     def setExposureAutoAlgFitRange(self):
-        self.setExposureAutoAlg("FitRange")
+        self.setExposureAutoAlg(ExposureAutoAlgMode.FitRange)
     
     def setExposureAutoAdjustTol(self,value):
         self.cam.setExposureAutoMode(ExposureAutoMode.ExposureAutoAdjustTol,value)
     
     def setExposureAutoAlg(self,algo):
-        if algo == "Mean":
+        if algo == ExposureAutoAlgMode.Mean:
             self.cam.setExposureAutoModeAlg(ExposureAutoAlgMode.Mean)
         else:
             self.cam.setExposureAutoModeAlg(ExposureAutoAlgMode.FitRange)

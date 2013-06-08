@@ -27,31 +27,34 @@
 #include <boost/python/extract.hpp>
 #include <boost/python/numeric.hpp>
 #include <boost/python/tuple.hpp>
+#include <boost/algorithm/string.hpp>
 #include <ndarrayobject.h>
 
 using namespace std;
 using namespace boost::python;
+using namespace boost::algorithm;
 
-enum AcquisitionMode {Continuous,SingleFrame,MultiFrame,Recorder};
 
-enum PixelFormat {Mono8,Bayer8,Bayer16,Rgb24,Bgr24,Rgba32,Bgra32};
+enum AcquisitionMode {Continuous,SingleFrame,MultiFrame,Recorder,AMCount=Recorder};
 
-enum ConfigFileIndex {Factory,Index1,Index2,Index3,Index4,Index5};
+enum PixelFormat {Mono8,Bayer8,Bayer16,Rgb24,Bgr24,Rgba32,Bgra32,PFCount=Bgra32};
+
+enum ConfigFileIndex {Factory,Index1,Index2,Index3,Index4,Index5,CFICount=Index5};
 
 namespace exposure{
-    enum ExposureMode{Manual,AutoOnce,Auto,External};
-    enum ExposureAutoMode{ExposureAutoAdjustTol,ExposureAutoAlg,ExposureAutoMax,ExposureAutoMin,ExposureAutoOutliers,ExposureAutoRate,ExposureAutoTarget};
-    enum ExposureAutoAlgMode{Mean,FitRange};
+    enum ExposureMode{Manual,AutoOnce,Auto,External,EMCount=External};
+    enum ExposureAutoMode{ExposureAutoAdjustTol,ExposureAutoAlg,ExposureAutoMax,ExposureAutoMin,ExposureAutoOutliers,ExposureAutoRate,ExposureAutoTarget,EAMCount=ExposureAutoTarget};
+    enum ExposureAutoAlgMode{Mean,FitRange,EAAMCount=FitRange};
 }
 
 namespace gain{
-    enum GainMode{Manual,AutoOnce,Auto};
-    enum GainAutoMode{GainAutoAdjustTol,GainAutoMax,GainAutoMin,GainAutoOutliers,GainAutoRate,GainAutoTarget};
+    enum GainMode{Manual,AutoOnce,Auto,GMCount=Auto};
+    enum GainAutoMode{GainAutoAdjustTol,GainAutoMax,GainAutoMin,GainAutoOutliers,GainAutoRate,GainAutoTarget,GAMCount=GainAutoTarget};
 }
 
 namespace whitebal{
-    enum WhitebalMode{Manual,Auto,AutoOnce};
-    enum WhitebalAutoMode{WhitebalAutoAdjustTol,WhiteAutoRate};
+    enum WhitebalMode{Manual,Auto,AutoOnce,WMCount=AutoOnce};
+    enum WhitebalAutoMode{WhitebalAutoAdjustTol,WhiteAutoRate,WAMCount=WhiteAutoRate};
 }
 
 static const char* acquisitionMode[]={"Continuous","SingleFrame","MultiFrame","Recorder"};
@@ -167,6 +170,12 @@ class WhitebalValueException:public exception{
         return "This white balance value has to be between 80 to 300.";
     }
 };
+
+class StringToEnumConversionException:public exception{
+    virtual const char* what() const throw(){
+        return "Conversion String to Enum has failed!";
+    }
+};
 /** End Declaration of Exception **/
 /** CAMERA_h **/
 class Camera
@@ -192,13 +201,13 @@ public:
 
     //configuration methods
     void setPixelFormat(PixelFormat);
-    const char* getPixelFormat();
+    PixelFormat getPixelFormat();
 
     void setAcquisitionMode(AcquisitionMode);
-    const char* getAcquisitionMode();
+    AcquisitionMode getAcquisitionMode();
 
     void setConfigFileIndex(ConfigFileIndex);
-    const char* getConfigFileIndex();
+    ConfigFileIndex getConfigFileIndex();
 
     int getTotalBytesPerFrame();
 
@@ -220,17 +229,17 @@ public:
     void setGamma(float);
 
     //Exposure methods
-    const char* getExposureMode();
+    exposure::ExposureMode getExposureMode();
     void setExposureMode(exposure::ExposureMode);
     void setExposureValue(int value);
     int getExposureValue();
     void setExposureAutoMode(exposure::ExposureAutoMode,int);
-    const char* getExposureAutoAlgMode();
+    exposure::ExposureAutoAlgMode getExposureAutoAlgMode();
     void setExposureAutoAlgMode(exposure::ExposureAutoAlgMode);
     int getExposureAutoMode(exposure::ExposureAutoMode);
 
     //Gain methods
-    const char* getGainMode();
+    gain::GainMode getGainMode();
     void setGainMode(gain::GainMode);
     int getGainAutoMode(gain::GainAutoMode);
     void setGainAutoMode(gain::GainAutoMode,int);
@@ -246,7 +255,7 @@ public:
     void setSaturation(float);
 
     //WhiteBalance methods
-    const char* getWhitebalMode();
+    whitebal::WhitebalMode getWhitebalMode();
     void setWhitebalMode(whitebal::WhitebalMode);
     int getWhitebalAutoMode(whitebal::WhitebalAutoMode);
     void setWhitebalAutoMode(whitebal::WhitebalAutoMode,int);
@@ -274,6 +283,20 @@ private:
     bool checkFloatValue(float,float);
     void checkWhitebalValue(int);
     void checkIfCameraIsInitialized();
+
+
+    template <class E>
+    E stringToEnum(string index,const char* stringTable[],int Count){
+        trim(index);
+        for(int i=0;i<Count;i++)
+        {
+            if(string(stringTable[i]).compare(index))
+            {
+                return (E)i;
+            }
+        }
+        throw StringToEnumConversionException();
+    }
 
 };
 

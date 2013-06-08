@@ -47,7 +47,7 @@ void Camera::initialize()
     }
     if(PvInitialize()==ePvErrSuccess)
     {
-        cout<<"Camera module for Manta G-95c version 0.99"<<endl;
+        cout<<"Camera module for Manta G-95c version 0.993"<<endl;
     } else {
         throw PvApiNotInitializeException();
     }
@@ -219,13 +219,13 @@ void Camera::setPixelFormat(PixelFormat pf){
     setChannel(pf);
 }
 
-const char* Camera::getPixelFormat(){
+PixelFormat Camera::getPixelFormat(){
     checkIfCameraIsInitialized();
     long size = 10;
     char table[size];
     PvAttrEnumGet(this->cam,"PixelFormat",table,size,NULL);
     string pf(table);
-    return pf.c_str();
+    return stringToEnum<PixelFormat>(pf,pixelFormat,PFCount);
 }
 
 void Camera::setAcquisitionMode(AcquisitionMode am){
@@ -233,13 +233,13 @@ void Camera::setAcquisitionMode(AcquisitionMode am){
     PvAttrEnumSet(this->cam,"AcquisitionMode",acquisitionMode[am]);
 }
 
-const char* Camera::getAcquisitionMode(){
+AcquisitionMode Camera::getAcquisitionMode(){
     checkIfCameraIsInitialized();
     long size = 20;
     char table[size];
     PvAttrEnumGet(this->cam,"AcquisitionMode",table,size,NULL);
     string am(table);
-    return am.c_str();
+    return stringToEnum<AcquisitionMode>(am,acquisitionMode,AMCount);
 }
 
 void Camera::setConfigFileIndex(ConfigFileIndex cfi){
@@ -247,13 +247,13 @@ void Camera::setConfigFileIndex(ConfigFileIndex cfi){
     PvAttrEnumSet(this->cam,"ConfigFileIndex",configFileIndex[cfi]);
 }
 
-const char* Camera::getConfigFileIndex(){
+ConfigFileIndex Camera::getConfigFileIndex(){
     checkIfCameraIsInitialized();
     long size = 10;
     char table[size];
     PvAttrEnumGet(this->cam,"ConfigFileIndex",table,size,NULL);
     string cfi(table);
-    return cfi.c_str();
+    return stringToEnum<ConfigFileIndex>(cfi,configFileIndex,(int)CFICount);
 }
 
 int Camera::getTotalBytesPerFrame(){
@@ -335,13 +335,13 @@ void Camera::setGamma(float gamma){
 }
 /** End Gamma Methods **/
 /** Begin Exposure methods **/
-const char* Camera::getExposureMode(){
+exposure::ExposureMode Camera::getExposureMode(){
     checkIfCameraIsInitialized();
     long size = 20;
     char table[size];
     PvAttrEnumGet(this->cam,"ExposureMode",table,size,NULL);
     string em(table);
-    return em.c_str();
+    return stringToEnum<exposure::ExposureMode>(em,exposureMode,exposure::EMCount);
 }
 
 void Camera::setExposureMode(exposure::ExposureMode em){
@@ -358,8 +358,8 @@ int Camera::getExposureValue(){
 
 void Camera::setExposureValue(int value){
     checkIfCameraIsInitialized();
-    string em = getExposureMode();
-    if(em != exposureMode[exposure::Manual]){
+    exposure::ExposureMode em = getExposureMode();
+    if(em != exposure::Manual){
         throw ExposureValueException();
     }
     if(value < 45){
@@ -414,23 +414,24 @@ void Camera::setExposureAutoAlgMode(exposure::ExposureAutoAlgMode eaa){
     PvAttrEnumSet(this->cam,exposureAutoMode[exposure::ExposureAutoAlg],exposureAutoAlgMode[eaa]);
 }
 
-const char* Camera::getExposureAutoAlgMode(){
+exposure::ExposureAutoAlgMode Camera::getExposureAutoAlgMode(){
     checkIfCameraIsInitialized();
     long size = 10;
     char table[size];
     PvAttrEnumGet(this->cam,"ExposureAutoAlg",table,size,NULL);
     string eaam(table);
-    return eaam.c_str();
+    return stringToEnum<exposure::ExposureAutoAlgMode>(eaam,exposureAutoMode,exposure::EAMCount);
 }
 /** End Exposure Methods **/
 /** Begin Gain methods **/
-const char* Camera::getGainMode(){
+gain::GainMode Camera::getGainMode(){
     checkIfCameraIsInitialized();
     long size = 10;
     char table[size];
     PvAttrEnumGet(this->cam,"GainMode",table,size,NULL);
     string gm(table);
-    return gm.c_str();
+
+    return stringToEnum<gain::GainMode>(gm,gainAutoMode,gain::GMCount);
 }
 
 void Camera::setGainMode(gain::GainMode gm){
@@ -467,8 +468,8 @@ int Camera::getGainAutoMode(gain::GainAutoMode gam){
 void Camera::setGainValue(int value){
     checkIfCameraIsInitialized();
 
-    string gm = getGainMode();
-    if(gm == gainMode[gain::Auto]){
+    gain::GainMode gm = getGainMode();
+    if(gm == gain::Auto){
         throw GainValueException();
     }
 
@@ -525,13 +526,13 @@ void Camera::setSaturation(float value){
 }
 
 /** WhiteBalance methods **/
-const char* Camera::getWhitebalMode(){
+whitebal::WhitebalMode Camera::getWhitebalMode(){
     checkIfCameraIsInitialized();
     long size = 10;
     char table[size];
     PvAttrEnumGet(this->cam,"WhitebalMode",table,size,NULL);
     string wbm(table);
-    return wbm.c_str();
+    return stringToEnum<whitebal::WhitebalMode>(wbm,whitebalMode,whitebal::WMCount);
 }
 
 void Camera::setWhitebalMode(whitebal::WhitebalMode wb){
@@ -642,8 +643,8 @@ bool Camera::checkFloatValue(float value, float ref){
 }
 
 void Camera::checkWhitebalValue(int value){
-    const char* wbm = getWhitebalMode();
-    if(wbm == whitebalMode[whitebal::Auto]){
+    whitebal::WhitebalMode wbm = getWhitebalMode();
+    if(wbm == whitebal::Auto){
         throw WhitebalModeException();
     }
     if(value <80 || value > 300){
@@ -657,6 +658,7 @@ void Camera::checkIfCameraIsInitialized(){
         throw CameraNotInitializeException();
     }
 }
+
 
 
 
