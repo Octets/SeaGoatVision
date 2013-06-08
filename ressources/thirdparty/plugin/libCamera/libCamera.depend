@@ -51,11 +51,11 @@
 	"camera.h"
 	<iostream>
 
-1369022594 source:/home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/camera.cpp
+1370729506 source:/home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/camera.cpp
 	"camera.h"
 	<iostream>
 
-1369523595 /home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/camera.h
+1370729300 /home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/camera.h
 	"PvApi.h"
 	<opencv2/opencv.hpp>
 	"ImageLib.h"

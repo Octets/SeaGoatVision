@@ -186,6 +186,10 @@ public:
     void loadConfigFile();
     void saveConfigFile();
 
+    PyObject* getCam();
+    void startVideo();
+    void stopVideo();
+
     //configuration methods
     void setPixelFormat(PixelFormat);
     const char* getPixelFormat();
@@ -261,6 +265,7 @@ private:
     char* array;
     bool started;
     bool initialized;
+    bool videoStarted;
 
     //private methods
     void setChannel(PixelFormat);

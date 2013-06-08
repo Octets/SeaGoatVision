@@ -24,6 +24,7 @@ Camera::Camera()
     array = NULL;
     started = false;
     initialized = false;
+    videoStarted = false;
 }
 
 Camera::~Camera()
@@ -35,7 +36,7 @@ Camera::~Camera()
     if(cam!=NULL){
        this->uninitialize();
     }
-    _
+
 }
 
 /** begin Commands methods **/
@@ -126,6 +127,29 @@ PyObject* Camera::getFrame()
     PvCaptureWaitForFrameDone(this->cam, &frame, PVINFINITE);
     PvCaptureQueueFrame(this->cam, &frame, NULL);
     return PyArray_SimpleNewFromData(CHANNEL,dims,NPY_UINT8,array);
+}
+
+PyObject* Camera::getCam(){
+    checkIfCameraIsInitialized();
+    return PyArray_SimpleNewFromData(CHANNEL,dims,NPY_UINT8,array);
+}
+
+void Camera::startVideo(){
+    checkIfCameraIsInitialized();
+
+    if(!started){
+        start();
+    }
+    videoStarted = true;
+    while(videoStarted){
+        PvCaptureWaitForFrameDone(this->cam, &frame, PVINFINITE);
+        PvCaptureQueueFrame(this->cam, &frame, NULL);
+    }
+}
+
+void Camera::stopVideo(){
+    videoStarted = false;
+    stop();
 }
 
 
