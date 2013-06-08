@@ -119,6 +119,10 @@ class Resource(object):
         chain = filterchain.FilterChain(filterchain_name)
         index = 0
         for s_filter in lst_str_filters:
+            # Exception, remove the last -#
+            pos = s_filter.rfind("-")
+            if pos > 0:
+                s_filter = s_filter[:pos]
             o_filter = self.create_filter(s_filter, index)
             index += 1
             if o_filter is None:

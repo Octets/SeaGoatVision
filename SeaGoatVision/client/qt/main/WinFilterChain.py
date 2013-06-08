@@ -121,6 +121,7 @@ class WinFilterChain(QtCore.QObject):
             self.ui.filterchainListWidget.currentItem().setText(newName)
             print("Editing success on filterchain %s" % newName)
             self._modeEdit(False)
+            self.updateFiltersList()
         else:
             print("Error with saving edit on filterchain %s." % newName)
             self.cancel()
@@ -186,7 +187,9 @@ class WinFilterChain(QtCore.QObject):
 
         self.ui.filterListWidget.clear()
 
-    def updateFiltersList(self, filterchain_name):
+    def updateFiltersList(self, filterchain_name=None):
+        if not filterchain_name:
+            filterchain_name = self._get_selected_filterchain_name()
         self.ui.filterListWidget.clear()
         for o_filter in self.controller.get_filter_list_from_filterchain(filterchain_name):
             self.ui.filterListWidget.addItem(o_filter.name)
