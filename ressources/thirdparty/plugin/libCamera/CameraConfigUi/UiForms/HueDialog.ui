@@ -44,7 +44,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QSlider" name="horizontalSlider">
+       <widget class="QSlider" name="hueSlider">
         <property name="minimum">
          <number>-40</number>
         </property>
@@ -77,7 +77,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>horizontalSlider</sender>
+   <sender>hueSlider</sender>
    <signal>valueChanged(int)</signal>
    <receiver>label</receiver>
    <slot>setNum(int)</slot>

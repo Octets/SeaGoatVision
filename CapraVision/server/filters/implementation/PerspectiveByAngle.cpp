@@ -7,7 +7,7 @@
 
 using namespace cv;
 
-int rotationX_ = -100;
+int rotationX_ = -160;
 int rotationY_ = 0;
 int zoom_ = 100;
 
