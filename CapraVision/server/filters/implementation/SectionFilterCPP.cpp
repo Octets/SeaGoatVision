@@ -20,17 +20,17 @@ cv::Mat kdilate;
 cv::Scalar color = cv::Scalar(255, 255, 255);
 
 void init() {
-	grass_min = ParameterAsInt("Grass Minimum", 1, 255, 12);
-	grass_max = ParameterAsInt("Grass Maximum", 1, 255, 80);
+	grass_min = ParameterAsInt("grass_min", 1, 255, 12);
+	grass_max = ParameterAsInt("grass_max", 1, 255, 80);
 
-	light_min = ParameterAsInt("Light Minimum", 1, 255, 120);
+	light_min = ParameterAsInt("light_min", 1, 255, 120);
 
-	kernel_erode_height = ParameterAsInt("Kernel Erode Height", 1, 255, 3);
-	kernel_erode_width = ParameterAsInt("Kernel Erode Width", 1, 255, 3);
-	kernel_dilate_height = ParameterAsInt("Kernel Dilate Height", 1, 255, 3);
-	kernel_dilate_width = ParameterAsInt("Kernel Dilate Width", 1, 255, 3);
-	sections = ParameterAsInt("Sections", 1, 10, 5);
-	min_area = ParameterAsInt("Minimum Area", 1, 65535, 1000);
+	kernel_erode_height = ParameterAsInt("kernel_erode_height", 1, 255, 3);
+	kernel_erode_width = ParameterAsInt("kernel_erode_width", 1, 255, 3);
+	kernel_dilate_height = ParameterAsInt("kernel_dilate_height", 1, 255, 3);
+	kernel_dilate_width = ParameterAsInt("kernel_dilate_width", 1, 255, 3);
+	sections = ParameterAsInt("sections", 1, 10, 5);
+	min_area = ParameterAsInt("min_area", 1, 65535, 1000);
 	kerode = cv::getStructuringElement(cv::MORPH_CROSS,
 	                      cv::Size(kernel_erode_width, kernel_erode_height));
 	kdilate = cv::getStructuringElement(cv::MORPH_CROSS,
