@@ -6,6 +6,8 @@
 int grass_min = 12;
 int grass_max = 80;
 
+int light_min = 100;
+
 int kernel_erode_height = 0;
 int kernel_erode_width = 0;
 int kernel_dilate_height = 0;
@@ -21,12 +23,14 @@ void init() {
 	grass_min = ParameterAsInt("Grass Minimum", 1, 255, 12);
 	grass_max = ParameterAsInt("Grass Maximum", 1, 255, 80);
 
+	light_min = ParameterAsInt("Light Minimum", 1, 255, 120);
+
 	kernel_erode_height = ParameterAsInt("Kernel Erode Height", 1, 255, 3);
 	kernel_erode_width = ParameterAsInt("Kernel Erode Width", 1, 255, 3);
 	kernel_dilate_height = ParameterAsInt("Kernel Dilate Height", 1, 255, 3);
 	kernel_dilate_width = ParameterAsInt("Kernel Dilate Width", 1, 255, 3);
 	sections = ParameterAsInt("Sections", 1, 10, 5);
-	min_area = ParameterAsInt("Minimum Area", 1, 65535, 100);
+	min_area = ParameterAsInt("Minimum Area", 1, 65535, 1000);
 	kerode = cv::getStructuringElement(cv::MORPH_CROSS,
 	                      cv::Size(kernel_erode_width, kernel_erode_height));
 	kdilate = cv::getStructuringElement(cv::MORPH_CROSS,
@@ -48,8 +52,12 @@ cv::Mat execute_remgrass(cv::Mat image) {
 	cv::Mat huemax = chans[0].clone();
 	cv::threshold(chans[0], huemin, grass_min, 255, cv::THRESH_BINARY_INV);
 	cv::threshold(chans[0], huemax, grass_max, 255, cv::THRESH_BINARY);
+
+	cv::threshold(chans[2], chans[2], light_min, 255, cv::THRESH_BINARY);
+
 	cv::Mat hue;
 	cv::bitwise_or(huemin, huemax, hue);
+	cv::bitwise_and(chans[2], hue, hue);
 
 	return hue;
 }
