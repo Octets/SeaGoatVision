@@ -49,22 +49,23 @@
      <property name="title">
       <string>Load Config File</string>
      </property>
-     <addaction name="actionFactory"/>
-     <addaction name="actionIndex_1"/>
-     <addaction name="actionIndex_2"/>
-     <addaction name="actionIndex_3"/>
-     <addaction name="actionIndex_4"/>
-     <addaction name="actionIndex_5"/>
+     <addaction name="actionLoadFactory"/>
+     <addaction name="actionLoadIndex_1"/>
+     <addaction name="actionLoadIndex_2"/>
+     <addaction name="actionLoadIndex_3"/>
+     <addaction name="actionLoadIndex_4"/>
+     <addaction name="actionLoadIndex_5"/>
     </widget>
     <widget class="QMenu" name="menuSaves_Config_File">
      <property name="title">
       <string>Saves Config File</string>
      </property>
-     <addaction name="actionIndex_6"/>
-     <addaction name="actionIndex_7"/>
-     <addaction name="actionIndex_8"/>
-     <addaction name="actionIndex_9"/>
-     <addaction name="actionIndex_10"/>
+     <addaction name="actionSaveFactory"/>
+     <addaction name="actionSaveIndex_1"/>
+     <addaction name="actionSaveIndex_2"/>
+     <addaction name="actionSaveIndex_3"/>
+     <addaction name="actionSaveIndex_4"/>
+     <addaction name="actionSaveIndex_5"/>
     </widget>
     <addaction name="menuLoad_Config_File"/>
     <addaction name="menuSaves_Config_File"/>
@@ -185,7 +186,7 @@
     <string>Saturation</string>
    </property>
   </action>
-  <action name="actionFactory">
+  <action name="actionLoadFactory">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -193,7 +194,7 @@
     <string>Factory</string>
    </property>
   </action>
-  <action name="actionIndex_1">
+  <action name="actionLoadIndex_1">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -201,7 +202,7 @@
     <string>Index 1</string>
    </property>
   </action>
-  <action name="actionIndex_2">
+  <action name="actionLoadIndex_2">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -209,7 +210,7 @@
     <string>Index 2</string>
    </property>
   </action>
-  <action name="actionIndex_3">
+  <action name="actionLoadIndex_3">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -217,7 +218,7 @@
     <string>Index 3</string>
    </property>
   </action>
-  <action name="actionIndex_4">
+  <action name="actionLoadIndex_4">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -225,7 +226,7 @@
     <string>Index 4</string>
    </property>
   </action>
-  <action name="actionIndex_5">
+  <action name="actionLoadIndex_5">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -233,27 +234,27 @@
     <string>Index 5</string>
    </property>
   </action>
-  <action name="actionIndex_6">
+  <action name="actionSaveIndex_1">
    <property name="text">
     <string>Index 1</string>
    </property>
   </action>
-  <action name="actionIndex_7">
+  <action name="actionSaveIndex_2">
    <property name="text">
     <string>Index 2</string>
    </property>
   </action>
-  <action name="actionIndex_8">
+  <action name="actionSaveIndex_3">
    <property name="text">
     <string>Index 3</string>
    </property>
   </action>
-  <action name="actionIndex_9">
+  <action name="actionSaveIndex_4">
    <property name="text">
     <string>Index 4</string>
    </property>
   </action>
-  <action name="actionIndex_10">
+  <action name="actionSaveIndex_5">
    <property name="text">
     <string>Index 5</string>
    </property>
@@ -386,6 +387,14 @@
   <action name="actionAuto_Once_3">
    <property name="text">
     <string>Auto Once</string>
+   </property>
+  </action>
+  <action name="actionSaveFactory">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Factory</string>
    </property>
   </action>
  </widget>

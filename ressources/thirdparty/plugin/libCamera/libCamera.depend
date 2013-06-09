@@ -51,11 +51,11 @@
 	"camera.h"
 	<iostream>
 
-1369022594 source:/home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/camera.cpp
+1370635814 source:/home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/camera.cpp
 	"camera.h"
 	<iostream>
 
-1369523595 /home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/camera.h
+1370729780 /home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/camera.h
 	"PvApi.h"
 	<opencv2/opencv.hpp>
 	"ImageLib.h"
@@ -66,6 +66,7 @@
 	<boost/python/extract.hpp>
 	<boost/python/numeric.hpp>
 	<boost/python/tuple.hpp>
+	<boost/algorithm/string.hpp>
 	<ndarrayobject.h>
 
 1360536032 /home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/PvApi.h
@@ -73,7 +74,7 @@
 1360536032 /home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/ImageLib.h
 	"PvApi.h"
 
-1369022491 source:/home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/main.cpp
+1370729542 source:/home/novae/workspace/SeaGoatVision/ressources/thirdparty/plugin/libCamera/main.cpp
 	"camera.h"
 	<iostream>
 	<boost/python.hpp>

@@ -33,7 +33,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QDoubleSpinBox" name="doubleSpinBox">
+       <widget class="QDoubleSpinBox" name="saturationSpinBox">
         <property name="maximum">
          <double>2.000000000000000</double>
         </property>
