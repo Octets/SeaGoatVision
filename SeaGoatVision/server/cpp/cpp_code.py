@@ -75,6 +75,36 @@ def params_code():
         py::dict params;
         py::object py_init_param;
         py::object py_init_global_param;
+        /*#########################
+        #### CLIENT PARAMETER #####
+        ###########################*/
+        long param_get_int(std::string name) {
+            if(!params.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+                return 0;
+            }
+            py::object o = params.get(name);
+            return PyInt_AsLong(o.mcall("get"));
+        }
+
+        bool param_get_bool(std::string name) {
+            if(!params.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+                return 0;
+            }
+            py::object o = params.get(name);
+            return (bool)(PyInt_AsLong(o.mcall("get")) != 0);
+        }
+
+        double param_get_double(std::string name) {
+            if(!params.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+                return 0;
+            }
+            py::object o = params.get(name);
+            return PyFloat_AsDouble(o.mcall("get"));
+        }
+
         long param_int(std::string name, int value, int min, int max) {
             if(!params.has_key(name)) {
                 py::tuple args(4);
@@ -84,8 +114,7 @@ def params_code():
                 args[3] = max;
                 py_init_param.call(args);
             }
-            py::object o = params.get(name);
-            return PyInt_AsLong(o.mcall("get"));
+            return param_get_int(name);
         }
 
         bool param_bool(std::string name, bool value) {
@@ -95,8 +124,7 @@ def params_code():
                 args[1] = PyBool_FromLong(value);
                 py_init_param.call(args);
             }
-            py::object o = params.get(name);
-            return (bool)(PyInt_AsLong(o.mcall("get")) != 0);
+            return param_get_bool(name);
         }
 
         double param_double(std::string name, double value, double min, double max) {
@@ -108,40 +136,69 @@ def params_code():
                 args[3] = max;
                 py_init_param.call(args);
             }
-            py::object o = params.get(name);
-            return PyFloat_AsDouble(o.mcall("get"));
+            return param_get_double(name);
         }
 
-        long param_get_int(std::string name) {
-            py::object o = params.get(name);
-            return PyInt_AsLong(o.mcall("get"));
-        }
-
-        bool param_get_bool(std::string name) {
-            py::object o = params.get(name);
-            return (bool)(PyInt_AsLong(o.mcall("get")) != 0);
-        }
-
-        double param_get_double(std::string name) {
-            py::object o = params.get(name);
-            return PyFloat_AsDouble(o.mcall("get"));
-        }
+        /*#############################
+        #####  ORIGINAL IMAGE #########
+        ###############################*/
         cv::Mat original_image;
         cv::Mat get_image_original() {
             return original_image;
         }
 
-        // define global param
-        /*cv::Mat global_param_mat(std::string name, cv::Mat value) {
+        /*###########################################
+        ##### GLOBAL PARAMETER - INTER FILTER #######
+        #############################################*/
+        long global_param_get_int(std::string name) {
             if(!global_param.has_key(name)) {
-                py::tuple args(2);
-                args[0] = name;
-                args[1] = value;
-                py_init_global_param.call(args);
+                printf("key %s not exist.", name.c_str());
+                return 0;
             }
             py::object o = global_param.get(name);
             return PyInt_AsLong(o.mcall("get"));
-        }*/
+        }
+
+        bool global_param_get_bool(std::string name) {
+            if(!global_param.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+                return false;
+            }
+            py::object o = global_param.get(name);
+            return (bool)(PyInt_AsLong(o.mcall("get")) != 0);
+        }
+
+        double global_param_get_double(std::string name) {
+            if(!global_param.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+                return 0.0;
+            }
+            py::object o = global_param.get(name);
+            return PyFloat_AsDouble(o.mcall("get"));
+        }
+
+        cv::Mat global_param_get_mat(std::string name) {
+            if(!global_param.has_key(name))
+                return cv::Mat();
+            try {
+                py::object o = global_param.get(name);
+                o = o.mcall("get");
+
+                PyArrayObject* image_array = convert_to_numpy(o, name.c_str());
+                conversion_numpy_check_type(image_array, PyArray_UBYTE, name.c_str());
+                npy_intp* Nimage = image_array->dimensions;
+                npy_ubyte* image = (npy_ubyte*) image_array->data;
+
+                cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
+                /* TODO what we increment?
+                Py_XDECREF(py_image);
+                */
+                return mat;
+            } catch (const std::string& ex) {
+                printf("Error with conversion numpy to cv::Mat : %s\\n", ex.c_str());
+            }
+            return cv::Mat();
+        }
 
         long global_param_int(std::string name, int value, int min, int max) {
             if(!global_param.has_key(name)) {
@@ -152,26 +209,45 @@ def params_code():
                 args[3] = max;
                 py_init_global_param.call(args);
             }
-            py::object o = global_param.get(name);
-            return PyInt_AsLong(o.mcall("get"));
+            return global_param_get_int(name);
         }
 
-        int global_param_get_int(std::string name) {
+        double global_param_int(std::string name, double value, double min, double max) {
             if(!global_param.has_key(name)) {
-                //printf("key %s not exist.", name);
-                return 0;
+                py::tuple args(4);
+                args[0] = name;
+                args[1] = value;
+                args[2] = min;
+                args[3] = max;
+                py_init_global_param.call(args);
             }
-            py::object o = global_param.get(name);
-            return PyInt_AsLong(o.mcall("get"));
+            return global_param_get_double(name);
         }
-        cv::Mat global_param_get_mat(std::string name) {
-            if(!global_param.has_key(name))
-                return cv::Mat();
-            py::object o = global_param.get(name);
-            //cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
-            o = o.mcall("get");
-            //cv::Mat image =
-            return cv::Mat();
+
+        bool global_param_bool(std::string name, bool value) {
+            if(!global_param.has_key(name)) {
+                py::tuple args(2);
+                args[0] = name;
+                args[1] = PyBool_FromLong(value);
+                py_init_param.call(args);
+            }
+            return global_param_get_bool(name);
+        }
+
+        cv::Mat global_param_mat(std::string name, cv::Mat cvmat) {
+            if(!global_param.has_key(name)) {
+                /* Convert cv::Mat to numpy */
+                int nrows = cvmat.rows;
+                int ncols = cvmat.cols;
+                npy_intp dims[2] = {nrows, ncols};
+                PyObject *result = PyArray_SimpleNewFromData(2, dims, NPY_UBYTE, cvmat.data);
+
+                py::tuple args(2);
+                args[0] = name;
+                args[1] = result;
+                py_init_global_param.call(args);
+            }
+            return global_param_get_mat(name);
         }
     """
 
