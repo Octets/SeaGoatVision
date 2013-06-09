@@ -26,10 +26,10 @@ class Undistort:
     def execute(self, image):
     
         distCoeffs = numpy.array([-0.34, 0.085, 0, 0, -0.007])
-        cameraMatrix = numpy.matrix([[630.79035702238025, 0, 645.50000000000000],
-                                     [0, 630.79035702238025, 366.50000000000000],
+        cameraMatrix = numpy.matrix([[630.79035702238025/2.0, 0, 645.50000000000000/2.0],
+                                     [0, 630.79035702238025/2.0, 366.50000000000000/2.0],
                                      [0,                  0,                  1]])
-        size = (1292, 734)
+        size = (1292/2, 734/2)
         
         #technique 2
         newimage = numpy.matrix([])

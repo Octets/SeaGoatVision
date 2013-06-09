@@ -103,6 +103,14 @@ class Lines(dataextract.DataExtractor):
                 
                 avgPoints = []
                 ptsByAvg = 5
+                
+                i = 0
+                while i < len(points):
+                    if len(points) - i < ptsByAvg:
+                        ptsByAvg = len(points) - i
+                    
+                    i += 1
+                
                 if len(points) <= ptsByAvg:
                     avgPoints = points
                 else:
