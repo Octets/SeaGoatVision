@@ -62,7 +62,7 @@ class Filter(object):
                 print("Error duplicate key on dct_global_param : %s" % key)
                 continue
             dct_global_param[key] = param
-        self.dct_global_param = dct_global_param.copy()
+        self.dct_global_param = dct_global_param
         self.set_global_params_cpp(self.dct_global_param)
 
     def set_global_params_cpp(self, dct_global_param):
