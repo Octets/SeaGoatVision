@@ -35,6 +35,8 @@ TIPS :
   The value is always the low value and the threshold_hight is the hight value.
     p = Param("f", 2, min_v=1, max_v=8, thres_h=5)
 """
+import numpy as np
+
 class Param(object):
     """Param autodetect basic type
     force_type need to be a <type>
@@ -66,19 +68,19 @@ class Param(object):
 
     def _valid_param(self, value, min_v, max_v, lst_value, thres_h):
         type_t = type(value)
-        if not(type_t is int or type_t is bool or type_t is float or type_t is str):
+        if not(type_t is int or type_t is bool or type_t is float or type_t is str or type_t is np.ndarray):
             raise Exception("Param don't manage type %s" % type_t)
         if type_t is float or type_t is int:
             # check min and max
             if min_v is not None and \
                 not(type(min_v) is float or type(min_v) is int):
-                raise Exception("min_v must be float or int.")
+                raise Exception("min_v must be float or int, type is %s." % type(min_v))
             if max_v is not None and \
                     not(type(max_v) is float or type(max_v) is int):
-                raise Exception("max_v must be float or int.")
+                raise Exception("max_v must be float or int, type is %s." % type(max_v))
             if lst_value is not None and \
                     not(type(lst_value) is tuple or type(lst_value) is list):
-                raise Exception("lst_value must be list or tuple")
+                raise Exception("lst_value must be list or tuple, type is %s." % type(lst_value))
             if type_t is float:
                 min_v = None if min_v is None else float(min_v)
                 max_v = None if max_v is None else float(max_v)
@@ -132,6 +134,10 @@ class Param(object):
         return self.max_v
 
     def get(self):
+        # Exception, cannot convert to numpy array
+        # this can create bug in your filter if you pass wrong type
+        if self.force_type is np.ndarray:
+            return self.value
         if self.thres_h is not None:
             return (self.force_type(self.value), self.force_type(self.thres_h))
         return self.force_type(self.value)
