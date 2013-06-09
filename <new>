@@ -1,0 +1,21 @@
+[Undistort]
+
+[Resize]
+height = 367.0
+width = 646.0
+
+[SectionFilterCPP]
+grass_max = 80
+grass_min = 1
+kernel_dilate_height = 3
+kernel_dilate_width = 3
+kernel_erode_height = 3
+kernel_erode_width = 3
+light_min = 40
+min_area = 300
+sections = 5
+
+[LineOrientation]
+area_max = 35000.0
+area_min = 2000.0
+
