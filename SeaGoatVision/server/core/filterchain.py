@@ -34,7 +34,7 @@ class FilterChain(object):
     The observer must be a method that receive a filter and an image as param.
     The observer method is called after each execution of a filter in the filter chain.
     """
-    def __init__(self, filterchain_name):
+    def __init__(self, filterchain_name, default_media_name=None):
         self.filters = []
         # {"filter_name":[observator,]}
         self.image_observers = {}
@@ -42,6 +42,8 @@ class FilterChain(object):
         self.filterchain_name = filterchain_name
         self.original_image_observer = []
         self.dct_global_param = {}
+        # If starting filterchain with empty media_name, we take the default media
+        self.default_media_name = default_media_name
 
     def destroy(self):
         # clean everything!
@@ -60,12 +62,16 @@ class FilterChain(object):
 
     def serialize(self):
         # Keep list of filter with param
-        return {"lst_filter":[filter.serialize() for filter in self.filters]}
+        dct = {"lst_filter":[filter.serialize() for filter in self.filters]}
+        if self.default_media_name:
+            dct["default_media_name"] = self.default_media_name
+        return dct
 
     def deserialize(self, name, value, fct_create_filter):
         status = True
         self.filterchain_name = name
         lst_filter = value.get("lst_filter", [])
+        self.default_media_name = value.get("default_media_name", None)
         self.filters = []
         index = 0
         for filter_to_ser in lst_filter:
@@ -86,6 +92,9 @@ class FilterChain(object):
 
     def get_name(self):
         return self.filterchain_name
+
+    def get_default_media_name(self):
+        return self.default_media_name
 
     def get_filter_output_observers(self):
         return self.filter_output_observers

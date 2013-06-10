@@ -92,7 +92,10 @@ class VCmd(cmd.Cmd):
     def do_start_filterchain_execution(self, line):
         # execution_name, media_name, filterchain_name
         param = line.split()
-        self.controller.start_filterchain_execution(param[0], param[1], param[2])
+        media = param[1]
+        if media == "None":
+            media = ""
+        self.controller.start_filterchain_execution(param[0], media, param[2])
 
     def do_stop_filterchain_execution(self, line):
         # execution_name
