@@ -24,6 +24,7 @@ Description : Server Service implementation using vServer_pb2, generate by .prot
 # Import required RPC modules
 from SeaGoatVision.proto import server_pb2
 from SeaGoatVision.server.core.manager import Manager
+import json
 import socket
 import threading
 
@@ -281,6 +282,15 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         response = server_pb2.StatusResponse()
         response.status = int(not self.manager.cmd_to_media(request.media_name, request.cmd))
+
+        done.run(response)
+
+    def get_info_media(self, controller, request, done):
+        print("get_info_media request %s" % str(request).replace("\n", " "))
+
+        response = server_pb2.GetInfoMediaResponse()
+        value = self.manager.get_info_media(request.media_name)
+        response.message = json.dumps(value)
 
         done.run(response)
 

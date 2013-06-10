@@ -23,6 +23,7 @@ Description : This controller use protobuf to communicate to the vision server
 # Import required RPC modules
 from SeaGoatVision.proto import server_pb2
 import logging
+import json
 import numpy as np
 from thirdparty.public.protobuf.socketrpc import RpcService
 import socket
@@ -277,6 +278,22 @@ class ControllerProtobuf():
             log.exception(ex)
 
         return returnValue
+
+    def get_info_media(self, media_name):
+        request = server_pb2.GetInfoMediaRequest()
+        request.media_name = media_name
+        # Make an synchronous call
+        dct_message = {}
+        try:
+            response = self.service.get_info_media(request, timeout=10000)
+            if response:
+                message = response.message
+                if message:
+                    dct_message = json.loads(message)
+        except Exception as ex:
+            log.exception(ex)
+
+        return dct_message
 
     ##########################################################################
     ##########################  CONFIGURATION  ###############################

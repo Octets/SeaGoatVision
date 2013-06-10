@@ -185,6 +185,15 @@ message GetExecutionInfoResponse
   required string media = 1;
   required string filterchain = 2;
 }
+
+message GetInfoMediaRequest
+{
+  required string media_name = 1;
+}
+message GetInfoMediaResponse
+{
+  required string message = 1;
+}
 //############################################################
 //################## CUSTOM MESSAGE SECTION ##################
 //############################################################
@@ -225,6 +234,7 @@ service CommandService
   rpc get_params_filterchain(GetParamsFilterchainRequest) returns(GetParamsFilterchainResponse);
   rpc get_execution_list(GetExecutionRequest) returns(GetExecutionResponse);
   rpc get_execution_info(GetExecutionInfoRequest) returns(GetExecutionInfoResponse);
+  rpc get_info_media(GetInfoMediaRequest) returns(GetInfoMediaResponse);
 
   // ask state
   rpc is_connected(IsConnectedRequest) returns(StatusResponse);
