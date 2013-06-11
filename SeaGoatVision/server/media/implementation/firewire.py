@@ -107,7 +107,7 @@ class Firewire(Media_streaming):
         return lst_param
 
     def update_property_param(self, param_name, value):
-        self.camera.set_property(name, value)
+        self.camera.set_property(param_name, value)
 
     def next(self):
         pass
