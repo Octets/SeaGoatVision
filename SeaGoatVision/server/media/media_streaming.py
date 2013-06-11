@@ -23,11 +23,11 @@ from recording.video_recorder import Video_recorder
 
 class Media_streaming(Media):
     def __init__(self):
+        Media.__init__(self)
         self.isOpened = False
         self.writer = None
         self.shape = None
         self.recorder = Video_recorder(self)
-        Media.__init__(self)
 
     def is_media_streaming(self):
         return True
