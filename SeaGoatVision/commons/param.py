@@ -69,9 +69,16 @@ class Param(object):
 
     def _valid_param(self, value, min_v, max_v, lst_value, thres_h):
         type_t = type(value)
-        if not(type_t is int or type_t is bool or type_t is float or type_t is str or type_t is np.ndarray):
+        if not(type_t is int or type_t is bool or type_t is float or type_t is str or type_t is np.ndarray or type_t is long):
             raise Exception("Param don't manage type %s" % type_t)
-        if type_t is float or type_t is int:
+        if type_t is long:
+            type_t = type_t = int
+            value = int(value)
+            if min_v is not None:
+                min_v = int(min_v)
+            if max_v is not None:
+                max_v = int(max_v)
+        if type_t is float or type_t is int or type_t is long:
             # check min and max
             if min_v is not None and \
                 not(type(min_v) is float or type(min_v) is int):
@@ -161,7 +168,7 @@ class Param(object):
         # exception for bool
         if self.type_t is bool:
             value = bool(value)
-        if self.type_t is int and type(value) is float:
+        if self.type_t is int and (type(value) is float or type(value) is long):
             value = int(value)
         if self.type_t is float and type(value) is int:
             value = float(value)
