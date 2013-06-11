@@ -47,6 +47,7 @@ class Param(object):
                 force_type=None, thres_h=None):
         if type(name) is not str and type(name) is not unicode:
             raise Exception("Name must be string value.")
+        self.lst_notify = []
         self.name = name
         self.min_v = None
         self.max_v = None
@@ -133,6 +134,20 @@ class Param(object):
     def get_max(self):
         return self.max_v
 
+    def add_notify(self, callback):
+        # notify when set the value
+        # pass the value in argument
+        if callback in self.lst_notify:
+            print("Error, already in notify %s" % self.get_name())
+            return
+        self.lst_notify.append(callback)
+
+    def remove_notify(self, callback):
+        if callback not in self.lst_notify:
+            print("Error, the callback wasn't in the list of notify %s" % self.get_name())
+            return
+        self.lst_notify.remove(callback)
+
     def get(self):
         # Exception, cannot convert to numpy array
         # this can create bug in your filter if you pass wrong type
@@ -186,6 +201,9 @@ class Param(object):
                             % (thres_h, self.max_v))
                 self.thres_h = thres_h
         self.value = value
+        # send the value on all notify callback
+        for notify in self.lst_notify:
+            notify(value)
 
     def get_type(self):
         return self.force_type
