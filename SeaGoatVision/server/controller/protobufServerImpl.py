@@ -294,6 +294,56 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         done.run(response)
 
+    def get_params_media(self, controller, request, done):
+        print("get_params_media request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.GetParamsMediaResponse()
+        try:
+            ret = self.manager.get_params_media(request.media_name)
+            if ret is not None:
+                for item in ret:
+                    if item.get_type() is int:
+                        response.params.add(name=item.get_name(), value_int=item.get(), min_v=item.get_min(), max_v=item.get_max())
+                    elif item.get_type() is bool:
+                        response.params.add(name=item.get_name(), value_bool=item.get())
+                    elif item.get_type() is float:
+                        response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(), max_float_v=item.get_max())
+                    elif item.get_type() is unicode or item.get_type() is str:
+                         response.params.add(name=item.get_name(), value_str=item.get())
+        except Exception as e:
+            print "Exception: ", e
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+    def update_param_media(self, controller, request, done):
+        print("update_param_media request %s" % str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            value = None
+            if request.param.HasField("value_int"):
+                value = request.param.value_int
+            if request.param.HasField("value_bool"):
+                value = request.param.value_bool
+            if request.param.HasField("value_float"):
+                value = request.param.value_float
+            if request.param.HasField("value_str"):
+                value = request.param.value_str
+            try:
+                response.status = not(self.manager.update_param_media(request.media_name, request.param.name, value))
+            except Exception as e:
+                response.status = 1
+                response.message = e
+        except Exception as e:
+            print "Exception: ", e
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
     ##########################################################################
     ############################### THREAD  ##################################
     ##########################################################################

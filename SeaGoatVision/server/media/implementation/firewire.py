@@ -95,7 +95,7 @@ class Firewire(Media_streaming):
     def get_properties_param(self):
         lst_ignore_prop = ["Trigger"]
         lst_param = []
-        dct_prop = cam.get_dict_available_features()
+        dct_prop = self.camera.get_dict_available_features()
         for name, value in dct_prop.items():
             if name in lst_ignore_prop:
                 continue

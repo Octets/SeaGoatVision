@@ -295,6 +295,66 @@ class ControllerProtobuf():
 
         return dct_message
 
+    def get_params_media(self, media_name):
+        request = server_pb2.GetParamsMediaRequest()
+        request.media_name = media_name
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.get_params_media(request, timeout=10000)
+
+            if response:
+                returnValue = []
+                for param in response.params:
+                    if param.HasField("value_int"):
+                        returnValue.append(Param(param.name, param.value_int, min_v=int(param.min_v), max_v=int(param.max_v)))
+                    if param.HasField("value_bool"):
+                        returnValue.append(Param(param.name, param.value_bool))
+                    if param.HasField("value_str"):
+                        returnValue.append(Param(param.name, param.value_str))
+                    if param.HasField("value_float"):
+                        returnValue.append(Param(param.name, param.value_float, min_v=param.min_float_v, max_v=param.max_float_v))
+                    # TODO complete with other param restriction
+            else:
+                returnValue = False
+
+        except Exception as ex:
+            log.exception(ex)
+
+        return returnValue
+
+    def update_param_media(self, media_name, param_name, value):
+        request = server_pb2.UpdateParamMediaRequest()
+        request.media_name = media_name
+        request.param.name = param_name
+        if type(value) is int:
+            request.param.value_int = value
+        if type(value) is bool:
+            request.param.value_bool = value
+        if type(value) is float:
+            request.param.value_float = value
+        if type(value) is str:
+            request.param.value_str = value
+
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.update_param_media(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with update_param_media : %s with value %s" % (response.message, returnValue))
+                    else:
+                        print("Error with update_param_media value %s." % returnValue)
+            else:
+                returnValue = False
+
+        except Exception as ex:
+            log.exception(ex)
+
+        return returnValue
+
     ##########################################################################
     ##########################  CONFIGURATION  ###############################
     ##########################################################################

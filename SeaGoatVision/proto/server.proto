@@ -107,6 +107,12 @@ message UpdateParamRequest
   required Param param = 3;
 }
 
+message UpdateParamMediaRequest
+{
+  required string media_name = 1;
+  required Param param = 2;
+}
+
 message StartRecordRequest
 {
   required string media = 1;
@@ -166,6 +172,15 @@ message GetParamsFilterchainRequest
   required string filter_name = 2;
 }
 message GetParamsFilterchainResponse
+{
+  repeated Param params = 1;
+}
+
+message GetParamsMediaRequest
+{
+  required string media_name = 1;
+}
+message GetParamsMediaResponse
 {
   repeated Param params = 1;
 }
@@ -232,6 +247,7 @@ service CommandService
   rpc get_filterchain_list(GetFilterChainListRequest) returns(GetFilterChainListResponse);
   rpc get_media_list(GetMediaListRequest) returns(GetMediaListResponse);
   rpc get_params_filterchain(GetParamsFilterchainRequest) returns(GetParamsFilterchainResponse);
+  rpc get_params_media(GetParamsMediaRequest) returns(GetParamsMediaResponse);
   rpc get_execution_list(GetExecutionRequest) returns(GetExecutionResponse);
   rpc get_execution_info(GetExecutionInfoRequest) returns(GetExecutionInfoResponse);
   rpc get_info_media(GetInfoMediaRequest) returns(GetInfoMediaResponse);
@@ -254,6 +270,7 @@ service CommandService
   rpc start_filterchain_execution(StartFilterchainExecutionRequest) returns(StatusResponse);
   rpc stop_filterchain_execution(StopFilterchainExecutionRequest) returns(StatusResponse);
   rpc update_param(UpdateParamRequest) returns(StatusResponse);
+  rpc update_param_media(UpdateParamMediaRequest) returns(StatusResponse);
   rpc start_record(StartRecordRequest) returns(StatusResponse);
   rpc stop_record(StopRecordRequest) returns(StatusResponse);
   rpc cmd_to_media(CmdMediaRequest) returns(StatusResponse);
