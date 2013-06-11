@@ -41,6 +41,12 @@ class Media:
         # type is Video or Streaming
         pass
 
+    def get_properties_param(self):
+        return []
+
+    def update_property_param(self, param_name, value):
+        return False
+
     def get_name(self):
         return self.media_name
 

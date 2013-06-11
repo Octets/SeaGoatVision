@@ -159,6 +159,18 @@ class Manager:
             return False
         return media.stop_record()
 
+    def get_params_media(self, media_name):
+        media = self.resource.get_media(media_name)
+        if not media:
+            return []
+        return media.get_properties_param()
+
+    def update_param_media(self, media_name, param_name, value):
+        media = self.resource.get_media(media_name)
+        if not media:
+            return False
+        return media.update_property_param(param_name, value)
+
     ##########################################################################
     #############################  OBSERVER  #################################
     ##########################################################################

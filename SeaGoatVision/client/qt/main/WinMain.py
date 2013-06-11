@@ -28,6 +28,7 @@ from WinFilterChain import WinFilterChain
 from WinExecution import WinExecution
 from WinMainViewer import WinMainViewer
 from WinFilter import WinFilter
+from WinCamera import WinCamera
 from PySide import QtGui
 from PySide import QtCore
 
@@ -44,6 +45,7 @@ class WinMain(QtGui.QMainWindow):
 
         # create dockWidgets
         self.winFilter = WinFilter(self.controller)
+        self.winCamera = WinCamera(self.controller)
         self.winFilterList = WinFilterList(self.controller)
         self.winMedia = WinMedia(self.controller)
         self.winExecution = WinExecution(self.controller)
@@ -52,6 +54,7 @@ class WinMain(QtGui.QMainWindow):
 
         # Add default widget
         self.show_win_filter()
+        self.show_win_camera()
         self.show_win_filterlist(first_time=True)
         self.show_win_filterchain(first_time=True)
         self.show_win_media(first_time=True)
@@ -98,6 +101,10 @@ class WinMain(QtGui.QMainWindow):
     def show_win_filter(self):
         self.winFilter.setFeatures(QtGui.QDockWidget.DockWidgetMovable or QtGui.QDockWidget.DockWidgetFloatable)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilter)
+
+    def show_win_camera(self):
+        self.winCamera.setFeatures(QtGui.QDockWidget.DockWidgetMovable or QtGui.QDockWidget.DockWidgetFloatable)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winCamera)
 
     def show_win_media(self, first_time=False):
         if not first_time:

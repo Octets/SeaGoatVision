@@ -21,6 +21,7 @@ try:
 except:
     pass
 from SeaGoatVision.server.media.media_streaming import Media_streaming
+from SeaGoatVision.commons.param import Param
 import numpy as np
 import Image
 import cv2
@@ -61,6 +62,7 @@ class Firewire(Media_streaming):
         ctx = video1394.DC1394Context()
         camera = self.camera
         camera.resetBus()
+        camera.isoSpeed = video1394.ISO_SPEED_400
         if self.is_format_7:
             # not supported
             camera.mode = video1394.VIDEO_MODE_FORMAT7_0
@@ -70,9 +72,7 @@ class Firewire(Media_streaming):
             camera.mode = video1394.VIDEO_MODE_800x600_MONO8
         else:
             camera.mode = video1394.VIDEO_MODE_800x600_YUV422
-
         camera.framerate = video1394.FRAMERATE_15
-        camera.isoSpeed = video1394.ISO_SPEED_400
 
         camera.start(force_rgb8=True)
         camera.grabEvent.addObserver(self.camera_observer)
@@ -91,6 +91,23 @@ class Firewire(Media_streaming):
         # rgb = np.zeros(shape, dtype=np.uint8)
         # np.copyto(rgb, im, casting="no")
         self.notify_observer(image2)
+
+    def get_properties_param(self):
+        lst_ignore_prop = ["Trigger"]
+        lst_param = []
+        dct_prop = cam.get_dict_available_features()
+        for name, value in dct_prop.items():
+            if name in lst_ignore_prop:
+                continue
+            try:
+                param = Param(name, value["value"], min_v=value["min"], max_v=value["max"])
+            except Exception as e:
+                print("Error: %s - name: %s, value: %s" % (e, name, value))
+            lst_param.append(param)
+        return lst_param
+
+    def update_property_param(self, param_name, value):
+        self.camera.set_property(name, value)
 
     def next(self):
         pass
