@@ -35,6 +35,7 @@ class Firewire(Media_streaming):
         Media_streaming.__init__(self)
         self.config = config
         self.camera = None
+        self.sleep_time = 1/15.0
         self.media_name = config.name
         try:
             ctx = video1394.DC1394Context()
@@ -57,6 +58,7 @@ class Firewire(Media_streaming):
         self.is_rgb = False
         self.is_mono = False
         self.is_format_7 = False
+        self.actual_image = None
 
     def open(self):
         ctx = video1394.DC1394Context()
@@ -90,7 +92,8 @@ class Firewire(Media_streaming):
         # shape = (im.shape[0], im.shape[1], 3)
         # rgb = np.zeros(shape, dtype=np.uint8)
         # np.copyto(rgb, im, casting="no")
-        self.notify_observer(image2)
+        #self.notify_observer(image2)
+        self.actual_image = image2
 
     def get_properties_param(self):
         lst_ignore_prop = ["Trigger"]
@@ -136,9 +139,10 @@ class Firewire(Media_streaming):
         self.camera.set_property(param_name, value)
 
     def next(self):
-        pass
+        return self.actual_image
 
     def close(self):
         Media_streaming.close(self)
         if self.camera:
             self.camera.stop()
+
