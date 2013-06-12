@@ -64,7 +64,7 @@ class Server:
     def send(self, data):
         for handler in self.handlers:
             try:
-                handler.send(data)
+                handler.send("%s\n" % data)
             except:
                 handler.stop()
                 self.handlers.remove(handler)
