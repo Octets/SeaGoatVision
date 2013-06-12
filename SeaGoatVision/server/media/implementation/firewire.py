@@ -100,13 +100,39 @@ class Firewire(Media_streaming):
             if name in lst_ignore_prop:
                 continue
             try:
+                if name == "White Balance":
+                    param = Param("%s-auto" % name, False)
+                    lst_param.append(param)
+                    param = Param("%s-red" % name, value["RV_value"], min_v=value["min"], max_v=value["max"])
+                    lst_param.append(param)
+                    param = Param("%s-blue" % name, value["BU_value"], min_v=value["min"], max_v=value["max"])
+                    lst_param.append(param)
+                    continue
+                elif name == "Shutter" or name == "Gain":
+                    param = Param("%s-auto" % name, False)
+                    lst_param.append(param)
                 param = Param(name, value["value"], min_v=value["min"], max_v=value["max"])
+                lst_param.append(param)
             except Exception as e:
                 print("Error: %s - name: %s, value: %s" % (e, name, value))
-            lst_param.append(param)
         return lst_param
 
     def update_property_param(self, param_name, value):
+        auto = "-auto"
+        if auto in param_name:
+            param_name = param_name[:-len(auto)]
+            if value:
+                value = -1
+            else:
+                value = 0
+        elif "White Balance" in param_name:
+            if "red" in param_name:
+                self.camera.set_whitebalance(RV_value=value)
+            elif "blue" in param_name:
+                self.camera.set_whitebalance(BU_value=value)
+            else:
+                print("Error: can define the right color %s" % param_name)
+            return
         self.camera.set_property(param_name, value)
 
     def next(self):
