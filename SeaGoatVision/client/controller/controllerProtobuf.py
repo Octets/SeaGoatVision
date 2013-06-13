@@ -28,6 +28,7 @@ import numpy as np
 from thirdparty.public.protobuf.socketrpc import RpcService
 import socket
 import threading
+import exceptions
 from SeaGoatVision.commons.param import Param
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -43,14 +44,15 @@ class ControllerProtobuf():
         self.hostname = host
         self.port = int(port)
         self.quiet = quiet
+        self.lst_port = []
 
         # Create a new service instance
         self.service = RpcService(server_pb2.CommandService_Stub, self.port, self.hostname)
 
-        self.observer = {}
+        self.observer = []
 
     def close(self):
-        for observer in self.observer.values():
+        for observer in self.observer:
             observer.stop()
         print("Closed connection.")
 
@@ -370,16 +372,13 @@ class ControllerProtobuf():
                 - string, execution_name to select an execution
                 - string, filter_name to select the filter
         """
-        local_observer = self.observer.get(execution_name, None)
-        if local_observer:
-            print("This observer already exist")
-            return False
-
-        local_observer = Observer(observer, self.hostname, 5051)
+        port = self._get_port_streaming()
+        local_observer = Observer(observer, self.hostname, port)
 
         request = server_pb2.AddImageObserverRequest()
         request.execution_name = execution_name
         request.filter_name = filter_name
+        request.port = port
 
         # Make an synchronous call
         returnValue = None
@@ -401,7 +400,7 @@ class ControllerProtobuf():
         if not returnValue:
             local_observer.stop()
         else:
-            self.observer[execution_name] = local_observer
+            self.observer.append(local_observer)
             local_observer.start()
 
         return returnValue
@@ -415,9 +414,13 @@ class ControllerProtobuf():
                 - string, filter_name_old , filter to replace
                 - string, filter_name_new , filter to use
         """
-        observer = self.observer.get(execution_name, None)
-        if not observer:
-            print("This observer doesn't exist.")
+        find = False
+        for o_observer in self.observer:
+            if observer == o_observer.observer:
+                 find = True
+                 break
+        if not find:
+            print("Error: This observer doesn't exist.")
             return False
 
         request = server_pb2.SetImageObserverRequest()
@@ -452,13 +455,17 @@ class ControllerProtobuf():
                 - string, execution_name to select an execution
                 - string, filter_name , filter to remove
         """
-        observer = self.observer.get(execution_name, None)
-        if not observer:
-            print("This observer doesn't exist.")
+        find = False
+        for o_observer in self.observer:
+            if observer == o_observer.observer:
+                 find = True
+                 break
+        if not find:
+            print("Error: This observer doesn't exist.")
             return False
 
-        observer.stop()
-        del self.observer[execution_name]
+        o_observer.stop()
+        self.observer.remove(o_observer)
 
         request = server_pb2.RemoveImageObserverRequest()
         request.execution_name = execution_name
@@ -480,7 +487,6 @@ class ControllerProtobuf():
 
         except Exception as ex:
             log.exception(ex)
-
 
         return returnValue
 
@@ -780,6 +786,13 @@ class ControllerProtobuf():
 
         return returnValue
 
+    def _get_port_streaming(self):
+        port = 5051
+        while port in self.lst_port:
+            port += 1
+        self.lst_port.append(port)
+        return port
+
 class Observer(threading.Thread):
     def __init__(self, observer, hostname, port):
         threading.Thread.__init__(self)
@@ -796,8 +809,11 @@ class Observer(threading.Thread):
                 sData = ""
                 try:
                     data = self.socket.recv(self.buffer)
+                    if not data:
+                        continue
+
                     if data[0] != "b":
-                        print("wrong type index.")
+                        #print("wrong type index.")
                         continue
 
                     i = 1
@@ -808,14 +824,14 @@ class Observer(threading.Thread):
                     if nb_packet_string.isdigit():
                         nb_packet = int(nb_packet_string)
                     else:
-                        print("wrong index.")
+                        #print("wrong index.")
                         continue
 
                     sData += data[i + 1:]
                     for packet in range(1, nb_packet):
                         data, _ = self.socket.recvfrom(self.buffer)  # 262144 # 8192
                         if data[0] != "c":
-                            print("wrong type index continue")
+                            #print("wrong type index continue")
                             continue
 
                         i = 1
@@ -825,18 +841,19 @@ class Observer(threading.Thread):
                         no_packet_string = data[1:i]
                         if no_packet_string.isdigit():
                             no_packet = int(no_packet_string)
-                            if no_packet != packet:
-                                print("Wrong no packet : %d" % packet)
+                            #if no_packet != packet:
+                                #print("Wrong no packet : %d" % packet)
                         else:
-                            print("wrong index continue.")
+                            #print("wrong index continue.")
                             continue
 
                         sData += data[i + 1:]
 
                     self.observer(np.loads(sData))
                 except Exception as e:
-                    if not self.close:
-                        print("Error udp observer : %s" % e)
+                    if type(e) is not exceptions.EOFError:
+                        if not self.close:
+                            print("Error udp observer : %s" % e)
         else:
             print("Error, self.observer is None.")
 

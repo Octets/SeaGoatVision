@@ -98,8 +98,9 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         # Create a reply
         response = server_pb2.StatusResponse()
+        port = request.port
         try:
-            observer = Observer()
+            observer = Observer(port)
             self.dct_observer[request.execution_name] = observer
             if self.manager.add_image_observer(observer.observer, request.execution_name, request.filter_name):
                 response.status = 0
@@ -500,10 +501,9 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
 class Observer(threading.Thread):
-    def __init__(self):
+    def __init__(self, port):
         threading.Thread.__init__(self)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        port = 5051
         self.socket.bind(("", port))
         # self.add = (add, port)
         # self.socket.connect(self.add)
