@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
 #    This filename is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -26,8 +26,8 @@ class Video_recorder:
     def __init__(self, media):
         self.writer = None
         self.media = media
-        
-    def start(self, shape, path=None, savepath="./", fps=30):
+
+    def start(self, shape, path=None, fps=30):
         # TODO manage multiple record
         # manage only one record at time
         if self.writer:
@@ -41,7 +41,7 @@ class Video_recorder:
         else:
             add_format_name = True
         if add_format_name:
-            name += "/%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
+            name += "%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
 
         fps = 8
         # fourcc = cv.CV_FOURCC('D','I','V','X')
@@ -54,10 +54,11 @@ class Video_recorder:
         self.writer.open(name, fourcc, fps, shape, 1)
         self.media.add_observer(self.writer.write)
         return True
-        
+
     def stop(self):
         if not self.writer:
             return False
+        self.media.remove_observer(self.writer.write)
         del self.writer
-        self.writer = None     
-        return True   
+        self.writer = None
+        return True
