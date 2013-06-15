@@ -43,6 +43,9 @@ class WinMain(QtGui.QMainWindow):
         self.ui = get_ui(self)
         self.uid_iter = 0
 
+        # default maximize Qt
+        self.showMaximized()
+
         # create dockWidgets
         self.winFilter = WinFilter(self.controller)
         self.winCamera = WinCamera(self.controller)
