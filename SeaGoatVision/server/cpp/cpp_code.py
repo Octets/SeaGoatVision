@@ -150,6 +150,53 @@ def params_code():
         /*###########################################
         ##### GLOBAL PARAMETER - INTER FILTER #######
         #############################################*/
+        void global_param_set_int(std::string name, int value) {
+            if(!global_param.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+            }
+            py::object o = global_param.get(name);
+            py::tuple args(1);
+            args[0] = value;
+            o.mcall("set", args);
+        }
+
+        void global_param_set_bool(std::string name, bool value) {
+            if(!global_param.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+            }
+            py::object o = global_param.get(name);
+            py::tuple args(1);
+            args[0] = PyBool_FromLong(value);
+            o.mcall("set", args);
+        }
+
+        void global_param_set_double(std::string name, double value) {
+            if(!global_param.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+            }
+            py::object o = global_param.get(name);
+            py::tuple args(1);
+            args[0] = value;
+            o.mcall("set", args);
+        }
+
+        void global_param_set_mat(std::string name, cv::Mat cvmat) {
+            if(!global_param.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+            }
+            py::object o = global_param.get(name);
+
+            /* Convert cv::Mat to numpy */
+            int nrows = cvmat.rows;
+            int ncols = cvmat.cols;
+            npy_intp dims[2] = {nrows, ncols};
+            PyObject *value = PyArray_SimpleNewFromData(2, dims, NPY_UBYTE, cvmat.data);
+
+            py::tuple args(1);
+            args[0] = value;
+            o.mcall("set", args);
+        }
+
         long global_param_get_int(std::string name) {
             if(!global_param.has_key(name)) {
                 printf("key %s not exist.", name.c_str());
