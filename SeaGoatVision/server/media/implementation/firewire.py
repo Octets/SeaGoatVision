@@ -74,7 +74,11 @@ class Firewire(Media_streaming):
             camera.mode = video1394.VIDEO_MODE_800x600_MONO8
         else:
             camera.mode = video1394.VIDEO_MODE_800x600_YUV422
-        camera.framerate = video1394.FRAMERATE_15
+        try:
+            camera.framerate = video1394.FRAMERATE_15
+        except:
+            # ignore it and use the default framerate
+            pass
 
         camera.start(force_rgb8=True)
         camera.grabEvent.addObserver(self.camera_observer)
