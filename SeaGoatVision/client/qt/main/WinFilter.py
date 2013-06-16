@@ -77,10 +77,11 @@ class WinFilter(QtGui.QDockWidget):
         self.on_cb_param_item_changed(0)
 
     def on_cb_param_item_changed(self, index):
+        if index == -1:
+            return
         for i in range(self.layout.count()):
             b = self.layout.itemAt(i)
             b.widget().deleteLater()
-
         param = self.lst_param[index]
         self.layout.addWidget(self.getWidget(param))
 
