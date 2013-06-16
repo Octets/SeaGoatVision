@@ -28,7 +28,6 @@ from SeaGoatVision.client.qt.shared_info import Shared_info
 class WinFilter(QtGui.QDockWidget):
     def __init__(self, controller):
         super(WinFilter, self).__init__()
-        #self.setWidget(QtGui.QWidget())
         self.shared_info = Shared_info()
 
         self.controller = controller
@@ -60,6 +59,8 @@ class WinFilter(QtGui.QDockWidget):
             return
 
         self.lst_param = self.controller.get_params_filterchain(execution_name, filter_name=filter_name)
+        if self.lst_param is None:
+           self.lst_param = []
         self.cb_param.clear()
         for param in self.lst_param:
             self.cb_param.addItem(param.get_name())

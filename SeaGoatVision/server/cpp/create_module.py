@@ -187,5 +187,6 @@ def _compile_cpp(modname, cppcode, lst_extra_link, lst_extra_compile):
         mod.customize.add_extra_compile_arg(extra_compile)
     # add debug symbol
     mod.customize.add_extra_compile_arg("-g")
+    mod.customize.add_extra_compile_arg("-pipe")
 
     return mod
