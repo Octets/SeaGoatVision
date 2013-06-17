@@ -375,7 +375,10 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # Create a reply
         response = server_pb2.GetFilterListFromFilterChainResponse()
         for item in self.manager.get_filter_list_from_filterchain(request.filterchain_name):
-            response.filters.add(name=item.name, doc=item.doc)
+            doc = item.doc
+            if doc is None:
+                doc = ""
+            response.filters.add(name=item.name, doc=doc)
 
         # We're done, call the run method of the done callback
         done.run(response)

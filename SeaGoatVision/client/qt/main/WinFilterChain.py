@@ -191,7 +191,11 @@ class WinFilterChain(QtCore.QObject):
         if not filterchain_name:
             filterchain_name = self._get_selected_filterchain_name()
         self.ui.filterListWidget.clear()
-        for o_filter in self.controller.get_filter_list_from_filterchain(filterchain_name):
+        lst_filter = self.controller.get_filter_list_from_filterchain(filterchain_name)
+        if not lst_filter:
+            print("Error: recieve empty filter list from filterchain %s" % filterchain_name)
+            return
+        for o_filter in lst_filter:
             self.ui.filterListWidget.addItem(o_filter.name)
 
     def updateFilterChainList(self):
