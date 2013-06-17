@@ -80,12 +80,14 @@ class Param(object):
                 max_v = int(max_v)
         if type_t is float or type_t is int or type_t is long:
             # check min and max
-            if min_v is not None and \
-                not(type(min_v) is float or type(min_v) is int):
-                raise Exception("min_v must be float or int, type is %s." % type(min_v))
-            if max_v is not None and \
-                    not(type(max_v) is float or type(max_v) is int):
-                raise Exception("max_v must be float or int, type is %s." % type(max_v))
+            if min_v is not None:
+                type_min = type(min_v)
+                if not (type_min is float or type_min is int or type_min is long):
+                    raise Exception("min_v must be float or int, type is %s." % type_min)
+            if max_v is not None:
+                type_max = type(max_v)
+                if not( type_max is float or type_max is int or type_max is long):
+                    raise Exception("max_v must be float or int, type is %s." % type(max_v))
             if lst_value is not None and \
                     not(type(lst_value) is tuple or type(lst_value) is list):
                 raise Exception("lst_value must be list or tuple, type is %s." % type(lst_value))
