@@ -40,6 +40,7 @@ class WinFilter(QtGui.QDockWidget):
         self.ui = get_ui(self)
 
         self.lst_param = []
+        self.dct_param = {}
         self.setValueFloat = None
 
         self.layout = self.ui.layout_params
@@ -48,7 +49,20 @@ class WinFilter(QtGui.QDockWidget):
         self.ui.saveButton.clicked.connect(self.save)
         self.ui.resetButton.clicked.connect(self.reset)
         self.ui.defaultButton.clicked.connect(self.default)
+        self.ui.txt_search.returnPressed.connect(self._search_text_change)
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+
+    def _search_text_change(self):
+        # kk = {key: value for (key, value) in d.items() if s in key}
+        text = self.ui.txt_search.text()
+        if text:
+            self.lst_param = [value for (key, value) in self.dct_param.items() if text in key]
+        else:
+            self.lst_param = self.dct_param.values()
+        self.cb_param.clear()
+        for param in self.lst_param:
+            name = param.get_name()
+            self.cb_param.addItem(name)
 
     def setFilter(self):
         execution_name = self.shared_info.get("execution")
@@ -58,21 +72,22 @@ class WinFilter(QtGui.QDockWidget):
         if not self.filter_name:
             return
 
+        self.ui.txt_search.setText("")
+        self.dct_param = {}
         self.lst_param = self.controller.get_params_filterchain(execution_name, filter_name=filter_name)
         if self.lst_param is None:
            self.lst_param = []
         self.cb_param.clear()
         for param in self.lst_param:
-            self.cb_param.addItem(param.get_name())
+            name = param.get_name()
+            self.cb_param.addItem(name)
+            self.dct_param[name] = param
 
-        self.setWindowTitle("%s - %s" % (self.filter_name, self.execution_name))
         self.construct_widget()
 
     def construct_widget(self):
         if not self.lst_param:
-            nothing = QtGui.QLabel()
-            nothing.setText("Empty params.")
-            self.layout.addWidget(nothing)
+            self.ui.lbl_param_name.setText("Empty params")
             return
 
         self.on_cb_param_item_changed(0)
@@ -80,6 +95,7 @@ class WinFilter(QtGui.QDockWidget):
     def on_cb_param_item_changed(self, index):
         if index == -1:
             return
+        self.ui.lbl_param_name.setText("%s - %s" % (self.execution_name, self.filter_name))
         for i in range(self.layout.count()):
             b = self.layout.itemAt(i)
             b.widget().deleteLater()

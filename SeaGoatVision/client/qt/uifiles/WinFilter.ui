@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>293</width>
-    <height>180</height>
+    <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -27,6 +27,19 @@
   </property>
   <widget class="QWidget" name="Filter">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="lbl_param_name">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="sizeConstraint">
@@ -46,7 +59,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit"/>
+       <widget class="QLineEdit" name="txt_search"/>
       </item>
      </layout>
     </item>
