@@ -61,6 +61,7 @@ class WinMedia(QtCore.QObject):
         self._update_media()
 
     def _update_media(self):
+        self.ui.cbMedia.currentIndexChanged.disconnect(self._change_media)
         self.dct_media = self.controller.get_media_list()
         for media in self.dct_media.keys():
             self.ui.cbMedia.addItem(media)
@@ -68,6 +69,7 @@ class WinMedia(QtCore.QObject):
             pos = self.dct_media.keys().index(config.default_media_selected)
             self.ui.cbMedia.setCurrentIndex(pos)
         self._change_media()
+        self.ui.cbMedia.currentIndexChanged.connect(self._change_media)
 
     def _change_media(self):
         item_cbmedia = self.ui.cbMedia.currentText()

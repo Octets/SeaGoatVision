@@ -139,8 +139,9 @@ class Firewire(Media_streaming):
                 self.camera.set_whitebalance(BU_value=value)
             else:
                 print("Error: can define the right color %s" % param_name)
-            return
+            return False
         self.camera.set_property(param_name, value)
+        return True
 
     def next(self):
         return self.actual_image
