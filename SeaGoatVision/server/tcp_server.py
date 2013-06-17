@@ -38,7 +38,7 @@ class Server:
         # reuse the socket if already open - fix when closed without close.
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((ip, port))
-        print "Server awaiting connections on port " + str(port)
+        print("Server awaiting connections on port " + str(port))
 
         self.done = False
 
@@ -47,14 +47,13 @@ class Server:
             self.socket.settimeout(2)
             try:
                 conn, addr = self.socket.accept()
-                print 'Connected to:', addr
+                print('Connected to:', addr)
                 handler = ClientHandler(conn)
                 self.handlers.append(handler)
                 t = Thread(target=handler.handle)
                 t.start()
             except:
                 pass #Do nothing if no user is added
-
 
     def stop(self):
         self.done = True
@@ -68,8 +67,9 @@ class Server:
                 handler.send("%s\n" % data)
             except:
                 handler.stop()
-                self.handlers.remove(handler)
-                print "Client disconnected"
+                if handler in self.handlers:
+                    self.handlers.remove(handler)
+                print("Client disconnected %s" % handler)
 
 class ClientHandler:
 
@@ -100,4 +100,3 @@ class ClientHandler:
 
     def send(self, data):
         self.conn.send(data)
-
