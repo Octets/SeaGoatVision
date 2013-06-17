@@ -22,79 +22,83 @@
 from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.commons.param import Param
+from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.client.qt.shared_info import Shared_info
 
 class WinCamera(QtGui.QDockWidget):
     def __init__(self, controller):
         super(WinCamera, self).__init__()
-        self.setWidget(QtGui.QWidget())
         self.shared_info = Shared_info()
 
-        self.lst_param = []
         self.controller = controller
-        self.cb_param = None
         self.layout = None
-        self.media_name = ""
-
-        self.setValueFloat = None
 
         self.shared_info.connect("media", self.set_camera)
+        self.reload_ui()
+
+    def reload_ui(self):
+        self.ui = get_ui(self)
+
+        self.lst_param = []
+        self.dct_param = {}
+        self.setValueFloat = None
+        self.media_name = None
+
+        self.layout = self.ui.layout_params
+        self.cb_param = self.ui.cb_filter_param
+
+        self.ui.saveButton.clicked.connect(self.save)
+        self.ui.resetButton.clicked.connect(self.reset)
+        self.ui.defaultButton.clicked.connect(self.default)
+        self.ui.txt_search.returnPressed.connect(self._search_text_change)
+        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+
+    def _search_text_change(self):
+        # kk = {key: value for (key, value) in d.items() if s in key}
+        text = self.ui.txt_search.text()
+        if text:
+            self.lst_param = [value for (key, value) in self.dct_param.items() if text in key]
+        else:
+            self.lst_param = self.dct_param.values()
+        self.cb_param.clear()
+        for param in self.lst_param:
+            name = param.get_name()
+            self.cb_param.addItem(name)
 
     def set_camera(self):
         self.media_name = self.shared_info.get("media")
-        
-        del self.lst_param[:]
-        self.widget().destroy()
-        self.cb_param = None
-        self.layout = None
-        self.setWidget(QtGui.QWidget())
+        if not self.media_name:
+            return
+
+        self.ui.txt_search.setText("")
+        self.dct_param = {}
+        self.lst_param = self.controller.get_params_media(self.media_name)
+        if self.lst_param is None:
+           self.lst_param = []
+        self.cb_param.clear()
+        for param in self.lst_param:
+            name = param.get_name()
+            self.cb_param.addItem(name)
+            self.dct_param[name] = param
+
         self.construct_widget()
 
     def construct_widget(self):
-        if not self.media_name:
-            return
-        self.setWindowTitle("%s" % (self.media_name))
-        self.camera_param = self.controller.get_params_media(self.media_name)
-
-        layout = QtGui.QVBoxLayout()
-
-        self.resetButton = QtGui.QPushButton()
-        self.resetButton.clicked.connect(self.reset)
-        self.resetButton.setText("Reset")
-        layout.addWidget(self.resetButton)
-
-        if not self.camera_param:
-            nothing = QtGui.QLabel()
-            nothing.setText("Empty params.")
-            layout.addWidget(nothing)
-            self.widget().setLayout(layout)
+        if not self.lst_param:
+            self.ui.lbl_param_name.setText("Empty params")
             return
 
-        # for param in self.camera_param:
-        #    layout.addWidget(self.getWidget(param))
+        self.on_cb_param_item_changed(0)
 
-        self.layout = layout
-        self.cb_param = QtGui.QComboBox()
-        for param in self.camera_param:
-            self.cb_param.addItem(param.get_name())
-            self.lst_param.append(param)
-        if self.camera_param:
-            self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
-            layout.addWidget(self.cb_param)
-            self.on_cb_param_item_changed(0, first=True)
-
-        self.widget().setLayout(layout)
-
-    def on_cb_param_item_changed(self, index, first=False):
-        if self.cb_param:
-            param_name = self.cb_param.currentText()
-            param_list = [param for param in self.lst_param if param.get_name() == param_name]
-            if param_list:
-                if not first:
-                    b = self.layout.itemAt(self.layout.count() - 1)
-                    b.widget().deleteLater()
-                param = param_list[0]
-                self.layout.addWidget(self.getWidget(param))
+    def on_cb_param_item_changed(self, index):
+        if index == -1:
+            return
+        self.ui.lbl_param_name.setText("%s" % (self.media_name))
+        for i in range(self.layout.count()):
+            b = self.layout.itemAt(i)
+            b.widget().deleteLater()
+        param = self.lst_param[index]
+        self.layout.addWidget(self.getWidget(param))
 
     def getWidget(self, param):
         groupBox = QtGui.QGroupBox()
@@ -255,7 +259,14 @@ class WinCamera(QtGui.QDockWidget):
         layout.addWidget(checkbox)
         return layout
 
+    def default(self):
+        pass
+
     def reset(self):
         for param in self.lst_param:
             param.reset()
         self.set_camera()
+
+    def save(self):
+        #self.controller.save_params(self.execution_name)
+        pass

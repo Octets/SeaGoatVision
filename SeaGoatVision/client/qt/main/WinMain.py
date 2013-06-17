@@ -56,8 +56,8 @@ class WinMain(QtGui.QMainWindow):
         self.WinMainViewer = WinMainViewer()
 
         # Add default widget
-        self.show_win_filter()
-        self.show_win_camera()
+        self.show_win_filter(first_time=True)
+        self.show_win_camera(first_time=True)
         self.show_win_filterlist(first_time=True)
         self.show_win_filterchain(first_time=True)
         self.show_win_media(first_time=True)
@@ -101,13 +101,17 @@ class WinMain(QtGui.QMainWindow):
             self.winFilterList.reload_ui()
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilterList.ui)
 
-    def show_win_filter(self):
-        self.winFilter.setFeatures(QtGui.QDockWidget.DockWidgetMovable or QtGui.QDockWidget.DockWidgetFloatable)
+    def show_win_filter(self, first_time=False):
+        if not first_time:
+            self.removeDockWidget(self.winFilter.ui)
+            self.winFilter.reload_ui()
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winFilter.ui)
 
-    def show_win_camera(self):
-        self.winCamera.setFeatures(QtGui.QDockWidget.DockWidgetMovable or QtGui.QDockWidget.DockWidgetFloatable)
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winCamera)
+    def show_win_camera(self, first_time=False):
+        if not first_time:
+            self.removeDockWidget(self.winCamera.ui)
+            self.winCamera.reload_ui()
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winCamera.ui)
 
     def show_win_media(self, first_time=False):
         if not first_time:
