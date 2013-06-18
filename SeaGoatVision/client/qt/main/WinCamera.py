@@ -72,32 +72,38 @@ class WinCamera(QtGui.QDockWidget):
             return
 
         self.ui.txt_search.setText("")
+
         self.dct_param = {}
+
+        self.cb_param.currentIndexChanged.disconnect(self.on_cb_param_item_changed)
+        self.cb_param.clear()
+        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+
         self.lst_param = self.controller.get_params_media(self.media_name)
         if self.lst_param is None:
            self.lst_param = []
-        self.cb_param.clear()
+
+        if not self.lst_param:
+            self.ui.lbl_param_name.setText("%s - Empty params" % self.media_name)
+            return
+
         for param in self.lst_param:
             name = param.get_name()
             self.cb_param.addItem(name)
             self.dct_param[name] = param
 
-        self.construct_widget()
-
-    def construct_widget(self):
-        if not self.lst_param:
-            self.ui.lbl_param_name.setText("%s - Empty params" % self.media_name)
-            return
-
         self.on_cb_param_item_changed(0)
 
     def on_cb_param_item_changed(self, index):
+        self.ui.lbl_param_name.setText("%s" % (self.media_name))
+
+        item = self.layout.takeAt(0)
+        if item:
+            item.widget().deleteLater()
+
         if index == -1:
             return
-        self.ui.lbl_param_name.setText("%s" % (self.media_name))
-        for i in range(self.layout.count()):
-            b = self.layout.itemAt(i)
-            b.widget().deleteLater()
+
         param = self.lst_param[index]
         self.layout.addWidget(self.getWidget(param))
 

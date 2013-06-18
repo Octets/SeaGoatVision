@@ -21,6 +21,7 @@
 
 from PySide import QtGui
 from PySide import QtCore
+from PySide.QtCore import QSemaphore
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.client.qt.shared_info import Shared_info
@@ -33,7 +34,7 @@ class WinFilter(QtGui.QDockWidget):
         self.controller = controller
         self.layout = None
 
-        self.shared_info.connect("filter", self.setFilter)
+        self.shared_info.connect("filter", self.set_filter)
         self.reload_ui()
 
     def reload_ui(self):
@@ -66,41 +67,45 @@ class WinFilter(QtGui.QDockWidget):
             name = param.get_name()
             self.cb_param.addItem(name)
 
-    def setFilter(self):
-        execution_name = self.shared_info.get("execution")
-        filter_name = self.shared_info.get("filter")
-        self.filter_name = filter_name
-        self.execution_name = execution_name
+    def set_filter(self):
+        self.execution_name = self.shared_info.get("execution")
+        self.filter_name = self.shared_info.get("filter")
         if not self.filter_name:
             return
 
         self.ui.txt_search.setText("")
+
         self.dct_param = {}
-        self.lst_param = self.controller.get_params_filterchain(execution_name, filter_name=filter_name)
+        self.cb_param.currentIndexChanged.disconnect(self.on_cb_param_item_changed)
+        self.cb_param.clear()
+        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+
+        self.lst_param = self.controller.get_params_filterchain(self.execution_name, filter_name=self.filter_name)
         if self.lst_param is None:
            self.lst_param = []
-        self.cb_param.clear()
+
+        if not self.lst_param:
+            self.ui.lbl_param_name.setText("%s - Empty params" % self.filter_name)
+            return
+
         for param in self.lst_param:
             name = param.get_name()
             self.cb_param.addItem(name)
             self.dct_param[name] = param
 
-        self.construct_widget()
-
-    def construct_widget(self):
-        if not self.lst_param:
-            self.ui.lbl_param_name.setText("%s - Empty params" % self.filter_name)
-            return
-
+        # Select first item
         self.on_cb_param_item_changed(0)
 
     def on_cb_param_item_changed(self, index):
+        self.ui.lbl_param_name.setText("%s - %s" % (self.execution_name, self.filter_name))
+
+        item = self.layout.takeAt(0)
+        if item:
+            item.widget().deleteLater()
+
         if index == -1:
             return
-        self.ui.lbl_param_name.setText("%s - %s" % (self.execution_name, self.filter_name))
-        for i in range(self.layout.count()):
-            b = self.layout.itemAt(i)
-            b.widget().deleteLater()
+
         param = self.lst_param[index]
         self.layout.addWidget(self.getWidget(param))
 
