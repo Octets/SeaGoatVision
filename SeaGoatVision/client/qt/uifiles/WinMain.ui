@@ -28,7 +28,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>filterchain</string>
+        <string>Filterchain</string>
        </property>
       </widget>
      </item>
@@ -41,7 +41,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>filter list</string>
+        <string>Filter list</string>
        </property>
       </widget>
      </item>
@@ -54,7 +54,20 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>execution</string>
+        <string>Execution</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnParam">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Filter Param</string>
        </property>
       </widget>
      </item>
@@ -67,7 +80,20 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>media</string>
+        <string>Media</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnCamera">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Camera</string>
        </property>
       </widget>
      </item>

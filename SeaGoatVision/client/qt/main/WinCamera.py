@@ -52,6 +52,7 @@ class WinCamera(QtGui.QDockWidget):
         self.ui.defaultButton.clicked.connect(self.default)
         self.ui.txt_search.returnPressed.connect(self._search_text_change)
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+        self.set_camera()
 
     def _search_text_change(self):
         # kk = {key: value for (key, value) in d.items() if s in key}
@@ -85,7 +86,7 @@ class WinCamera(QtGui.QDockWidget):
 
     def construct_widget(self):
         if not self.lst_param:
-            self.ui.lbl_param_name.setText("Empty params")
+            self.ui.lbl_param_name.setText("%s - Empty params" % self.media_name)
             return
 
         self.on_cb_param_item_changed(0)

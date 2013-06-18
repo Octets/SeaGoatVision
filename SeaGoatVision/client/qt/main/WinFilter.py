@@ -52,6 +52,8 @@ class WinFilter(QtGui.QDockWidget):
         self.ui.txt_search.returnPressed.connect(self._search_text_change)
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
 
+        self.ui.lbl_param_name.setText("None - Empty params")
+
     def _search_text_change(self):
         # kk = {key: value for (key, value) in d.items() if s in key}
         text = self.ui.txt_search.text()
@@ -87,7 +89,7 @@ class WinFilter(QtGui.QDockWidget):
 
     def construct_widget(self):
         if not self.lst_param:
-            self.ui.lbl_param_name.setText("Empty params")
+            self.ui.lbl_param_name.setText("%s - Empty params" % self.filter_name)
             return
 
         self.on_cb_param_item_changed(0)

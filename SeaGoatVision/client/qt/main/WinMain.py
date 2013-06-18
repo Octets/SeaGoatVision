@@ -57,7 +57,7 @@ class WinMain(QtGui.QMainWindow):
 
         # Add default widget
         self.show_win_filter(first_time=True)
-        self.show_win_camera(first_time=True)
+        #self.show_win_camera(first_time=True)
         self.show_win_filterlist(first_time=True)
         self.show_win_filterchain(first_time=True)
         self.show_win_media(first_time=True)
@@ -69,6 +69,8 @@ class WinMain(QtGui.QMainWindow):
         self.ui.btnFilterChain.clicked.connect(self.show_win_filterchain)
         self.ui.btnFilterList.clicked.connect(self.show_win_filterlist)
         self.ui.btnExecution.clicked.connect(self.show_win_execution)
+        self.ui.btnCamera.clicked.connect(self.show_win_camera)
+        self.ui.btnParam.clicked.connect(self.show_win_filter)
         self.winExecution.onPreviewClick.connect(self.addPreview)
         self.winExecution.onExecutionChanged.connect(self.winFilterChain.select_filterchain)
 
@@ -120,7 +122,6 @@ class WinMain(QtGui.QMainWindow):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winMedia.ui)
 
     def addPreview(self, execution_name, media_name, filterchain_name):
-        # TODO create signal to share the filter list to WinViewer
         winviewer = WinViewer(self.controller, execution_name, media_name, filterchain_name, self.host, self.uid_iter)
         self.dct_preview[self.uid_iter] = winviewer
         self.uid_iter += 1
