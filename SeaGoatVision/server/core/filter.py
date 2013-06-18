@@ -34,12 +34,10 @@ class Filter(object):
         for param_ser in value.get("lst_param"):
             param_name = param_ser.get("filter_name", None)
             if not param_name:
-                # TODO: deprecated - name doesn't exist
-                param_name = param_ser.get("name", None)
-                if not param_name:
-                    continue
+                continue
             param = self.get_params(param_name=param_name)
-            status &= param.deserialize(param_ser)
+            if param:
+                status &= param.deserialize(param_ser)
         return status
 
     def get_name(self):
