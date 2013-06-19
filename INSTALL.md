@@ -47,12 +47,12 @@ Install the following dependencies :
 ### C. Install OpenCV 2.4 ###
 If your package management has opencv 2.4, it's not necessary to follow this section.
 
-To check if your package management already have opencv 2.4;
+To check if your package management have opencv 2.4;
 
 ###Try i.e. with Ubuntu###
 	apt-cache search opencv
-	
-###If the output is showing something like opencv 2.4 go to step D.###
+
+###If the output is showing something like opencv 2.4, install it and go to step D.###
 
 ###1. Install required OpenCV dependencies###
 	sudo apt-get install cmake cmake-gui gcc pkg-config libavformat-dev libswscale-dev
