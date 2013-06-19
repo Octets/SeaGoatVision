@@ -64,7 +64,7 @@ class LineOrientation(dataextract.DataExtractor):
         toSend = ""
         for l in lines:
             x1, y1, x2, y2 = l
-            toSend += self.filter_name + " x1=" + str(int(x1)) + " y1=" + str(int(y1)) + " x2=" + str(int(x2)) + " y2=" + str(int(y2)) + " \n"
+            toSend += self.filter_name + " x1=" + str(int(x1)*2) + " y1=" + str(int(y1)*2) + " x2=" + str(int(x2)*2) + " y2=" + str(int(y2)*2) + " \n"
             
         toSend += "=\n"
         self.notify_output_observers(toSend)

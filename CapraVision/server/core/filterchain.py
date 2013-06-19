@@ -188,7 +188,7 @@ class FilterChain:
     def add_filter_output_observer(self, output):
         self.filter_output_observers.append(output)
         for f in self.filters:
-            if isinstance(f, DataExtractor):
+            if isinstance(f, DataExtractor):    
                 f.add_output_observer(output)
 
     def remove_filter_output_observer(self, output):

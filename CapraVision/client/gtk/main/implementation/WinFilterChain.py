@@ -82,7 +82,7 @@ class WinFilterChain:
         self.cboSource = ui.get_object('cboSource')
         self.spnFPS = ui.get_object('spnFPS')
         self.spnFPS.set_adjustment(self.create_adj())
-        self.spnFPS.set_value(30)
+        self.spnFPS.set_value(10)
 
         self.win_list = []
 

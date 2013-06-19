@@ -13,8 +13,8 @@ class RemoveObstacle:
         self.horizontal_blur = Parameter("Horizontal Blur",0,255,3)
     
     def execute(self, image):
-        #copy = cv2.cvtColor(image, cv.CV_BGR2HSV)
-        copy = cv2.blur(image, (3,3))
+        copy = cv2.cvtColor(image, cv.CV_BGR2HSV)
+        copy = cv2.blur(copy, (3,3))
         h, _, _ = cv2.split(copy)
         h[h > self.threshold.get_current_value()] = 0
         contours, _ = cv2.findContours(

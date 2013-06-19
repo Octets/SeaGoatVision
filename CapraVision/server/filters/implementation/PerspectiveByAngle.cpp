@@ -68,10 +68,9 @@ cv::Mat execute(cv::Mat image)
 
 	Mat transfo = A2 * (T * (RX * RY * A1));
 
-	Mat source = image;
 	Mat destination;
 
-	warpPerspective(source, destination, transfo, source.size(), INTER_CUBIC | WARP_INVERSE_MAP);
+	warpPerspective(image, destination, transfo, image.size(), INTER_CUBIC | WARP_INVERSE_MAP);
 
 	return destination;
 }
