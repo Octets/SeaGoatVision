@@ -180,6 +180,16 @@ def params_code():
             o.mcall("set", args);
         }
 
+        void global_param_set_string(std::string name, std::string value) {
+            if(!global_param.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+            }
+            py::object o = global_param.get(name);
+            py::tuple args(1);
+            args[0] = value;
+            o.mcall("set", args);
+        }
+
         void global_param_set_mat(std::string name, cv::Mat cvmat) {
             if(!global_param.has_key(name)) {
                 printf("key %s not exist.", name.c_str());
@@ -222,6 +232,19 @@ def params_code():
             }
             py::object o = global_param.get(name);
             return PyFloat_AsDouble(o.mcall("get"));
+        }
+
+        std::string global_param_get_string(std::string name) {
+            if(!global_param.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+                return "";
+            }
+            py::object o = global_param.get(name);
+            char* data = PyString_AsString(o.mcall("get"));
+            if (data == NULL) {
+                return "";
+            }
+            return std::string(data);
         }
 
         cv::Mat global_param_get_mat(std::string name) {
