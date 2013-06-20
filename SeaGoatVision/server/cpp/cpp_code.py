@@ -105,6 +105,19 @@ def params_code():
             return PyFloat_AsDouble(o.mcall("get"));
         }
 
+        std::string param_get_string(std::string name) {
+            if(!params.has_key(name)) {
+                printf("key %s not exist.", name.c_str());
+                return "";
+            }
+            py::object o = params.get(name);
+            char* data = PyString_AsString(o.mcall("get"));
+            if (data == NULL) {
+                return "";
+            }
+            return std::string(data);
+        }
+
         long param_int(std::string name, int value, int min, int max) {
             if(!params.has_key(name)) {
                 py::tuple args(4);
@@ -125,6 +138,16 @@ def params_code():
                 py_init_param.call(args);
             }
             return param_get_bool(name);
+        }
+
+        std::string param_string(std::string name, std::string value) {
+            if(!params.has_key(name)) {
+                py::tuple args(2);
+                args[0] = name;
+                args[1] = value;
+                py_init_param.call(args);
+            }
+            return param_get_string(name);
         }
 
         double param_double(std::string name, double value, double min, double max) {
@@ -282,7 +305,7 @@ def params_code():
             return global_param_get_int(name);
         }
 
-        double global_param_int(std::string name, double value, double min, double max) {
+        double global_param_double(std::string name, double value, double min, double max) {
             if(!global_param.has_key(name)) {
                 py::tuple args(4);
                 args[0] = name;
@@ -299,9 +322,19 @@ def params_code():
                 py::tuple args(2);
                 args[0] = name;
                 args[1] = PyBool_FromLong(value);
-                py_init_param.call(args);
+                py_init_global_param.call(args);
             }
             return global_param_get_bool(name);
+        }
+
+        std::string global_param_string(std::string name, std::string value) {
+            if(!global_param.has_key(name)) {
+                py::tuple args(2);
+                args[0] = name;
+                args[1] = value;
+                py_init_global_param.call(args);
+            }
+            return global_param_get_string(name);
         }
 
         cv::Mat global_param_mat(std::string name, cv::Mat cvmat) {
