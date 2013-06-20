@@ -44,11 +44,11 @@ class Param(object):
     Param manager type : bool, str, int and float
     """
     def __init__(self, name, value, min_v=None, max_v=None, lst_value=None, \
-                force_type=None, thres_h=None):
-        if type(name) is not str and type(name) is not unicode:
-            raise Exception("Name must be string value.")
+                force_type=None, thres_h=None, serialize=None):
+        # Exception, can serialize
         self.lst_notify = []
         self.name = name
+        self.lst_value = lst_value
         self.min_v = None
         self.max_v = None
         self.value = None
@@ -56,6 +56,16 @@ class Param(object):
         self.type_t = None
         self.thres_h = None
         self.force_type = None
+
+        if serialize:
+            status = self.deserialize(serialize)
+            if not status:
+                raise Exception("Wrong deserialize parameter, can't know the name.")
+            return
+
+        if type(name) is not str and type(name) is not unicode:
+            raise Exception("Name must be string value.")
+
         self._init_param(value, min_v, max_v, lst_value, force_type, thres_h)
 
     def _init_param(self, value, min_v, max_v, lst_value, force_type, thres_h):
@@ -123,6 +133,7 @@ class Param(object):
         name = value.get("name", None)
         if not name:
             return False
+        self.name = name
         self._init_param(value.get("value", None),
                          value.get("min_v", None),
                          value.get("max_v", None),
@@ -142,6 +153,11 @@ class Param(object):
 
     def get_max(self):
         return self.max_v
+
+    def get_list_value(self):
+        if not self.lst_value:
+            return None
+        return self.lst_value
 
     def add_notify(self, callback):
         # notify when set the value
@@ -167,9 +183,11 @@ class Param(object):
         return self.force_type(self.value)
 
     def set(self, value, thres_h=None):
-        # exception for bool
+        if type(value) is unicode:
+            value = str(value)
         if self.type_t is bool:
             value = bool(value)
+
         if self.type_t is int and (type(value) is float or type(value) is long):
             value = int(value)
         if self.type_t is float and type(value) is int:

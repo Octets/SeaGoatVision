@@ -259,7 +259,29 @@ class WinFilter(QtGui.QDockWidget):
         self.setValue(value)
 
     def getStrWidget(self, param, cb_value_change):
-        print "string"
+        layout = QtGui.QHBoxLayout()
+        lst_value = param.get_list_value()
+        self.str_value_change = cb_value_change
+        if not lst_value:
+            self.line_edit = QtGui.QLineEdit()
+            self.line_edit.setText(param.get())
+            self.line_edit.returnPressed.connect(self.signal_edit_line)
+            layout.addWidget(self.line_edit)
+        else:
+            self.combo = QtGui.QComboBox()
+            self.combo.addItems([str(v) for v in lst_value])
+            layout.addWidget(self.combo)
+            self.combo.currentIndexChanged.connect(self.signal_combo_change)
+
+        return layout
+
+    def signal_combo_change(self, index):
+        value = self.combo.currentText()
+        self.str_value_change(value)
+
+    def signal_edit_line(self):
+        value = self.line_edit.text()
+        self.str_value_change(value)
 
     def getBoolWidget(self, param, cb_value_change):
         checkbox = QtGui.QCheckBox()
