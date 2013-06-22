@@ -207,13 +207,15 @@ class ProtobufServerImpl(server_pb2.CommandService):
             if ret is not None:
                 for item in ret:
                     if item.get_type() is int:
-                        response.params.add(name=item.get_name(), value_int=item.get(), min_v=item.get_min(), max_v=item.get_max())
+                        response.params.add(name=item.get_name(), value_int=item.get(), min_v=item.get_min(),
+                                            max_v=item.get_max(), lst_value_int=item.get_list_value())
                     elif item.get_type() is bool:
                         response.params.add(name=item.get_name(), value_bool=item.get())
                     elif item.get_type() is float:
-                        response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(), max_float_v=item.get_max())
+                        response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(),
+                                            max_float_v=item.get_max(), lst_value_float=item.get_list_value())
                     elif item.get_type() is unicode or item.get_type() is str:
-                         response.params.add(name=item.get_name(), value_str=item.get())
+                         response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
         except Exception as e:
             print "Exception: ", e
 
@@ -305,13 +307,15 @@ class ProtobufServerImpl(server_pb2.CommandService):
             if ret is not None:
                 for item in ret:
                     if item.get_type() is int:
-                        response.params.add(name=item.get_name(), value_int=item.get(), min_v=item.get_min(), max_v=item.get_max())
+                        response.params.add(name=item.get_name(), value_int=item.get(), min_v=item.get_min(),
+                                            max_v=item.get_max(), lst_value_int=item.get_list_value())
                     elif item.get_type() is bool:
                         response.params.add(name=item.get_name(), value_bool=item.get())
                     elif item.get_type() is float:
-                        response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(), max_float_v=item.get_max())
+                        response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(),
+                                            max_float_v=item.get_max(), lst_value_float=item.get_list_value())
                     elif item.get_type() is unicode or item.get_type() is str:
-                         response.params.add(name=item.get_name(), value_str=item.get())
+                         response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
         except Exception as e:
             print "Exception: ", e
 

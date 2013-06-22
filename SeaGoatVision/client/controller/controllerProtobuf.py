@@ -150,14 +150,15 @@ class ControllerProtobuf():
                 returnValue = []
                 for param in response.params:
                     if param.HasField("value_int"):
-                        returnValue.append(Param(param.name, param.value_int, min_v=param.min_v, max_v=param.max_v))
+                        returnValue.append(Param(param.name, param.value_int, min_v=param.min_v, max_v=param.max_v,
+                                                 lst_value=param.lst_value_int))
                     if param.HasField("value_bool"):
                         returnValue.append(Param(param.name, param.value_bool))
                     if param.HasField("value_str"):
-                        returnValue.append(Param(param.name, param.value_str))
+                        returnValue.append(Param(param.name, param.value_str, lst_value=param.lst_value_str))
                     if param.HasField("value_float"):
-                        returnValue.append(Param(param.name, param.value_float, min_v=param.min_float_v, max_v=param.max_float_v))
-                    # TODO complete with other param restriction
+                        returnValue.append(Param(param.name, param.value_float, min_v=param.min_float_v,
+                                                 max_v=param.max_float_v, lst_value=param.lst_value_float))
             else:
                 returnValue = False
 
@@ -309,14 +310,15 @@ class ControllerProtobuf():
                 returnValue = []
                 for param in response.params:
                     if param.HasField("value_int"):
-                        returnValue.append(Param(param.name, param.value_int, min_v=int(param.min_v), max_v=int(param.max_v)))
+                        returnValue.append(Param(param.name, param.value_int, min_v=param.min_v, max_v=param.max_v,
+                                                 lst_value=list(param.lst_value_int)))
                     if param.HasField("value_bool"):
                         returnValue.append(Param(param.name, param.value_bool))
                     if param.HasField("value_str"):
-                        returnValue.append(Param(param.name, param.value_str))
+                        returnValue.append(Param(param.name, param.value_str, lst_value=list(param.lst_value_str)))
                     if param.HasField("value_float"):
-                        returnValue.append(Param(param.name, param.value_float, min_v=param.min_float_v, max_v=param.max_float_v))
-                    # TODO complete with other param restriction
+                        returnValue.append(Param(param.name, param.value_float, min_v=param.min_float_v,
+                                                 max_v=param.max_float_v, lst_value=list(param.lst_value_float)))
             else:
                 returnValue = False
 
