@@ -19,6 +19,7 @@
 
 import cv2
 from SeaGoatVision.server.media.media_streaming import Media_streaming
+from SeaGoatVision.commons.param import Param
 
 class Webcam(Media_streaming):
     """Return images from the webcam."""
@@ -34,14 +35,24 @@ class Webcam(Media_streaming):
         if video.isOpened():
             self.isOpened = True
             video.release()
-        self.shape = (320, 240)
+        self.actual_resolution_name = "800x600"
+        self.dct_resolution = {self.actual_resolution_name:(800, 600),
+                               "320x240":(320, 240),
+                               "640x480":(640, 480),
+                               "1024x768":(1024, 768),
+                               "1280x960":(1280, 960)}
+        self.shape = self.dct_resolution[self.actual_resolution_name]
 
     def open(self):
-        self.video = cv2.VideoCapture(self.config.no)
-        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, self.shape[0])
-        self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, self.shape[1])
+        try:
+            self.video = cv2.VideoCapture(self.config.no)
+            self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, self.shape[0])
+            self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, self.shape[1])
+        except Exception as e:
+            print("Error: %s" % e)
+            return False
         # call open when video is ready
-        Media_streaming.open(self)
+        return Media_streaming.open(self)
 
     def next(self):
         run, image = self.video.read()
@@ -52,3 +63,18 @@ class Webcam(Media_streaming):
     def close(self):
         Media_streaming.close(self)
         self.video.release()
+        return True
+
+    def get_properties_param(self):
+        resolution = Param("resolution", self.actual_resolution_name, lst_value=self.dct_resolution.keys())
+        return [resolution]
+
+    def update_property_param(self, param_name, value):
+        if param_name == "resolution":
+            if value not in self.dct_resolution.keys():
+                print("Error, key %s not in list of resolution, camera %s." % (value, self.get_name()))
+                return False
+            self.actual_resolution_name = value
+            self.shape = self.dct_resolution[value]
+            return self.reload()
+        return False

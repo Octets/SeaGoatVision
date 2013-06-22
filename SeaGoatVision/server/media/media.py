@@ -84,6 +84,14 @@ class Media:
         self.thread = None
         return True
 
+    def reload(self):
+        status = self.close()
+        if not status:
+            return False
+        # TODO force re-init filterchain
+        status = self.open()
+        return status
+
     def change_sleep_time(self, sleep_time):
         self.sleep_time = sleep_time
 
