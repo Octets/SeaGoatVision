@@ -76,9 +76,6 @@ class FilterChain(object):
         index = 0
         for filter_to_ser in lst_filter:
             filter_name = filter_to_ser.get("filter_name", None)
-            # TODO deprecated - "name"
-            if not filter_name:
-                filter_name = filter_to_ser.get("name", None)
             o_filter = fct_create_filter(filter_name, index)
             index += 1
             if not o_filter:

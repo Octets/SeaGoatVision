@@ -159,7 +159,7 @@ class Resource(object):
         if not filter_class:
             return None
         o_filter = filter_class()
-        o_filter.set_name("%s-%s" % (filter_name, index))
+        o_filter.set_name("%s-%d" % (filter_name, index))
         return o_filter
 
     def get_filter_from_filterName(self, filter_name):
@@ -169,20 +169,6 @@ class Resource(object):
     def load_media(self):
         # update list of media
         dct_media = {}
-        """
-        for name, media_class in vars(media).items():
-            # only class can be a media
-            if not inspect.isclass(media_class):
-                continue
-            # don't add first subclass, it's not a device
-            if not(media_class is not media.media_video.Media_video and
-                media_class is not media.media_streaming.Media_streaming):
-                continue
-            # add only subclass
-            # ignore media.media_streaming.Media_streaming
-            if issubclass(media_class, media.media_video.Media_video):
-                dct_media[name] = media_class()
-        """
         # Create personalize media
         for conf_media in self.config.get_lst_media_config():
             name = conf_media.name

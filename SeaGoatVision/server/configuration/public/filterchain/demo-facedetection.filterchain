@@ -1,7 +1,6 @@
 {
     "lst_filter": [
         {
-            "name": "FaceDetection", 
             "lst_param": [
                 {
                     "thres_h": null, 
@@ -11,7 +10,8 @@
                     "value": false, 
                     "max_v": null
                 }
-            ]
+            ], 
+            "filter_name": "FaceDetection"
         }
     ]
 }
