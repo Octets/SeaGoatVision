@@ -79,8 +79,10 @@ class Param(object):
 
     def _valid_param(self, value, min_v, max_v, lst_value, thres_h):
         type_t = type(value)
-        if not(type_t is int or type_t is bool or type_t is float or type_t is str or type_t is np.ndarray or type_t is long):
+        if not(type_t is int or type_t is bool or type_t is float or type_t is str or type_t is np.ndarray or type_t is long or type_t is unicode):
             raise Exception("Param don't manage type %s" % type_t)
+        if type_t is unicode:
+            type_t = str
         if type_t is long:
             type_t = type_t = int
             value = int(value)

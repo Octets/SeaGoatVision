@@ -20,19 +20,20 @@
 """
 Description : Configuration manage configuration file.
 """
+# Note, this file should not import core object, because they depend of him
+
 import os
 import json
-
-from SeaGoatVision.server.configuration.public import config as public_config
-try:
-    from SeaGoatVision.server.configuration.private import config as private_config
-except:
-    pass
 
 class Configuration(object):
     _instance = None
 
     def __new__(cls):
+        from SeaGoatVision.server.configuration.public import config as public_config
+        try:
+            from SeaGoatVision.server.configuration.private import config as private_config
+        except:
+            pass
         # Singleton
         if not cls._instance:
             # first instance
@@ -52,9 +53,12 @@ class Configuration(object):
     def __init__(self):
         if self.get_is_show_public_filterchain():
             self.dir_filterchain = "SeaGoatVision/server/configuration/public/filterchain/"
+            self.dir_media = "SeaGoatVision/server/configuration/public/"
         else:
             self.dir_filterchain = "SeaGoatVision/server/configuration/private/filterchain/"
-        self.extFilterChain = ".filterchain"
+            self.dir_media = "SeaGoatVision/server/configuration/private/"
+        self.ext_filterchain = ".filterchain"
+        self.ext_media = ".media"
 
     #### General config
     def get_tcp_output_config(self):
@@ -93,16 +97,24 @@ class Configuration(object):
     def list_filterchain(self):
         if not os.path.isdir(self.dir_filterchain):
             return []
-        return [files[:-len(self.extFilterChain)] for files in os.listdir(self.dir_filterchain) if files.endswith(self.extFilterChain)]
+        return [files[:-len(self.ext_filterchain)] for files in os.listdir(self.dir_filterchain) if files.endswith(self.ext_filterchain)]
 
     def read_filterchain(self, filterchain_name):
         file_name = self._get_filterchain_filename(filterchain_name)
+        return self._read_configuration(file_name, "filterchain", False)
+
+    def read_media(self, media_name):
+        file_name = self._get_media_filename(media_name)
+        return self._read_configuration(file_name, "media", True)
+
+    def _read_configuration(self, file_name, type_name, ignore_not_exist):
         if not os.path.isfile(file_name):
-            print("Error, the filterchain config %s not exist." % file_name)
+            if not ignore_not_exist:
+                print("Error, the %s config %s not exist." % (file_name, type_name))
             return None
         f = open(file_name, "r")
         if not f:
-            print("Error, can't open filterchain %s." % file_name)
+            print("Error, can't open %s %s." % (file_name, type_name))
             return None
         str_value = f.readlines()
         try:
@@ -114,11 +126,17 @@ class Configuration(object):
         return value
 
     def write_filterchain(self, filterchain):
-        file_name = self._get_filterchain_filename(filterchain.get_name())
+        return self._write_configuration(filterchain, self._get_filterchain_filename)
+
+    def write_media(self, media):
+        return self._write_configuration(media, self._get_media_filename)
+
+    def _write_configuration(self, object, fct_filename):
+        file_name = fct_filename(object.get_name())
         f = open(file_name, "w")
         if not f:
             return False
-        str_value = json.dumps(filterchain.serialize(), indent=4)
+        str_value = json.dumps(object.serialize(), indent=4)
         f.write(str_value)
         f.close()
         return True
@@ -131,4 +149,7 @@ class Configuration(object):
             return False
 
     def _get_filterchain_filename(self, filterchain_name):
-        return "%s%s%s" % (self.dir_filterchain, filterchain_name, self.extFilterChain)
+        return "%s%s%s" % (self.dir_filterchain, filterchain_name, self.ext_filterchain)
+
+    def _get_media_filename(self, media_name):
+        return "%s%s%s" % (self.dir_media, media_name, self.ext_media)

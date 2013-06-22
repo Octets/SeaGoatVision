@@ -22,6 +22,7 @@ except:
     pass
 from SeaGoatVision.server.media.media_streaming import Media_streaming
 from SeaGoatVision.commons.param import Param
+from SeaGoatVision.server.core.configuration import Configuration
 import numpy as np
 import Image
 import cv2
@@ -33,7 +34,7 @@ class Firewire(Media_streaming):
     def __init__(self, config):
         # Go into configuration/template_media for more information
         Media_streaming.__init__(self)
-        self.config = config
+        self.config = Configuration()
         self.camera = None
         self.sleep_time = 1/15.0
         self.media_name = config.name
@@ -46,7 +47,7 @@ class Firewire(Media_streaming):
         if config.guid:
             self.camera = ctx.createCamera(guid=config.guid)
         else:
-            self.camera = ctx.createCamera(cid=self.config.no)
+            self.camera = ctx.createCamera(cid=config.no)
 
         if self.camera is not None:
             self.isOpened = True
@@ -59,6 +60,26 @@ class Firewire(Media_streaming):
         self.is_mono = False
         self.is_format_7 = False
         self.actual_image = None
+
+        self.deserialize(self.config.read_media(self.get_name()))
+
+    def serialize(self):
+        return [param.serialize() for param in self.get_properties_param()]
+
+    def deserialize(self, data):
+        if not data:
+            return False
+        for uno_data in data:
+            if not uno_data:
+                continue
+            try:
+                print("Debug 3: deserialize param camera %s data: %s" % (self.get_name(), uno_data))
+                param = Param(None, None, serialize=uno_data)
+                self.update_property_param(param.get_name(), param.get())
+            except Exception as e:
+                print(e)
+                return False
+        return True
 
     def open(self):
         ctx = video1394.DC1394Context()

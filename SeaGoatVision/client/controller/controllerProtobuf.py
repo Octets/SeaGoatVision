@@ -335,7 +335,7 @@ class ControllerProtobuf():
             request.param.value_bool = value
         if type(value) is float:
             request.param.value_float = value
-        if type(value) is str:
+        if type(value) is str or type(value) is unicode:
             request.param.value_str = value
 
         # Make an synchronous call
@@ -349,6 +349,29 @@ class ControllerProtobuf():
                         print("Error with update_param_media : %s with value %s" % (response.message, returnValue))
                     else:
                         print("Error with update_param_media value %s." % returnValue)
+            else:
+                returnValue = False
+
+        except Exception as ex:
+            log.exception(ex)
+
+        return returnValue
+
+    def save_params_media(self, media_name):
+        request = server_pb2.SaveParamsMediaRequest()
+        request.media_name = media_name
+
+        # Make an synchronous call
+        returnValue = None
+        try:
+            response = self.service.save_params_media(request, timeout=10000)
+            if response:
+                returnValue = not response.status
+                if not returnValue:
+                    if response.HasField("message"):
+                        print("Error with save_params_media : %s" % response.message)
+                    else:
+                        print("Error with save_params_media.")
             else:
                 returnValue = False
 

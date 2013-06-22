@@ -19,6 +19,7 @@
 
 import cv2
 from SeaGoatVision.server.media.media_streaming import Media_streaming
+from SeaGoatVision.server.core.configuration import Configuration
 from SeaGoatVision.commons.param import Param
 
 class Webcam(Media_streaming):
@@ -26,12 +27,13 @@ class Webcam(Media_streaming):
 
     def __init__(self, config):
         # Go into configuration/template_media for more information
-        self.config = config
+        self.config = Configuration()
+        self.own_config = config
         Media_streaming.__init__(self)
         self.media_name = config.name
         self.run = True
         self.video = None
-        video = cv2.VideoCapture(self.config.no)
+        video = cv2.VideoCapture(config.no)
         if video.isOpened():
             self.isOpened = True
             video.release()
@@ -43,9 +45,21 @@ class Webcam(Media_streaming):
                                "1280x960":(1280, 960)}
         self.shape = self.dct_resolution[self.actual_resolution_name]
 
+        self.deserialize(self.config.read_media(self.get_name()))
+
+    def serialize(self):
+        return {"resolution":self.actual_resolution_name}
+
+    def deserialize(self, data):
+        if type(data) is not dict:
+            print("Error: Wrong format data, suppose to be dict into camera %s" % self.get_name())
+        res = data.get("resolution", None)
+        if res:
+            self.change_resolution(res)
+
     def open(self):
         try:
-            self.video = cv2.VideoCapture(self.config.no)
+            self.video = cv2.VideoCapture(self.own_config.no)
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, self.shape[0])
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, self.shape[1])
         except Exception as e:
@@ -65,16 +79,21 @@ class Webcam(Media_streaming):
         self.video.release()
         return True
 
+    def change_resolution(self, resolution):
+        """ Param: resolution type string, need to be a key of dct_resolution"""
+        if resolution not in self.dct_resolution:
+            print("Error: The key %s not in the list of resolution %s of media %s." %
+                  (resolution, self.dct_resolution.keys(), self.get_name()))
+            return False
+        self.actual_resolution_name = resolution
+        self.shape = self.dct_resolution[resolution]
+        return self.reload()
+
     def get_properties_param(self):
         resolution = Param("resolution", self.actual_resolution_name, lst_value=self.dct_resolution.keys())
         return [resolution]
 
     def update_property_param(self, param_name, value):
         if param_name == "resolution":
-            if value not in self.dct_resolution.keys():
-                print("Error, key %s not in list of resolution, camera %s." % (value, self.get_name()))
-                return False
-            self.actual_resolution_name = value
-            self.shape = self.dct_resolution[value]
-            return self.reload()
+            return self.change_resolution(value)
         return False

@@ -301,5 +301,4 @@ class WinCamera(QtGui.QDockWidget):
         self.set_camera()
 
     def save(self):
-        #self.controller.save_params(self.execution_name)
-        pass
+        self.controller.save_params_media(self.media_name)

@@ -60,6 +60,12 @@ class Media:
         fps = int(1/self.sleep_time) if self.thread else -1
         return {"fps" : fps, "nb_frame" : self.get_total_frames()}
 
+    def serialize(self):
+        pass
+
+    def deserialize(self, data):
+        pass
+
     def open(self):
         # IMPORTANT, if inherit, call this at the end
         # the thread need to be start when device is ready
@@ -85,6 +91,8 @@ class Media:
         return True
 
     def reload(self):
+        if not self.thread:
+            return True
         status = self.close()
         if not status:
             return False
