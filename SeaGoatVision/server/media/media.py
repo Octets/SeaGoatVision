@@ -64,9 +64,10 @@ class Media:
         # IMPORTANT, if inherit, call this at the end
         # the thread need to be start when device is ready
         if self.thread:
-            return
+            return False
         self.thread = Thread_media(self)
         self.thread.start()
+        return True
 
     def next(self):
         # edit me in child
@@ -78,9 +79,10 @@ class Media:
 
     def close(self):
         if not self.thread:
-            return
+            return False
         self.thread.stop()
         self.thread = None
+        return True
 
     def change_sleep_time(self, sleep_time):
         self.sleep_time = sleep_time

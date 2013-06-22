@@ -150,4 +150,5 @@ class Firewire(Media_streaming):
         Media_streaming.close(self)
         if self.camera:
             self.camera.stop()
-
+            return True
+        return False

@@ -123,8 +123,11 @@ class WinCamera(QtGui.QDockWidget):
             def set(value):
                 if param.get_type() is bool:
                     value = bool(value)
-                self.controller.update_param_media(self.media_name, param.get_name(), value)
-                param.set(value)
+                status = self.controller.update_param_media(self.media_name, param.get_name(), value)
+                if status:
+                    param.set(value)
+                else:
+                    print("Error change value %s of param %s." % (value, param.get_name()))
             return set
 
         cb_value_change = create_value_change(param)
@@ -265,6 +268,7 @@ class WinCamera(QtGui.QDockWidget):
             self.combo = QtGui.QComboBox()
             self.combo.addItems([str(v) for v in lst_value])
             layout.addWidget(self.combo)
+            self.combo.setCurrentIndex(lst_value.index(param.get()))
             self.combo.currentIndexChanged.connect(self.signal_combo_change)
 
         return layout
