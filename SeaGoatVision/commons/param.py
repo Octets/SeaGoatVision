@@ -162,7 +162,7 @@ class Param(object):
 
     def get_list_value(self):
         if not self.lst_value:
-            return []
+            return None
         return self.lst_value
 
     def add_notify(self, callback):

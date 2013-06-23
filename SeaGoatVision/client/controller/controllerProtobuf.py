@@ -70,7 +70,7 @@ class ControllerProtobuf():
             if response and not self.quiet:
                 logger.info("Connection successful")
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return response
 
@@ -106,7 +106,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -133,7 +133,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -163,7 +163,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -177,7 +177,7 @@ class ControllerProtobuf():
             if response:
                 return response.execution
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return []
 
@@ -191,7 +191,7 @@ class ControllerProtobuf():
             if response:
                 return response
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return None
 
@@ -215,7 +215,7 @@ class ControllerProtobuf():
             else:
                 logger.warning("No answer on get_media_list")
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnResponse
 
@@ -237,7 +237,7 @@ class ControllerProtobuf():
             else:
                 returnValue = False
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -257,7 +257,7 @@ class ControllerProtobuf():
             else:
                 returnValue = False
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -278,7 +278,7 @@ class ControllerProtobuf():
             else:
                 returnValue = False
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -294,7 +294,7 @@ class ControllerProtobuf():
                 if message:
                     dct_message = json.loads(message)
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return dct_message
 
@@ -310,20 +310,29 @@ class ControllerProtobuf():
                 returnValue = []
                 for param in response.params:
                     if param.HasField("value_int"):
+                        lst_value = list(param.lst_value_int)
+                        if not lst_value:
+                            lst_value = None
                         returnValue.append(Param(param.name, param.value_int, min_v=param.min_v, max_v=param.max_v,
-                                                 lst_value=list(param.lst_value_int)))
+                                                 lst_value=lst_value))
                     if param.HasField("value_bool"):
                         returnValue.append(Param(param.name, param.value_bool))
                     if param.HasField("value_str"):
+                        lst_value = list(param.lst_value_str)
+                        if not lst_value:
+                            lst_value = None
                         returnValue.append(Param(param.name, param.value_str, lst_value=list(param.lst_value_str)))
                     if param.HasField("value_float"):
+                        lst_value = list(param.lst_value_float)
+                        if not lst_value:
+                            lst_value = None
                         returnValue.append(Param(param.name, param.value_float, min_v=param.min_float_v,
                                                  max_v=param.max_float_v, lst_value=list(param.lst_value_float)))
             else:
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -355,7 +364,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -378,7 +387,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -420,7 +429,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         if not returnValue:
             local_observer.stop()
@@ -468,7 +477,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -511,7 +520,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -538,7 +547,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -565,7 +574,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -587,7 +596,7 @@ class ControllerProtobuf():
                 logger.error("Error : protobuf, get_filterchain_list response is None")
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -607,7 +616,7 @@ class ControllerProtobuf():
                 logger.error("Error : protobuf, get_filterchain_list response is None")
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -635,7 +644,7 @@ class ControllerProtobuf():
 
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -664,7 +673,7 @@ class ControllerProtobuf():
 
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -698,7 +707,7 @@ class ControllerProtobuf():
 
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -731,7 +740,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -754,7 +763,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -790,7 +799,7 @@ class ControllerProtobuf():
                 returnValue = False
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
@@ -806,7 +815,7 @@ class ControllerProtobuf():
             returnValue = {response.filters[i]:response.doc[i] for i in range(len(response.filters))}
 
         except Exception as ex:
-            log.exception(ex)
+            logger.error("Exception: %s", ex)
 
         return returnValue
 
