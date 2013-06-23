@@ -129,7 +129,7 @@ class WinFilter(QtGui.QDockWidget):
             def set(value):
                 if param.get_type() is bool:
                     value = bool(value)
-                status = self.controller.update_param_media(self.media_name, param.get_name(), value)
+                status = self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), value)
                 if status:
                     param.set(value)
                 else:
