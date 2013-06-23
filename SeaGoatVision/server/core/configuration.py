@@ -101,6 +101,14 @@ class Configuration(object):
                 return self.public_config.show_public_filter
         return self.public_config.show_public_filter
 
+    def get_path_save_record(self):
+        if self.private_config:
+            try:
+                return self.private_config.path_save_record
+            except:
+                return self.public_config.path_save_record
+        return self.public_config.path_save_record
+
     #### Filterchain
     def list_filterchain(self):
         if not os.path.isdir(self.dir_filterchain):

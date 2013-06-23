@@ -24,6 +24,7 @@ Different type :
  - INT : integer. Can have min or max value. Can use table of specific value.
  - FLOAT : float. Same of INT, but use float.
  - BOOL : boolean. Only True or False.
+ - STRING : string.
 
 TIPS :
  - You want only EVEN number for your gaussian blur?

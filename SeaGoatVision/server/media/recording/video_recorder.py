@@ -21,11 +21,16 @@ import cv
 import cv2
 import os
 import time
+import logging
+from SeaGoatVision.server.core.configuration import Configuration
+
+logger = logging.getLogger("seagoat")
 
 class Video_recorder:
     def __init__(self, media):
         self.writer = None
         self.media = media
+        self.config = Configuration()
 
     def start(self, shape, path=None, fps=30):
         # TODO manage multiple record
@@ -33,15 +38,18 @@ class Video_recorder:
         if self.writer:
             self.stop()
         add_format_name = False
-        name = ""
         if path:
             name = path
             if os.path.isdir(path):
                 add_format_name = True
         else:
             add_format_name = True
+            # TODO mkdir if directory
+            name =  self.config.get_path_save_record()
         if add_format_name:
             name += "%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
+
+        logger.info("Start record on path: %s", name)
 
         fps = 8
         # fourcc = cv.CV_FOURCC('D','I','V','X')

@@ -32,6 +32,7 @@ port_tcp_output = 8090
 
 
 ## Media
+path_save_record = "" # empty string will record on root of seagoat project
 lst_media = []
 
 # add camera webcam with default value
