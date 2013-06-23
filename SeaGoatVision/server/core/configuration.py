@@ -118,11 +118,11 @@ class Configuration(object):
     def _read_configuration(self, file_name, type_name, ignore_not_exist):
         if not os.path.isfile(file_name):
             if not ignore_not_exist:
-                logger.error("The %s config %s not exist.", (file_name, type_name))
+                logger.error("The %s config %s not exist.", file_name, type_name)
             return None
         f = open(file_name, "r")
         if not f:
-            logger.error("Can't open %s %s.", (file_name, type_name))
+            logger.error("Can't open %s %s.", file_name, type_name)
             return None
         str_value = f.readlines()
         try:

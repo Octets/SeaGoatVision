@@ -78,7 +78,7 @@ class Webcam(Media_streaming):
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, shape[1])
             self.video.set(cv2.cv.CV_CAP_PROP_FPS, fps)
         except Exception as e:
-            logger.error("Exception when open camera %s: %s" % (self.get_name(), e))
+            logger.error("Exception when open camera %s: %s", self.get_name(), e)
             return False
         # call open when video is ready
         return Media_streaming.open(self)
@@ -98,7 +98,7 @@ class Webcam(Media_streaming):
         """ Param: resolution type string, need to be a key of dct_resolution"""
         if resolution not in self.dct_resolution:
             logger.error("The key %s not in the list of resolution %s of media %s.",
-                  (resolution, self.dct_resolution.keys(), self.get_name()))
+                  resolution, self.dct_resolution.keys(), self.get_name())
             return False
         self.actual_resolution_name = resolution
         return self.reload()
@@ -107,7 +107,7 @@ class Webcam(Media_streaming):
         """ Param: fps type string, need to be a key of dct_fps"""
         if fps not in self.dct_fps:
             logger.error("Error: The key %s not in the list of fps %s of media %s.",
-                  (resolution, self.dct_fps.keys(), self.get_name()))
+                  resolution, self.dct_fps.keys(), self.get_name())
             return False
         self.actual_fps_name = fps
         return self.reload()

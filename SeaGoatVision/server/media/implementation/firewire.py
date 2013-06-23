@@ -76,7 +76,7 @@ class Firewire(Media_streaming):
             if not uno_data:
                 continue
             try:
-                logger.debug("Deserialize param camera %s data: %s", (self.get_name(), uno_data))
+                logger.debug("Deserialize param camera %s data: %s", self.get_name(), uno_data)
                 param = Param(None, None, serialize=uno_data)
                 self.update_property_param(param.get_name(), param.get())
             except Exception as e:
@@ -165,7 +165,7 @@ class Firewire(Media_streaming):
             else:
                 logger.error("Can define the right color %s", param_name)
             return False
-        logger.debug("Camera %s param_name %s and value %s", (self.get_name(), param_name, value))
+        logger.debug("Camera %s param_name %s and value %s", self.get_name(), param_name, value)
         self.camera.set_property(param_name, value)
         return True
 

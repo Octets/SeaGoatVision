@@ -55,7 +55,7 @@ def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=
         code = "cv::Mat execute(cv::Mat "
         if code not in cppcode:
             code += "image)"
-            logger.error("Missing execute function into %s like \"%s\"", (modname, code))
+            logger.error("Missing execute function into %s like \"%s\"", modname, code)
             continue
 
         # Verify if there are changes in the c++ code file.  If there are

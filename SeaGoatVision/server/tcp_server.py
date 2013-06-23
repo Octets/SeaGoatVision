@@ -41,7 +41,7 @@ class Server:
         # reuse the socket if already open - fix when closed without close.
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((ip, port))
-        logger.info("Server awaiting connections on port " + str(port))
+        logger.info("Server awaiting connections on port %s", str(port))
 
         self.done = False
 

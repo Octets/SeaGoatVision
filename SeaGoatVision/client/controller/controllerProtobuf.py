@@ -348,7 +348,7 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with update_param_media : %s with value %s", (response.message, returnValue))
+                        logger.error("Error with update_param_media : %s with value %s", response.message, returnValue)
                     else:
                         logger.error("Error with update_param_media value %s.", returnValue)
             else:

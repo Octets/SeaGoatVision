@@ -55,7 +55,7 @@ def run(p_port=None):
     server.registerService(server_service)
 
     # Start the server
-    logger.info('Serving on port %s - pid %s', (port, pid))
+    logger.info('Serving on port %s - pid %s', port, pid)
     logger.info('Waiting command')
     try:
         server.run()
@@ -83,7 +83,7 @@ def is_lock(sFileLockName):
         if pid.isdigit():
             pid = int(pid)
             if check_pid(pid):
-                logger.info("SeaGoat already run with the pid : %s - lock file %s", (pid, sFileLockName))
+                logger.info("SeaGoat already run with the pid : %s - lock file %s", pid, sFileLockName)
                 fileLock.close()
             else:
                 # its a false lock
