@@ -37,6 +37,9 @@ from PySide.QtCore import Qt
 import socket
 import threading
 import StringIO
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class WinViewer(QtCore.QObject):
     """Show the media after being processed by the filter chain.
@@ -91,7 +94,7 @@ class WinViewer(QtCore.QObject):
         if self.thread_output:
             self.thread_output.stop()
         self.light_observer.stop()
-        print("WinViewer %s quit." % (self.execution_name))
+        logger.info("WinViewer %s quit." % (self.execution_name))
 
     ######################################################################
     ####################### PRIVATE FUNCTION  ############################
@@ -132,7 +135,7 @@ class WinViewer(QtCore.QObject):
 
     def updateLog(self, data):
         data = str(data).strip()
-        print("Qt output exec %s - %s" % (self.execution_name, data))
+        logger.info("Qt output exec %s - %s" % (self.execution_name, data))
 
     def updateImage(self, image):
         self.light_observer.active_light()

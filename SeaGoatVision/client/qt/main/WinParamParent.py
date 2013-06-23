@@ -23,6 +23,9 @@ from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.client.qt.shared_info import Shared_info
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class WinParamParent(QtGui.QDockWidget):
     def __init__(self, controller):
@@ -127,7 +130,7 @@ class WinParamParent(QtGui.QDockWidget):
                 if status:
                     param.set(value)
                 else:
-                    print("Error change value %s of param %s." % (value, param.get_name()))
+                    logger.error("Change value %s of param %s." % (value, param.get_name()))
             return set
 
         cb_value_change = create_value_change(param)

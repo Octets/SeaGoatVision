@@ -36,6 +36,9 @@ TIPS :
     p = Param("f", 2, min_v=1, max_v=8, thres_h=5)
 """
 import numpy as np
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class Param(object):
     """Param autodetect basic type
@@ -61,6 +64,7 @@ class Param(object):
             status = self.deserialize(serialize)
             if not status:
                 raise Exception("Wrong deserialize parameter, can't know the name.")
+            logger.debug("Param %s deserialization complete, value %s" % (self.name, self.value))
             return
 
         if type(name) is not str and type(name) is not unicode:
@@ -165,13 +169,13 @@ class Param(object):
         # notify when set the value
         # pass the value in argument
         if callback in self.lst_notify:
-            print("Error, already in notify %s" % self.get_name())
+            logger.warning("Already in notify %s" % self.get_name())
             return
         self.lst_notify.append(callback)
 
     def remove_notify(self, callback):
         if callback not in self.lst_notify:
-            print("Error, the callback wasn't in the list of notify %s" % self.get_name())
+            logger.warning("The callback wasn't in the list of notify %s" % self.get_name())
             return
         self.lst_notify.remove(callback)
 

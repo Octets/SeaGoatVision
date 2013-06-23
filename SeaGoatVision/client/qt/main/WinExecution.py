@@ -23,8 +23,9 @@ from SeaGoatVision.client.qt.shared_info import Shared_info
 
 from PySide import QtCore
 from PySide import QtGui
+import logging
 
-# TODO missing change textbox value when exectionList selected item change
+logger = logging.getLogger("seagoat")
 
 class WinExecution(QtCore.QObject):
     onPreviewClick = QtCore.Signal(object, object, object)
@@ -94,7 +95,7 @@ class WinExecution(QtCore.QObject):
             self.ui.lstExecution.takeItem(noLine)
             self._enable_stop_button(False)
         else:
-            print("Bug internal system - winExecution - fix me please")
+            logger.critical("Bug internal system - winExecution - fix me please")
 
     def new(self):
         self._mode_edit(True)
@@ -127,7 +128,7 @@ class WinExecution(QtCore.QObject):
         self.ui.txtExecution.setText(execution)
         exec_info = self.controller.get_execution_info(execution)
         if not exec_info:
-            print("WinExecution Internal sync error with execution info :(")
+            logger.error("WinExecution Internal sync error with execution info :(")
             return
         self.ui.txtFilterchain.setText(exec_info.filterchain)
         self.ui.txtMedia.setText(exec_info.media)

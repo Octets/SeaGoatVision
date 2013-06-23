@@ -19,6 +19,9 @@
 
 from PySide import QtGui
 from WinParamParent import WinParamParent
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class WinCamera(WinParamParent):
     def __init__(self, controller):
@@ -88,7 +91,7 @@ class WinCamera(WinParamParent):
                 if status:
                     param.set(value)
                 else:
-                    print("Error change value %s of param %s." % (value, param.get_name()))
+                    logger.error("Change value %s of param %s." % (value, param.get_name()))
             return set
 
         cb_value_change = create_value_change(param)

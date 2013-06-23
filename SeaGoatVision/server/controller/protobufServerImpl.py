@@ -27,6 +27,9 @@ from SeaGoatVision.server.core.manager import Manager
 import json
 import socket
 import threading
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class ProtobufServerImpl(server_pb2.CommandService):
     def __init__(self, * args, ** kwargs):
@@ -35,7 +38,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         self.dct_observer = {}
 
     def close(self):
-        print("Close protobuf.")
+        logger.info("Close protobuf.")
         for observer in self.dct_observer.values():
             observer.close()
         self.manager.close()
@@ -44,7 +47,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ################################ CLIENT ##################################
     ##########################################################################
     def is_connected(self, controller, request, done):
-        print("is_connected request %s" % str(request).replace("\n", " "))
+        logger.info("is_connected request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -56,7 +59,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ######################## EXECUTION FILTER ################################
     ##########################################################################
     def start_filterchain_execution(self, controller, request, done):
-        print("start_filterchain_execution request %s" % str(request).replace("\n", " "))
+        logger.info("start_filterchain_execution request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -67,7 +70,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             if response.status:
                 response.message = "This filterchain_execution already exist."
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -75,7 +78,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
     def stop_filterchain_execution(self, controller, request, done):
-        print("stop_filterchain_execution request %s" % str(request).replace("\n", " "))
+        logger.info("stop_filterchain_execution request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -84,7 +87,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             if response.status:
                 response.message = "This filterchain_execution is already close."
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -94,7 +97,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ############################## OBSERVATOR ################################
     ##########################################################################
     def add_image_observer(self, controller, request, done):
-        print("add_image_observer request %s" % str(request).replace("\n", " "))
+        logger.info("add_image_observer request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -109,14 +112,14 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = "This add_image_observer can't add observer."
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
 
     def set_image_observer(self, controller, request, done):
-        print("set_image_observer request %s" % str(request).replace("\n", " "))
+        logger.info("set_image_observer request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -128,14 +131,14 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = "This set_image_observer can't change observer."
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
 
     def remove_image_observer(self, controller, request, done):
-        print("remove_image_observer request %s" % str(request).replace("\n", " "))
+        logger.info("remove_image_observer request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -149,7 +152,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -162,7 +165,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             del self.dct_observer[request.execution_name]
 
     def add_output_observer(self, controller, request, done):
-        print("add_output_observer request %s" % str(request).replace("\n", " "))
+        logger.info("add_output_observer request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -173,14 +176,14 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = "This add_output_observer can't add observer."
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
 
     def remove_output_observer(self, controller, request, done):
-        print("remove_output_observer request %s" % str(request).replace("\n", " "))
+        logger.info("remove_output_observer request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -191,14 +194,14 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = "This remove_output_observer can't add observer."
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
 
     def get_params_filterchain(self, controller, request, done):
-        print("get_params_filterchain request %s" % str(request).replace("\n", " "))
+        logger.info("get_params_filterchain request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetParamsFilterchainResponse()
@@ -217,13 +220,13 @@ class ProtobufServerImpl(server_pb2.CommandService):
                     elif item.get_type() is unicode or item.get_type() is str:
                          response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
 
         # We're done, call the run method of the done callback
         done.run(response)
 
     def get_execution_list(self, controller, request, done):
-        print("get_execution_list request %s" % str(request).replace("\n", " "))
+        logger.info("get_execution_list request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetExecutionResponse()
@@ -231,13 +234,13 @@ class ProtobufServerImpl(server_pb2.CommandService):
             for execution in self.manager.get_execution_list():
                 response.execution.append(execution)
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
 
         # We're done, call the run method of the done callback
         done.run(response)
 
     def get_execution_info(self, controller, request, done):
-        print("get_execution_info request %s" % str(request).replace("\n", " "))
+        logger.info("get_execution_info request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetExecutionInfoResponse()
@@ -246,7 +249,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             response.filterchain = o_exec.filterchain
             response.media = o_exec.media
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
 
         # We're done, call the run method of the done callback
         done.run(response)
@@ -255,7 +258,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ################################ MEDIA ###################################
     ##########################################################################
     def get_media_list(self, controller, request, done):
-        print("get_media_list request %s" % str(request).replace("\n", " "))
+        logger.info("get_media_list request %s", str(request).replace("\n", " "))
 
         response = server_pb2.GetMediaListResponse()
         for key, item in self.manager.get_media_list().items():
@@ -265,7 +268,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def start_record(self, controller, request, done):
-        print("start_record request %s" % str(request).replace("\n", " "))
+        logger.info("start_record request %s", str(request).replace("\n", " "))
 
         response = server_pb2.StatusResponse()
         response.status = int(not self.manager.start_record(request.media, path=request.path))
@@ -273,7 +276,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def stop_record(self, controller, request, done):
-        print("stop_record request %s" % str(request).replace("\n", " "))
+        logger.info("stop_record request %s", str(request).replace("\n", " "))
 
         response = server_pb2.StatusResponse()
         response.status = int(not self.manager.stop_record(request.media))
@@ -281,7 +284,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def cmd_to_media(self, controller, request, done):
-        print("cmd_to_media request %s" % str(request).replace("\n", " "))
+        logger.info("cmd_to_media request %s", str(request).replace("\n", " "))
 
         response = server_pb2.StatusResponse()
         response.status = int(not self.manager.cmd_to_media(request.media_name, request.cmd))
@@ -289,7 +292,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def get_info_media(self, controller, request, done):
-        print("get_info_media request %s" % str(request).replace("\n", " "))
+        logger.info("get_info_media request %s", str(request).replace("\n", " "))
 
         response = server_pb2.GetInfoMediaResponse()
         value = self.manager.get_info_media(request.media_name)
@@ -298,7 +301,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def get_params_media(self, controller, request, done):
-        print("get_params_media request %s" % str(request).replace("\n", " "))
+        logger.info("get_params_media request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetParamsMediaResponse()
@@ -317,13 +320,13 @@ class ProtobufServerImpl(server_pb2.CommandService):
                     elif item.get_type() is unicode or item.get_type() is str:
                          response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
 
         # We're done, call the run method of the done callback
         done.run(response)
 
     def update_param_media(self, controller, request, done):
-        print("update_param_media request %s" % str(request).replace("\n", " "))
+        logger.info("update_param_media request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -343,21 +346,21 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = e
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
 
     def save_params_media(self, controller, request, done):
-        print("save_params_media request %s" % str(request).replace("\n", " "))
+        logger.info("save_params_media request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
             response.status = self.manager.save_params_media(request.media_name)
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -371,7 +374,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ##########################  CONFIGURATION  ###############################
     ##########################################################################
     def get_filterchain_list(self, controller, request, done):
-        print("get_filterchain_list request %s" % str(request).replace("\n", " "))
+        logger.info("get_filterchain_list request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetFilterChainListResponse()
@@ -388,7 +391,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ############################ FILTERCHAIN  ################################
     ##########################################################################
     def get_filter_list_from_filterchain(self, controller, request, done):
-        print("get_filter_list_from_filterchain request %s" % str(request).replace("\n", " "))
+        logger.info("get_filter_list_from_filterchain request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetFilterListFromFilterChainResponse()
@@ -402,14 +405,14 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def delete_filterchain(self, controller, request, done):
-        print("delete_filterchain request %s" % str(request).replace("\n", " "))
+        logger.info("delete_filterchain request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
             response.status = int(not self.manager.delete_filterchain(request.filterchain_name))
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -417,14 +420,14 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
     def upload_filterchain(self, controller, request, done):
-        print("upload_filterchain request %s" % str(request).replace("\n", " "))
+        logger.info("upload_filterchain request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
             response.status = int(not self.manager.upload_filterchain(request.filterchain_name, request.s_file_contain))
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -432,7 +435,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
     def modify_filterchain(self, controller, request, done):
-        print("modify_filterchain request %s" % str(request).replace("\n", " "))
+        logger.info("modify_filterchain request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -440,7 +443,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             lstStrFilter = [filter.name for filter in request.lst_str_filters]
             response.status = int(not self.manager.modify_filterchain(request.old_filterchain_name, request.new_filterchain_name, lstStrFilter))
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -448,7 +451,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
     def reload_filter(self, controller, request, done):
-        print("reload_filter request %s" % str(request).replace("\n", " "))
+        logger.info("reload_filter request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -456,14 +459,14 @@ class ProtobufServerImpl(server_pb2.CommandService):
             self.manager.reload_filter(request.filterName[0])
             response.status = 0
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
 
     def update_param(self, controller, request, done):
-        print("update_param request %s" % str(request).replace("\n", " "))
+        logger.info("update_param request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -483,21 +486,21 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = e
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
         done.run(response)
 
     def save_params(self, controller, request, done):
-        print("save_params request %s" % str(request).replace("\n", " "))
+        logger.info("save_params request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
             response.status = self.manager.save_params(request.execution_name)
         except Exception as e:
-            print "Exception: ", e
+            logger.error("Exception: %s", e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -507,7 +510,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ############################### FILTER  ##################################
     ##########################################################################
     def get_filter_list(self, controller, request, done):
-        print("get_filter_list request %s" % str(request).replace("\n", " "))
+        logger.info("get_filter_list request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetFilterListResponse()
@@ -561,8 +564,7 @@ class Observer(threading.Thread):
                 except Exception as e:
                     # Don't print error if we suppose to stop the socket
                     if not self.__stop:
-                        print(e)
-
+                        logger.warning("Exception from image observer : %s", e)
 
     def close(self):
         self.__stop = True
@@ -572,4 +574,3 @@ class Observer(threading.Thread):
             pass
         self.socket.close()
         self.socket = None
-

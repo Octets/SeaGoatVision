@@ -26,6 +26,9 @@ import os
 import thirdparty.public.protobuf.socketrpc.server as server_rpc
 from controller import protobufServerImpl as impl
 from core.configuration import Configuration
+import logging
+
+logger = logging.getLogger("seagoat")
 
 def run(p_port=None):
     config = Configuration()
@@ -52,12 +55,12 @@ def run(p_port=None):
     server.registerService(server_service)
 
     # Start the server
-    print('Serving on port %s - pid %s' % (port, pid))
-    print('Waiting command')
+    logger.info('Serving on port %s - pid %s', (port, pid))
+    logger.info('Waiting command')
     try:
         server.run()
     except (KeyboardInterrupt, SystemExit):
-        print("\nClose SeaGoat. See you later!")
+        logger.info("Close SeaGoat. See you later!")
     except Exception:
         raise(Exception)
     finally:
@@ -80,13 +83,13 @@ def is_lock(sFileLockName):
         if pid.isdigit():
             pid = int(pid)
             if check_pid(pid):
-                print("SeaGoat already run with the pid : %s - lock file %s" % (pid, sFileLockName))
+                logger.info("SeaGoat already run with the pid : %s - lock file %s", (pid, sFileLockName))
                 fileLock.close()
             else:
                 # its a false lock
                 bIsLocked = False
         else:
-            print("SeaGoat lock is corrupted, see file : %s" % sFileLockName)
+            logger.info("SeaGoat lock is corrupted, see file : %s", sFileLockName)
     return bIsLocked
 
 def check_pid(pid):

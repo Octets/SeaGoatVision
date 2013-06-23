@@ -21,6 +21,9 @@ import cv2
 from SeaGoatVision.server.media.media_streaming import Media_streaming
 from SeaGoatVision.server.core.configuration import Configuration
 from SeaGoatVision.commons.param import Param
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class Webcam(Media_streaming):
     """Return images from the webcam."""
@@ -55,7 +58,7 @@ class Webcam(Media_streaming):
         if not data:
             return False
         if type(data) is not dict:
-            print("Error: Wrong format data, suppose to be dict into camera %s" % self.get_name())
+            logger.error("Wrong format data, suppose to be dict into camera %s" % self.get_name())
             return False
         res = data.get("resolution", None)
         if res:
@@ -63,7 +66,7 @@ class Webcam(Media_streaming):
         res = data.get("fps", None)
         if res:
             self.change_fps(res)
-        return TRue
+        return True
 
     def open(self):
         try:
@@ -75,7 +78,7 @@ class Webcam(Media_streaming):
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, shape[1])
             self.video.set(cv2.cv.CV_CAP_PROP_FPS, fps)
         except Exception as e:
-            print("Error: %s" % e)
+            logger.error("Exception when open camera %s: %s" % (self.get_name(), e))
             return False
         # call open when video is ready
         return Media_streaming.open(self)
@@ -94,7 +97,7 @@ class Webcam(Media_streaming):
     def change_resolution(self, resolution):
         """ Param: resolution type string, need to be a key of dct_resolution"""
         if resolution not in self.dct_resolution:
-            print("Error: The key %s not in the list of resolution %s of media %s." %
+            logger.error("The key %s not in the list of resolution %s of media %s.",
                   (resolution, self.dct_resolution.keys(), self.get_name()))
             return False
         self.actual_resolution_name = resolution
@@ -103,7 +106,7 @@ class Webcam(Media_streaming):
     def change_fps(self, fps):
         """ Param: fps type string, need to be a key of dct_fps"""
         if fps not in self.dct_fps:
-            print("Error: The key %s not in the list of fps %s of media %s." %
+            logger.error("Error: The key %s not in the list of fps %s of media %s.",
                   (resolution, self.dct_fps.keys(), self.get_name()))
             return False
         self.actual_fps_name = fps

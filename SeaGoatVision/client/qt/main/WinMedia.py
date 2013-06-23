@@ -25,6 +25,9 @@ from SeaGoatVision.client.qt import config
 from PySide.QtGui import QFileDialog
 
 from PySide import QtCore
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class WinMedia(QtCore.QObject):
     def __init__(self, controller):
@@ -97,13 +100,13 @@ class WinMedia(QtCore.QObject):
         if not self.is_recorded:
             if not self.controller.start_record(self.ui.cbMedia.currentText()):
                 # TODO improve error message
-                print("Error trying start record...")
+                logger.error("Trying start record...")
             else:
                self.is_recorded = True
                self._set_record_icon()
         else:
             if not self.controller.stop_record(self.ui.cbMedia.currentText()):
-                print("Error trying stop record...")
+                logger.error("Trying stop record...")
             self.is_recorded = False
             self._set_record_icon()
 

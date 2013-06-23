@@ -21,6 +21,9 @@ import time
 
 import socket
 from threading import Thread
+import logging
+
+logger = logging.getLogger("seagoat")
 
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
 
@@ -38,7 +41,7 @@ class Server:
         # reuse the socket if already open - fix when closed without close.
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((ip, port))
-        print("Server awaiting connections on port " + str(port))
+        logger.info("Server awaiting connections on port " + str(port))
 
         self.done = False
 
@@ -47,7 +50,7 @@ class Server:
             self.socket.settimeout(2)
             try:
                 conn, addr = self.socket.accept()
-                print('Connected to:', addr)
+                logger.info('Connected to: %s', addr)
                 handler = ClientHandler(conn)
                 self.handlers.append(handler)
                 t = Thread(target=handler.handle)
@@ -69,7 +72,7 @@ class Server:
                 handler.stop()
                 if handler in self.handlers:
                     self.handlers.remove(handler)
-                print("Client disconnected %s" % handler)
+                logger.info("Client disconnected %s", handler)
 
 class ClientHandler:
 

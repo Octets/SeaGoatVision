@@ -24,18 +24,21 @@ Description : Configuration manage configuration file.
 
 import os
 import json
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class Configuration(object):
     _instance = None
 
     def __new__(cls):
-        from SeaGoatVision.server.configuration.public import config as public_config
-        try:
-            from SeaGoatVision.server.configuration.private import config as private_config
-        except:
-            pass
         # Singleton
         if not cls._instance:
+            from SeaGoatVision.server.configuration.public import config as public_config
+            try:
+                from SeaGoatVision.server.configuration.private import config as private_config
+            except:
+                pass
             # first instance
             cls.public_config = public_config
             try:
@@ -45,7 +48,7 @@ class Configuration(object):
                     cls.private_config = None
             except:
                 cls.private_config = None
-
+            cls.print_configuration = False
             # instance class
             cls._instance = super(Configuration, cls).__new__(cls)
         return cls._instance
@@ -54,9 +57,14 @@ class Configuration(object):
         if self.get_is_show_public_filterchain():
             self.dir_filterchain = "SeaGoatVision/server/configuration/public/filterchain/"
             self.dir_media = "SeaGoatVision/server/configuration/public/"
+            if not self.print_configuration:
+                logger.info("Loading public configuration.")
         else:
             self.dir_filterchain = "SeaGoatVision/server/configuration/private/filterchain/"
             self.dir_media = "SeaGoatVision/server/configuration/private/"
+            if not self.print_configuration:
+                logger.info("Loading private configuration.")
+        self.print_configuration = True
         self.ext_filterchain = ".filterchain"
         self.ext_media = ".media"
 
@@ -110,17 +118,17 @@ class Configuration(object):
     def _read_configuration(self, file_name, type_name, ignore_not_exist):
         if not os.path.isfile(file_name):
             if not ignore_not_exist:
-                print("Error, the %s config %s not exist." % (file_name, type_name))
+                logger.error("The %s config %s not exist.", (file_name, type_name))
             return None
         f = open(file_name, "r")
         if not f:
-            print("Error, can't open %s %s." % (file_name, type_name))
+            logger.error("Can't open %s %s.", (file_name, type_name))
             return None
         str_value = f.readlines()
         try:
             value = json.loads("".join(str_value))
         except:
-            print("Error, the file %s not contain json data." % file_name)
+            logger.error("The file %s not contain json data.", file_name)
             value = None
         f.close()
         return value

@@ -28,8 +28,8 @@ import cmd
 
 # Configure logging
 import logging
-log = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+
+logger = logging.getLogger("seagoat")
 
 class VCmd(cmd.Cmd):
     def __init__(self, local=False, host="localhost", port=8090, completekey='tab', stdin=None, stdout=None, quiet=False):
@@ -45,7 +45,7 @@ class VCmd(cmd.Cmd):
         # self.controller = Manager()
 
         if not self.controller.is_connected():
-            print("Vision server is not accessible.")
+            logger.info("Vision server is not accessible.")
             return None
 
         if self.quiet:
@@ -57,27 +57,27 @@ class VCmd(cmd.Cmd):
     def do_is_connected(self, line):
         if not self.quiet:
             if self.controller.is_connected():
-                print("You are connected.")
+                logger.info("You are connected.")
             else:
-                print("You are disconnected.")
+                logger.info("You are disconnected.")
 
     def do_get_filter_list(self, line):
         lstFilter = self.controller.get_filter_list()
         if lstFilter is not None:
-            print("Nombre de ligne %s, tableau : %s" % (len(lstFilter), lstFilter))
+            logger.info("Nombre de ligne %s, tableau : %s" % (len(lstFilter), lstFilter))
         else:
-            print("No filterlist")
+            logger.info("No filterlist")
 
     def do_get_filterchain_list(self, line):
         lstFilterChain = self.controller.get_filterchain_list()
         lst_name = [item.name for item in lstFilterChain]
         if not self.quiet:
             if lstFilterChain is not None:
-                print("Nombre de ligne %s, tableau : %s" % (len(lstFilterChain), lst_name))
+                logger.info("Nombre de ligne %s, tableau : %s" % (len(lstFilterChain), lst_name))
             else:
-                print("No lstFilterChain")
+                logger.info("No lstFilterChain")
         else:
-             print(lst_name)
+             logger.info(lst_name)
 
     def do_add_output_observer(self, line):
         # execution_name
@@ -119,11 +119,11 @@ class VCmd(cmd.Cmd):
         lst_media = self.controller.get_media_list()
         if not self.quiet:
             if lst_media is not None:
-                print("Media list : %s" % lst_media)
+                logger.info("Media list : %s" % lst_media)
             else:
-                print("No media")
+                logger.info("No media")
         else:
-            print(lst_media)
+            logger.info(lst_media)
 
     def do_EOF(self, line):
         # Redo last command

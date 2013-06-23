@@ -23,6 +23,9 @@ from SeaGoatVision.client.qt.shared_info import Shared_info
 
 from PySide import QtGui
 from PySide import QtCore
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class WinFilterChain(QtCore.QObject):
     """Main window
@@ -86,9 +89,9 @@ class WinFilterChain(QtCore.QObject):
                     if self.controller.upload_filterchain(filterchain_name, s_contain):
                         self.ui.filterchainListWidget.addItem(filterchain_name)
                 else:
-                    print("Error, can't open the file : %s" % (filename))
+                    logger.error("Can't open the file : %s" % (filename))
             else:
-                print("Error, this filtername already exist : %s" % filterchain_name)
+                logger.error("This filtername already exist : %s" % filterchain_name)
 
     def edit(self):
         self.lastRowFilterChainSelected = self.ui.filterchainListWidget.currentRow()
@@ -99,7 +102,7 @@ class WinFilterChain(QtCore.QObject):
         self._list_filterchain_is_selected(False)
         self.ui.filterchainListWidget.setCurrentRow(self.lastRowFilterChainSelected)
         self._modeEdit(False)
-        print("Cancel changement.")
+        logger.info("Cancel changement.")
 
     def save(self):
         newName = self.ui.filterchainEdit.text()
@@ -119,11 +122,11 @@ class WinFilterChain(QtCore.QObject):
 
         if self.controller.modify_filterchain(oldName, newName, lstFilter):
             self.ui.filterchainListWidget.currentItem().setText(newName)
-            print("Editing success on filterchain %s" % newName)
+            logger.info("Editing success on filterchain %s" % newName)
             self._modeEdit(False)
             self.updateFiltersList()
         else:
-            print("Error with saving edit on filterchain %s." % newName)
+            logger.error("Saving edit on filterchain %s." % newName)
             self.cancel()
 
     def delete(self):
@@ -140,9 +143,9 @@ class WinFilterChain(QtCore.QObject):
                 # delete the filterchain
                 self.controller.delete_filterchain(filterchain_name)
                 self.ui.filterchainListWidget.takeItem(noLine)
-                print("Delete %s" % filterchain_name)
+                logger.info("Delete %s" % filterchain_name)
             else:
-                print("Cancel delete %s" % filterchain_name)
+                logger.info("Cancel delete %s" % filterchain_name)
         self._modeEdit(False)
         # update the widget
         self.onSelectedFilterchainChanged()
@@ -197,7 +200,7 @@ class WinFilterChain(QtCore.QObject):
 
         lst_filter = self.controller.get_filter_list_from_filterchain(filterchain_name)
         if not lst_filter:
-            print("Error: recieve empty filter list from filterchain %s" % filterchain_name)
+            logger.error("Recieve empty filter list from filterchain %s" % filterchain_name)
             return
         for o_filter in lst_filter:
             self.ui.filterListWidget.addItem(o_filter.name)

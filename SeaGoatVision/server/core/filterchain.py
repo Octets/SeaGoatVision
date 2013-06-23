@@ -27,6 +27,9 @@ import cv2
 import cv2.cv as cv
 import ConfigParser
 import numpy as np
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class FilterChain(object):
     """ Observable.  Contains the chain of filters to execute on an image.
@@ -165,7 +168,7 @@ class FilterChain(object):
             lstObserver = self.image_observers.get(filter_name, [])
         if lstObserver:
             if observer in lstObserver:
-                print("This observer already observer the filter %s" % filter_name)
+                logger.warning("This observer already observer the filter %s" % filter_name)
                 return False
             else:
                 lstObserver.append(observer)
@@ -189,7 +192,7 @@ class FilterChain(object):
                     del self.image_observers[filter_name]
                 return True
 
-        print("This observer is not in observation list for filter %s" % filter_name)
+        logger.warning("This observer is not in observation list for filter %s" % filter_name)
         return False
 
     def add_filter_output_observer(self, output):

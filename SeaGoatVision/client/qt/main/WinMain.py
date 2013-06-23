@@ -31,6 +31,9 @@ from WinFilter import WinFilter
 from WinCamera import WinCamera
 from PySide import QtGui
 from PySide import QtCore
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class WinMain(QtGui.QMainWindow):
 
@@ -136,7 +139,7 @@ class WinMain(QtGui.QMainWindow):
             self.removeDockWidget(viewer.ui)
             del self.dct_preview[uid]
         else:
-            print("Don't find DockWidget %s" % execution_name)
+            logger.error("Don't find DockWidget %s" % execution_name)
 
     def quit(self):
         for viewer in self.dct_preview.values():

@@ -21,6 +21,9 @@ from PySide import QtUiTools
 from PySide import QtCore
 
 import os
+import logging
+
+logger = logging.getLogger("seagoat")
 
 def tree_selected_index(treeview):
     (model, iter) = treeview.get_selection().get_selected()
@@ -36,7 +39,7 @@ def tree_row_selected(treeview):
 def get_ui(widget):
     loader = QtUiTools.QUiLoader()
     uiPath = os.path.join('SeaGoatVision', 'client', 'qt', 'uifiles', win_name(widget) + '.ui')
-    print uiPath
+    logger.info("Loading ui %s", uiPath)
     uiFile = QtCore.QFile(uiPath)
     uiFile.open(QtCore.QFile.ReadOnly)
     return loader.load(uiFile)

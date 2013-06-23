@@ -18,6 +18,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import time
 import threading
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class Thread_media(threading.Thread):
     """Media thread to process the images.
@@ -44,7 +47,7 @@ class Thread_media(threading.Thread):
                     no_reset += 1
                     if no_reset >= protection_max_reset:
                         self.running = False
-                        print("Error: max reset - close media %s" % self.media.get_name())
+                        logger.error("Max reset - close media %s" % self.media.get_name())
                     continue
                 else:
                     while not self.media.active_loop:

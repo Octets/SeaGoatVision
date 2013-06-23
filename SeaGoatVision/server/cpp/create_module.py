@@ -26,6 +26,9 @@ import sys
 from SeaGoatVision.server.core.filter import Filter
 from cpp_code import *
 from python_code import *
+import logging
+
+logger = logging.getLogger("seagoat")
 
 BUILD_DIR = 'build'
 RELOAD_DIR = os.path.join('build', 'reload')
@@ -52,7 +55,7 @@ def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=
         code = "cv::Mat execute(cv::Mat "
         if code not in cppcode:
             code += "image)"
-            print("Error - Missing execute function into %s like \"%s\"" % (modname, code))
+            logger.error("Missing execute function into %s like \"%s\"", (modname, code))
             continue
 
         # Verify if there are changes in the c++ code file.  If there are
@@ -85,7 +88,7 @@ def _create_build(cppfiles):
 
 def _create_module(cpptimestamps, module, modname, mod):
     try:
-        print("Cpp: begin compile %s." % modname)
+        logger.info("Cpp: begin compile %s.", modname)
         if cpptimestamps.has_key(modname):
             # Reloaded modules are saved in the reload folder for easy cleanup
             mod.compile(RELOAD_DIR)

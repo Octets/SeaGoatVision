@@ -23,6 +23,9 @@ import sys
 
 from PySide.QtGui import QApplication
 import main
+import logging
+
+logger = logging.getLogger("seagoat")
 
 def run(local=False, host="localhost", port=8090):
     if local:
@@ -35,7 +38,7 @@ def run(local=False, host="localhost", port=8090):
         c = ControllerProtobuf(host, port)
 
     if not c.is_connected():
-        print("Vision server is not accessible.")
+        logger.critical("Vision server is not accessible. Exit now.")
         return
 
     app = QApplication(sys.argv)
@@ -44,7 +47,7 @@ def run(local=False, host="localhost", port=8090):
     try:
         rint = app.exec_()
     except Exception as e:
-        print("Exit error : %s" % e)
+        logger.critical("Exit error : %s" % e)
     # close the server
     win.quit()
     c.close()

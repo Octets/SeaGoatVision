@@ -25,6 +25,9 @@ from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
 from resource import Resource
 from SeaGoatVision.commons.keys import *
+import logging
+
+logger =  logging.getLogger("seagoat")
 
 KEY_MEDIA = "media"
 KEY_FILTERCHAIN = "filterchain"
@@ -44,7 +47,7 @@ class Manager:
         self.server_observer.start("", 5030)
 
     def close(self):
-        print("Close manager")
+        logger.info("Close manager")
         for execution in self.dct_exec.values():
             execution[KEY_MEDIA].close()
         self.server_observer.stop()
@@ -67,12 +70,12 @@ class Manager:
         execution = self.dct_exec.get(execution_name, None)
 
         if execution:
-            print("The execution %s is already created." % execution_name)
+            logger.error("The execution %s is already created.", execution_name)
             return None
 
         filterchain = self.resource.get_filterchain(filterchain_name, force_new_filterchain=True)
         if not filterchain:
-            print("Error with the Filterchain \"%s\". Maybe it not exist." % filterchain_name)
+            logger.error("Filterchain %s. Maybe it not exist.", filterchain_name)
             return None
 
         # Exception, if not media_name, we take the default media_name from the filterchain
@@ -81,7 +84,7 @@ class Manager:
 
         media = self.resource.get_media(media_name)
         if not media:
-            print("Error with the media \"%s\". Maybe it not exist." % media_name)
+            logger.error("Media %s. Maybe it not exist.", media_name)
             return None
 
         if media.is_media_video() and file_name:
@@ -98,7 +101,7 @@ class Manager:
 
         if not execution:
             # change this, return the actual execution
-            print("The execution %s is already stopped." % execution_name)
+            logger.warning("The execution %s is already stopped." % execution_name)
             return False
 
         # Remove execution image observer from media

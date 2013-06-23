@@ -32,6 +32,9 @@ from SeaGoatVision.server.core import utils
 from SeaGoatVision.server import media
 import filters
 from filter import Filter
+import logging
+
+logger = logging.getLogger("seagoat")
 
 class Resource(object):
     _instance = None
@@ -173,13 +176,13 @@ class Resource(object):
         for conf_media in self.config.get_lst_media_config():
             name = conf_media.name
             if name in dct_media.keys():
-                print("Error: media %s already exist." % name)
+                logger.error("media %s already exist.", name)
                 continue
             o_media = conf_media.media(conf_media)
             if o_media.is_opened():
                 dct_media[name] = o_media
             else:
-                print("Error: Camera not detected %s" % name)
+                logger.error("Camera not detected %s", name)
         # Force media_video
         dct_media["File"] = media.media_video.Media_video("File")
 

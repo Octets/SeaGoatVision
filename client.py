@@ -22,6 +22,10 @@ Description : launch vision client. Can choose multiple client
 
 import sys
 import argparse
+from SeaGoatVision.commons import log
+import logging
+
+logger = logging.getLogger("seagoat")
 
 def runQt(local=False, host="localhost", port=8090):
     from SeaGoatVision.client.qt.mainqt import run
@@ -47,5 +51,4 @@ if __name__ == '__main__':
     elif sInterface == "cli":
         sys.exit(runCli(local=args.local, host=args.host, port=args.port, quiet=args.quiet))
     else:
-        print("Interface not supported : %s" % sInterface)
-
+        logger.error("Interface not supported : %s", sInterface)

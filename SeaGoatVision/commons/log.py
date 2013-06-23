@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python
 
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
@@ -16,19 +16,23 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-Description : Run the vision server
-"""
-import argparse
 
-import sys
-argument = sys.argv[1:]
-from SeaGoatVision.server.mainserver import run
-from SeaGoatVision.commons import log
+import logging
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Vision Server')
-    parser.add_argument('--port', type=int, default="0", help='Port of the host.')
-    args = parser.parse_args(args=argument)
-    port = args.port if args.port else None
-    run(p_port=port)
+# create logger
+logger = logging.getLogger("seagoat")
+logger.setLevel(logging.DEBUG)
+
+# create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+
+# create formatter
+formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s",
+                              "%Y-%m-%d %H:%M:%S")
+
+# add formatter to ch
+ch.setFormatter(formatter)
+
+# add ch to logger
+logger.addHandler(ch)
