@@ -33,7 +33,7 @@ class Server:
         self.handlers = []
 
     def start(self, ip, port):
-        t = Thread(target=self.innerStart, args=(ip, port, ))
+        t = Thread(target=self.innerStart, args=(ip, port,))
         t.start()
 
     def innerStart(self, ip, port):
@@ -56,7 +56,7 @@ class Server:
                 t = Thread(target=handler.handle)
                 t.start()
             except:
-                pass #Do nothing if no user is added
+                pass  # Do nothing if no user is added
 
     def stop(self):
         self.done = True
@@ -72,13 +72,14 @@ class Server:
                 handler.stop()
                 if handler in self.handlers:
                     self.handlers.remove(handler)
-                logger.info("Client disconnected %s", handler)
+                logger.warning("Client disconnected %s", handler.info)
 
 class ClientHandler:
 
     def __init__(self, conn):
         self.done = False
         self.conn = conn
+        self.info = conn.getsockname()
 
     def handle(self):
         while not self.done:
@@ -86,12 +87,12 @@ class ClientHandler:
                 _ = self.conn.recv(BUFFER_SIZE)
             except:
                 time.sleep(1)
-                pass #Do noting if no data is received
+                pass  # Do noting if no data is received
 
-            #if not data: break
-            #print "received data:", data
-            #self.conn.send(data)  # echo
-            #self.conn.close()
+            # if not data: break
+            # print "received data:", data
+            # self.conn.send(data)  # echo
+            # self.conn.close()
 
     def stop(self):
         self.done = True
@@ -99,6 +100,7 @@ class ClientHandler:
             self.conn.shutdown(socket.SHUT_RDWR)
         except:
             pass
+        logger.info("Disconnect client %s", str(self.info))
         self.conn.close()
 
     def send(self, data):

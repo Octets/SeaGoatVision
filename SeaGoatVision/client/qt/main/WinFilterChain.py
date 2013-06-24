@@ -200,7 +200,7 @@ class WinFilterChain(QtCore.QObject):
 
         lst_filter = self.controller.get_filter_list_from_filterchain(filterchain_name)
         if not lst_filter:
-            logger.error("Recieve empty filter list from filterchain %s" % filterchain_name)
+            logger.warning("Recieve empty filter list from filterchain %s" % filterchain_name)
             return
         for o_filter in lst_filter:
             self.ui.filterListWidget.addItem(o_filter.name)

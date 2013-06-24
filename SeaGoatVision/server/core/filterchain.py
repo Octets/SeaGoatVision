@@ -82,9 +82,14 @@ class FilterChain(object):
             o_filter = fct_create_filter(filter_name, index)
             index += 1
             if not o_filter:
+                logger.warning("Cannot create filter %s, maybe it not exists.", filter_name)
                 continue
             status &= o_filter.deserialize(filter_to_ser)
             self.add_filter(o_filter)
+        if status:
+            logger.info("Deserialize filterchain %s success.", name)
+        else:
+            logger.warning("Deserialize filterchain %s failed.", name)
         return status
 
     def count(self):
