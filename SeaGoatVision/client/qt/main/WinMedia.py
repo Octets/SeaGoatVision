@@ -98,17 +98,19 @@ class WinMedia(QtCore.QObject):
 
     def click_record_button(self):
         if not self.is_recorded:
-            if not self.controller.start_record(self.ui.cbMedia.currentText()):
+            path = self.ui.txt_name_record.text()
+            if not path:
+                path = None
+            if not self.controller.start_record(self.ui.cbMedia.currentText(), path=path):
                 # TODO improve error message
                 logger.error("Trying start record...")
             else:
                self.is_recorded = True
-               self._set_record_icon()
         else:
             if not self.controller.stop_record(self.ui.cbMedia.currentText()):
                 logger.error("Trying stop record...")
             self.is_recorded = False
-            self._set_record_icon()
+        self.set_info()
 
     def open_directory(self):
         filename = QFileDialog.getExistingDirectory()
@@ -125,9 +127,15 @@ class WinMedia(QtCore.QObject):
         if not media_name:
             return
         info = self.controller.get_info_media(media_name)
-        self.ui.lblframe.setText("/%s" % info.get("nb_frame"))
+        if not info:
+            logger.warning("WinMedia: info is empty from get_info_media.")
+        self.ui.lblframe.setText("/%s" % info.get("nb_frame", "-1"))
         self.ui.txtframe.setText("0")
-        self.ui.lblFPS.setText("%s" % info.get("fps"))
+        self.ui.lblFPS.setText("%s" % info.get("fps", "-1"))
+        record_name = info.get("record_file_name", "")
+        self.ui.txt_name_record.setText("%s" % record_name)
+        self.is_recorded = bool(record_name)
+        self._set_record_icon()
 
     def play(self):
         media_name = self.ui.cbMedia.currentText()
@@ -153,8 +161,10 @@ class WinMedia(QtCore.QObject):
     def _set_record_icon(self):
         if not self.is_recorded:
             self.ui.recordButton.setIcon(self.record_icon)
+            self.ui.txt_name_record.setEnabled(True)
         else:
             self.ui.recordButton.setIcon(self.save_record_icon)
+            self.ui.txt_name_record.setEnabled(False)
 
     def get_file_path(self):
         item_cbmedia = self.ui.cbMedia.currentText()

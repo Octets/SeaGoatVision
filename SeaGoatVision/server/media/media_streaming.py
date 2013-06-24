@@ -23,7 +23,7 @@ from recording.video_recorder import Video_recorder
 
 class Media_streaming(Media):
     def __init__(self):
-        Media.__init__(self)
+        super(Media_streaming, self).__init__()
         self.isOpened = False
         self.writer = None
         self.shape = None
@@ -37,6 +37,11 @@ class Media_streaming(Media):
 
     def is_opened(self):
         return self.isOpened
+
+    def get_info(self):
+        info = super(Media_streaming, self).get_info()
+        info["record_file_name"] = self.recorder.get_file_name()
+        return info
 
     def get_type_media(self):
         return get_media_type_streaming_name()

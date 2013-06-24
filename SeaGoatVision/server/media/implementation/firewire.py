@@ -36,7 +36,7 @@ class Firewire(Media_streaming):
 
     def __init__(self, config):
         # Go into configuration/template_media for more information
-        Media_streaming.__init__(self)
+        super(Firewire, self).__init__()
         self.config = Configuration()
         self.camera = None
         self.sleep_time = 1/15.0

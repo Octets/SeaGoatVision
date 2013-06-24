@@ -20,7 +20,7 @@
 from thread_media import Thread_media
 import numpy as np
 
-class Media:
+class Media(object):
     def __init__(self):
         self.sleep_time = 1 / 30.0
         self.lst_observer = []

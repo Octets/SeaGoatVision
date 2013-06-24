@@ -31,6 +31,7 @@ class Video_recorder:
         self.writer = None
         self.media = media
         self.config = Configuration()
+        self.file_name = None
 
     def start(self, shape, path=None, fps=30):
         # TODO manage multiple record
@@ -39,9 +40,14 @@ class Video_recorder:
             self.stop()
         add_format_name = False
         if path:
-            name = path
-            if os.path.isdir(path):
-                add_format_name = True
+            # exception, if not contain /, maybe it's just a filename
+            if "/" not in path:
+                name = "%s%s.avi" % (self.config.get_path_save_record(), path)
+            else:
+                # TODO need to add extension when giving all path with filename?
+                name = path
+                if os.path.isdir(path):
+                    add_format_name = True
         else:
             add_format_name = True
             # TODO mkdir if directory
@@ -49,6 +55,11 @@ class Video_recorder:
         if add_format_name:
             name += "%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
 
+        if not os.path.isfile(name):
+            logger.error("Record: file already exist %s", name)
+            return
+
+        self.file_name = name
         logger.info("Start record on path: %s", name)
 
         fps = 8
@@ -63,7 +74,13 @@ class Video_recorder:
         self.media.add_observer(self.writer.write)
         return True
 
+    def get_file_name(self):
+        if not self.file_name:
+            return ""
+        return self.file_name
+
     def stop(self):
+        self.file_name = None
         if not self.writer:
             return False
         self.media.remove_observer(self.writer.write)

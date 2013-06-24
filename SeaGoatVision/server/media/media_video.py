@@ -26,7 +26,7 @@ from SeaGoatVision.commons.keys import *
 
 class Media_video(Media):
     def __init__(self, name):
-        Media.__init__(self)
+        super(Media_video, self).__init__()
         self.movie = None
         self.imagefolder = None
 
