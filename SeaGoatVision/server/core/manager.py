@@ -192,12 +192,10 @@ class Manager:
                 - string, filter_name to select the filter
         """
         ret_value = False
-        dct_execution = self.dct_exec.get(execution_name, {})
-        if dct_execution:
-            filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
-            if filterchain:
-                ret_value = filterchain.add_image_observer(observer, filter_name)
-        return ret_value
+        filterchain = self._get_filterchain(execution_name)
+        if not filterchain:
+            return False
+        return filterchain.add_image_observer(observer, filter_name)
 
     def set_image_observer(self, observer, execution_name, filter_name_old, filter_name_new):
         """
@@ -210,12 +208,11 @@ class Manager:
         """
         ret_value = False
         if filter_name_old != filter_name_new:
-            dct_execution = self.dct_exec.get(execution_name, {})
-            if dct_execution:
-                filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
-                if filterchain:
-                    filterchain.remove_image_observer(observer, filter_name_old)
-                    ret_value = filterchain.add_image_observer(observer, filter_name_new)
+            filterchain = self._get_filterchain(execution_name)
+            if not filterchain:
+                return False
+            filterchain.remove_image_observer(observer, filter_name_old)
+            ret_value = filterchain.add_image_observer(observer, filter_name_new)
         return ret_value
 
     def remove_image_observer(self, observer, execution_name, filter_name):
@@ -226,43 +223,35 @@ class Manager:
                 - string, execution_name to select an execution
                 - string, filter_name , filter to remove
         """
-        ret_value = False
-        dct_execution = self.dct_exec.get(execution_name, {})
-        if dct_execution:
-            filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
-            if filterchain:
-                ret_value = filterchain.remove_image_observer(observer, filter_name)
-        return ret_value
+        filterchain = self._get_filterchain(execution_name)
+        if not filterchain:
+            return False
+        return filterchain.remove_image_observer(observer, filter_name)
 
     def add_output_observer(self, execution_name):
         """
             attach the output information of execution to tcp_server
             supported only one observer. Add observer to tcp_server
         """
-        ret_value = False
-        dct_execution = self.dct_exec.get(execution_name, {})
-        if dct_execution:
-            filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
-            if filterchain:
-                if self.server_observer.send in filterchain.get_filter_output_observers():
-                    return True
-                ret_value = filterchain.add_filter_output_observer(self.server_observer.send)
-        return ret_value
+        filterchain = self._get_filterchain(execution_name)
+        if not filterchain:
+            return False
+        if self.server_observer.send in filterchain.get_filter_output_observers():
+            logger.warning("Manager: observer already exist - add_output_observer")
+            return True
+        return filterchain.add_filter_output_observer(self.server_observer.send)
 
     def remove_output_observer(self, execution_name):
         """
             remove the output information of execution to tcp_server
             supported only one observer. remove observer to tcp_server
         """
-        ret_value = False
-        dct_execution = self.dct_exec.get(execution_name, {})
-        if dct_execution:
-            filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
-            if filterchain:
-                if not filterchain.get_filter_output_observers():
-                    return True
-                ret_value = filterchain.remove_filter_output_observer(self.server_observer.send)
-        return ret_value
+        filterchain = self._get_filterchain(execution_name)
+        if not filterchain:
+            return False
+        if not filterchain.get_filter_output_observers():
+            return True
+        return filterchain.remove_filter_output_observer(self.server_observer.send)
 
     ##########################################################################
     ########################## CONFIGURATION  ################################
@@ -293,24 +282,14 @@ class Manager:
 
     def get_params_filterchain(self, execution_name, filter_name):
         # get actual filter from execution
-        o_filter = None
-        filterchain_item = None
-        execution = self.dct_exec.get(execution_name, None)
-        if execution:
-            filterchain = execution.get(KEY_FILTERCHAIN, None)
-            if filterchain:
-                return filterchain.get_params(filter_name=filter_name)
-        # Try on configuration
-
-        # if filterchain_item is None:
-        #    # search in config
-        #    o_filter = self.resource.get_filter_from_filterName(filter_name=filter_name)
+        # TODO search information from configuration if execution not exist
+        filterchain = self._get_filterchain(execution_name)
+        if not filterchain:
+            return False
+        return filterchain.get_params(filter_name=filter_name)
 
     def update_param(self, execution_name, filter_name, param_name, value):
-        dct_execution = self.dct_exec.get(execution_name, {})
-        if not dct_execution:
-            return False
-        filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
+        filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return False
         filter = filterchain.get_filter(name=filter_name)
@@ -323,11 +302,8 @@ class Manager:
 
     def save_params(self, execution_name):
         "Force serialization and overwrite config"
-        dct_execution = self.dct_exec.get(execution_name, {})
-        if not dct_execution:
-            return False
-        filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
-        if not filterchain:
+        filterchain = self._get_filterchain(execution_name)
+        if filterchain is None:
             return False
         return self.config.write_filterchain(filterchain)
 
@@ -336,3 +312,19 @@ class Manager:
     ##########################################################################
     def get_filter_list(self):
         return self.resource.get_filter_info_list()
+
+    ##########################################################################
+    ############################## PRIVATE  ##################################
+    ##########################################################################
+    def _get_filterchain(self, execution_name):
+        dct_execution = self.dct_exec.get(execution_name, {})
+        if not dct_execution:
+            logger.warning("Manager: don't find execution %s. List execution name: %s",
+                           execution_name, self.dct_exec.keys())
+            return None
+        filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
+        if not filterchain:
+            logger.critical("Manager: execution %s hasn't filterchain. Internal error.",
+                           execution_name)
+            return None
+        return filterchain
