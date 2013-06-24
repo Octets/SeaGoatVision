@@ -99,9 +99,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with start_filterchain_execution : %s", response.message)
+                        logger.error("start_filterchain_execution : %s", response.message)
                     else:
-                        logger.error("Error with start_filterchain_execution.")
+                        logger.error("start_filterchain_execution.")
             else:
                 returnValue = False
 
@@ -126,9 +126,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with stop_filterchain_execution : %s", response.message)
+                        logger.error("stop_filterchain_execution : %s", response.message)
                     else:
-                        logger.error("Error with stop_filterchain_execution.")
+                        logger.error("stop_filterchain_execution.")
             else:
                 returnValue = False
 
@@ -240,9 +240,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with start_record : %s", response.message)
+                        logger.error("start_record : %s", response.message)
                     else:
-                        logger.error("Error with start_record.")
+                        logger.error("start_record.")
             else:
                 returnValue = False
         except Exception as ex:
@@ -260,9 +260,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with stop_record : %s", response.message)
+                        logger.error("stop_record : %s", response.message)
                     else:
-                        logger.error("Error with stop_record.")
+                        logger.error("stop_record.")
             else:
                 returnValue = False
         except Exception as ex:
@@ -281,9 +281,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with cmd_to_media : %s", response.message)
+                        logger.error("cmd_to_media : %s", response.message)
                     else:
-                        logger.error("Error with cmd_to_media.")
+                        logger.error("cmd_to_media.")
             else:
                 returnValue = False
         except Exception as ex:
@@ -366,9 +366,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with update_param_media : %s with value %s", response.message, returnValue)
+                        logger.error("update_param_media : %s with value %s", response.message, returnValue)
                     else:
-                        logger.error("Error with update_param_media value %s.", returnValue)
+                        logger.error("update_param_media value %s.", returnValue)
             else:
                 returnValue = False
 
@@ -389,9 +389,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with save_params_media : %s", response.message)
+                        logger.error("save_params_media : %s", response.message)
                     else:
-                        logger.error("Error with save_params_media.")
+                        logger.error("save_params_media.")
             else:
                 returnValue = False
 
@@ -431,9 +431,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with add_image_observer : %s", response.message)
+                        logger.error("add_image_observer : %s", response.message)
                     else:
-                        logger.error("Error with add_image_observer.")
+                        logger.error("add_image_observer.")
             else:
                 returnValue = False
 
@@ -463,7 +463,7 @@ class ControllerProtobuf():
                  find = True
                  break
         if not find:
-            logger.error("Error: This observer doesn't exist.")
+            logger.error("This observer doesn't exist.")
             return False
 
         request = server_pb2.SetImageObserverRequest()
@@ -479,9 +479,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with set_image_observer : %s", response.message)
+                        logger.error("set_image_observer : %s", response.message)
                     else:
-                        logger.error("Error with set_image_observer.")
+                        logger.error("set_image_observer.")
             else:
                 returnValue = False
 
@@ -504,7 +504,7 @@ class ControllerProtobuf():
                  find = True
                  break
         if not find:
-            logger.error("Error: This observer doesn't exist.")
+            logger.error("This observer doesn't exist.")
             return False
 
         o_observer.stop()
@@ -522,9 +522,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with remove_image_observer : %s", response.message)
+                        logger.error("remove_image_observer : %s", response.message)
                     else:
-                        logger.error("Error with remove_image_observer.")
+                        logger.error("remove_image_observer.")
             else:
                 returnValue = False
 
@@ -549,9 +549,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with add_output_observer : %s", response.message)
+                        logger.error("add_output_observer : %s", response.message)
                     else:
-                        logger.error("Error with add_output_observer.")
+                        logger.error("add_output_observer.")
             else:
                 returnValue = False
 
@@ -576,9 +576,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with remove_output_observer : %s", response.message)
+                        logger.error("remove_output_observer : %s", response.message)
                     else:
-                        logger.error("Error with remove_output_observer.")
+                        logger.error("remove_output_observer.")
             else:
                 returnValue = False
 
@@ -602,7 +602,7 @@ class ControllerProtobuf():
             if response:
                 returnValue = response.filterchains
             else:
-                logger.error("Error : protobuf, get_filterchain_list response is None")
+                logger.error("protobuf, get_filterchain_list response is None")
 
         except Exception as ex:
             logger.error("Exception: %s", ex)
@@ -622,7 +622,7 @@ class ControllerProtobuf():
             if response:
                 returnValue = response.filters
             else:
-                logger.error("Error : protobuf, get_filterchain_list response is None")
+                logger.error("protobuf, get_filterchain_list response is None")
 
         except Exception as ex:
             logger.error("Exception: %s", ex)
@@ -645,9 +645,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with delete_filterchain : %s", response.message)
+                        logger.error("delete_filterchain : %s", response.message)
                     else:
-                        logger.error("Error with delete_filterchain.")
+                        logger.error("delete_filterchain.")
             else:
                 returnValue = False
 
@@ -674,9 +674,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with upload_filterchain : %s", response.message)
+                        logger.error("upload_filterchain : %s", response.message)
                     else:
-                        logger.error("Error with upload_filterchain.")
+                        logger.error("upload_filterchain.")
             else:
                 returnValue = False
 
@@ -708,9 +708,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with modify_filterchain : %s", response.message)
+                        logger.error("modify_filterchain : %s", response.message)
                     else:
-                        logger.error("Error with modify_filterchain.")
+                        logger.error("modify_filterchain.")
             else:
                 returnValue = False
 
@@ -742,9 +742,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with update_param : %s", response.message)
+                        logger.error("update_param : %s", response.message)
                     else:
-                        logger.error("Error with update_param.")
+                        logger.error("update_param.")
             else:
                 returnValue = False
 
@@ -765,9 +765,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with save_params : %s", response.message)
+                        logger.error("save_params : %s", response.message)
                     else:
-                        logger.error("Error with save_params.")
+                        logger.error("save_params.")
             else:
                 returnValue = False
 
@@ -801,9 +801,9 @@ class ControllerProtobuf():
                 returnValue = not response.status
                 if not returnValue:
                     if response.HasField("message"):
-                        logger.error("Error with reload_filter : %s", response.message)
+                        logger.error("reload_filter : %s", response.message)
                     else:
-                        logger.error("Error with reload_filter.")
+                        logger.error("reload_filter.")
             else:
                 returnValue = False
 
@@ -895,9 +895,9 @@ class Observer(threading.Thread):
                 except Exception as e:
                     if type(e) is not exceptions.EOFError:
                         if not self.close:
-                            logger.error("Error udp observer : %s", e)
+                            logger.error("udp observer : %s", e)
         else:
-            logger.error("Error, self.observer is None.")
+            logger.error("self.observer is None.")
 
     def stop(self):
         self.close = True

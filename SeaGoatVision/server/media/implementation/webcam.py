@@ -106,7 +106,7 @@ class Webcam(Media_streaming):
     def change_fps(self, fps):
         """ Param: fps type string, need to be a key of dct_fps"""
         if fps not in self.dct_fps:
-            logger.error("Error: The key %s not in the list of fps %s of media %s.",
+            logger.error("The key %s not in the list of fps %s of media %s.",
                   resolution, self.dct_fps.keys(), self.get_name())
             return False
         self.actual_fps_name = fps
