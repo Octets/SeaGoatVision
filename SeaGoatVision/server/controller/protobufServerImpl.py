@@ -358,7 +358,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
-            response.status = self.manager.save_params_media(request.media_name)
+            response.status = not(self.manager.save_params_media(request.media_name))
         except Exception as e:
             logger.error("Exception: %s", e)
             response.status = -1
@@ -498,7 +498,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
-            response.status = self.manager.save_params(request.execution_name)
+            response.status = not(self.manager.save_params(request.execution_name))
         except Exception as e:
             logger.error("Exception: %s", e)
             response.status = -1
