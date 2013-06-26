@@ -35,7 +35,7 @@ class Filter(object):
     def deserialize(self, value):
         status = True
         for param_ser in value.get("lst_param"):
-            param_name = param_ser.get("filter_name", None)
+            param_name = param_ser.get("name", None)
             if not param_name:
                 continue
             param = self.get_params(param_name=param_name)
