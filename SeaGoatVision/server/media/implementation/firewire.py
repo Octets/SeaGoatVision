@@ -56,6 +56,7 @@ class Firewire(Media_streaming):
             self.isOpened = True
         else:
             logger.warning("No Firewire camera detected.")
+            return
 
         self.shape = (800, 600)
 
@@ -85,6 +86,9 @@ class Firewire(Media_streaming):
         return True
 
     def open(self):
+        if not self.camera:
+            return False
+
         ctx = video1394.DC1394Context()
         camera = self.camera
         camera.resetBus()
@@ -125,6 +129,9 @@ class Firewire(Media_streaming):
         self.actual_image = image2
 
     def get_properties_param(self):
+        if not self.camera:
+            return None
+
         lst_ignore_prop = ["Trigger"]
         lst_param = []
         dct_prop = self.camera.get_dict_available_features()
@@ -150,6 +157,9 @@ class Firewire(Media_streaming):
         return lst_param
 
     def update_property_param(self, param_name, value):
+        if not self.camera:
+            return False
+
         auto = "-auto"
         if auto in param_name:
             param_name = param_name[:-len(auto)]
