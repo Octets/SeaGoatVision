@@ -731,7 +731,7 @@ class ControllerProtobuf():
             request.param.value_bool = value
         if type(value) is float:
             request.param.value_float = value
-        if type(value) is str:
+        if type(value) is str or type(value) is unicode:
             request.param.value_str = value
 
         # Make an synchronous call

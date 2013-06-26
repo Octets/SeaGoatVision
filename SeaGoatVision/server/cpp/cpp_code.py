@@ -375,11 +375,11 @@ def notify_code():
             }
         }
         void notify_str(const std::string message) {
+            if(message.empty())
+                return;
             py::tuple notify_args(1);
-
             notify_args[0] = message;
             notify_py.call(notify_args);
-
         }
     """
 
