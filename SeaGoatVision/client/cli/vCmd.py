@@ -20,9 +20,6 @@
 """
 Description : Implementation of cmd, command line of python
 """
-
-from SeaGoatVision.server.core.manager import Manager
-from SeaGoatVision.client.controller.controllerProtobuf import ControllerProtobuf
 # SOURCE of this code about the commande line : http://www.doughellmann.com/PyMOTW/cmd/
 import cmd
 from SeaGoatVision.commons import log
@@ -34,8 +31,10 @@ class VCmd(cmd.Cmd):
         cmd.Cmd.__init__(self, completekey=completekey, stdin=stdin, stdout=stdout)
         self.quiet = quiet
         if local:
+            from SeaGoatVision.server.core.manager import Manager
             self.controller = Manager()
         else:
+            from SeaGoatVision.client.controller.controllerProtobuf import ControllerProtobuf
             # Protobuf
             self.controller = ControllerProtobuf(host, port, quiet=quiet)
 
