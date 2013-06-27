@@ -161,10 +161,10 @@ class WinMedia(QtCore.QObject):
     def _set_record_icon(self):
         if not self.is_recorded:
             self.ui.recordButton.setIcon(self.record_icon)
-            self.ui.txt_name_record.setEnabled(True)
+            self.ui.txt_name_record.setReadOnly(False)
         else:
             self.ui.recordButton.setIcon(self.save_record_icon)
-            self.ui.txt_name_record.setEnabled(False)
+            self.ui.txt_name_record.setReadOnly(True)
 
     def get_file_path(self):
         item_cbmedia = self.ui.cbMedia.currentText()
