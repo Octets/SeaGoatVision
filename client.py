@@ -23,9 +23,8 @@ Description : launch vision client. Can choose multiple client
 import sys
 import argparse
 from SeaGoatVision.commons import log
-import logging
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 def runQt(local=False, host="localhost", port=8090):
     from SeaGoatVision.client.qt.mainqt import run

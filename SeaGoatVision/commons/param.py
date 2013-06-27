@@ -37,9 +37,9 @@ TIPS :
     p = Param("f", 2, min_v=1, max_v=8, thres_h=5)
 """
 import numpy as np
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class Param(object):
     """Param autodetect basic type

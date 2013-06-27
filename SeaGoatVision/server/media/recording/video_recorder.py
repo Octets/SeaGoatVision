@@ -21,10 +21,10 @@ import cv
 import cv2
 import os
 import time
-import logging
 from SeaGoatVision.server.core.configuration import Configuration
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class Video_recorder:
     def __init__(self, media):
@@ -56,7 +56,7 @@ class Video_recorder:
             name += "%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
 
         if not os.path.isfile(name):
-            logger.error("Record: file already exist %s", name)
+            log.print_function(logger.error, "fFle already exist %s" % name)
             return
 
         self.file_name = name

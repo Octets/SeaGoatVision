@@ -21,9 +21,9 @@ from PySide import QtUiTools
 from PySide import QtCore
 
 import os
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 def tree_selected_index(treeview):
     (model, iter) = treeview.get_selection().get_selected()

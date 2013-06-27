@@ -22,7 +22,6 @@ Description : This controller use protobuf to communicate to the vision server
 
 # Import required RPC modules
 from SeaGoatVision.proto import server_pb2
-import logging
 import json
 import numpy as np
 from thirdparty.public.protobuf.socketrpc import RpcService
@@ -30,8 +29,9 @@ import socket
 import threading
 import exceptions
 from SeaGoatVision.commons.param import Param
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 # The callback is for asynchronous call to RpcService
 def callback(request, response):
@@ -139,6 +139,12 @@ class ControllerProtobuf():
 
     def get_params_filterchain(self, execution_name, filter_name):
         request = server_pb2.GetParamsFilterchainRequest()
+        if not execution_name:
+            logger.error("get_params_filterchain: execution is empty.")
+            return False
+        if not filter_name:
+            logger.error("get_params_filterchain: filter_name is empty.")
+            return False
         request.execution_name = execution_name
         request.filter_name = filter_name
         # Make an synchronous call

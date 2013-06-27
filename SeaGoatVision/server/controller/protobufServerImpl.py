@@ -27,9 +27,9 @@ from SeaGoatVision.server.core.manager import Manager
 import json
 import socket
 import threading
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class ProtobufServerImpl(server_pb2.CommandService):
     def __init__(self, * args, ** kwargs):

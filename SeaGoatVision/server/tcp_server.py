@@ -21,9 +21,9 @@ import time
 
 import socket
 from threading import Thread
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
 

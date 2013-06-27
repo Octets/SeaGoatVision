@@ -18,9 +18,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.commons.param import Param
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class Filter(object):
     def __init__(self):
@@ -60,7 +60,7 @@ class Filter(object):
         # complete the list and point on it
         for key, param in self.dct_global_param.items():
             if key in dct_global_param:
-                logger.error("Duplicate key on dct_global_param : %s", key)
+                log.print_function(logger.error, "Duplicate key on dct_global_param : %s", key)
                 continue
             dct_global_param[key] = param
         self.dct_global_param = dct_global_param
@@ -72,7 +72,7 @@ class Filter(object):
     def add_global_params(self, param):
         name = param.get_name()
         if name in self.dct_global_param:
-            logger.error("This param is already in the list : %s", name)
+            log.print_function(logger.error, "This param is already in the list : %s", name)
             return
         self.dct_global_param[name] = param
 

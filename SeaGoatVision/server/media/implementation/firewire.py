@@ -27,9 +27,9 @@ import numpy as np
 import Image
 import cv2
 import cv2.cv as cv
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class Firewire(Media_streaming):
     """Return images from a Firewire device."""
@@ -44,7 +44,7 @@ class Firewire(Media_streaming):
         try:
             ctx = video1394.DC1394Context()
         except:
-            logger.error("Lib1394 is not supported.")
+            log.print_function(logger.error, "Lib1394 is not supported.")
             return
 
         if config.guid:
@@ -55,7 +55,7 @@ class Firewire(Media_streaming):
         if self.camera is not None:
             self.isOpened = True
         else:
-            logger.warning("No Firewire camera detected.")
+            log.print_function(logger.warning, "No Firewire camera detected.")
             return
 
         self.shape = (800, 600)
@@ -81,7 +81,7 @@ class Firewire(Media_streaming):
                 param = Param(None, None, serialize=uno_data)
                 self.update_property_param(param.get_name(), param.get())
             except Exception as e:
-                logger.error("Deserialize: %s", e)
+                printerror_stacktrace(logger, e)
                 return False
         return True
 
@@ -105,7 +105,7 @@ class Firewire(Media_streaming):
         try:
             camera.framerate = video1394.FRAMERATE_15
         except:
-            logger.warning("Framerate raise exception, but skip it from camera %s", self.get_name())
+            log.print_function(logger.warning, "Framerate raise exception, but skip it from camera %s" % self.get_name())
             # ignore it and use the default framerate
             pass
 
@@ -153,7 +153,7 @@ class Firewire(Media_streaming):
                 param = Param(name, value["value"], min_v=value["min"], max_v=value["max"])
                 lst_param.append(param)
             except Exception as e:
-                logger.error("get_properties_param: %s - name: %s, value: %s" % (e, name, value))
+                printerror_stacktrace(logger, "%s - name: %s, value: %s" % (e, name, value))
         return lst_param
 
     def update_property_param(self, param_name, value):
@@ -173,7 +173,7 @@ class Firewire(Media_streaming):
             elif "blue" in param_name:
                 self.camera.set_whitebalance(BU_value=value)
             else:
-                logger.error("Can define the right color %s", param_name)
+                log.print_function(logger.error, "Can define the right color %s" % param_name)
             return False
         logger.debug("Camera %s param_name %s and value %s", self.get_name(), param_name, value)
         self.camera.set_property(param_name, value)

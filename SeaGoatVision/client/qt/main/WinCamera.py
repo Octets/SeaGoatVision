@@ -19,9 +19,9 @@
 
 from PySide import QtGui
 from WinParamParent import WinParamParent
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class WinCamera(WinParamParent):
     def __init__(self, controller):

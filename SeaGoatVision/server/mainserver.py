@@ -26,9 +26,9 @@ import os
 import thirdparty.public.protobuf.socketrpc.server as server_rpc
 from controller import protobufServerImpl as impl
 from core.configuration import Configuration
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 def run(p_port=None):
     config = Configuration()

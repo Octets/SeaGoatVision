@@ -25,9 +25,9 @@ from SeaGoatVision.client.qt import config
 from PySide.QtGui import QFileDialog
 
 from PySide import QtCore
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class WinMedia(QtCore.QObject):
     def __init__(self, controller):

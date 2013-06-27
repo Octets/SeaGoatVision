@@ -23,9 +23,9 @@ import sys
 
 from PySide.QtGui import QApplication
 import main
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 def run(local=False, host="localhost", port=8090):
     if local:

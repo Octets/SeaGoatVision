@@ -27,9 +27,9 @@ import cv2
 import cv2.cv as cv
 import ConfigParser
 import numpy as np
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class FilterChain(object):
     """ Observable.  Contains the chain of filters to execute on an image.
@@ -82,14 +82,14 @@ class FilterChain(object):
             o_filter = fct_create_filter(filter_name, index)
             index += 1
             if not o_filter:
-                logger.warning("Cannot create filter %s, maybe it not exists.", filter_name)
+                log.print_function(logger.warning, "Cannot create filter %s, maybe it not exists." % filter_name)
                 continue
             status &= o_filter.deserialize(filter_to_ser)
             self.add_filter(o_filter)
         if status:
-            logger.info("Deserialize filterchain %s success.", name)
+            log.print_function(logger.info, "Deserialize filterchain %s success." % name)
         else:
-            logger.warning("Deserialize filterchain %s failed.", name)
+            log.print_function(logger.warning, "Deserialize filterchain %s failed." % name)
         return status
 
     def count(self):
@@ -173,7 +173,7 @@ class FilterChain(object):
             lstObserver = self.image_observers.get(filter_name, [])
         if lstObserver:
             if observer in lstObserver:
-                logger.warning("This observer already observer the filter %s" % filter_name)
+                log.print_function(logger.warning, "This observer already observer the filter %s" % filter_name)
                 return False
             else:
                 lstObserver.append(observer)
@@ -197,7 +197,7 @@ class FilterChain(object):
                     del self.image_observers[filter_name]
                 return True
 
-        logger.warning("This observer is not in observation list for filter %s" % filter_name)
+        log.print_function(logger.warning, "This observer is not in observation list for filter %s" % filter_name)
         return False
 
     def add_filter_output_observer(self, output):

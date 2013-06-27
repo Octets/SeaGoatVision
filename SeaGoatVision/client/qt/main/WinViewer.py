@@ -37,9 +37,9 @@ from PySide.QtCore import Qt
 import socket
 import threading
 import StringIO
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class WinViewer(QtCore.QObject):
     """Show the media after being processed by the filter chain.

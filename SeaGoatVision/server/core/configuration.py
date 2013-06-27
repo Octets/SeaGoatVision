@@ -24,9 +24,9 @@ Description : Configuration manage configuration file.
 
 import os
 import json
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class Configuration(object):
     _instance = None
@@ -126,17 +126,17 @@ class Configuration(object):
     def _read_configuration(self, file_name, type_name, ignore_not_exist):
         if not os.path.isfile(file_name):
             if not ignore_not_exist:
-                logger.error("The %s config %s not exist.", file_name, type_name)
+                log.print_function(logger.error, "The %s config %s not exist." % (file_name, type_name))
             return None
         f = open(file_name, "r")
         if not f:
-            logger.error("Can't open %s %s.", file_name, type_name)
+            log.print_function(logger.error, "Can't open %s %s." % (file_name, type_name))
             return None
         str_value = f.readlines()
         try:
             value = json.loads("".join(str_value))
         except:
-            logger.error("The file %s not contain json data.", file_name)
+            log.print_function(logger.error,  "The file %s not contain json data." % file_name)
             value = None
         f.close()
         return value

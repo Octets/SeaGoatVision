@@ -25,11 +25,9 @@ from SeaGoatVision.server.core.manager import Manager
 from SeaGoatVision.client.controller.controllerProtobuf import ControllerProtobuf
 # SOURCE of this code about the commande line : http://www.doughellmann.com/PyMOTW/cmd/
 import cmd
+from SeaGoatVision.commons import log
 
-# Configure logging
-import logging
-
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 class VCmd(cmd.Cmd):
     def __init__(self, local=False, host="localhost", port=8090, completekey='tab', stdin=None, stdout=None, quiet=False):

@@ -25,9 +25,9 @@ from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
 from resource import Resource
 from SeaGoatVision.commons.keys import *
-import logging
+from SeaGoatVision.commons import log
 
-logger =  logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 KEY_MEDIA = "media"
 KEY_FILTERCHAIN = "filterchain"
@@ -47,7 +47,7 @@ class Manager:
         self.server_observer.start("", 5030)
 
     def close(self):
-        logger.info("Close manager")
+        logger.info("Close manager and close server.")
         for execution in self.dct_exec.values():
             execution[KEY_MEDIA].close()
         self.server_observer.stop()
@@ -66,17 +66,16 @@ class Manager:
     ######################## EXECUTION FILTER ################################
     ##########################################################################
     def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None):
-        # if file_name != None, it's a media video!
         execution = self.dct_exec.get(execution_name, None)
 
         if execution:
-            logger.error("The execution %s is already created.", execution_name)
-            return None
+            log.print_function(logger.error, "The execution %s is already created." % (execution_name))
+            return False
 
         filterchain = self.resource.get_filterchain(filterchain_name, force_new_filterchain=True)
         if not filterchain:
-            logger.error("Filterchain %s. Maybe it not exist.", filterchain_name)
-            return None
+            log.print_function(logger.error, "Filterchain %s not exist or contain error." % (filterchain_name))
+            return False
 
         # Exception, if not media_name, we take the default media_name from the filterchain
         if not media_name:
@@ -84,8 +83,8 @@ class Manager:
 
         media = self.resource.get_media(media_name)
         if not media:
-            logger.error("Media %s. Maybe it not exist.", media_name)
-            return None
+            log.print_function(logger.error, "Media %s not exist or you didn't set the default media on filterchain." % (media_name))
+            return False
 
         if media.is_media_video() and file_name:
             media.set_file(file_name)
@@ -100,8 +99,7 @@ class Manager:
         execution = self.dct_exec.get(execution_name, None)
 
         if not execution:
-            # change this, return the actual execution
-            logger.warning("The execution %s is already stopped." % execution_name)
+            log.print_function(logger.warning, "The execution %s is already stopped." % execution_name)
             return False
 
         # Remove execution image observer from media
@@ -109,7 +107,6 @@ class Manager:
         # Destroy all memory
         execution[KEY_FILTERCHAIN].destroy()
         del self.dct_exec[execution_name]
-
         return True
 
     def get_execution_list(self):
@@ -118,6 +115,7 @@ class Manager:
     def get_execution_info(self, execution_name):
         exec_info = self.dct_exec.get(execution_name, None)
         if not exec_info:
+            log.print_function(logger.error, "Cannot get execution info, it's empty.")
             return None
         class Exec_info: pass
         o_exec_info = Exec_info()
@@ -133,49 +131,52 @@ class Manager:
                 for name in self.resource.get_media_name_list()}
 
     def cmd_to_media(self, media_name, cmd, value=None):
-        media = self.resource.get_media(media_name)
+        media = self._get_media(media_name)
         if not media:
             return False
         if media.is_media_streaming():
+            log.print_function(logger.error, "Cannot send a command to a streaming media %s." % media_name)
             return False
         return media.do_cmd(cmd, value)
 
     def get_info_media(self, media_name):
-        media = self.resource.get_media(media_name)
+        media = self._get_media(media_name)
         if not media:
-            return False
+            return {}
         return media.get_info()
 
     def start_record(self, media_name, path=None):
-        media = self.resource.get_media(media_name)
+        media = self._get_media(media_name)
         if not media:
             return False
         if media.is_media_video():
+            log.print_function(logger.error, "Cannot start record to a media media %s." % media_name)
             return False
         return media.start_record(path=path)
 
     def stop_record(self, media_name):
-        media = self.resource.get_media(media_name)
+        media = self._get_media(media_name)
         if not media:
             return False
         if media.is_media_video():
+            log.print_function(logger.error, "Cannot stop record to a media media %s." % media_name)
             return False
         return media.stop_record()
 
     def get_params_media(self, media_name):
-        media = self.resource.get_media(media_name)
+        media = self._get_media(media_name)
         if not media:
             return []
         return media.get_properties_param()
 
     def update_param_media(self, media_name, param_name, value):
-        media = self.resource.get_media(media_name)
+        media = self._get_media(media_name)
         if not media:
             return False
         return media.update_property_param(param_name, value)
 
     def save_params_media(self, media_name):
-        media = self.resource.get_media(media_name)
+        media = self._get_media(media_name)
         if not media:
             return False
         return self.config.write_media(media)
@@ -206,14 +207,14 @@ class Manager:
                 - string, filter_name_old , filter to replace
                 - string, filter_name_new , filter to use
         """
-        ret_value = False
-        if filter_name_old != filter_name_new:
-            filterchain = self._get_filterchain(execution_name)
-            if not filterchain:
-                return False
-            filterchain.remove_image_observer(observer, filter_name_old)
-            ret_value = filterchain.add_image_observer(observer, filter_name_new)
-        return ret_value
+        if filter_name_old == filter_name_new:
+            log.print_function(logger.error, "New and old filter_name is equal: %s" % filter_name_old)
+            return False
+        filterchain = self._get_filterchain(execution_name)
+        if not filterchain:
+            return False
+        filterchain.remove_image_observer(observer, filter_name_old)
+        return filterchain.add_image_observer(observer, filter_name_new)
 
     def remove_image_observer(self, observer, execution_name, filter_name):
         """
@@ -295,17 +296,22 @@ class Manager:
         if not filterchain:
             return False
         filter = filterchain.get_filter(name=filter_name)
+        if not filter:
+            log.print_function(logger.error, "Don't find filter %s on filterchain %s" % (filter_name, filterchain.get_name()))
+            return False
         param = filter.get_params(param_name=param_name)
-        if param:
-            param.set(value)
-            filter.configure()
-            return True
-        return False
+        if not param:
+            log.print_function(logger.error, "Don't find param %s on filter %s" % (param_name, filter_name))
+            return False
+
+        param.set(value)
+        filter.configure()
+        return True
 
     def save_params(self, execution_name):
         "Force serialization and overwrite config"
         filterchain = self._get_filterchain(execution_name)
-        if filterchain is None:
+        if not filterchain:
             return False
         return self.config.write_filterchain(filterchain)
 
@@ -321,12 +327,20 @@ class Manager:
     def _get_filterchain(self, execution_name):
         dct_execution = self.dct_exec.get(execution_name, {})
         if not dct_execution:
-            logger.warning("Manager: don't find execution %s. List execution name: %s",
-                           execution_name, self.dct_exec.keys())
+            msg = "Don't find execution %s. List execution name: %s" % (execution_name, self.dct_exec.keys())
+            log.print_function(logger.warning, msg, last_stack=True)
             return None
         filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
         if not filterchain:
-            logger.critical("Manager: execution %s hasn't filterchain. Internal error.",
-                           execution_name)
+            msg = "Execution %s hasn't filterchain." % execution_name
+            log.print_function(logger.critical, msg, last_stack=True)
             return None
         return filterchain
+
+    def _get_media(self, media_name):
+        media = self.resource.get_media(media_name)
+        if not media:
+            log.print_function(logger.error, "Cannot found the media %s." % media_name, last_stack=True)
+            return None
+        return media
+

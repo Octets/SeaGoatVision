@@ -17,7 +17,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import traceback
 import numpy as np
 import scipy.weave.ext_tools as ext_tools
 import os
@@ -26,9 +25,9 @@ import sys
 from SeaGoatVision.server.core.filter import Filter
 from cpp_code import *
 from python_code import *
-import logging
+from SeaGoatVision.commons import log
 
-logger = logging.getLogger("seagoat")
+logger = log.get_logger(__name__)
 
 BUILD_DIR = 'build'
 RELOAD_DIR = os.path.join('build', 'reload')
@@ -55,7 +54,7 @@ def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=
         code = "cv::Mat execute(cv::Mat "
         if code not in cppcode:
             code += "image)"
-            logger.error("Missing execute function into %s like \"%s\"", modname, code)
+            log.print_function(logger.error, "Missing execute function into %s like \"%s\"" % (modname, code))
             continue
 
         # Verify if there are changes in the c++ code file.  If there are
@@ -88,7 +87,7 @@ def _create_build(cppfiles):
 
 def _create_module(cpptimestamps, module, modname, mod):
     try:
-        logger.info("Cpp: begin compile %s.", modname)
+        logger.info("Begin compile %s.", modname)
         if cpptimestamps.has_key(modname):
             # Reloaded modules are saved in the reload folder for easy cleanup
             mod.compile(RELOAD_DIR)
@@ -116,8 +115,7 @@ def _create_module(cpptimestamps, module, modname, mod):
         setattr(module, modname, clazz)
         del clazz
     except Exception as e:
-        sys.stderr.write(str(e) + '\n')
-        sys.stderr.write(traceback.format_exc() + "\n")
+        printerror_stacktrace(logger, e)
 
 def _create_python_code(mod, modname, cppcode):
     # param variable size
