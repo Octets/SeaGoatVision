@@ -222,7 +222,12 @@ class FilterChain(object):
 
         for f in self.filters:
             f.set_original_image(original_image)
-            image = f.execute(image)
+            try:
+                image = f.execute(image)
+            except Exception as e:
+                log.printerror_stacktrace(logger, e, check_duplicate=True)
+                break
+
             lst_observer = self.image_observers.get(f.get_name(), [])
             self.send_image(image, lst_observer)
         return image
