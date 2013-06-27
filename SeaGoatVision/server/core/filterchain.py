@@ -225,7 +225,8 @@ class FilterChain(object):
             try:
                 image = f.execute(image)
             except Exception as e:
-                log.printerror_stacktrace(logger, e, check_duplicate=True)
+                msg = "(Exec exception Filter %s) %s" % (f.get_name(), e)
+                log.printerror_stacktrace(logger, msg, check_duplicate=True)
                 break
 
             lst_observer = self.image_observers.get(f.get_name(), [])
