@@ -55,9 +55,9 @@ class Video_recorder:
         if add_format_name:
             name += "%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
 
-        if not os.path.isfile(name):
+        if os.path.isfile(name):
             log.print_function(logger.error, "fFle already exist %s" % name)
-            return
+            return False
 
         self.file_name = name
         logger.info("Start record on path: %s", name)
