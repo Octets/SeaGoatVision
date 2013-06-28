@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
-    <height>265</height>
+    <width>407</width>
+    <height>268</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>407</width>
-    <height>265</height>
+    <height>268</height>
    </size>
   </property>
   <property name="features">
@@ -263,37 +263,56 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>28</height>
+          <height>64</height>
          </size>
         </property>
         <property name="autoFillBackground">
          <bool>false</bool>
         </property>
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+         <enum>QFrame::Plain</enum>
         </property>
         <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>225</width>
-           <height>26</height>
+           <width>301</width>
+           <height>64</height>
           </rect>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Filterchain name:</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Filterchain name:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="filterchainEdit"/>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QLineEdit" name="filterchainEdit"/>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Default media
+empty for None</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="media_default_edit"/>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>

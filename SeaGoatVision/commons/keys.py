@@ -26,6 +26,9 @@ def get_media_type_streaming_name():
 def get_media_type_video_name():
     return "Video"
 
+def get_media_file_video_name():
+    return "File"
+
 def get_empty_filterchain_name():
     return "-- empty filterchain --"
 

@@ -60,12 +60,23 @@ class WinFilterChain(QtCore.QObject):
         self.lock_preview = False
 
         self.edit_mode = False
+        self.mode_new = False
         self._modeEdit(False)
         self._list_filterchain_is_selected(False)
+
+        self.shared_info.connect("media", self._update_media_default_edit)
 
     ######################################################################
     #############################  SIGNAL  ###############################
     ######################################################################
+    def _update_media_default_edit(self, value):
+        if self.edit_mode and not self.mode_new:
+            return
+        txt = ""
+        if value != get_media_file_video_name():
+            txt = value
+        self.ui.media_default_edit.setText(txt)
+
     def add_filter(self, filter_name):
         if not self.edit_mode:
             return
@@ -119,8 +130,9 @@ class WinFilterChain(QtCore.QObject):
         self.ui.filterchainEdit.setText(newName)
 
         lstFilter = self._get_listString_qList(self.ui.filterListWidget)
+        default_media = self.ui.media_default_edit.text()
 
-        if self.controller.modify_filterchain(oldName, newName, lstFilter):
+        if self.controller.modify_filterchain(oldName, newName, lstFilter, default_media):
             self.ui.filterchainListWidget.currentItem().setText(newName)
             logger.info("Editing success on filterchain %s" % newName)
             self._modeEdit(False)
@@ -153,7 +165,7 @@ class WinFilterChain(QtCore.QObject):
     def copy(self):
         self.edit()
 
-        # we copy the seleted filterchain
+        # we copy the selected filterchain
         noRow = self.ui.filterchainListWidget.currentRow()
         filterchain_name_temp = self.ui.filterchainListWidget.item(noRow).text() + " - copy"
 
@@ -174,6 +186,7 @@ class WinFilterChain(QtCore.QObject):
             self.ui.filterListWidget.addItem(item)
 
     def new(self):
+        self.mode_new = True
         self.edit()
 
         # find name of new filterchain
@@ -198,12 +211,15 @@ class WinFilterChain(QtCore.QObject):
         if filterchain_name == get_empty_filterchain_name():
             return
 
-        lst_filter = self.controller.get_filter_list_from_filterchain(filterchain_name)
+        info = self.controller.get_filterchain_info(filterchain_name)
+        lst_filter = info.get("filters", None)
         if not lst_filter:
             logger.warning("Recieve empty filter list from filterchain %s" % filterchain_name)
             return
         for o_filter in lst_filter:
             self.ui.filterListWidget.addItem(o_filter.name)
+        default_media = info.get("default_media", "")
+        self.ui.media_default_edit.setText(default_media)
 
     def updateFilterChainList(self):
         self.ui.filterchainListWidget.clear()
@@ -290,6 +306,8 @@ class WinFilterChain(QtCore.QObject):
         self.shared_info.set("filterchain_edit_mode", status)
         if status:
             self.ui.filterchainEdit.setFocus()
+        else:
+            self.mode_new = False
 
     def _list_filterchain_is_selected(self, isSelected=True):
         self.ui.editButton.setEnabled(isSelected)

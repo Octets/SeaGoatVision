@@ -390,16 +390,22 @@ class ProtobufServerImpl(server_pb2.CommandService):
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################
-    def get_filter_list_from_filterchain(self, controller, request, done):
-        logger.info("get_filter_list_from_filterchain request %s", str(request).replace("\n", " "))
+    def get_filterchain_info(self, controller, request, done):
+        logger.info("get_filterchain_info request %s", str(request).replace("\n", " "))
 
         # Create a reply
-        response = server_pb2.GetFilterListFromFilterChainResponse()
-        for item in self.manager.get_filter_list_from_filterchain(request.filterchain_name):
+        response = server_pb2.GetFilterChainInfoResponse()
+        dct = self.manager.get_filterchain_info(request.filterchain_name)
+        filters = dct.get("filters", [])
+        for item in filters:
             doc = item.doc
             if doc is None:
                 doc = ""
             response.filters.add(name=item.name, doc=doc)
+        default_media_name = dct.get("default_media", None)
+        if not default_media_name:
+            default_media_name = ""
+        response.default_media = default_media_name
 
         # We're done, call the run method of the done callback
         done.run(response)
@@ -441,7 +447,8 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             lstStrFilter = [filter.name for filter in request.lst_str_filters]
-            response.status = int(not self.manager.modify_filterchain(request.old_filterchain_name, request.new_filterchain_name, lstStrFilter))
+            response.status = int(not self.manager.modify_filterchain(request.old_filterchain_name, request.new_filterchain_name,
+                                                                      lstStrFilter, request.default_media))
         except Exception as e:
             logger.error("Exception: %s", e)
             response.status = -1

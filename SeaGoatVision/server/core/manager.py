@@ -257,20 +257,6 @@ class Manager:
     ##########################################################################
     ########################## CONFIGURATION  ################################
     ##########################################################################
-    def get_filterchain_list(self):
-        return self.resource.get_filterchain_list()
-
-    def upload_filterchain(self, filterchain_name, s_file_contain):
-        return self.resource.upload_filterchain(filterchain_name, s_file_contain)
-
-    def delete_filterchain(self, filterchain_name):
-        return self.resource.delete_filterchain(filterchain_name)
-
-    def get_filter_list_from_filterchain(self, filterchain_name):
-        return self.resource.get_filters_from_filterchain(filterchain_name)
-
-    def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
-        return self.resource.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters)
 
     ##########################################################################
     ############################ FILTERCHAIN  ################################
@@ -290,6 +276,9 @@ class Manager:
         if not filterchain:
             return False
         return filterchain.get_params(filter_name=filter_name)
+
+    def get_filterchain_info(self, filterchain_name):
+        return self.resource.get_filterchain_info(filterchain_name)
 
     def update_param(self, execution_name, filter_name, param_name, value):
         filterchain = self._get_filterchain(execution_name)
@@ -314,6 +303,18 @@ class Manager:
         if not filterchain:
             return False
         return self.config.write_filterchain(filterchain)
+
+    def get_filterchain_list(self):
+        return self.resource.get_filterchain_list()
+
+    def upload_filterchain(self, filterchain_name, s_file_contain):
+        return self.resource.upload_filterchain(filterchain_name, s_file_contain)
+
+    def delete_filterchain(self, filterchain_name):
+        return self.resource.delete_filterchain(filterchain_name)
+
+    def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters, default_media):
+        return self.resource.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters, default_media)
 
     ##########################################################################
     ############################### FILTER  ##################################

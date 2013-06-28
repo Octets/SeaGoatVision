@@ -15,7 +15,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='server.proto',
   package='thirdparty.public.protobuf.socketrpc',
-  serialized_pb='\n\x0cserver.proto\x12$thirdparty.public.protobuf.socketrpc\"1\n\x0eStatusResponse\x12\x0e\n\x06status\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x14\n\x12IsConnectedRequest\")\n\x13ReloadFilterRequest\x12\x12\n\nfilterName\x18\x01 \x03(\t\"{\n StartFilterchainExecutionRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x12\n\nmedia_name\x18\x02 \x02(\t\x12\x18\n\x10\x66ilterchain_name\x18\x03 \x02(\t\x12\x11\n\tfile_name\x18\x04 \x01(\t\"9\n\x1fStopFilterchainExecutionRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"4\n\x18\x44\x65leteFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\"L\n\x18UploadFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\x12\x16\n\x0es_file_contain\x18\x02 \x02(\t\"\x9d\x01\n\x18ModifyFilterChainRequest\x12\x1c\n\x14old_filterchain_name\x18\x01 \x02(\t\x12\x1c\n\x14new_filterchain_name\x18\x02 \x02(\t\x12\x45\n\x0flst_str_filters\x18\x03 \x03(\x0b\x32,.thirdparty.public.protobuf.socketrpc.Filter\"T\n\x17\x41\x64\x64ImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\x12\x0c\n\x04port\x18\x03 \x02(\x05\"c\n\x17SetImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x17\n\x0f\x66ilter_name_old\x18\x02 \x02(\t\x12\x17\n\x0f\x66ilter_name_new\x18\x03 \x02(\t\"I\n\x1aRemoveImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\"2\n\x18\x41\x64\x64OutputObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"5\n\x1bRemoveOutputObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"}\n\x12UpdateParamRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\x12:\n\x05param\x18\x03 \x02(\x0b\x32+.thirdparty.public.protobuf.socketrpc.Param\"i\n\x17UpdateParamMediaRequest\x12\x12\n\nmedia_name\x18\x01 \x02(\t\x12:\n\x05param\x18\x02 \x02(\x0b\x32+.thirdparty.public.protobuf.socketrpc.Param\"1\n\x12StartRecordRequest\x12\r\n\x05media\x18\x01 \x02(\t\x12\x0c\n\x04path\x18\x02 \x01(\t\"\"\n\x11StopRecordRequest\x12\r\n\x05media\x18\x01 \x02(\t\"2\n\x0f\x43mdMediaRequest\x12\x12\n\nmedia_name\x18\x01 \x02(\t\x12\x0b\n\x03\x63md\x18\x02 \x02(\t\"+\n\x11SaveParamsRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\",\n\x16SaveParamsMediaRequest\x12\x12\n\nmedia_name\x18\x01 \x02(\t\"\x16\n\x14GetFilterListRequest\"5\n\x15GetFilterListResponse\x12\x0f\n\x07\x66ilters\x18\x01 \x03(\t\x12\x0b\n\x03\x64oc\x18\x02 \x03(\t\"?\n#GetFilterListFromFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\"e\n$GetFilterListFromFilterChainResponse\x12=\n\x07\x66ilters\x18\x01 \x03(\x0b\x32,.thirdparty.public.protobuf.socketrpc.Filter\"\x1b\n\x19GetFilterChainListRequest\"e\n\x1aGetFilterChainListResponse\x12G\n\x0c\x66ilterchains\x18\x01 \x03(\x0b\x32\x31.thirdparty.public.protobuf.socketrpc.FilterChain\"\x15\n\x13GetMediaListRequest\"3\n\x14GetMediaListResponse\x12\r\n\x05media\x18\x01 \x03(\t\x12\x0c\n\x04type\x18\x02 \x03(\t\"J\n\x1bGetParamsFilterchainRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\"[\n\x1cGetParamsFilterchainResponse\x12;\n\x06params\x18\x01 \x03(\x0b\x32+.thirdparty.public.protobuf.socketrpc.Param\"+\n\x15GetParamsMediaRequest\x12\x12\n\nmedia_name\x18\x01 \x02(\t\"U\n\x16GetParamsMediaResponse\x12;\n\x06params\x18\x01 \x03(\x0b\x32+.thirdparty.public.protobuf.socketrpc.Param\"\x15\n\x13GetExecutionRequest\")\n\x14GetExecutionResponse\x12\x11\n\texecution\x18\x01 \x03(\t\",\n\x17GetExecutionInfoRequest\x12\x11\n\texecution\x18\x01 \x02(\t\">\n\x18GetExecutionInfoResponse\x12\r\n\x05media\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilterchain\x18\x02 \x02(\t\")\n\x13GetInfoMediaRequest\x12\x12\n\nmedia_name\x18\x01 \x02(\t\"\'\n\x14GetInfoMediaResponse\x12\x0f\n\x07message\x18\x01 \x02(\t\"#\n\x06\x46ilter\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x0b\n\x03\x64oc\x18\x02 \x01(\t\"(\n\x0b\x46ilterChain\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x0b\n\x03\x64oc\x18\x02 \x01(\t\"\xf3\x01\n\x05Param\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x11\n\tvalue_int\x18\x02 \x01(\x05\x12\x11\n\tvalue_str\x18\x03 \x01(\t\x12\x12\n\nvalue_bool\x18\x04 \x01(\x08\x12\x13\n\x0bvalue_float\x18\x05 \x01(\x02\x12\r\n\x05min_v\x18\x06 \x01(\x05\x12\r\n\x05max_v\x18\x07 \x01(\x05\x12\x13\n\x0bmin_float_v\x18\x08 \x01(\x02\x12\x13\n\x0bmax_float_v\x18\t \x01(\x02\x12\x15\n\rlst_value_str\x18\n \x03(\t\x12\x15\n\rlst_value_int\x18\x0b \x03(\x05\x12\x17\n\x0flst_value_float\x18\x0c \x03(\x02\x32\x9e\x1f\n\x0e\x43ommandService\x12\x8a\x01\n\x0fget_filter_list\x12:.thirdparty.public.protobuf.socketrpc.GetFilterListRequest\x1a;.thirdparty.public.protobuf.socketrpc.GetFilterListResponse\x12\xb9\x01\n get_filter_list_from_filterchain\x12I.thirdparty.public.protobuf.socketrpc.GetFilterListFromFilterChainRequest\x1aJ.thirdparty.public.protobuf.socketrpc.GetFilterListFromFilterChainResponse\x12\x99\x01\n\x14get_filterchain_list\x12?.thirdparty.public.protobuf.socketrpc.GetFilterChainListRequest\x1a@.thirdparty.public.protobuf.socketrpc.GetFilterChainListResponse\x12\x87\x01\n\x0eget_media_list\x12\x39.thirdparty.public.protobuf.socketrpc.GetMediaListRequest\x1a:.thirdparty.public.protobuf.socketrpc.GetMediaListResponse\x12\x9f\x01\n\x16get_params_filterchain\x12\x41.thirdparty.public.protobuf.socketrpc.GetParamsFilterchainRequest\x1a\x42.thirdparty.public.protobuf.socketrpc.GetParamsFilterchainResponse\x12\x8d\x01\n\x10get_params_media\x12;.thirdparty.public.protobuf.socketrpc.GetParamsMediaRequest\x1a<.thirdparty.public.protobuf.socketrpc.GetParamsMediaResponse\x12\x8b\x01\n\x12get_execution_list\x12\x39.thirdparty.public.protobuf.socketrpc.GetExecutionRequest\x1a:.thirdparty.public.protobuf.socketrpc.GetExecutionResponse\x12\x93\x01\n\x12get_execution_info\x12=.thirdparty.public.protobuf.socketrpc.GetExecutionInfoRequest\x1a>.thirdparty.public.protobuf.socketrpc.GetExecutionInfoResponse\x12\x87\x01\n\x0eget_info_media\x12\x39.thirdparty.public.protobuf.socketrpc.GetInfoMediaRequest\x1a:.thirdparty.public.protobuf.socketrpc.GetInfoMediaResponse\x12~\n\x0cis_connected\x12\x38.thirdparty.public.protobuf.socketrpc.IsConnectedRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x89\x01\n\x12\x61\x64\x64_image_observer\x12=.thirdparty.public.protobuf.socketrpc.AddImageObserverRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x89\x01\n\x12set_image_observer\x12=.thirdparty.public.protobuf.socketrpc.SetImageObserverRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x8f\x01\n\x15remove_image_observer\x12@.thirdparty.public.protobuf.socketrpc.RemoveImageObserverRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x8b\x01\n\x13\x61\x64\x64_output_observer\x12>.thirdparty.public.protobuf.socketrpc.AddOutputObserverRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x91\x01\n\x16remove_output_observer\x12\x41.thirdparty.public.protobuf.socketrpc.RemoveOutputObserverRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x80\x01\n\rreload_filter\x12\x39.thirdparty.public.protobuf.socketrpc.ReloadFilterRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x8a\x01\n\x12\x64\x65lete_filterchain\x12>.thirdparty.public.protobuf.socketrpc.DeleteFilterChainRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x8a\x01\n\x12upload_filterchain\x12>.thirdparty.public.protobuf.socketrpc.UploadFilterChainRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x8a\x01\n\x12modify_filterchain\x12>.thirdparty.public.protobuf.socketrpc.ModifyFilterChainRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x9b\x01\n\x1bstart_filterchain_execution\x12\x46.thirdparty.public.protobuf.socketrpc.StartFilterchainExecutionRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x99\x01\n\x1astop_filterchain_execution\x12\x45.thirdparty.public.protobuf.socketrpc.StopFilterchainExecutionRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12~\n\x0cupdate_param\x12\x38.thirdparty.public.protobuf.socketrpc.UpdateParamRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x89\x01\n\x12update_param_media\x12=.thirdparty.public.protobuf.socketrpc.UpdateParamMediaRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12~\n\x0cstart_record\x12\x38.thirdparty.public.protobuf.socketrpc.StartRecordRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12|\n\x0bstop_record\x12\x37.thirdparty.public.protobuf.socketrpc.StopRecordRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12{\n\x0c\x63md_to_media\x12\x35.thirdparty.public.protobuf.socketrpc.CmdMediaRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12|\n\x0bsave_params\x12\x37.thirdparty.public.protobuf.socketrpc.SaveParamsRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x87\x01\n\x11save_params_media\x12<.thirdparty.public.protobuf.socketrpc.SaveParamsMediaRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponseB&\n\x11\x63om.seagoatvisionB\x0cVServerProtoH\x01\x90\x01\x01')
+  serialized_pb='\n\x0cserver.proto\x12$thirdparty.public.protobuf.socketrpc\"1\n\x0eStatusResponse\x12\x0e\n\x06status\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x14\n\x12IsConnectedRequest\")\n\x13ReloadFilterRequest\x12\x12\n\nfilterName\x18\x01 \x03(\t\"{\n StartFilterchainExecutionRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x12\n\nmedia_name\x18\x02 \x02(\t\x12\x18\n\x10\x66ilterchain_name\x18\x03 \x02(\t\x12\x11\n\tfile_name\x18\x04 \x01(\t\"9\n\x1fStopFilterchainExecutionRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"4\n\x18\x44\x65leteFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\"L\n\x18UploadFilterChainRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\x12\x16\n\x0es_file_contain\x18\x02 \x02(\t\"\xb4\x01\n\x18ModifyFilterChainRequest\x12\x1c\n\x14old_filterchain_name\x18\x01 \x02(\t\x12\x1c\n\x14new_filterchain_name\x18\x02 \x02(\t\x12\x45\n\x0flst_str_filters\x18\x03 \x03(\x0b\x32,.thirdparty.public.protobuf.socketrpc.Filter\x12\x15\n\rdefault_media\x18\x04 \x02(\t\"T\n\x17\x41\x64\x64ImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\x12\x0c\n\x04port\x18\x03 \x02(\x05\"c\n\x17SetImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x17\n\x0f\x66ilter_name_old\x18\x02 \x02(\t\x12\x17\n\x0f\x66ilter_name_new\x18\x03 \x02(\t\"I\n\x1aRemoveImageObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\"2\n\x18\x41\x64\x64OutputObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"5\n\x1bRemoveOutputObserverRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\"}\n\x12UpdateParamRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\x12:\n\x05param\x18\x03 \x02(\x0b\x32+.thirdparty.public.protobuf.socketrpc.Param\"i\n\x17UpdateParamMediaRequest\x12\x12\n\nmedia_name\x18\x01 \x02(\t\x12:\n\x05param\x18\x02 \x02(\x0b\x32+.thirdparty.public.protobuf.socketrpc.Param\"1\n\x12StartRecordRequest\x12\r\n\x05media\x18\x01 \x02(\t\x12\x0c\n\x04path\x18\x02 \x01(\t\"\"\n\x11StopRecordRequest\x12\r\n\x05media\x18\x01 \x02(\t\"2\n\x0f\x43mdMediaRequest\x12\x12\n\nmedia_name\x18\x01 \x02(\t\x12\x0b\n\x03\x63md\x18\x02 \x02(\t\"+\n\x11SaveParamsRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\",\n\x16SaveParamsMediaRequest\x12\x12\n\nmedia_name\x18\x01 \x02(\t\"\x16\n\x14GetFilterListRequest\"5\n\x15GetFilterListResponse\x12\x0f\n\x07\x66ilters\x18\x01 \x03(\t\x12\x0b\n\x03\x64oc\x18\x02 \x03(\t\"5\n\x19GetFilterChainInfoRequest\x12\x18\n\x10\x66ilterchain_name\x18\x01 \x02(\t\"r\n\x1aGetFilterChainInfoResponse\x12=\n\x07\x66ilters\x18\x01 \x03(\x0b\x32,.thirdparty.public.protobuf.socketrpc.Filter\x12\x15\n\rdefault_media\x18\x02 \x02(\t\"\x1b\n\x19GetFilterChainListRequest\"e\n\x1aGetFilterChainListResponse\x12G\n\x0c\x66ilterchains\x18\x01 \x03(\x0b\x32\x31.thirdparty.public.protobuf.socketrpc.FilterChain\"\x15\n\x13GetMediaListRequest\"3\n\x14GetMediaListResponse\x12\r\n\x05media\x18\x01 \x03(\t\x12\x0c\n\x04type\x18\x02 \x03(\t\"J\n\x1bGetParamsFilterchainRequest\x12\x16\n\x0e\x65xecution_name\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilter_name\x18\x02 \x02(\t\"[\n\x1cGetParamsFilterchainResponse\x12;\n\x06params\x18\x01 \x03(\x0b\x32+.thirdparty.public.protobuf.socketrpc.Param\"+\n\x15GetParamsMediaRequest\x12\x12\n\nmedia_name\x18\x01 \x02(\t\"U\n\x16GetParamsMediaResponse\x12;\n\x06params\x18\x01 \x03(\x0b\x32+.thirdparty.public.protobuf.socketrpc.Param\"\x15\n\x13GetExecutionRequest\")\n\x14GetExecutionResponse\x12\x11\n\texecution\x18\x01 \x03(\t\",\n\x17GetExecutionInfoRequest\x12\x11\n\texecution\x18\x01 \x02(\t\">\n\x18GetExecutionInfoResponse\x12\r\n\x05media\x18\x01 \x02(\t\x12\x13\n\x0b\x66ilterchain\x18\x02 \x02(\t\")\n\x13GetInfoMediaRequest\x12\x12\n\nmedia_name\x18\x01 \x02(\t\"\'\n\x14GetInfoMediaResponse\x12\x0f\n\x07message\x18\x01 \x02(\t\"#\n\x06\x46ilter\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x0b\n\x03\x64oc\x18\x02 \x01(\t\"(\n\x0b\x46ilterChain\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x0b\n\x03\x64oc\x18\x02 \x01(\t\"\xf3\x01\n\x05Param\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\x11\n\tvalue_int\x18\x02 \x01(\x05\x12\x11\n\tvalue_str\x18\x03 \x01(\t\x12\x12\n\nvalue_bool\x18\x04 \x01(\x08\x12\x13\n\x0bvalue_float\x18\x05 \x01(\x02\x12\r\n\x05min_v\x18\x06 \x01(\x05\x12\r\n\x05max_v\x18\x07 \x01(\x05\x12\x13\n\x0bmin_float_v\x18\x08 \x01(\x02\x12\x13\n\x0bmax_float_v\x18\t \x01(\x02\x12\x15\n\rlst_value_str\x18\n \x03(\t\x12\x15\n\rlst_value_int\x18\x0b \x03(\x05\x12\x17\n\x0flst_value_float\x18\x0c \x03(\x02\x32\xfe\x1e\n\x0e\x43ommandService\x12\x8a\x01\n\x0fget_filter_list\x12:.thirdparty.public.protobuf.socketrpc.GetFilterListRequest\x1a;.thirdparty.public.protobuf.socketrpc.GetFilterListResponse\x12\x99\x01\n\x14get_filterchain_info\x12?.thirdparty.public.protobuf.socketrpc.GetFilterChainInfoRequest\x1a@.thirdparty.public.protobuf.socketrpc.GetFilterChainInfoResponse\x12\x99\x01\n\x14get_filterchain_list\x12?.thirdparty.public.protobuf.socketrpc.GetFilterChainListRequest\x1a@.thirdparty.public.protobuf.socketrpc.GetFilterChainListResponse\x12\x87\x01\n\x0eget_media_list\x12\x39.thirdparty.public.protobuf.socketrpc.GetMediaListRequest\x1a:.thirdparty.public.protobuf.socketrpc.GetMediaListResponse\x12\x9f\x01\n\x16get_params_filterchain\x12\x41.thirdparty.public.protobuf.socketrpc.GetParamsFilterchainRequest\x1a\x42.thirdparty.public.protobuf.socketrpc.GetParamsFilterchainResponse\x12\x8d\x01\n\x10get_params_media\x12;.thirdparty.public.protobuf.socketrpc.GetParamsMediaRequest\x1a<.thirdparty.public.protobuf.socketrpc.GetParamsMediaResponse\x12\x8b\x01\n\x12get_execution_list\x12\x39.thirdparty.public.protobuf.socketrpc.GetExecutionRequest\x1a:.thirdparty.public.protobuf.socketrpc.GetExecutionResponse\x12\x93\x01\n\x12get_execution_info\x12=.thirdparty.public.protobuf.socketrpc.GetExecutionInfoRequest\x1a>.thirdparty.public.protobuf.socketrpc.GetExecutionInfoResponse\x12\x87\x01\n\x0eget_info_media\x12\x39.thirdparty.public.protobuf.socketrpc.GetInfoMediaRequest\x1a:.thirdparty.public.protobuf.socketrpc.GetInfoMediaResponse\x12~\n\x0cis_connected\x12\x38.thirdparty.public.protobuf.socketrpc.IsConnectedRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x89\x01\n\x12\x61\x64\x64_image_observer\x12=.thirdparty.public.protobuf.socketrpc.AddImageObserverRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x89\x01\n\x12set_image_observer\x12=.thirdparty.public.protobuf.socketrpc.SetImageObserverRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x8f\x01\n\x15remove_image_observer\x12@.thirdparty.public.protobuf.socketrpc.RemoveImageObserverRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x8b\x01\n\x13\x61\x64\x64_output_observer\x12>.thirdparty.public.protobuf.socketrpc.AddOutputObserverRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x91\x01\n\x16remove_output_observer\x12\x41.thirdparty.public.protobuf.socketrpc.RemoveOutputObserverRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x80\x01\n\rreload_filter\x12\x39.thirdparty.public.protobuf.socketrpc.ReloadFilterRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x8a\x01\n\x12\x64\x65lete_filterchain\x12>.thirdparty.public.protobuf.socketrpc.DeleteFilterChainRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x8a\x01\n\x12upload_filterchain\x12>.thirdparty.public.protobuf.socketrpc.UploadFilterChainRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x8a\x01\n\x12modify_filterchain\x12>.thirdparty.public.protobuf.socketrpc.ModifyFilterChainRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x9b\x01\n\x1bstart_filterchain_execution\x12\x46.thirdparty.public.protobuf.socketrpc.StartFilterchainExecutionRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x99\x01\n\x1astop_filterchain_execution\x12\x45.thirdparty.public.protobuf.socketrpc.StopFilterchainExecutionRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12~\n\x0cupdate_param\x12\x38.thirdparty.public.protobuf.socketrpc.UpdateParamRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x89\x01\n\x12update_param_media\x12=.thirdparty.public.protobuf.socketrpc.UpdateParamMediaRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12~\n\x0cstart_record\x12\x38.thirdparty.public.protobuf.socketrpc.StartRecordRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12|\n\x0bstop_record\x12\x37.thirdparty.public.protobuf.socketrpc.StopRecordRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12{\n\x0c\x63md_to_media\x12\x35.thirdparty.public.protobuf.socketrpc.CmdMediaRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12|\n\x0bsave_params\x12\x37.thirdparty.public.protobuf.socketrpc.SaveParamsRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponse\x12\x87\x01\n\x11save_params_media\x12<.thirdparty.public.protobuf.socketrpc.SaveParamsMediaRequest\x1a\x34.thirdparty.public.protobuf.socketrpc.StatusResponseB&\n\x11\x63om.seagoatvisionB\x0cVServerProtoH\x01\x90\x01\x01')
 
 
 
@@ -272,6 +272,13 @@ _MODIFYFILTERCHAINREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='default_media', full_name='thirdparty.public.protobuf.socketrpc.ModifyFilterChainRequest.default_media', index=3,
+      number=4, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -282,7 +289,7 @@ _MODIFYFILTERCHAINREQUEST = _descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=487,
-  serialized_end=644,
+  serialized_end=667,
 )
 
 
@@ -323,8 +330,8 @@ _ADDIMAGEOBSERVERREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=646,
-  serialized_end=730,
+  serialized_start=669,
+  serialized_end=753,
 )
 
 
@@ -365,8 +372,8 @@ _SETIMAGEOBSERVERREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=732,
-  serialized_end=831,
+  serialized_start=755,
+  serialized_end=854,
 )
 
 
@@ -400,8 +407,8 @@ _REMOVEIMAGEOBSERVERREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=833,
-  serialized_end=906,
+  serialized_start=856,
+  serialized_end=929,
 )
 
 
@@ -428,8 +435,8 @@ _ADDOUTPUTOBSERVERREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=908,
-  serialized_end=958,
+  serialized_start=931,
+  serialized_end=981,
 )
 
 
@@ -456,8 +463,8 @@ _REMOVEOUTPUTOBSERVERREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=960,
-  serialized_end=1013,
+  serialized_start=983,
+  serialized_end=1036,
 )
 
 
@@ -498,8 +505,8 @@ _UPDATEPARAMREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1015,
-  serialized_end=1140,
+  serialized_start=1038,
+  serialized_end=1163,
 )
 
 
@@ -533,8 +540,8 @@ _UPDATEPARAMMEDIAREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1142,
-  serialized_end=1247,
+  serialized_start=1165,
+  serialized_end=1270,
 )
 
 
@@ -568,8 +575,8 @@ _STARTRECORDREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1249,
-  serialized_end=1298,
+  serialized_start=1272,
+  serialized_end=1321,
 )
 
 
@@ -596,8 +603,8 @@ _STOPRECORDREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1300,
-  serialized_end=1334,
+  serialized_start=1323,
+  serialized_end=1357,
 )
 
 
@@ -631,8 +638,8 @@ _CMDMEDIAREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1336,
-  serialized_end=1386,
+  serialized_start=1359,
+  serialized_end=1409,
 )
 
 
@@ -659,8 +666,8 @@ _SAVEPARAMSREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1388,
-  serialized_end=1431,
+  serialized_start=1411,
+  serialized_end=1454,
 )
 
 
@@ -687,8 +694,8 @@ _SAVEPARAMSMEDIAREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1433,
-  serialized_end=1477,
+  serialized_start=1456,
+  serialized_end=1500,
 )
 
 
@@ -708,8 +715,8 @@ _GETFILTERLISTREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1479,
-  serialized_end=1501,
+  serialized_start=1502,
+  serialized_end=1524,
 )
 
 
@@ -743,20 +750,20 @@ _GETFILTERLISTRESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1503,
-  serialized_end=1556,
+  serialized_start=1526,
+  serialized_end=1579,
 )
 
 
-_GETFILTERLISTFROMFILTERCHAINREQUEST = _descriptor.Descriptor(
-  name='GetFilterListFromFilterChainRequest',
-  full_name='thirdparty.public.protobuf.socketrpc.GetFilterListFromFilterChainRequest',
+_GETFILTERCHAININFOREQUEST = _descriptor.Descriptor(
+  name='GetFilterChainInfoRequest',
+  full_name='thirdparty.public.protobuf.socketrpc.GetFilterChainInfoRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='filterchain_name', full_name='thirdparty.public.protobuf.socketrpc.GetFilterListFromFilterChainRequest.filterchain_name', index=0,
+      name='filterchain_name', full_name='thirdparty.public.protobuf.socketrpc.GetFilterChainInfoRequest.filterchain_name', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
@@ -771,22 +778,29 @@ _GETFILTERLISTFROMFILTERCHAINREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1558,
-  serialized_end=1621,
+  serialized_start=1581,
+  serialized_end=1634,
 )
 
 
-_GETFILTERLISTFROMFILTERCHAINRESPONSE = _descriptor.Descriptor(
-  name='GetFilterListFromFilterChainResponse',
-  full_name='thirdparty.public.protobuf.socketrpc.GetFilterListFromFilterChainResponse',
+_GETFILTERCHAININFORESPONSE = _descriptor.Descriptor(
+  name='GetFilterChainInfoResponse',
+  full_name='thirdparty.public.protobuf.socketrpc.GetFilterChainInfoResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='filters', full_name='thirdparty.public.protobuf.socketrpc.GetFilterListFromFilterChainResponse.filters', index=0,
+      name='filters', full_name='thirdparty.public.protobuf.socketrpc.GetFilterChainInfoResponse.filters', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='default_media', full_name='thirdparty.public.protobuf.socketrpc.GetFilterChainInfoResponse.default_media', index=1,
+      number=2, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -799,8 +813,8 @@ _GETFILTERLISTFROMFILTERCHAINRESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1623,
-  serialized_end=1724,
+  serialized_start=1636,
+  serialized_end=1750,
 )
 
 
@@ -820,8 +834,8 @@ _GETFILTERCHAINLISTREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1726,
-  serialized_end=1753,
+  serialized_start=1752,
+  serialized_end=1779,
 )
 
 
@@ -848,8 +862,8 @@ _GETFILTERCHAINLISTRESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1755,
-  serialized_end=1856,
+  serialized_start=1781,
+  serialized_end=1882,
 )
 
 
@@ -869,8 +883,8 @@ _GETMEDIALISTREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1858,
-  serialized_end=1879,
+  serialized_start=1884,
+  serialized_end=1905,
 )
 
 
@@ -904,8 +918,8 @@ _GETMEDIALISTRESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1881,
-  serialized_end=1932,
+  serialized_start=1907,
+  serialized_end=1958,
 )
 
 
@@ -939,8 +953,8 @@ _GETPARAMSFILTERCHAINREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=1934,
-  serialized_end=2008,
+  serialized_start=1960,
+  serialized_end=2034,
 )
 
 
@@ -967,8 +981,8 @@ _GETPARAMSFILTERCHAINRESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2010,
-  serialized_end=2101,
+  serialized_start=2036,
+  serialized_end=2127,
 )
 
 
@@ -995,8 +1009,8 @@ _GETPARAMSMEDIAREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2103,
-  serialized_end=2146,
+  serialized_start=2129,
+  serialized_end=2172,
 )
 
 
@@ -1023,8 +1037,8 @@ _GETPARAMSMEDIARESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2148,
-  serialized_end=2233,
+  serialized_start=2174,
+  serialized_end=2259,
 )
 
 
@@ -1044,8 +1058,8 @@ _GETEXECUTIONREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2235,
-  serialized_end=2256,
+  serialized_start=2261,
+  serialized_end=2282,
 )
 
 
@@ -1072,8 +1086,8 @@ _GETEXECUTIONRESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2258,
-  serialized_end=2299,
+  serialized_start=2284,
+  serialized_end=2325,
 )
 
 
@@ -1100,8 +1114,8 @@ _GETEXECUTIONINFOREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2301,
-  serialized_end=2345,
+  serialized_start=2327,
+  serialized_end=2371,
 )
 
 
@@ -1135,8 +1149,8 @@ _GETEXECUTIONINFORESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2347,
-  serialized_end=2409,
+  serialized_start=2373,
+  serialized_end=2435,
 )
 
 
@@ -1163,8 +1177,8 @@ _GETINFOMEDIAREQUEST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2411,
-  serialized_end=2452,
+  serialized_start=2437,
+  serialized_end=2478,
 )
 
 
@@ -1191,8 +1205,8 @@ _GETINFOMEDIARESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2454,
-  serialized_end=2493,
+  serialized_start=2480,
+  serialized_end=2519,
 )
 
 
@@ -1226,8 +1240,8 @@ _FILTER = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2495,
-  serialized_end=2530,
+  serialized_start=2521,
+  serialized_end=2556,
 )
 
 
@@ -1261,8 +1275,8 @@ _FILTERCHAIN = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2532,
-  serialized_end=2572,
+  serialized_start=2558,
+  serialized_end=2598,
 )
 
 
@@ -1366,14 +1380,14 @@ _PARAM = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=2575,
-  serialized_end=2818,
+  serialized_start=2601,
+  serialized_end=2844,
 )
 
 _MODIFYFILTERCHAINREQUEST.fields_by_name['lst_str_filters'].message_type = _FILTER
 _UPDATEPARAMREQUEST.fields_by_name['param'].message_type = _PARAM
 _UPDATEPARAMMEDIAREQUEST.fields_by_name['param'].message_type = _PARAM
-_GETFILTERLISTFROMFILTERCHAINRESPONSE.fields_by_name['filters'].message_type = _FILTER
+_GETFILTERCHAININFORESPONSE.fields_by_name['filters'].message_type = _FILTER
 _GETFILTERCHAINLISTRESPONSE.fields_by_name['filterchains'].message_type = _FILTERCHAIN
 _GETPARAMSFILTERCHAINRESPONSE.fields_by_name['params'].message_type = _PARAM
 _GETPARAMSMEDIARESPONSE.fields_by_name['params'].message_type = _PARAM
@@ -1399,8 +1413,8 @@ DESCRIPTOR.message_types_by_name['SaveParamsRequest'] = _SAVEPARAMSREQUEST
 DESCRIPTOR.message_types_by_name['SaveParamsMediaRequest'] = _SAVEPARAMSMEDIAREQUEST
 DESCRIPTOR.message_types_by_name['GetFilterListRequest'] = _GETFILTERLISTREQUEST
 DESCRIPTOR.message_types_by_name['GetFilterListResponse'] = _GETFILTERLISTRESPONSE
-DESCRIPTOR.message_types_by_name['GetFilterListFromFilterChainRequest'] = _GETFILTERLISTFROMFILTERCHAINREQUEST
-DESCRIPTOR.message_types_by_name['GetFilterListFromFilterChainResponse'] = _GETFILTERLISTFROMFILTERCHAINRESPONSE
+DESCRIPTOR.message_types_by_name['GetFilterChainInfoRequest'] = _GETFILTERCHAININFOREQUEST
+DESCRIPTOR.message_types_by_name['GetFilterChainInfoResponse'] = _GETFILTERCHAININFORESPONSE
 DESCRIPTOR.message_types_by_name['GetFilterChainListRequest'] = _GETFILTERCHAINLISTREQUEST
 DESCRIPTOR.message_types_by_name['GetFilterChainListResponse'] = _GETFILTERCHAINLISTRESPONSE
 DESCRIPTOR.message_types_by_name['GetMediaListRequest'] = _GETMEDIALISTREQUEST
@@ -1551,17 +1565,17 @@ class GetFilterListResponse(_message.Message):
 
   # @@protoc_insertion_point(class_scope:thirdparty.public.protobuf.socketrpc.GetFilterListResponse)
 
-class GetFilterListFromFilterChainRequest(_message.Message):
+class GetFilterChainInfoRequest(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
-  DESCRIPTOR = _GETFILTERLISTFROMFILTERCHAINREQUEST
+  DESCRIPTOR = _GETFILTERCHAININFOREQUEST
 
-  # @@protoc_insertion_point(class_scope:thirdparty.public.protobuf.socketrpc.GetFilterListFromFilterChainRequest)
+  # @@protoc_insertion_point(class_scope:thirdparty.public.protobuf.socketrpc.GetFilterChainInfoRequest)
 
-class GetFilterListFromFilterChainResponse(_message.Message):
+class GetFilterChainInfoResponse(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
-  DESCRIPTOR = _GETFILTERLISTFROMFILTERCHAINRESPONSE
+  DESCRIPTOR = _GETFILTERCHAININFORESPONSE
 
-  # @@protoc_insertion_point(class_scope:thirdparty.public.protobuf.socketrpc.GetFilterListFromFilterChainResponse)
+  # @@protoc_insertion_point(class_scope:thirdparty.public.protobuf.socketrpc.GetFilterChainInfoResponse)
 
 class GetFilterChainListRequest(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
@@ -1675,8 +1689,8 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=2821,
-  serialized_end=6819,
+  serialized_start=2847,
+  serialized_end=6813,
   methods=[
   _descriptor.MethodDescriptor(
     name='get_filter_list',
@@ -1688,12 +1702,12 @@ _COMMANDSERVICE = _descriptor.ServiceDescriptor(
     options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='get_filter_list_from_filterchain',
-    full_name='thirdparty.public.protobuf.socketrpc.CommandService.get_filter_list_from_filterchain',
+    name='get_filterchain_info',
+    full_name='thirdparty.public.protobuf.socketrpc.CommandService.get_filterchain_info',
     index=1,
     containing_service=None,
-    input_type=_GETFILTERLISTFROMFILTERCHAINREQUEST,
-    output_type=_GETFILTERLISTFROMFILTERCHAINRESPONSE,
+    input_type=_GETFILTERCHAININFOREQUEST,
+    output_type=_GETFILTERCHAININFORESPONSE,
     options=None,
   ),
   _descriptor.MethodDescriptor(

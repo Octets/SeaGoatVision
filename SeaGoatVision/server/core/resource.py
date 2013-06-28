@@ -102,15 +102,17 @@ class Resource(object):
         self.dct_filterchain[filterchain_name] = o_filterchain
         return o_filterchain
 
-    def get_filters_from_filterchain(self, filterchain_name):
+    def get_filterchain_info(self, filterchain_name):
         o_filterchain = self.get_filterchain(filterchain_name)
         if o_filterchain is None:
-            return []
-        return o_filterchain.get_filter_list()
+            return {}
 
-    def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
+        return {"filters":o_filterchain.get_filter_list(),
+                "default_media":o_filterchain.get_default_media_name()}
+
+    def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters, default_media):
         # create new filterchain
-        if self.create_filterchain(new_filterchain_name, lst_str_filters):
+        if self.create_filterchain(new_filterchain_name, lst_str_filters, default_media):
             # delete old filterchain
             if old_filterchain_name != new_filterchain_name:
                 self.delete_filterchain(old_filterchain_name)
@@ -118,7 +120,7 @@ class Resource(object):
         # error with create filterchain
         return False
 
-    def create_filterchain(self, filterchain_name, lst_str_filters):
+    def create_filterchain(self, filterchain_name, lst_str_filters, default_media=None):
         chain = filterchain.FilterChain(filterchain_name)
         index = 0
         for s_filter in lst_str_filters:
@@ -133,6 +135,7 @@ class Resource(object):
                 return False
             chain.add_filter(o_filter)
 
+        chain.set_default_media_name(default_media)
         self.config.write_filterchain(chain)
         self.dct_filterchain[filterchain_name] = chain
         return True
@@ -184,7 +187,7 @@ class Resource(object):
             else:
                 log.print_function(logger.error, "Camera not detected %s" % name)
         # Force media_video
-        dct_media["File"] = media.media_video.Media_video("File")
+        dct_media[get_media_file_video_name()] = media.media_video.Media_video(get_media_file_video_name())
 
         self.dct_media = dct_media
 

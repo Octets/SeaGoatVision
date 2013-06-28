@@ -615,20 +615,20 @@ class ControllerProtobuf():
 
         return returnValue
 
-    def get_filter_list_from_filterchain(self, filterchain_name):
+    def get_filterchain_info(self, filterchain_name):
         """
-            Return list of filter from filterchain.
+            Return filterchain info.
         """
-        request = server_pb2.GetFilterListFromFilterChainRequest()
+        request = server_pb2.GetFilterChainInfoRequest()
         request.filterchain_name = filterchain_name
         # Make an synchronous call
         returnValue = None
         try:
-            response = self.service.get_filter_list_from_filterchain(request, timeout=10000)
+            response = self.service.get_filterchain_info(request, timeout=10000)
             if response:
-                returnValue = response.filters
+                returnValue = {"filters": response.filters, "default_media": response.default_media}
             else:
-                logger.error("protobuf, get_filterchain_list response is None")
+                logger.error("protobuf, get_filterchain_info response is None")
 
         except Exception as ex:
             logger.error("Exception: %s", ex)
@@ -692,8 +692,7 @@ class ControllerProtobuf():
 
         return returnValue
 
-
-    def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters):
+    def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters, default_media):
         """
             Edit or create a new filterchain
             Param : str - old_filterchain name
@@ -703,6 +702,8 @@ class ControllerProtobuf():
         request = server_pb2.ModifyFilterChainRequest()
         request.old_filterchain_name = old_filterchain_name
         request.new_filterchain_name = new_filterchain_name
+        request.default_media = default_media
+
         for filter_name in lst_str_filters:
             request.lst_str_filters.add().name = filter_name
 

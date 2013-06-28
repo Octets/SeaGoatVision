@@ -101,6 +101,9 @@ class FilterChain(object):
     def get_default_media_name(self):
         return self.default_media_name
 
+    def set_default_media_name(self, name):
+        self.default_media_name = name
+
     def get_filter_output_observers(self):
         return self.filter_output_observers
 

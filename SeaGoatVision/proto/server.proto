@@ -72,6 +72,7 @@ message ModifyFilterChainRequest{
   required string old_filterchain_name = 1;
   required string new_filterchain_name = 2;
   repeated Filter lst_str_filters = 3;
+  required string default_media = 4;
 }
 
 message AddImageObserverRequest
@@ -151,13 +152,14 @@ message GetFilterListResponse
   repeated string doc = 2;
 }
 
-message GetFilterListFromFilterChainRequest
+message GetFilterChainInfoRequest
 {
   required string filterchain_name = 1;
 }
-message GetFilterListFromFilterChainResponse
+message GetFilterChainInfoResponse
 {
   repeated Filter filters = 1;
+  required string default_media = 2;
 }
 message GetFilterChainListRequest{}
 message GetFilterChainListResponse
@@ -252,7 +254,7 @@ service CommandService
 {
   // get information
   rpc get_filter_list(GetFilterListRequest) returns(GetFilterListResponse);
-  rpc get_filter_list_from_filterchain(GetFilterListFromFilterChainRequest) returns(GetFilterListFromFilterChainResponse);
+  rpc get_filterchain_info(GetFilterChainInfoRequest) returns(GetFilterChainInfoResponse);
   rpc get_filterchain_list(GetFilterChainListRequest) returns(GetFilterChainListResponse);
   rpc get_media_list(GetMediaListRequest) returns(GetMediaListResponse);
   rpc get_params_filterchain(GetParamsFilterchainRequest) returns(GetParamsFilterchainResponse);
