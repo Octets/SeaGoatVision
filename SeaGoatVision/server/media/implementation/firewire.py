@@ -162,11 +162,9 @@ class Firewire(Media_streaming):
 
         auto = "-auto"
         if auto in param_name:
-            param_name = param_name[:-len(auto)]
-            if value:
-                value = -1
-            else:
-                value = 0
+            new_param_name = param_name[:-len(auto)]
+            logger.debug("Camera %s param_name %s and value %s", self.get_name(), param_name, value)
+            self.camera.set_property_auto(new_param_name, value)
         elif "White Balance" in param_name:
             if "red" in param_name:
                 self.camera.set_whitebalance(RV_value=value)
@@ -174,9 +172,10 @@ class Firewire(Media_streaming):
                 self.camera.set_whitebalance(BU_value=value)
             else:
                 log.print_function(logger.error, "Can define the right color %s" % param_name)
-            return False
-        logger.debug("Camera %s param_name %s and value %s", self.get_name(), param_name, value)
-        self.camera.set_property(param_name, value)
+                return False
+        else:
+            logger.debug("Camera %s param_name %s and value %s", self.get_name(), param_name, value)
+            self.camera.set_property(param_name, value)
         return True
 
     def next(self):
