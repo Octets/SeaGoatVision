@@ -51,6 +51,10 @@ class Shared_info(object):
         if callback in lst_callback:
             return False 
         lst_callback.append(callback)
+        # call if already contain value
+        value = self.dct_variable.get(key, None)
+        if value is not None:
+            callback(value)
         return True
 
     def get(self, key):
@@ -61,5 +65,5 @@ class Shared_info(object):
             return False
         self.dct_variable[key] = value
         for callback in self.dct_signal[key]:
-            callback()
+            callback(value)
         return True

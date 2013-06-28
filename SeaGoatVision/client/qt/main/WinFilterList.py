@@ -31,8 +31,8 @@ class WinFilterList(QtCore.QObject):
         self.shared_info.connect("filterchain_edit_mode", self._filterchain_edit_mode)
         self.reload_ui()
 
-    def _filterchain_edit_mode(self):
-        is_edit = self.shared_info.get("filterchain_edit_mode")
+    def _filterchain_edit_mode(self, value):
+        is_edit = value
         self.ui.addFilterButton.setEnabled(bool(is_edit))
 
     def reload_ui(self):

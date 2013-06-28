@@ -28,7 +28,8 @@ class WinFilter(WinParamParent):
         super(WinFilter, self).__init__(controller)
         self.shared_info.connect("filter", self.set_filter)
 
-    def set_filter(self):
+    def set_filter(self, value=None):
+        # Ignore the value
         self.ui.txt_search.setText("")
         self.dct_param = {}
         self.cb_param.currentIndexChanged.disconnect(self.on_cb_param_item_changed)

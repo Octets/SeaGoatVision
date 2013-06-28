@@ -35,13 +35,14 @@ class WinExecution(QtCore.QObject):
         super(WinExecution, self).__init__()
         self.controller = controller
         self.shared_info = Shared_info()
-        self.shared_info.connect("media", self._change_media)
-        self.shared_info.connect("filterchain", self._change_filterchain)
 
         self.mode_edit = False
         self.last_index = 0
 
         self.reload_ui()
+
+        self.shared_info.connect("media", self._change_media)
+        self.shared_info.connect("filterchain", self._change_filterchain)
 
     def reload_ui(self):
         self.ui = get_ui(self)
@@ -202,13 +203,15 @@ class WinExecution(QtCore.QObject):
             self.ui.txtMedia.clear()
             self.ui.txtFilterchain.clear()
 
-    def _change_media(self):
+    def _change_media(self, value=None):
+        # Ignore the value
         if self.mode_edit:
             media_name = self.shared_info.get("media")
             if media_name:
                 self.ui.txtMedia.setText(media_name)
 
-    def _change_filterchain(self):
+    def _change_filterchain(self, value=None):
+        # Ignore the value
         if self.mode_edit:
             filterchain_name = self.shared_info.get("filterchain")
             if filterchain_name:

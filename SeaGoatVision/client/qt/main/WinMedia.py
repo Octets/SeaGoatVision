@@ -122,7 +122,8 @@ class WinMedia(QtCore.QObject):
         if len(filename) > 0:
             self.ui.movieLineEdit.setText(filename)
 
-    def set_info(self):
+    def set_info(self, value=None):
+        # Ignore the value
         media_name = self.shared_info.get("media")
         if not media_name:
             return
