@@ -22,16 +22,20 @@ Description : Start the Vision Server
 """
 
 import os
+
+from core.configuration import Configuration
+from SeaGoatVision.commons import log
+logger = log.get_logger(__name__)
+config = Configuration()
+path = config.get_log_file_path()
+if path:
+    log.add_handler(path)
 # Import required RPC modules
 import thirdparty.public.protobuf.socketrpc.server as server_rpc
 from controller import protobufServerImpl as impl
-from core.configuration import Configuration
-from SeaGoatVision.commons import log
-
-logger = log.get_logger(__name__)
 
 def run(p_port=None):
-    config = Configuration()
+    global config
     # recheck if its locked because the last check is maybe a false lock
     pid = os.getpid()
     sFileLockName = "/tmp/SeaGoat.lock"

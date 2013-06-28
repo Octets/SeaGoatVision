@@ -21,14 +21,67 @@ import logging
 import inspect
 import logging
 import time
+import os
 
 # date formater with day, use : "%Y-%m-%d %H:%M:%S"
 
 last_print_duplicate = ""
 last_time_print = time.time()
 spam_delay_sec = 5
+formatter = logging.Formatter("[%(asctime)s-%(levelname)s-%(name)s] %(message)s",
+                                  "%H:%M:%S")
+dct_file_handler = {}
+dct_logger = {}
+
+def add_handler(file_path):
+    global own_logger
+    global formatter
+    global dct_file_handler
+    global dct_logger
+
+    if type(file_path) is not str:
+        own_logger.error("The path %s is not type of string, type is %s" % (file_path, type(file_path)))
+        return
+
+    if file_path in dct_file_handler.values():
+        own_logger.error("The path %s is already handled on log." % file_path)
+        return
+
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+
+    hdlr = logging.FileHandler(filename=file_path)
+    hdlr.setFormatter(formatter)
+
+    for logger in dct_logger.values():
+        logger.addHandler(hdlr)
+
+    dct_file_handler[file_path] = hdlr
+
+def remove_handler(file_path):
+    global own_logger
+    global dct_file_handler
+    global dct_logger
+
+    if type(file_path) is not str:
+        own_logger.error("The path %s is not type of string, type is %s" % (file_path, type(file_path)))
+        return
+
+    hdlr = dct_file_handler.get(file_path, None)
+    if not hdlr:
+        own_logger.warning("The path %s is not handled on log." % file_path)
+        return
+
+    for logger in dct_logger.values():
+        logger.removeHandler(hdlr)
+
+    del dct_file_handler[file_path]
 
 def get_logger(name):
+    global dct_logger
+    global formatter
+    global dct_file_handler
+
     key = "SeaGoatVision."
     if name.startswith(key):
         name = name[len(key):]
@@ -41,15 +94,18 @@ def get_logger(name):
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
 
-    # create formatter
-    formatter = logging.Formatter("[%(asctime)s-%(levelname)s-%(name)s] %(message)s",
-                                  "%H:%M:%S")
-
     # add formatter to ch
     ch.setFormatter(formatter)
 
     # add ch to logger
     logger.addHandler(ch)
+
+    if name not in dct_logger:
+        dct_logger[name] = logger
+
+    for handler in dct_file_handler.values():
+        logger.addHandler(handler)
+
     return logger
 
 def printerror_stacktrace(logger, message, check_duplicate=False):
@@ -84,3 +140,7 @@ def print_function(logger_call, message, last_stack=False):
         message
     )
     logger_call(to_print)
+
+
+# create own_logger to log info from himself!!
+own_logger = get_logger(__name__)

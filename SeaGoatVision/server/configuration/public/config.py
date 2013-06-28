@@ -19,12 +19,19 @@
 
 # This file contain configuration about server.py
 
+import datetime
 from SeaGoatVision.server.configuration.template_media.conf_webcam import Conf_webcam
 from SeaGoatVision.server.configuration.template_media.conf_firewire import Conf_firewire
 
 # keep always true for public configuration
 # It's useful if you need to disable private config
 active_configuration = True
+
+## Log
+# no log When log_path is None else put a string path with file_name
+log_path = None
+# exemple of log_path
+#log_path = "/tmp/log_%s.log" % datetime.datetime.now().strftime("%Y-%m-%d_%I:%M:%S")
 
 ## Networking
 ### Server tcp output notification

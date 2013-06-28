@@ -109,6 +109,14 @@ class Configuration(object):
                 return self.public_config.path_save_record
         return self.public_config.path_save_record
 
+    def get_log_file_path(self):
+        if self.private_config:
+            try:
+                return self.private_config.log_path
+            except:
+                return self.public_config.log_path
+        return self.public_config.log_path
+
     #### Filterchain
     def list_filterchain(self):
         if not os.path.isdir(self.dir_filterchain):
