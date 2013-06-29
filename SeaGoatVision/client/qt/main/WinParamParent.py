@@ -66,34 +66,6 @@ class WinParamParent(QtGui.QDockWidget):
             name = param.get_name()
             self.cb_param.addItem(name)
 
-    def set_camera(self):
-        self.ui.txt_search.setText("")
-        self.dct_param = {}
-        self.cb_param.currentIndexChanged.disconnect(self.on_cb_param_item_changed)
-        self.cb_param.clear()
-        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
-
-        self.media_name = self.shared_info.get("media")
-        self.clear_widget()
-        if not self.media_name:
-            self.ui.lbl_param_name.setText("Empty params")
-            return
-
-        self.lst_param = self.controller.get_params_media(self.media_name)
-        if self.lst_param is None:
-           self.lst_param = []
-
-        if not self.lst_param:
-            self.ui.lbl_param_name.setText("%s - Empty params" % self.media_name)
-            return
-
-        for param in self.lst_param:
-            name = param.get_name()
-            self.cb_param.addItem(name)
-            self.dct_param[name] = param
-
-        self.on_cb_param_item_changed(0)
-
     def on_cb_param_item_changed(self, index):
         self.ui.lbl_param_name.setText("%s" % (self.media_name))
 

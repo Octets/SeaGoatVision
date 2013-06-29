@@ -52,6 +52,7 @@ class WinCamera(WinParamParent):
 
         if not self.lst_param:
             self.ui.lbl_param_name.setText("%s - Empty params" % self.media_name)
+            self.clear_widget()
             return
 
         for param in self.lst_param:

@@ -49,6 +49,7 @@ class WinFilter(WinParamParent):
 
         if not self.lst_param:
             self.ui.lbl_param_name.setText("%s - Empty params" % self.filter_name)
+            self.clear_widget()
             return
 
         for param in self.lst_param:
