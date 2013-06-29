@@ -37,8 +37,8 @@ class Configuration(object):
             from configurations.public import config as public_config
             try:
                 from configurations.private import config as private_config
-            except:
-                pass
+            except Exception as e:
+                logger.info("Ignore missing private configuration because: %s" % e)
             # first instance
             cls.public_config = public_config
             try:

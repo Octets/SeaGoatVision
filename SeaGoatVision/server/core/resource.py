@@ -176,14 +176,14 @@ class Resource(object):
         # Create personalize media
         for conf_media in self.config.get_lst_media_config():
             name = conf_media.name
-            if name in dct_media.keys():
-                log.print_function(logger.error, "Media %s already exist." % name)
-                continue
             o_media = conf_media.media(conf_media)
             if o_media.is_opened():
+                if name in dct_media.keys():
+                    log.print_function(logger.error, "Media %s already exist." % name)
+                    continue
                 dct_media[name] = o_media
             else:
-                log.print_function(logger.error, "Camera not detected %s" % name)
+                log.print_function(logger.error, "Camera %s not detected" % name)
         # Force media_video
         dct_media[get_media_file_video_name()] = media.media_video.Media_video(get_media_file_video_name())
 
