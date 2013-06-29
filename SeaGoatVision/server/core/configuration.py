@@ -34,9 +34,9 @@ class Configuration(object):
     def __new__(cls):
         # Singleton
         if not cls._instance:
-            from SeaGoatVision.server.configuration.public import config as public_config
+            from configurations.public import config as public_config
             try:
-                from SeaGoatVision.server.configuration.private import config as private_config
+                from configurations.private import config as private_config
             except:
                 pass
             # first instance
@@ -54,14 +54,15 @@ class Configuration(object):
         return cls._instance
 
     def __init__(self):
+        path = "configurations/"
         if self.get_is_show_public_filterchain():
-            self.dir_filterchain = "SeaGoatVision/server/configuration/public/filterchain/"
-            self.dir_media = "SeaGoatVision/server/configuration/public/"
+            self.dir_filterchain = path + "public/filterchain/"
+            self.dir_media = path + "public/"
             if not self.print_configuration:
                 logger.info("Loading public configuration.")
         else:
-            self.dir_filterchain = "SeaGoatVision/server/configuration/private/filterchain/"
-            self.dir_media = "SeaGoatVision/server/configuration/private/"
+            self.dir_filterchain = path + "private/filterchain/"
+            self.dir_media = path + "private/"
             if not self.print_configuration:
                 logger.info("Loading private configuration.")
         self.print_configuration = True

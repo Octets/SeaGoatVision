@@ -20,8 +20,8 @@
 # This file contain configuration about server.py
 
 import datetime
-from SeaGoatVision.server.configuration.template_media.conf_webcam import Conf_webcam
-from SeaGoatVision.server.configuration.template_media.conf_firewire import Conf_firewire
+from configurations.template_media.conf_webcam import Conf_webcam
+from configurations.template_media.conf_firewire import Conf_firewire
 
 # keep always true for public configuration
 # It's useful if you need to disable private config
