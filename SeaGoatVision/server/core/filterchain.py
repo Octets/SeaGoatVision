@@ -37,7 +37,11 @@ class FilterChain(object):
     The observer must be a method that receive a filter and an image as param.
     The observer method is called after each execution of a filter in the filter chain.
     """
-    def __init__(self, filterchain_name, default_media_name=None):
+    def __init__(self, filterchain_name, serialize=None, default_media_name=None):
+        # to limit the infini import, we import in the init
+        from resource import Resource
+        self.resource = Resource()
+
         self.filters = []
         # {"filter_name":[observator,]}
         self.image_observers = {}
@@ -47,6 +51,12 @@ class FilterChain(object):
         self.dct_global_param = {}
         # If starting filterchain with empty media_name, we take the default media
         self.default_media_name = default_media_name
+
+        if serialize:
+            self.deserialize(filterchain_name, serialize)
+        else:
+            # add default filter
+            self.add_filter(Filter(get_empty_filterchain_name()))
 
     def destroy(self):
         # clean everything!
@@ -65,21 +75,23 @@ class FilterChain(object):
 
     def serialize(self):
         # Keep list of filter with param
-        dct = {"lst_filter":[filter.serialize() for filter in self.filters]}
+        dct = {"lst_filter":[filter.serialize() for filter in self.filters if filter.name != get_empty_filterchain_name()]}
         if self.default_media_name:
             dct["default_media_name"] = self.default_media_name
         return dct
 
-    def deserialize(self, name, value, fct_create_filter):
+    def deserialize(self, name, value):
         status = True
         self.filterchain_name = name
         lst_filter = value.get("lst_filter", [])
         self.default_media_name = value.get("default_media_name", None)
         self.filters = []
         index = 0
+        # add default filter
+        self.add_filter(Filter(get_empty_filterchain_name()))
         for filter_to_ser in lst_filter:
             filter_name = filter_to_ser.get("filter_name", None)
-            o_filter = fct_create_filter(filter_name, index)
+            o_filter = self.resource.create_filter(filter_name, index)
             index += 1
             if not o_filter:
                 log.print_function(logger.warning, "Cannot create filter %s, maybe it not exists." % filter_name)

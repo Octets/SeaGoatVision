@@ -23,10 +23,10 @@ from SeaGoatVision.commons import log
 logger = log.get_logger(__name__)
 
 class Filter(object):
-    def __init__(self):
+    def __init__(self, name=None):
         self._output_observers = list()
         self.original_image = None
-        self.name = None
+        self.name = name
         self.dct_global_param = {}
 
     def serialize(self):
@@ -50,11 +50,17 @@ class Filter(object):
         self.name = name
 
     def destroy(self):
+        # edit me
         # It's called just before to be destroyed
         pass
 
     def configure(self):
+        # edit me
         pass
+
+    def execute(self, image):
+        # edit me
+        return image
 
     def set_global_params(self, dct_global_param):
         # complete the list and point on it

@@ -119,11 +119,13 @@ class WinViewer(QtCore.QObject):
         self.controller.add_output_observer(self.execution_name)
 
     def _updateFilters(self):
-        lst_filter_str = self.controller.get_filter_list_from_filterchain(self.filterchain_name)
         self.ui.filterComboBox.clear()
-        # First is original image
-        self.ui.filterComboBox.addItem(get_filter_original_name())
-        for sFilter in lst_filter_str:
+        info = self.controller.get_filterchain_info(self.filterchain_name)
+        lst_filter = info.get("filters", None)
+        if not lst_filter:
+            logger.warning("Recieve empty filter list from filterchain %s" % self.filterchain_name)
+            return
+        for sFilter in lst_filter:
             self.ui.filterComboBox.addItem(sFilter.name)
         self.ui.filterComboBox.setCurrentIndex(self.ui.filterComboBox.count() - 1)
 

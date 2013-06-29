@@ -72,8 +72,8 @@ class Resource(object):
         return lstFilterChain
 
     def upload_filterchain(self, filterchain_name, s_contain):
-        o_filterchain = filterchain.FilterChain("System - Empty")
-        status = o_filterchain.deserialize(filterchain_name, s_contain, self.create_filter)
+        o_filterchain = filterchain.FilterChain(filterchain_name)
+        status = o_filterchain.deserialize(filterchain_name, s_contain)
         if not status:
             return status
         return self.config.write_filterchain(o_filterchain)
@@ -94,11 +94,10 @@ class Resource(object):
             data = self.config.read_filterchain(filterchain_name)
             if not data:
                 return None
-            # Temporary name - empty
-            o_filterchain = filterchain.FilterChain("System - Empty")
-            o_filterchain.deserialize(filterchain_name, data, self.create_filter)
+            o_filterchain = filterchain.FilterChain(filterchain_name, serialize=data)
         else:
             o_filterchain = filterchain.FilterChain(get_empty_filterchain_name())
+
         self.dct_filterchain[filterchain_name] = o_filterchain
         return o_filterchain
 
@@ -106,7 +105,6 @@ class Resource(object):
         o_filterchain = self.get_filterchain(filterchain_name)
         if o_filterchain is None:
             return {}
-
         return {"filters":o_filterchain.get_filter_list(),
                 "default_media":o_filterchain.get_default_media_name()}
 
