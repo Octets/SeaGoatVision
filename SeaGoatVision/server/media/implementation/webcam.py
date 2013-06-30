@@ -78,7 +78,7 @@ class Webcam(Media_streaming):
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, shape[1])
             self.video.set(cv2.cv.CV_CAP_PROP_FPS, fps)
         except Exception as e:
-            printerror_stacktrace(logger, "Open camera %s: " % (self.get_name(), e))
+            log.printerror_stacktrace(logger, "Open camera %s: " % (self.get_name(), e))
             return False
         # call open when video is ready
         return Media_streaming.open(self)

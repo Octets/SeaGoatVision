@@ -81,7 +81,7 @@ class Firewire(Media_streaming):
                 param = Param(None, None, serialize=uno_data)
                 self.update_property_param(param.get_name(), param.get())
             except Exception as e:
-                printerror_stacktrace(logger, e)
+                log.printerror_stacktrace(logger, e)
                 return False
         return True
 
@@ -153,7 +153,7 @@ class Firewire(Media_streaming):
                 param = Param(name, value["value"], min_v=value["min"], max_v=value["max"])
                 lst_param.append(param)
             except Exception as e:
-                printerror_stacktrace(logger, "%s - name: %s, value: %s" % (e, name, value))
+                log.printerror_stacktrace(logger, "%s - name: %s, value: %s" % (e, name, value))
         return lst_param
 
     def update_property_param(self, param_name, value):

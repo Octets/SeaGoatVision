@@ -115,7 +115,7 @@ def _create_module(cpptimestamps, module, modname, mod):
         setattr(module, modname, clazz)
         del clazz
     except Exception as e:
-        printerror_stacktrace(logger, e)
+        log.printerror_stacktrace(logger, e)
 
 def _create_python_code(mod, modname, cppcode):
     # param variable size
