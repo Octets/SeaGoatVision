@@ -271,10 +271,10 @@ class Manager:
         # get actual filter from execution
         # TODO search information from configuration if execution not exist
         if not execution_name:
-            return False
+            return None
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
-            return False
+            return None
         return filterchain.get_params(filter_name=filter_name)
 
     def get_filterchain_info(self, filterchain_name):
