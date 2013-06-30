@@ -70,7 +70,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             if response.status:
                 response.message = "This filterchain_execution already exist."
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -87,7 +87,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             if response.status:
                 response.message = "This filterchain_execution is already close."
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -112,7 +112,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = "This add_image_observer can't add observer."
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -131,7 +131,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = "This set_image_observer can't change observer."
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -152,7 +152,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
 
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -176,7 +176,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = "This add_output_observer can't add observer."
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -194,7 +194,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = "This remove_output_observer can't add observer."
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -220,7 +220,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                     elif item.get_type() is unicode or item.get_type() is str:
                          response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
 
         # We're done, call the run method of the done callback
         done.run(response)
@@ -234,7 +234,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             for execution in self.manager.get_execution_list():
                 response.execution.append(execution)
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
 
         # We're done, call the run method of the done callback
         done.run(response)
@@ -249,7 +249,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             response.filterchain = o_exec.filterchain
             response.media = o_exec.media
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
 
         # We're done, call the run method of the done callback
         done.run(response)
@@ -320,7 +320,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                     elif item.get_type() is unicode or item.get_type() is str:
                          response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
 
         # We're done, call the run method of the done callback
         done.run(response)
@@ -346,7 +346,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = e
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -360,7 +360,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         try:
             response.status = not(self.manager.save_params_media(request.media_name))
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -418,7 +418,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         try:
             response.status = int(not self.manager.delete_filterchain(request.filterchain_name))
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -433,7 +433,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         try:
             response.status = int(not self.manager.upload_filterchain(request.filterchain_name, request.s_file_contain))
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -450,7 +450,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             response.status = int(not self.manager.modify_filterchain(request.old_filterchain_name, request.new_filterchain_name,
                                                                       lstStrFilter, request.default_media))
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -466,7 +466,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
             self.manager.reload_filter(request.filterName[0])
             response.status = 0
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -493,7 +493,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                 response.status = 1
                 response.message = e
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback
@@ -507,7 +507,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         try:
             response.status = not(self.manager.save_params(request.execution_name))
         except Exception as e:
-            logger.error("Exception: %s", e)
+            log.printerror_stacktrace(logger, e)
             response.status = -1
 
         # We're done, call the run method of the done callback

@@ -69,8 +69,8 @@ class ControllerProtobuf():
             response = self.service.is_connected(request, timeout=10000) is not None
             if response and not self.quiet:
                 logger.info("Connection successful")
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return response
 
@@ -105,8 +105,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -132,15 +132,15 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
     def get_params_filterchain(self, execution_name, filter_name):
         request = server_pb2.GetParamsFilterchainRequest()
         if not execution_name:
-            logger.error("get_params_filterchain: execution is empty.")
+            logger.warning("get_params_filterchain: execution is empty.")
             return False
         if not filter_name:
             logger.error("get_params_filterchain: filter_name is empty.")
@@ -177,8 +177,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -191,8 +191,8 @@ class ControllerProtobuf():
 
             if response:
                 return response.execution
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return []
 
@@ -205,8 +205,8 @@ class ControllerProtobuf():
             response = self.service.get_execution_info(request, timeout=10000)
             if response:
                 return response
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return None
 
@@ -229,8 +229,8 @@ class ControllerProtobuf():
                     i += 1
             else:
                 logger.warning("No answer on get_media_list")
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnResponse
 
@@ -251,8 +251,8 @@ class ControllerProtobuf():
                         logger.error("start_record.")
             else:
                 returnValue = False
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -271,8 +271,8 @@ class ControllerProtobuf():
                         logger.error("stop_record.")
             else:
                 returnValue = False
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -292,8 +292,8 @@ class ControllerProtobuf():
                         logger.error("cmd_to_media.")
             else:
                 returnValue = False
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -308,8 +308,8 @@ class ControllerProtobuf():
                 message = response.message
                 if message:
                     dct_message = json.loads(message)
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return dct_message
 
@@ -346,8 +346,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -378,8 +378,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -401,8 +401,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -443,8 +443,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         if not returnValue:
             local_observer.stop()
@@ -491,8 +491,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -534,8 +534,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -561,8 +561,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -588,8 +588,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -610,8 +610,8 @@ class ControllerProtobuf():
             else:
                 logger.error("protobuf, get_filterchain_list response is None")
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -630,8 +630,8 @@ class ControllerProtobuf():
             else:
                 logger.error("protobuf, get_filterchain_info response is None")
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -658,8 +658,8 @@ class ControllerProtobuf():
                 returnValue = False
 
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -687,8 +687,8 @@ class ControllerProtobuf():
                 returnValue = False
 
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -722,8 +722,8 @@ class ControllerProtobuf():
                 returnValue = False
 
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -755,8 +755,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -778,8 +778,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -814,8 +814,8 @@ class ControllerProtobuf():
             else:
                 returnValue = False
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
@@ -830,8 +830,8 @@ class ControllerProtobuf():
             response = self.service.get_filter_list(request, timeout=10000)
             returnValue = {response.filters[i]:response.doc[i] for i in range(len(response.filters))}
 
-        except Exception as ex:
-            logger.error("Exception: %s", ex)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
 
         return returnValue
 
