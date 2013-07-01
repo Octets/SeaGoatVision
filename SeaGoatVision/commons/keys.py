@@ -32,6 +32,9 @@ def get_media_file_video_name():
 def get_empty_filterchain_name():
     return "-- empty filterchain --"
 
+def get_empty_filter_name():
+    return "-- empty filter --"
+
 def get_key_media_play():
     return "play"
 

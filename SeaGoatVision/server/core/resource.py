@@ -122,7 +122,7 @@ class Resource(object):
         chain = filterchain.FilterChain(filterchain_name)
         index = 0
         for s_filter in lst_str_filters:
-            if s_filter == get_empty_filterchain_name():
+            if s_filter == get_empty_filter_name():
                 continue
             # Exception, remove the last -#
             pos = s_filter.rfind("-")

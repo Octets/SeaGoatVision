@@ -56,7 +56,7 @@ class FilterChain(object):
             self.deserialize(filterchain_name, serialize)
         else:
             # add default filter
-            self.add_filter(Filter(get_empty_filterchain_name()))
+            self.add_filter(Filter(get_empty_filter_name()))
 
     def destroy(self):
         # clean everything!
@@ -75,7 +75,7 @@ class FilterChain(object):
 
     def serialize(self):
         # Keep list of filter with param
-        dct = {"lst_filter":[filter.serialize() for filter in self.filters if filter.name != get_empty_filterchain_name()]}
+        dct = {"lst_filter":[filter.serialize() for filter in self.filters if filter.name != get_empty_filter_name()]}
         if self.default_media_name:
             dct["default_media_name"] = self.default_media_name
         return dct
@@ -88,7 +88,7 @@ class FilterChain(object):
         self.filters = []
         index = 0
         # add default filter
-        self.add_filter(Filter(get_empty_filterchain_name()))
+        self.add_filter(Filter(get_empty_filter_name()))
         for filter_to_ser in lst_filter:
             filter_name = filter_to_ser.get("filter_name", None)
             o_filter = self.resource.create_filter(filter_name, index)
