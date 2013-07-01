@@ -103,9 +103,17 @@ class Manager:
             return False
 
         # Remove execution image observer from media
-        execution[KEY_MEDIA].remove_observer(execution[KEY_FILTERCHAIN].execute)
-        # Destroy all memory
-        execution[KEY_FILTERCHAIN].destroy()
+        observer = execution.get(KEY_MEDIA, None)
+        if observer is None:
+            logger.critical("Not found the observer about execution %s" % execution_name)
+            return False
+        filterchain = execution.get(KEY_FILTERCHAIN, None)
+        if filterchain is None:
+            logger.critical("Not found the filterchain about execution %s" % execution_name)
+            return False
+
+        observer.remove_observer(filterchain.execute)
+        filterchain.destroy()
         del self.dct_exec[execution_name]
         return True
 
@@ -344,4 +352,3 @@ class Manager:
             log.print_function(logger.error, "Cannot found the media %s." % media_name, last_stack=True)
             return None
         return media
-
