@@ -49,6 +49,7 @@ class FilterChain(object):
         self.filterchain_name = filterchain_name
         self.original_image_observer = []
         self.dct_global_param = {}
+        self.dct_media_param = {}
         # If starting filterchain with empty media_name, we take the default media
         self.default_media_name = default_media_name
 
@@ -106,6 +107,11 @@ class FilterChain(object):
 
     def count(self):
         return len(self.filters)
+
+    def set_media_param(self, dct_media_param):
+        self.dct_media_param = dct_media_param
+        for item in self.filters:
+            item.set_media_param(dct_media_param)
 
     def get_name(self):
         return self.filterchain_name

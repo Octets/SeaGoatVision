@@ -28,6 +28,7 @@ class Filter(object):
         self.original_image = None
         self.name = name
         self.dct_global_param = {}
+        self.dct_media_param = {}
 
     def serialize(self):
         return {"filter_name":self.__class__.__name__, "lst_param":[param.serialize() for param in self.get_params()]}
@@ -97,6 +98,12 @@ class Filter(object):
             else:
                 params.append(var)
         return params
+
+    def set_media_param(self, dct_media_param):
+        self.dct_media_param = dct_media_param
+
+    def get_media_param(self, param_name):
+        return self.dct_media_param.get(param_name, None)
 
     def set_original_image(self, image):
         self.original_image = image

@@ -89,6 +89,8 @@ class Manager:
         if media.is_media_video() and file_name:
             media.set_file(file_name)
 
+        filterchain.set_media_param(media.get_dct_media_param())
+
         media.add_observer(filterchain.execute)
 
         self.dct_exec[execution_name] = {KEY_FILTERCHAIN: filterchain, KEY_MEDIA : media}

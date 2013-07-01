@@ -41,6 +41,9 @@ class Media(object):
         # type is Video or Streaming
         pass
 
+    def get_dct_media_param(self):
+        return {param.get_name():param for param in self.get_properties_param()}
+
     def get_properties_param(self):
         return []
 
