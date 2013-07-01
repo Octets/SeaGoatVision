@@ -184,6 +184,7 @@ class Resource(object):
                     log.print_function(logger.error, "Media %s already exist." % name)
                     continue
                 dct_media[name] = o_media
+                logger.info("Media %s detected." % name)
             else:
                 log.print_function(logger.error, "Camera %s not detected" % name)
         # Force media_video
