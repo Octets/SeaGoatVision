@@ -123,3 +123,8 @@ class Filter(object):
 
     def remove_output_observer(self, observer):
         self._output_observers.remove(observer)
+
+    def get_media(self, name):
+        from resource import Resource
+        resource = Resource()
+        return resource.get_media(name)
