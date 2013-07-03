@@ -41,6 +41,7 @@ class Firewire(Media_streaming):
         self.camera = None
         self.sleep_time = 1/15.0
         self.media_name = config.name
+        self.own_config = config
         try:
             ctx = video1394.DC1394Context()
         except:
@@ -60,9 +61,10 @@ class Firewire(Media_streaming):
 
         self.shape = (800, 600)
 
-        self.is_rgb = False
-        self.is_mono = False
-        self.is_format_7 = False
+        self.is_rgb = config.is_rgb
+        self.is_mono = config.is_mono
+        self.is_format_7 = config.is_format7
+        self.is_yuv = config.is_yuv
         self.actual_image = None
 
         self.deserialize(self.config.read_media(self.get_name()))
@@ -89,24 +91,15 @@ class Firewire(Media_streaming):
         if not self.camera:
             return False
 
-        ctx = video1394.DC1394Context()
         camera = self.camera
         camera.resetBus()
-        camera.isoSpeed = video1394.ISO_SPEED_400
-        if self.is_format_7:
-            # not supported
-            camera.mode = video1394.VIDEO_MODE_FORMAT7_0
-        elif self.is_rgb:
-            camera.mode = video1394.VIDEO_MODE_800x600_RGB8
-        elif self.is_mono:
-            camera.mode = video1394.VIDEO_MODE_800x600_MONO8
-        else:
-            camera.mode = video1394.VIDEO_MODE_800x600_YUV422
+        camera.isoSpeed = self.own_config.iso_speed
+        camera.mode = self.own_config.mode
         try:
-            camera.framerate = video1394.FRAMERATE_15
+            camera.framerate = self.own_config.framerate
         except:
-            log.print_function(logger.warning, "Framerate raise exception, but skip it from camera %s" % self.get_name())
             # ignore it and use the default framerate
+            log.print_function(logger.warning, "Framerate raise exception, but skip it from camera %s" % self.get_name())
             pass
 
         camera.start(force_rgb8=True)
@@ -118,14 +111,10 @@ class Firewire(Media_streaming):
         if self.is_rgb or not self.is_mono:
             image = Image.fromarray(im, "RGB")
             image2 = np.asarray(image, dtype="uint8")
-            # transform it to bgr
+            # transform it to BGR
             cv2.cvtColor(np.copy(image), cv.CV_BGR2RGB, image2)
         elif self.is_mono:
             image2 = im
-        # shape = (im.shape[0], im.shape[1], 3)
-        # rgb = np.zeros(shape, dtype=np.uint8)
-        # np.copyto(rgb, im, casting="no")
-        #self.notify_observer(image2)
         self.actual_image = image2
 
     def get_properties_param(self):

@@ -17,6 +17,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+try:
+    from thirdparty.public.pydc1394 import video1394
+except:
+    pass
 from SeaGoatVision.server.media.implementation.firewire import Firewire
 
 class Conf_firewire:
@@ -28,4 +32,13 @@ class Conf_firewire:
 
         # specific for firewire device
         self.guid = None
-
+        try:
+            self.iso_speed = video1394.ISO_SPEED_400
+            self.mode = video1394.VIDEO_MODE_800x600_YUV422
+            self.framerate = video1394.FRAMERATE_15
+            self.is_rgb = False
+            self.is_format7 = False
+            self.is_mono = False
+            self.is_yuv = True
+        except:
+            pass
