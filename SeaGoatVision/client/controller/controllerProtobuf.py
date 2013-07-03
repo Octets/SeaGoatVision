@@ -167,13 +167,13 @@ class ControllerProtobuf():
                         lst_value = list(param.lst_value_str)
                         if not lst_value:
                             lst_value = None
-                        returnValue.append(Param(param.name, param.value_str, lst_value=list(param.lst_value_str)))
+                        returnValue.append(Param(param.name, param.value_str, lst_value=lst_value))
                     if param.HasField("value_float"):
                         lst_value = list(param.lst_value_float)
                         if not lst_value:
                             lst_value = None
                         returnValue.append(Param(param.name, param.value_float, min_v=param.min_float_v,
-                                                 max_v=param.max_float_v, lst_value=list(param.lst_value_float)))
+                                                 max_v=param.max_float_v, lst_value=lst_value))
             else:
                 returnValue = False
 
