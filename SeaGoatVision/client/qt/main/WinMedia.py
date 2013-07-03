@@ -45,6 +45,7 @@ class WinMedia(QtCore.QObject):
         self.pause_icon = QIcon("/usr/share/icons/gnome/24x24/actions/player_pause.png")
 
         self.dct_media = None
+        self.last_selected_media = config.default_media_selected
 
         self.reload_ui()
 
@@ -63,25 +64,24 @@ class WinMedia(QtCore.QObject):
         self._set_play_icon()
         self._update_media()
 
+        self.select_media(self.last_selected_media)
+
     def _update_media(self):
         self.ui.cbMedia.currentIndexChanged.disconnect(self._change_media)
         self.dct_media = self.controller.get_media_list()
         for media in self.dct_media.keys():
             self.ui.cbMedia.addItem(media)
-        if config.default_media_selected in self.dct_media.keys():
-            pos = self.dct_media.keys().index(config.default_media_selected)
-            self.ui.cbMedia.setCurrentIndex(pos)
-        self._change_media()
+        self._change_media(after_update=True)
         self.ui.cbMedia.currentIndexChanged.connect(self._change_media)
 
-    def _change_media(self):
-        item_cbmedia = self.ui.cbMedia.currentText()
+    def _change_media(self, index= -1, after_update=False):
+        media_name = self.ui.cbMedia.currentText()
         frame_webcam = self.ui.frame_webcam
         frame_webcam.setVisible(False)
         frame_video = self.ui.frame_video
         frame_video.setVisible(False)
 
-        media_type = self.dct_media.get(item_cbmedia, None)
+        media_type = self.dct_media.get(media_name, None)
         if not media_type:
             self.shared_info.set("media", None)
             return
@@ -90,8 +90,10 @@ class WinMedia(QtCore.QObject):
         elif media_type == get_media_type_streaming_name():
             frame_webcam.setVisible(True)
             self.shared_info.set("path_media", None)
-        self.shared_info.set("media", self.ui.cbMedia.currentText())
+        self.shared_info.set("media", media_name)
         self.set_info()
+        if not after_update:
+            self.last_selected_media = media_name
 
     def _movie_changed(self):
         self.shared_info.set("path_media", self.ui.movieLineEdit.text())
@@ -173,3 +175,12 @@ class WinMedia(QtCore.QObject):
         if media_type != get_media_type_video_name():
             return None
         return self.ui.movieLineEdit.text()
+
+    def select_media(self, media_name):
+        # find index
+        index = self.ui.cbMedia.findText(media_name)
+        if index < 0:
+            return False
+        # TODO Need to resend signal if it's the same media? Maybe not necessary
+        self.ui.cbMedia.setCurrentIndex(index)
+        return True
