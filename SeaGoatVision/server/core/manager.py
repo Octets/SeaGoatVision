@@ -271,11 +271,15 @@ class Manager:
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################
-    def reload_filter(self, filtre=None):
+    def reload_filter(self, filter_name=None):
+        filter = self.resource.reload_filter(filter_name)
+        if filter is None:
+            return False
         for execution in self.dct_exec.values():
             filterchain = execution.get(KEY_FILTERCHAIN, None)
             if filterchain:
-                filterchain.reload_filter(filtre)
+                filterchain.reload_filter(filter)
+        return True
 
     def get_params_filterchain(self, execution_name, filter_name):
         # get actual filter from execution

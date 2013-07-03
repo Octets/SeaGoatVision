@@ -30,6 +30,7 @@ from SeaGoatVision.commons.keys import *
 from SeaGoatVision.server.core import filterchain
 from SeaGoatVision.server.core import utils
 from SeaGoatVision.server import media
+import types
 import filters
 from filter import Filter
 from SeaGoatVision.commons import log
@@ -59,6 +60,14 @@ class Resource(object):
             self._load_filters()
         if not self.dct_media:
             self.load_media()
+
+    #### Utils
+    def _module_name(self, name):
+        mod = __import__(name)
+        components = name.split('.')
+        for comp in components[1:]:
+            mod = getattr(mod, comp)
+        return mod
 
     #### Filterchain
     def get_filterchain_list(self):
@@ -159,6 +168,23 @@ class Resource(object):
                         if inspect.isclass(filtre)
                         if issubclass(filtre, Filter)
                         if "execute" in vars(filtre)}
+
+    def reload_filter(self, filter_name):
+        filter = self.dct_filter.get(filter_name, None)
+        if not filter:
+            log.print_function(logger.error, "The filter %s not exist in the list." % filter_name)
+            return None
+        # reload the module
+        if filter.__module__ == "SeaGoatVision.server.cpp.create_module":
+            module = filter.__module_init__
+        else:
+            module = self._module_name(filter.__module__)
+        reload(module)
+        filter_class = getattr(module, filter_name)
+        filter = filter_class()
+        filter.set_name(filter_name)
+        self.dct_filter[filter_name] = filter_class
+        return filter
 
     def create_filter(self, filter_name, index):
         filter_class = self.get_filter_from_filterName(filter_name)

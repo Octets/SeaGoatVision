@@ -29,13 +29,6 @@ def isnumeric(string):
     except ValueError:
         return False
 
-def module_name(name):
-    mod = __import__(name)
-    components = name.split('.')
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
-    return mod
-
 def add_filter_module(module, file):
     # param :
     # module like sys.modules[__name__]

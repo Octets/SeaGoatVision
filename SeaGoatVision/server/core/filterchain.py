@@ -164,21 +164,22 @@ class FilterChain(object):
     def remove_filter(self, filter):
         self.filters.remove(filter)
 
-    def reload_filter(self, filtre):
+    def reload_filter(self, filter):
         # TODO: not working because module name change
         # example of __module__:
         index = 0
         for item in self.filters:
-            if item.__class__.__name__ == filtre:
+            if item.__class__.__name__ == filter.__class__.__name__:
                 # remote observer
                 filter_output_obs_copy = self.filter_output_observers[:]
                 for output in filter_output_obs_copy:
                     self.remove_filter_output_observer(output)
-                # reload the module
-                module = utils.module_name(item.__module__)
-                reload(module)
                 # recreate the instance
-                self.filters[index] = getattr(module, item.__class__.__name__)()
+                # index -1 to ignore the default filter
+                filter.set_name("%s-%d" % (filter.get_name(), index - 1))
+                obj = self.filters[index]
+                self.filters[index] = filter
+                del obj
                 # re-add observer
                 for output in filter_output_obs_copy:
                     self.add_filter_output_observer(output)

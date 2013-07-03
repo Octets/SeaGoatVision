@@ -21,6 +21,7 @@ import numpy as np
 import scipy.weave.ext_tools as ext_tools
 import os
 import sys
+import time
 
 from SeaGoatVision.server.core.filter import Filter
 from cpp_code import *
@@ -72,9 +73,9 @@ def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=
 
         mod = _compile_cpp(modname, cppcode, extra_link_arg, extra_compile_arg)
 
-        _create_python_code(mod, modname, cppcode)
+        _create_python_code(mod, filename, cppcode)
 
-        _create_module(cpptimestamps, module, modname, mod)
+        _create_module(cpptimestamps, module, filename, mod)
 
 def _create_build(cppfiles):
     if not os.path.exists(BUILD_DIR):
@@ -112,6 +113,7 @@ def _create_module(cpptimestamps, module, modname, mod):
         clazz = type(modname,
                      (Filter,),
                      dct_fct)
+        clazz.__module_init__ = module
         setattr(module, modname, clazz)
         del clazz
     except Exception as e:
