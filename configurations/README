@@ -1,5 +1,5 @@
 This is directory of configuration where it's contain filterchain and global configuration.
-To have your own configuration, copy the public directory to the private and edit the configuration.
-The configuration need to be at the same level of directory, but in private.
+
+To have your own configuration, create a private folder and copy the public directory to the private and edit the configuration.
 
 The public configuration is the default configuration to have a fast environnement with demo and one webcam.
