@@ -51,6 +51,7 @@ class Param(object):
                 force_type=None, thres_h=None, serialize=None):
         # Exception, can serialize
         self.lst_notify = []
+        self.lst_notify_reset = []
         self.name = name
         self.lst_value = lst_value
         self.min_v = None
@@ -150,7 +151,19 @@ class Param(object):
         return True
 
     def reset(self):
+        if self.value == self.default_value:
+            return
         self.value = self.default_value
+        for notify in self.lst_notify_reset:
+            notify(self.get_name(), self.value)
+
+    def merge(self, param):
+        self.name = param.name
+        self.value = param.value
+        self.min_v = param.min_v
+        self.max_v = param.max_v
+        self.lst_value = param.lst_value
+        self.thres_h = param.thres_h
 
     def get_name(self):
         return self.name
@@ -179,6 +192,20 @@ class Param(object):
             logger.warning("The callback wasn't in the list of notify %s" % self.get_name())
             return
         self.lst_notify.remove(callback)
+
+    def add_notify_reset(self, callback):
+        # notify when set the value
+        # pass the value in argument
+        if callback in self.lst_notify_reset:
+            logger.warning("Already in notify reset %s" % self.get_name())
+            return
+        self.lst_notify_reset.append(callback)
+
+    def remove_notify_reset(self, callback):
+        if callback not in self.lst_notify_reset:
+            logger.warning("The callback wasn't in the list of notify reset %s" % self.get_name())
+            return
+        self.lst_notify_reset.remove(callback)
 
     def get(self):
         # Exception, cannot convert to numpy array
