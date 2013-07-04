@@ -144,12 +144,11 @@ class ProtobufServerImpl(server_pb2.CommandService):
         response = server_pb2.StatusResponse()
         try:
             observer = self.dct_observer.get(request.execution_name, None)
-            if self.manager.remove_image_observer(observer.observer, request.execution_name, request.filter_name):
+            if observer and self.manager.remove_image_observer(observer.observer, request.execution_name, request.filter_name):
                 response.status = 0
             else:
                 response.status = 1
                 response.message = "This remove_image_observer can't remove observer."
-
 
         except Exception as e:
             log.printerror_stacktrace(logger, e)

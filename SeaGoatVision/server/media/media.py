@@ -19,6 +19,9 @@
 
 from thread_media import Thread_media
 import numpy as np
+from SeaGoatVision.commons import log
+
+logger = log.get_logger(__name__)
 
 class Media(object):
     def __init__(self):
@@ -76,6 +79,7 @@ class Media(object):
             return False
         self.thread = Thread_media(self)
         self.thread.start()
+        logger.info("Open media %s" % self.get_name())
         return True
 
     def next(self):
@@ -91,6 +95,7 @@ class Media(object):
             return False
         self.thread.stop()
         self.thread = None
+        logger.info("Close media %s" % self.get_name())
         return True
 
     def reload(self):
