@@ -108,7 +108,8 @@ class WinFilter(WinParamParent):
     def reset(self):
         for param in self.lst_param:
             param.reset()
-        self.setFilter()
+            status = self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), param.get())
+        self.set_filter()
 
     def save(self):
         self.controller.save_params(self.execution_name)

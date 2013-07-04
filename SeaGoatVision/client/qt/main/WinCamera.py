@@ -110,6 +110,7 @@ class WinCamera(WinParamParent):
     def reset(self):
         for param in self.lst_param:
             param.reset()
+            status = self.controller.update_param_media(self.media_name, param.get_name(), param.get())
         self.set_camera()
 
     def save(self):

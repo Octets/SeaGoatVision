@@ -66,52 +66,10 @@ class WinParamParent(QtGui.QDockWidget):
             name = param.get_name()
             self.cb_param.addItem(name)
 
-    def on_cb_param_item_changed(self, index):
-        self.ui.lbl_param_name.setText("%s" % (self.media_name))
-
-        self.clear_widget()
-
-        if index == -1:
-            return
-
-        param = self.lst_param[index]
-        self.layout.addWidget(self.getWidget(param))
-
     def clear_widget(self):
         item = self.layout.takeAt(0)
         if item:
             item.widget().deleteLater()
-
-    def getWidget(self, param):
-        groupBox = QtGui.QGroupBox()
-
-        groupBox.setTitle(param.get_name())
-
-        getWidget = {
-            int : self.getIntegerWidget,
-            float : self.getFloatWidget,
-            str : self.getStrWidget,
-            bool : self.getBoolWidget,
-            }
-
-        def create_value_change(param):
-            def set(value):
-                if param.get_type() is bool:
-                    value = bool(value)
-                status = self.controller.update_param_media(self.media_name, param.get_name(), value)
-                if status:
-                    param.set(value)
-                else:
-                    logger.error("Change value %s of param %s." % (value, param.get_name()))
-            return set
-
-        cb_value_change = create_value_change(param)
-        self.cb_value_change = cb_value_change
-
-        layout = getWidget[param.get_type()](param, cb_value_change)
-        groupBox.setLayout(layout)
-
-        return groupBox
 
     def getIntegerWidget(self, param, cb_value_change):
         spinbox = QtGui.QSpinBox()
@@ -266,14 +224,3 @@ class WinParamParent(QtGui.QDockWidget):
         layout = QtGui.QHBoxLayout()
         layout.addWidget(checkbox)
         return layout
-
-    def default(self):
-        pass
-
-    def reset(self):
-        for param in self.lst_param:
-            param.reset()
-        self.set_camera()
-
-    def save(self):
-        self.controller.save_params_media(self.media_name)
