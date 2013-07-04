@@ -40,19 +40,32 @@ class Webcam(Media_streaming):
         if video.isOpened():
             self.isOpened = True
             video.release()
-        self.actual_resolution_name = "800x600"
-        self.dct_resolution = {self.actual_resolution_name:(800, 600),
+
+        self._create_params()
+
+        self.deserialize(self.config.read_media(self.get_name()))
+
+    def _create_params(self):
+        self.dct_params = {}
+
+        default_resolution_name = "800x600"
+        self.dct_resolution = {default_resolution_name:(800, 600),
                                "320x240":(320, 240),
                                "640x480":(640, 480),
                                "1024x768":(1024, 768),
                                "1280x960":(1280, 960)}
-        self.actual_fps_name = "30"
-        self.dct_fps = {self.actual_fps_name:30, "15":15, "7.5":7.5}
+        param = Param("resolution", default_resolution_name, lst_value=self.dct_resolution.keys())
+        param.add_notify_reset(self.reset_property_param)
+        self.dct_params["resolution"] = param
 
-        self.deserialize(self.config.read_media(self.get_name()))
+        default_fps_name = "30"
+        self.dct_fps = {default_fps_name:30, "15":15, "7.5":7.5}
+        param = Param("fps", default_fps_name, lst_value=self.dct_fps.keys())
+        param.add_notify_reset(self.reset_property_param)
+        self.dct_params["fps"] = param
 
     def serialize(self):
-        return {"resolution":self.actual_resolution_name, "fps":self.actual_fps_name}
+        return {"resolution":self.dct_params.get("resolution").get(), "fps":self.dct_params.get("fps").get()}
 
     def deserialize(self, data):
         if not data:
@@ -62,23 +75,23 @@ class Webcam(Media_streaming):
             return False
         res = data.get("resolution", None)
         if res:
-            self.change_resolution(res)
+            self.dct_params.get("resolution").set(res)
         res = data.get("fps", None)
         if res:
-            self.change_fps(res)
+            self.dct_params.get("fps").set(res)
         return True
 
     def open(self):
         try:
-            shape = self.dct_resolution[self.actual_resolution_name]
-            fps = self.dct_fps[self.actual_fps_name]
+            shape = self.dct_resolution[self.dct_params.get("resolution").get()]
+            fps = self.dct_fps[self.dct_params.get("fps").get()]
 
             self.video = cv2.VideoCapture(self.own_config.no)
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, shape[0])
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, shape[1])
             self.video.set(cv2.cv.CV_CAP_PROP_FPS, fps)
         except Exception as e:
-            log.printerror_stacktrace(logger, "Open camera %s: " % (self.get_name(), e))
+            log.printerror_stacktrace(logger, "Open camera %s: %s" % (self.get_name(), e))
             return False
         # call open when video is ready
         return Media_streaming.open(self)
@@ -94,34 +107,20 @@ class Webcam(Media_streaming):
         self.video.release()
         return True
 
-    def change_resolution(self, resolution):
-        """ Param: resolution type string, need to be a key of dct_resolution"""
-        if resolution not in self.dct_resolution:
-            msg = "The key %s not in the list of resolution %s of media %s." % \
-                  resolution, self.dct_resolution.keys(), self.get_name()
-            log.print_function(logger.error, msg)
-            return False
-        self.actual_resolution_name = resolution
-        return self.reload()
-
-    def change_fps(self, fps):
-        """ Param: fps type string, need to be a key of dct_fps"""
-        if fps not in self.dct_fps:
-            msg = "The key %s not in the list of fps %s of media %s." % \
-                  resolution, self.dct_fps.keys(), self.get_name()
-            log.print_function(logger.error, msg)
-            return False
-        self.actual_fps_name = fps
-        return self.reload()
-
     def get_properties_param(self):
-        resolution = Param("resolution", self.actual_resolution_name, lst_value=self.dct_resolution.keys())
-        fps = Param("fps", self.actual_fps_name, lst_value=self.dct_fps.keys())
-        return [resolution, fps]
+        return self.dct_params.values()
 
     def update_property_param(self, param_name, value):
-        if param_name == "resolution":
-            return self.change_resolution(value)
-        elif param_name == "fps":
-            return self.change_fps(value)
-        return False
+        param = self.dct_params.get(param_name, None)
+        if not param:
+            return False
+        param_value = param.get()
+        if value == param_value:
+            return True
+        param.set(value)
+        self.reload()
+        return True
+
+    def reset_property_param(self, param_name, value):
+        self.reload()
+        return True

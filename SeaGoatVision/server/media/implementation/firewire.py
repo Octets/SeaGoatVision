@@ -39,7 +39,8 @@ class Firewire(Media_streaming):
         super(Firewire, self).__init__()
         self.config = Configuration()
         self.camera = None
-        self.sleep_time = 1/15.0
+        self.dct_params = {}
+        self.sleep_time = 1 / 15.0
         self.media_name = config.name
         self.own_config = config
         try:
@@ -67,7 +68,41 @@ class Firewire(Media_streaming):
         self.is_yuv = config.is_yuv
         self.actual_image = None
 
+        self._create_params()
+
         self.deserialize(self.config.read_media(self.get_name()))
+        self.update_all_property()
+
+    def _create_params(self):
+        self.dct_params = {}
+        if not self.camera:
+            return
+        lst_ignore_prop = ["Trigger"]
+        dct_prop = self.camera.get_dict_available_features()
+        for name, value in dct_prop.items():
+            if name in lst_ignore_prop:
+                continue
+            try:
+                if name == "White Balance":
+                    param = Param("%s-auto" % name, False)
+                    param.add_notify_reset(self.update_property_param)
+                    self.dct_params[param.get_name()] = param
+                    param = Param("%s-red" % name, value["RV_value"], min_v=value["min"], max_v=value["max"])
+                    param.add_notify_reset(self.update_property_param)
+                    self.dct_params[param.get_name()] = param
+                    param = Param("%s-blue" % name, value["BU_value"], min_v=value["min"], max_v=value["max"])
+                    param.add_notify_reset(self.update_property_param)
+                    self.dct_params[param.get_name()] = param
+                    continue
+                elif name == "Shutter" or name == "Gain":
+                    param = Param("%s-auto" % name, False)
+                    param.add_notify_reset(self.update_property_param)
+                    self.dct_params[param.get_name()] = param
+                param = Param(name, value["value"], min_v=value["min"], max_v=value["max"])
+                param.add_notify_reset(self.update_property_param)
+                self.dct_params[param.get_name()] = param
+            except Exception as e:
+                log.printerror_stacktrace(logger, "%s - name: %s, value: %s" % (e, name, value))
 
     def serialize(self):
         return [param.serialize() for param in self.get_properties_param()]
@@ -79,9 +114,10 @@ class Firewire(Media_streaming):
             if not uno_data:
                 continue
             try:
-                logger.debug("Deserialize param camera %s data: %s", self.get_name(), uno_data)
                 param = Param(None, None, serialize=uno_data)
-                self.update_property_param(param.get_name(), param.get())
+                own_param = self.dct_params.get(param.get_name(), None)
+                if own_param:
+                    own_param.merge(param)
             except Exception as e:
                 log.printerror_stacktrace(logger, e)
                 return False
@@ -118,32 +154,11 @@ class Firewire(Media_streaming):
         self.actual_image = image2
 
     def get_properties_param(self):
-        if not self.camera:
-            return None
+        return self.dct_params.values()
 
-        lst_ignore_prop = ["Trigger"]
-        lst_param = []
-        dct_prop = self.camera.get_dict_available_features()
-        for name, value in dct_prop.items():
-            if name in lst_ignore_prop:
-                continue
-            try:
-                if name == "White Balance":
-                    param = Param("%s-auto" % name, False)
-                    lst_param.append(param)
-                    param = Param("%s-red" % name, value["RV_value"], min_v=value["min"], max_v=value["max"])
-                    lst_param.append(param)
-                    param = Param("%s-blue" % name, value["BU_value"], min_v=value["min"], max_v=value["max"])
-                    lst_param.append(param)
-                    continue
-                elif name == "Shutter" or name == "Gain":
-                    param = Param("%s-auto" % name, False)
-                    lst_param.append(param)
-                param = Param(name, value["value"], min_v=value["min"], max_v=value["max"])
-                lst_param.append(param)
-            except Exception as e:
-                log.printerror_stacktrace(logger, "%s - name: %s, value: %s" % (e, name, value))
-        return lst_param
+    def update_all_property(self):
+        for name, value in self.dct_params.items():
+            self.update_property_param(name, value.get())
 
     def update_property_param(self, param_name, value):
         if not self.camera:
