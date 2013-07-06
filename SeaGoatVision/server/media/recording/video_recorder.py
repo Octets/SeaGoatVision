@@ -56,7 +56,7 @@ class Video_recorder:
             name += "%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
 
         if os.path.isfile(name):
-            log.print_function(logger.error, "fFle already exist %s" % name)
+            log.print_function(logger.error, "File already exist %s" % name)
             return False
 
         self.file_name = name
@@ -80,6 +80,7 @@ class Video_recorder:
         return self.file_name
 
     def stop(self):
+        logger.info("Close record on path: %s", self.file_name)
         self.file_name = None
         if not self.writer:
             return False
