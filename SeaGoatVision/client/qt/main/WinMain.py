@@ -32,6 +32,8 @@ from WinCamera import WinCamera
 from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.commons import log
+import thread
+import time
 
 logger = log.get_logger(__name__)
 
@@ -45,6 +47,7 @@ class WinMain(QtGui.QMainWindow):
         self.dct_preview = {}
         self.ui = get_ui(self)
         self.uid_iter = 0
+        self.id = -1
 
         # default maximize Qt
         self.showMaximized()
@@ -80,6 +83,18 @@ class WinMain(QtGui.QMainWindow):
         self._addToolBar()
 
         self.setCentralWidget(self.WinMainViewer.ui)
+
+        # register to notify server
+        if not islocal:
+            self.id = self.controller.add_notify_server()
+            self.start_pull = self.id is not None
+            try:
+                if self.start_pull:
+                    thread.start_new_thread(self.poll_notify_server, ())
+            except Exception as e:
+                log.printerror_stacktrace(logger, e)
+        else:
+            self.start_pull = False
 
     def _addToolBar(self):
         self.toolbar = QtGui.QToolBar()
@@ -142,5 +157,15 @@ class WinMain(QtGui.QMainWindow):
             logger.error("Don't find DockWidget %s" % execution_name)
 
     def quit(self):
+        self.start_pull = False
         for viewer in self.dct_preview.values():
             viewer.closeEvent()
+
+    def poll_notify_server(self):
+        sleep = 2
+        while self.start_pull:
+            time.sleep(sleep)
+            status = self.controller.need_notify(self.id)
+            if status:
+                logger.info("Update client - WinExecution receive notification.")
+                self.winExecution.update_execution_list()

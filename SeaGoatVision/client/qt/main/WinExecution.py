@@ -55,7 +55,7 @@ class WinExecution(QtCore.QObject):
         self.ui.lstExecution.currentItemChanged.connect(self._on_selected_lstExecution_change)
         self.ui.lstExecution.itemClicked.connect(self._lst_execution_clicked)
 
-        self._update_execution_list()
+        self.update_execution_list()
         self._mode_edit(self.mode_edit)
 
     def preview(self):
@@ -134,7 +134,7 @@ class WinExecution(QtCore.QObject):
         self.ui.txtFilterchain.setText(exec_info.filterchain)
         self.ui.txtMedia.setText(exec_info.media)
 
-    def _update_execution_list(self):
+    def update_execution_list(self):
         self.ui.lstExecution.clear()
         for execution_name in self.controller.get_execution_list():
             self.ui.lstExecution.addItem(execution_name)

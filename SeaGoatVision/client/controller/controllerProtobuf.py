@@ -75,6 +75,44 @@ class ControllerProtobuf():
         return response
 
     ##########################################################################
+    ################################ SERVER ##################################
+    ##########################################################################
+    def add_notify_server(self):
+        request = server_pb2.AddNotifyRequest()
+        # Make an synchronous call
+        id = None
+        try:
+            response = self.service.add_notify_server(request, timeout=10000)
+
+            if response:
+                id = response.id
+                if id < 0:
+                    id = None
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
+
+        return id
+
+    def need_notify(self, id):
+        request = server_pb2.NeedNotifyRequest()
+        request.id = id
+        # Make an synchronous call
+        status = None
+        try:
+            response = self.service.need_notify(request, timeout=10000)
+
+            if response:
+                status = not response.status
+            else:
+                log.printerror_stacktrace(logger, "Error when call need_notify, response is empty.")
+                status = False
+
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
+
+        return status
+
+    ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
     def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None):

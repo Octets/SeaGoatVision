@@ -56,6 +56,42 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     ##########################################################################
+    ################################ SERVER ##################################
+    ##########################################################################
+    def add_notify_server(self, controller, request, done):
+        logger.info("add_notify_server request %s", str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.AddNotifyResponse()
+        try:
+            ret = self.manager.add_notify_server()
+            if ret is None or ret < 0:
+                response.id = -1
+            else:
+                response.id = ret
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
+            response.id = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+    def need_notify(self, controller, request, done):
+        #logger.debug("need_notify request %s", str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.StatusResponse()
+        try:
+            status = self.manager.need_notify(request.id)
+            response.status = not(status)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
+            response.status = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
+    ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
     def start_filterchain_execution(self, controller, request, done):
@@ -75,7 +111,6 @@ class ProtobufServerImpl(server_pb2.CommandService):
 
         # We're done, call the run method of the done callback
         done.run(response)
-
 
     def stop_filterchain_execution(self, controller, request, done):
         logger.info("stop_filterchain_execution request %s", str(request).replace("\n", " "))

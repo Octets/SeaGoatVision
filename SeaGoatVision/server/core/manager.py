@@ -45,6 +45,8 @@ class Manager:
         # tcp server for output observer
         self.server_observer = Server()
         self.server_observer.start("", 5030)
+        self.notify_event_client = {}
+        self.id_client_notify = 0
 
     def close(self):
         logger.info("Close manager and close server.")
@@ -61,6 +63,24 @@ class Manager:
     ##########################################################################
     ############################# SERVER STATE ###############################
     ##########################################################################
+    def add_notify_server(self):
+        self.id_client_notify += 1
+        self.notify_event_client[self.id_client_notify] = False
+        return self.id_client_notify
+
+    def need_notify(self, id):
+        notify = self.notify_event_client.get(id, None)
+        if notify is None:
+            logger.warning("The client id %s is not in the notify list.")
+            return False
+        if not notify:
+            return False
+        self.notify_event_client[id] = False
+        return True
+
+    def _active_notify(self):
+        for notify in self.notify_event_client.keys():
+            self.notify_event_client[notify] = True
 
     ##########################################################################
     ######################## EXECUTION FILTER ################################
@@ -95,6 +115,8 @@ class Manager:
 
         self.dct_exec[execution_name] = {KEY_FILTERCHAIN: filterchain, KEY_MEDIA : media}
 
+        self._active_notify()
+
         return True
 
     def stop_filterchain_execution(self, execution_name):
@@ -117,6 +139,7 @@ class Manager:
         observer.remove_observer(filterchain.execute)
         filterchain.destroy()
         del self.dct_exec[execution_name]
+        self._active_notify()
         return True
 
     def get_execution_list(self):
