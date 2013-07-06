@@ -61,6 +61,7 @@ class Param(object):
         self.type_t = None
         self.thres_h = None
         self.force_type = None
+        self.last_serialize_value = None
 
         if serialize:
             status = self.deserialize(serialize)
@@ -77,7 +78,7 @@ class Param(object):
     def _init_param(self, value, min_v, max_v, lst_value, force_type, thres_h):
         self._valid_param(value, min_v, max_v, lst_value, thres_h)
         self.set(value)
-        self.default_value = self.value
+        self.default_value = self.last_serialize_value = self.value
         if force_type:
             self.force_type = force_type
         else:
@@ -126,6 +127,7 @@ class Param(object):
         self.thres_h = thres_h
 
     def serialize(self):
+        self.last_serialize_value = self.value
         # Force_type is not supported
         return {"name":self.name,
                 "value":self.value,
@@ -151,6 +153,13 @@ class Param(object):
         return True
 
     def reset(self):
+        if self.value == self.last_serialize_value:
+            return
+        self.value = self.last_serialize_value
+        for notify in self.lst_notify_reset:
+            notify(self.get_name(), self.value)
+
+    def set_as_default(self):
         if self.value == self.default_value:
             return
         self.value = self.default_value
