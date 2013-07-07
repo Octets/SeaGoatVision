@@ -40,24 +40,23 @@ class Firewire(Media_streaming):
         self.config = Configuration()
         self.camera = None
         self.dct_params = {}
+
+        self.cam_guid = config.guid
+        self.cam_no = config.no
+        # the id is guid or no, writing into open_camera
+        self.id = ""
+
+        fps = 15
         self.sleep_time = 1 / 15.0
         self.media_name = config.name
+        self.last_timestamp = -1
+        self.actual_timestamp = -1
+        self.count_not_receive = 0
+        self.max_not_receive = fps * 2
+        self.buffer_last_timestamp = False
         self.own_config = config
-        try:
-            ctx = video1394.DC1394Context()
-        except:
-            log.print_function(logger.error, "Lib1394 is not supported.")
-            return
 
-        if config.guid:
-            self.camera = ctx.createCamera(guid=config.guid)
-        else:
-            self.camera = ctx.createCamera(cid=config.no)
-
-        if self.camera is not None:
-            self.isOpened = True
-        else:
-            log.print_function(logger.warning, "No Firewire camera detected.")
+        if not self.open_camera():
             return
 
         self.shape = (800, 600)
@@ -107,6 +106,9 @@ class Firewire(Media_streaming):
     def serialize(self):
         return [param.serialize() for param in self.get_properties_param()]
 
+    def is_opened(self):
+        return self.camera is not None
+
     def deserialize(self, data):
         if not data:
             return False
@@ -123,23 +125,44 @@ class Firewire(Media_streaming):
                 return False
         return True
 
+    def initialize(self):
+        if not self.camera:
+            return False
+        self.camera.initialize(reset_bus=True,
+                               mode=self.own_config.mode,
+                               framerate=self.own_config.framerate,
+                               iso_speed=self.own_config.iso_speed,
+                               operation_mode=self.own_config.operation_mode
+                               )
+
+    def open_camera(self):
+        try:
+            ctx = video1394.DC1394Context()
+        except:
+            log.print_function(logger.error, "Libdc1394 is not supported.")
+            return False
+
+        if self.cam_guid:
+            self.camera = ctx.createCamera(guid=self.cam_guid)
+            self.id = "guid %s" % str(self.cam_guid)
+        else:
+            self.camera = ctx.createCamera(cid=self.cam_no)
+            self.id = "no %s" % str(self.cam_no)
+
+        if self.camera is not None:
+            return True
+        else:
+            log.print_function(logger.warning, "No Firewire camera detected - %s." % self.id)
+        return False
+
     def open(self):
         if not self.camera:
             return False
+        self.initialize()
 
-        camera = self.camera
-        camera.resetBus()
-        camera.isoSpeed = self.own_config.iso_speed
-        camera.mode = self.own_config.mode
-        try:
-            camera.framerate = self.own_config.framerate
-        except:
-            # ignore it and use the default framerate
-            log.print_function(logger.warning, "Framerate raise exception, but skip it from camera %s" % self.get_name())
-            pass
-
-        camera.start(force_rgb8=True)
-        camera.grabEvent.addObserver(self.camera_observer)
+        self.camera.start(force_rgb8=True)
+        self.camera.grabEvent.addObserver(self.camera_observer)
+        self.camera.stopEvent.addObserver(self.camera_close)
         # call open when video is ready
         Media_streaming.open(self)
 
@@ -152,6 +175,25 @@ class Firewire(Media_streaming):
         elif self.is_mono:
             image2 = im
         self.actual_image = image2
+        self.last_timestamp = timestamp
+
+    def camera_close(self):
+        if not self.camera:
+            # we already close the camera
+            return
+        # anormal close, do something!
+        logger.error("Receive events camera close , retry to reopen it.")
+        # clean camera
+        self.camera.grabEvent.removeObserver(self.camera_observer)
+        self.camera.stopEvent.removeObserver(self.camera_close)
+        self.camera = None
+        self.actual_image = None
+        # reopen the camera
+        if self.open_camera():
+            self.open()
+        else:
+            logger.warning("Cannot find the camera")
+            self.camera = None
 
     def get_properties_param(self):
         return self.dct_params.values()
@@ -183,11 +225,40 @@ class Firewire(Media_streaming):
         return True
 
     def next(self):
+        if not self.camera:
+            return None
+
+        diff_time = self.last_timestamp - self.actual_timestamp
+        # logger.debug("actual time %s, last time %s, diff %s" % (self.actual_timestamp, self.last_timestamp, diff_time))
+        self.actual_timestamp = self.last_timestamp
+        if self.last_timestamp == -1:
+            logger.warning("No image receive from %s" % (self.get_name()))
+            return None
+        if not diff_time:
+            self.count_not_receive += 1
+            if self.count_not_receive > self.max_not_receive:
+                logger.error("Didn't receive since %d image. Restart the camera??")
+                self.actual_timestamp = self.last_timestamp = -1
+                self.count_not_receive = 0
+                # TODO need to reload?
+                self.reload()
+                return None
+            # ignore if only missing one image
+            if not self.buffer_last_timestamp:
+                self.buffer_last_timestamp = True
+                return self.actual_image
+            else:
+                logger.warning("Receive no more image from %s, timestamp %d" % (self.get_name(), self.actual_timestamp))
+                return None
+        self.buffer_last_timestamp = False
         return self.actual_image
 
     def close(self):
         Media_streaming.close(self)
         if self.camera:
+            self.camera.grabEvent.removeObserver(self.camera_observer)
+            self.camera.stopEvent.removeObserver(self.camera_close)
             self.camera.stop()
+            self.camera = None
             return True
         return False

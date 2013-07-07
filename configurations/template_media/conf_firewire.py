@@ -36,6 +36,7 @@ class Conf_firewire:
             self.iso_speed = video1394.ISO_SPEED_400
             self.mode = video1394.VIDEO_MODE_800x600_YUV422
             self.framerate = video1394.FRAMERATE_15
+            self.operation_mode = video1394.OPERATION_MODE_LEGACY
             self.is_rgb = False
             self.is_format7 = False
             self.is_mono = False

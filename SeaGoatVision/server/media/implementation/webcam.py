@@ -105,6 +105,7 @@ class Webcam(Media_streaming):
     def close(self):
         Media_streaming.close(self)
         self.video.release()
+        self.isOpened = False
         return True
 
     def get_properties_param(self):
