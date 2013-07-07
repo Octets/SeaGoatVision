@@ -24,7 +24,7 @@ from SeaGoatVision.server.media.media_streaming import Media_streaming
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.configuration import Configuration
 import numpy as np
-import Image
+from PIL import Image
 import cv2
 import cv2.cv as cv
 from SeaGoatVision.commons import log

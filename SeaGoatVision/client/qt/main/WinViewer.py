@@ -27,7 +27,7 @@ import time
 
 from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.commons.keys import *
-import Image
+from PIL import Image
 from PySide import QtCore
 from PySide import QtGui
 from PySide.QtGui import QPainter
