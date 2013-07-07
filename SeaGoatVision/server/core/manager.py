@@ -71,7 +71,7 @@ class Manager:
     def need_notify(self, id):
         notify = self.notify_event_client.get(id, None)
         if notify is None:
-            logger.warning("The client id %s is not in the notify list.")
+            #logger.warning("The client id %s is not in the notify list.")
             return False
         if not notify:
             return False

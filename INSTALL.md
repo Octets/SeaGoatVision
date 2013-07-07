@@ -80,6 +80,7 @@ To check if your package management have opencv 2.4;
 More information is available here: http://opencv.willowgarage.com/wiki/InstallGuide
 
 ### D. Compile the project ###
+Note: The third-party pydc1394 is dependant of cython 0.19. Be sure you have it, else install it with easy_install from his website.
 On the root of the project:
 
 	git submodule init

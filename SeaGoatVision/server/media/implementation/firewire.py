@@ -58,6 +58,7 @@ class Firewire(Media_streaming):
 
         if not self.open_camera():
             return
+        self.initialize()
 
         self.shape = (800, 600)
 
@@ -71,6 +72,7 @@ class Firewire(Media_streaming):
 
         self.deserialize(self.config.read_media(self.get_name()))
         self.update_all_property()
+        self.is_streaming = False
 
     def _create_params(self):
         self.dct_params = {}
@@ -158,11 +160,11 @@ class Firewire(Media_streaming):
     def open(self):
         if not self.camera:
             return False
-        self.initialize()
 
         self.camera.start(force_rgb8=True)
         self.camera.grabEvent.addObserver(self.camera_observer)
         self.camera.stopEvent.addObserver(self.camera_close)
+        self.is_streaming = True
         # call open when video is ready
         Media_streaming.open(self)
 
@@ -178,11 +180,11 @@ class Firewire(Media_streaming):
         self.last_timestamp = timestamp
 
     def camera_close(self):
-        if not self.camera:
+        if not self.camera or not self.is_streaming:
             # we already close the camera
             return
         # anormal close, do something!
-        logger.error("Receive events camera close , retry to reopen it.")
+        logger.error("Receive events camera close %s, retry to reopen it." % (self.id))
         # clean camera
         self.camera.grabEvent.removeObserver(self.camera_observer)
         self.camera.stopEvent.removeObserver(self.camera_close)
@@ -225,7 +227,7 @@ class Firewire(Media_streaming):
         return True
 
     def next(self):
-        if not self.camera:
+        if not self.camera or not self.is_streaming:
             return None
 
         diff_time = self.last_timestamp - self.actual_timestamp
@@ -236,12 +238,14 @@ class Firewire(Media_streaming):
             return None
         if not diff_time:
             self.count_not_receive += 1
-            if self.count_not_receive > self.max_not_receive:
-                logger.error("Didn't receive since %d image. Restart the camera??")
+            if self.count_not_receive >= self.max_not_receive:
+                # logger.error("Didn't receive since %d images. Restart the camera %s??" % (self.count_not_receive, self.id))
+                logger.error("Didn't receive since %d images on camera %s" % (self.count_not_receive, self.id))
                 self.actual_timestamp = self.last_timestamp = -1
                 self.count_not_receive = 0
                 # TODO need to reload?
-                self.reload()
+                # self.reload()
+                # logger.info("Restart finished with camera %s" % (self.id))
                 return None
             # ignore if only missing one image
             if not self.buffer_last_timestamp:
@@ -254,11 +258,13 @@ class Firewire(Media_streaming):
         return self.actual_image
 
     def close(self):
+        # Only the manager can call this close or the reload on media.py
         Media_streaming.close(self)
+        self.is_streaming = False
         if self.camera:
+            self.camera.stop()
             self.camera.grabEvent.removeObserver(self.camera_observer)
             self.camera.stopEvent.removeObserver(self.camera_close)
-            self.camera.stop()
             self.camera = None
             return True
         return False
