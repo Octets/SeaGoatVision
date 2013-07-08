@@ -72,6 +72,11 @@ class Media(object):
     def deserialize(self, data):
         pass
 
+    def get_real_fps(self):
+        if self.thread:
+            return self.thread.get_fps()
+        return -1
+
     def open(self):
         # IMPORTANT, if inherit, call this at the end
         # the thread need to be start when device is ready

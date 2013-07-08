@@ -35,6 +35,7 @@ from PySide.QtCore import Qt
 import socket
 import threading
 import StringIO
+import thread
 from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
@@ -69,8 +70,10 @@ class WinViewer(QtCore.QObject):
 
         self.light_observer = self._get_light_observer()
 
-        self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter)
-        self.__add_output_observer()
+        if self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter):
+            self.__add_output_observer()
+            self.update_execution_thread = True
+            thread.start_new_thread(self.update_execution_name, ())
 
         self.light_observer.start()
 
@@ -92,6 +95,7 @@ class WinViewer(QtCore.QObject):
         if self.thread_output:
             self.thread_output.stop()
         self.light_observer.stop()
+        self.update_execution_thread = False
         logger.info("WinViewer %s quit." % (self.execution_name))
 
     ######################################################################
@@ -136,6 +140,14 @@ class WinViewer(QtCore.QObject):
     def updateLog(self, data):
         data = str(data).strip()
         logger.info("Qt output exec %s - %s" % (self.execution_name, data))
+
+    def update_execution_name(self):
+        while self.update_execution_thread:
+            fps = self.controller.get_real_fps_execution(self.execution_name)
+            if fps is None:
+                fps = -1
+            self.ui.lbl_real_fps.setText("%s" % fps)
+            time.sleep(2)
 
     def updateImage(self, image):
         self.light_observer.active_light()

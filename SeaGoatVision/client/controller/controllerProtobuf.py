@@ -248,6 +248,22 @@ class ControllerProtobuf():
 
         return None
 
+    def get_real_fps_execution(self, execution_name):
+        request = server_pb2.GetRealFpsExecutionRequest()
+        request.execution_name = execution_name
+        # Make an synchronous call
+        try:
+            response = self.service.get_real_fps_execution(request, timeout=10000)
+            if not response:
+                fps = -1
+            else:
+                fps = response.fps
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
+            fps = -1
+
+        return fps
+
     ##########################################################################
     ################################ MEDIA ##################################
     ##########################################################################
@@ -900,7 +916,7 @@ class Observer(threading.Thread):
                         continue
 
                     if data[0] != "b":
-                        #print("wrong type index.")
+                        # print("wrong type index.")
                         continue
 
                     i = 1
@@ -911,14 +927,14 @@ class Observer(threading.Thread):
                     if nb_packet_string.isdigit():
                         nb_packet = int(nb_packet_string)
                     else:
-                        #print("wrong index.")
+                        # print("wrong index.")
                         continue
 
                     sData += data[i + 1:]
                     for packet in range(1, nb_packet):
                         data, _ = self.socket.recvfrom(self.buffer)  # 262144 # 8192
                         if data[0] != "c":
-                            #print("wrong type index continue")
+                            # print("wrong type index continue")
                             continue
 
                         i = 1
@@ -928,10 +944,10 @@ class Observer(threading.Thread):
                         no_packet_string = data[1:i]
                         if no_packet_string.isdigit():
                             no_packet = int(no_packet_string)
-                            #if no_packet != packet:
-                                #print("Wrong no packet : %d" % packet)
+                            # if no_packet != packet:
+                                # print("Wrong no packet : %d" % packet)
                         else:
-                            #print("wrong index continue.")
+                            # print("wrong index continue.")
                             continue
 
                         sData += data[i + 1:]

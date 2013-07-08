@@ -128,6 +128,20 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # We're done, call the run method of the done callback
         done.run(response)
 
+    def get_real_fps_execution(self, controller, request, done):
+        logger.info("get_real_fps_execution request %s", str(request).replace("\n", " "))
+
+        # Create a reply
+        response = server_pb2.GetRealFpsExecutionResponse()
+        try:
+            response.fps = self.manager.get_real_fps_execution(request.execution_name)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
+            response.fps = -1
+
+        # We're done, call the run method of the done callback
+        done.run(response)
+
     ##########################################################################
     ############################## OBSERVATOR ################################
     ##########################################################################

@@ -72,7 +72,7 @@ class Manager:
     def need_notify(self, id):
         notify = self.notify_event_client.get(id, None)
         if notify is None:
-            #logger.warning("The client id %s is not in the notify list.")
+            # logger.warning("The client id %s is not in the notify list.")
             return False
         if not notify:
             return False
@@ -157,6 +157,12 @@ class Manager:
         setattr(o_exec_info, KEY_FILTERCHAIN, exec_info[KEY_FILTERCHAIN].get_name())
         return o_exec_info
 
+    def get_real_fps_execution(self, execution_name):
+        media = self._get_media(execution_name=execution_name)
+        if not media:
+            return -1
+        return media.get_real_fps()
+
     ##########################################################################
     ################################ MEDIA ###################################
     ##########################################################################
@@ -165,7 +171,7 @@ class Manager:
                 for name in self.resource.get_media_name_list()}
 
     def cmd_to_media(self, media_name, cmd, value=None):
-        media = self._get_media(media_name)
+        media = self._get_media(media_name=media_name)
         if not media:
             return False
         if media.is_media_streaming():
@@ -174,13 +180,13 @@ class Manager:
         return media.do_cmd(cmd, value)
 
     def get_info_media(self, media_name):
-        media = self._get_media(media_name)
+        media = self._get_media(media_name=media_name)
         if not media:
             return {}
         return media.get_info()
 
     def start_record(self, media_name, path=None):
-        media = self._get_media(media_name)
+        media = self._get_media(media_name=media_name)
         if not media:
             return False
         if media.is_media_video():
@@ -189,7 +195,7 @@ class Manager:
         return media.start_record(path=path)
 
     def stop_record(self, media_name):
-        media = self._get_media(media_name)
+        media = self._get_media(media_name=media_name)
         if not media:
             return False
         if media.is_media_video():
@@ -198,19 +204,19 @@ class Manager:
         return media.stop_record()
 
     def get_params_media(self, media_name):
-        media = self._get_media(media_name)
+        media = self._get_media(media_name=media_name)
         if not media:
             return []
         return media.get_properties_param()
 
     def update_param_media(self, media_name, param_name, value):
-        media = self._get_media(media_name)
+        media = self._get_media(media_name=media_name)
         if not media:
             return False
         return media.update_property_param(param_name, value)
 
     def save_params_media(self, media_name):
-        media = self._get_media(media_name)
+        media = self._get_media(media_name=media_name)
         if not media:
             return False
         return self.config.write_media(media)
@@ -390,9 +396,16 @@ class Manager:
             return None
         return filterchain
 
-    def _get_media(self, media_name):
-        media = self.resource.get_media(media_name)
-        if not media:
-            log.print_function(logger.error, "Cannot found the media %s." % media_name, last_stack=True)
-            return None
+    def _get_media(self, media_name=None, execution_name=None):
+        media = None
+        if media_name:
+            media = self.resource.get_media(media_name)
+            if not media:
+                log.print_function(logger.error, "Cannot found the media %s." % media_name, last_stack=True)
+                return None
+        elif execution_name:
+            dct_execution = self._get_execution(execution_name)
+            if not dct_execution:
+                return None
+            media = dct_execution.get(KEY_MEDIA, None)
         return media

@@ -31,15 +31,20 @@ class Thread_media(threading.Thread):
         self.media = media
         self.running = False
         self.pause = False
+        self.nb_fps = 0
 
     def run(self):
         sleep_time_per_fps = self.media.sleep_time
         self.running = True
         protection_max_reset = 3
         no_reset = 0
+        first_fps_time = time.time()
+        nb_fps = 0
+
         while self.running:
             try:
                 image = self.media.next()
+                nb_fps += 1
                 no_reset = 0
             except StopIteration:
                 if self.media.active_loop:
@@ -66,6 +71,10 @@ class Thread_media(threading.Thread):
                 time.sleep(sleep_time_per_fps)
 
             start_time = time.time()
+            if start_time - first_fps_time > 1:
+                self.nb_fps = nb_fps
+                nb_fps = 0
+                first_fps_time = start_time
             self.media.notify_observer(image)
             if not self.running:
                 break
@@ -74,6 +83,9 @@ class Thread_media(threading.Thread):
                 if sleep_time > 0:
                     time.sleep(sleep_time)
         self.running = False
+
+    def get_fps(self):
+        return self.nb_fps
 
     def stop(self):
         self.running = False

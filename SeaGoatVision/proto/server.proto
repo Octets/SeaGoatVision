@@ -197,6 +197,15 @@ message GetParamsMediaResponse
   repeated Param params = 1;
 }
 
+message GetRealFpsExecutionRequest
+{
+  required string execution_name = 1;
+}
+message GetRealFpsExecutionResponse
+{
+  required int32 fps = 1;
+}
+
 message GetExecutionRequest{}
 message GetExecutionResponse
 {
@@ -270,6 +279,7 @@ service CommandService
   rpc get_media_list(GetMediaListRequest) returns(GetMediaListResponse);
   rpc get_params_filterchain(GetParamsFilterchainRequest) returns(GetParamsFilterchainResponse);
   rpc get_params_media(GetParamsMediaRequest) returns(GetParamsMediaResponse);
+  rpc get_real_fps_execution(GetRealFpsExecutionRequest) returns(GetRealFpsExecutionResponse);
   rpc get_execution_list(GetExecutionRequest) returns(GetExecutionResponse);
   rpc get_execution_info(GetExecutionInfoRequest) returns(GetExecutionInfoResponse);
   rpc get_info_media(GetInfoMediaRequest) returns(GetInfoMediaResponse);
