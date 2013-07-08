@@ -43,6 +43,7 @@ class Manager:
         self.resource = Resource()
 
         # tcp server for output observer
+        self.nb_observer_client = 0
         self.server_observer = Server()
         self.server_observer.start("", 5030)
         self.notify_event_client = {}
@@ -270,10 +271,12 @@ class Manager:
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return False
-        if self.server_observer.send in filterchain.get_filter_output_observers():
-            logger.warning("Manager: observer already exist - add_output_observer")
-            return True
-        return filterchain.add_filter_output_observer(self.server_observer.send)
+
+        status = True
+        if self.server_observer.send not in filterchain.get_filter_output_observers():
+            status = filterchain.add_filter_output_observer(self.server_observer.send)
+        self.nb_observer_client += 1
+        return status
 
     def remove_output_observer(self, execution_name):
         """
@@ -285,7 +288,13 @@ class Manager:
             return False
         if not filterchain.get_filter_output_observers():
             return True
-        return filterchain.remove_filter_output_observer(self.server_observer.send)
+        self.nb_observer_client -= 1
+        if self.nb_observer_client <= 0:
+            # protection if go under zero
+            if self.nb_observer_client < 0:
+                self.nb_observer_client = 0
+            return filterchain.remove_filter_output_observer(self.server_observer.send)
+        return True
 
     ##########################################################################
     ########################## CONFIGURATION  ################################
@@ -362,11 +371,17 @@ class Manager:
     ##########################################################################
     ############################## PRIVATE  ##################################
     ##########################################################################
-    def _get_filterchain(self, execution_name):
+    def _get_execution(self, execution_name):
         dct_execution = self.dct_exec.get(execution_name, {})
         if not dct_execution:
             msg = "Don't find execution %s. List execution name: %s" % (execution_name, self.dct_exec.keys())
             log.print_function(logger.warning, msg, last_stack=True)
+            return None
+        return dct_execution
+
+    def _get_filterchain(self, execution_name):
+        dct_execution = self._get_execution(execution_name)
+        if dct_execution is None:
             return None
         filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
         if not filterchain:
