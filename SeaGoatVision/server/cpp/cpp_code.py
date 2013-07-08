@@ -80,7 +80,7 @@ def params_code():
         ###########################*/
         long param_get_int(std::string name) {
             if(!params.has_key(name)) {
-                printf("ERROR from cpp_code param_get_int: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code param_get_int: key %s not exist.\\n", name.c_str());
                 return 0;
             }
             py::object o = params.get(name);
@@ -89,7 +89,7 @@ def params_code():
 
         bool param_get_bool(std::string name) {
             if(!params.has_key(name)) {
-                printf("ERROR from cpp_code param_get_bool: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code param_get_bool: key %s not exist.\\n", name.c_str());
                 return 0;
             }
             py::object o = params.get(name);
@@ -98,7 +98,7 @@ def params_code():
 
         double param_get_double(std::string name) {
             if(!params.has_key(name)) {
-                printf("ERROR from cpp_code param_get_double: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code param_get_double: key %s not exist.\\n", name.c_str());
                 return 0;
             }
             py::object o = params.get(name);
@@ -107,7 +107,7 @@ def params_code():
 
         std::string param_get_string(std::string name) {
             if(!params.has_key(name)) {
-                printf("ERROR from cpp_code param_get_string: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code param_get_string: key %s not exist.\\n", name.c_str());
                 return "";
             }
             py::object o = params.get(name);
@@ -175,7 +175,7 @@ def params_code():
         #############################################*/
         void global_param_set_int(std::string name, int value) {
             if(!global_param.has_key(name)) {
-                printf("ERROR from cpp_code global_param_set_int: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code global_param_set_int: key %s not exist.\\n", name.c_str());
             }
             py::object o = global_param.get(name);
             py::tuple args(1);
@@ -185,7 +185,7 @@ def params_code():
 
         void global_param_set_bool(std::string name, bool value) {
             if(!global_param.has_key(name)) {
-                printf("ERROR from cpp_code global_param_set_bool: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code global_param_set_bool: key %s not exist.\\n", name.c_str());
             }
             py::object o = global_param.get(name);
             py::tuple args(1);
@@ -195,7 +195,7 @@ def params_code():
 
         void global_param_set_double(std::string name, double value) {
             if(!global_param.has_key(name)) {
-                printf("ERROR from cpp_code global_param_set_double: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code global_param_set_double: key %s not exist.\\n", name.c_str());
             }
             py::object o = global_param.get(name);
             py::tuple args(1);
@@ -205,7 +205,7 @@ def params_code():
 
         void global_param_set_string(std::string name, std::string value) {
             if(!global_param.has_key(name)) {
-                printf("ERROR from cpp_code global_param_set_string: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code global_param_set_string: key %s not exist.\\n", name.c_str());
             }
             py::object o = global_param.get(name);
             py::tuple args(1);
@@ -215,7 +215,7 @@ def params_code():
 
         void global_param_set_mat(std::string name, cv::Mat cvmat) {
             if(!global_param.has_key(name)) {
-                printf("ERROR from cpp_code global_param_set_mat: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code global_param_set_mat: key %s not exist.\\n", name.c_str());
             }
             py::object o = global_param.get(name);
 
@@ -232,7 +232,7 @@ def params_code():
 
         long global_param_get_int(std::string name) {
             if(!global_param.has_key(name)) {
-                printf("ERROR from cpp_code global_param_get_int: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code global_param_get_int: key %s not exist.\\n", name.c_str());
                 return 0;
             }
             py::object o = global_param.get(name);
@@ -241,7 +241,7 @@ def params_code():
 
         bool global_param_get_bool(std::string name) {
             if(!global_param.has_key(name)) {
-                printf("ERROR from cpp_code global_param_get_bool: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code global_param_get_bool: key %s not exist.\\n", name.c_str());
                 return false;
             }
             py::object o = global_param.get(name);
@@ -250,7 +250,7 @@ def params_code():
 
         double global_param_get_double(std::string name) {
             if(!global_param.has_key(name)) {
-                printf("ERROR from cpp_code global_param_get_double: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code global_param_get_double: key %s not exist.\\n", name.c_str());
                 return 0.0;
             }
             py::object o = global_param.get(name);
@@ -259,7 +259,7 @@ def params_code():
 
         std::string global_param_get_string(std::string name) {
             if(!global_param.has_key(name)) {
-                printf("ERROR from cpp_code global_param_get_string: key %s not exist.\n", name.c_str());
+                printf("ERROR from cpp_code global_param_get_string: key %s not exist.\\n", name.c_str());
                 return "";
             }
             py::object o = global_param.get(name);
