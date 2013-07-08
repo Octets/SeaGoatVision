@@ -56,7 +56,6 @@ class WinExecution(QtCore.QObject):
         self.ui.lstExecution.itemClicked.connect(self._lst_execution_clicked)
 
         self.update_execution_list()
-        self._mode_edit(self.mode_edit)
 
     def preview(self):
         # feature, if not into edit mode, we are create a new execution
@@ -135,6 +134,10 @@ class WinExecution(QtCore.QObject):
         self.ui.txtMedia.setText(exec_info.media)
 
     def update_execution_list(self):
+        self.mode_edit = False
+        self._mode_edit(self.mode_edit)
+
+        self.last_index += 1
         self.ui.lstExecution.clear()
         for execution_name in self.controller.get_execution_list():
             self.ui.lstExecution.addItem(execution_name)
