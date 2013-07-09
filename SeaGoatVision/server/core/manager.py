@@ -49,6 +49,9 @@ class Manager:
         self.notify_event_client = {}
         self.id_client_notify = 0
 
+        # launch command on start
+        self.config.get_dct_cmd_on_start()(self)
+
     def close(self):
         logger.info("Close manager and close server.")
         for execution in self.dct_exec.values():

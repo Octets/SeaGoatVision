@@ -118,6 +118,14 @@ class Configuration(object):
                 return self.public_config.log_path
         return self.public_config.log_path
 
+    def get_dct_cmd_on_start(self):
+        if self.private_config:
+            try:
+                return self.private_config.cmd_on_start
+            except:
+                return self.public_config.cmd_on_start
+        return self.public_config.cmd_on_start
+
     #### Filterchain
     def list_filterchain(self):
         if not os.path.isdir(self.dir_filterchain):
