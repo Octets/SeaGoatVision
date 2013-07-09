@@ -123,6 +123,9 @@ class WinViewer(QtCore.QObject):
     def _updateFilters(self):
         self.ui.filterComboBox.clear()
         info = self.controller.get_filterchain_info(self.filterchain_name)
+        if not info:
+            logger.error("Missing info from get_filterchain_info.")
+            return
         lst_filter = info.get("filters", None)
         if not lst_filter:
             logger.warning("Recieve empty filter list from filterchain %s" % self.filterchain_name)
