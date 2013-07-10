@@ -49,6 +49,8 @@ class Param(object):
     """
     def __init__(self, name, value, min_v=None, max_v=None, lst_value=None, \
                 force_type=None, thres_h=None, serialize=None):
+        # contant float
+        self.delta_float = 0.0001
         # Exception, can serialize
         self.lst_notify = []
         self.lst_notify_reset = []
@@ -239,10 +241,10 @@ class Param(object):
             raise Exception("value is wrong type. Expected %s and receive %s" \
                     % (self.type_t, type(value)))
         if self.type_t is int or self.type_t is float:
-            if self.min_v is not None and value < self.min_v:
+            if self.min_v is not None and value < self.min_v - self.delta_float:
                 raise Exception("Value %s is lower then min %s" % \
                     (value, self.min_v))
-            if self.max_v is not None and value > self.max_v:
+            if self.max_v is not None and value > self.max_v + self.delta_float:
                 raise Exception("Value %s is upper then max %s" % \
                     (value, self.max_v))
             if self.lst_value is not None and value not in self.lst_value:
