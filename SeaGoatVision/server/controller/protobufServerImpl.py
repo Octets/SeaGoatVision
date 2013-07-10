@@ -129,7 +129,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def get_real_fps_execution(self, controller, request, done):
-        logger.info("get_real_fps_execution request %s", str(request).replace("\n", " "))
+        #logger.info("get_real_fps_execution request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetRealFpsExecutionResponse()

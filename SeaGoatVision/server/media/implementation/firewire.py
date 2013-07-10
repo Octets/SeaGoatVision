@@ -234,6 +234,9 @@ class Firewire(Media_streaming):
         # logger.debug("actual time %s, last time %s, diff %s" % (self.actual_timestamp, self.last_timestamp, diff_time))
         self.actual_timestamp = self.last_timestamp
         if self.last_timestamp == -1:
+            if not self.buffer_last_timestamp:
+                self.buffer_last_timestamp = True
+                return None
             logger.warning("No image receive from %s" % (self.get_name()))
             return None
         if not diff_time:
