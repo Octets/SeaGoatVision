@@ -26,6 +26,7 @@ from configuration import Configuration
 from resource import Resource
 from SeaGoatVision.commons.keys import *
 from SeaGoatVision.commons import log
+import thread
 
 logger = log.get_logger(__name__)
 
@@ -50,7 +51,7 @@ class Manager:
         self.id_client_notify = 0
 
         # launch command on start
-        self.config.get_dct_cmd_on_start()(self)
+        thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self, ))
 
     def close(self):
         logger.info("Close manager and close server.")
