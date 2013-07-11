@@ -64,6 +64,9 @@ class WinExecution(QtCore.QObject):
                 self._mode_edit(True)
             execution_name = self.ui.txtExecution.text()
             if not execution_name:
+                # this case is when no selected item in the list, so select the first and restart
+                self.ui.lstExecution.setCurrentRow(0)
+                self.preview()
                 return
         else:
             execution_name = self.ui.txtExecution.text()
@@ -94,8 +97,6 @@ class WinExecution(QtCore.QObject):
             self.controller.stop_filterchain_execution(execution_name)
             self.ui.lstExecution.takeItem(noLine)
             self._enable_stop_button(False)
-        else:
-            logger.critical("Bug internal system - winExecution - fix me please")
 
     def new(self):
         self._mode_edit(True)
@@ -120,7 +121,9 @@ class WinExecution(QtCore.QObject):
         execution = self._get_selected_list(self.ui.lstExecution)
         if execution:
             self.ui.previewButton.setEnabled(True)
+            self.ui.stopButton.setEnabled(True)
         else:
+            self.ui.stopButton.setEnabled(False)
             self.ui.txtFilterchain.setText("")
             self.ui.txtMedia.setText("")
             self.ui.txtExecution.setText("")
