@@ -45,6 +45,7 @@ class Firewire(Media_streaming):
         self.cam_no = config.no
         # the id is guid or no, writing into open_camera
         self.id = ""
+        self.key_auto_param = "-auto"
 
         fps = 15
         self.sleep_time = 1 / 15.0
@@ -85,7 +86,7 @@ class Firewire(Media_streaming):
                 continue
             try:
                 if name == "White Balance":
-                    param = Param("%s-auto" % name, False)
+                    param = Param("%s%s" % (name, self.key_auto_param), False)
                     param.add_notify_reset(self.update_property_param)
                     self.dct_params[param.get_name()] = param
                     param = Param("%s-red" % name, value["RV_value"], min_v=value["min"], max_v=value["max"])
@@ -96,7 +97,7 @@ class Firewire(Media_streaming):
                     self.dct_params[param.get_name()] = param
                     continue
                 elif name == "Shutter" or name == "Gain":
-                    param = Param("%s-auto" % name, False)
+                    param = Param("%s%s" % (name, self.key_auto_param), False)
                     param.add_notify_reset(self.update_property_param)
                     self.dct_params[param.get_name()] = param
                 param = Param(name, value["value"], min_v=value["min"], max_v=value["max"])
@@ -106,7 +107,6 @@ class Firewire(Media_streaming):
                 log.printerror_stacktrace(logger, "%s - name: %s, value: %s" % (e, name, value))
 
     def serialize(self):
-        return [param.serialize() for param in self.get_properties_param()]
 
     def is_opened(self):
         return self.camera is not None
@@ -201,17 +201,38 @@ class Firewire(Media_streaming):
         return self.dct_params.values()
 
     def update_all_property(self):
-        for name, value in self.dct_params.items():
-            self.update_property_param(name, value.get())
+        # If property is auto, don't apply manual parameter
+        lst_auto = [value[:-(len(self.key_auto_param))]
+                    for value in self.dct_params.keys()
+                    if self.key_auto_param in value]
+        lst_active_auto = [value for value in lst_auto
+                           if self.dct_params["%s%s" % (value, self.key_auto_param)].get()]
 
-    def update_property_param(self, param_name, value):
+        for key, value in self.dct_params.items():
+            contain_auto_variable = False
+            # search active auto
+            for active_key in lst_active_auto:
+                if active_key in key:
+                    contain_auto_variable = True
+                    if self.key_auto_param in key:
+                        self.update_property_param(key, value.get(), update_object_param=False)
+            if contain_auto_variable:
+                continue
+            # find auto key disable and cancel it
+            if self.key_auto_param in key:
+                continue
+            self.update_property_param(key, value.get(), update_object_param=False)
+
+    def update_property_param(self, param_name, value, update_object_param=True):
         if not self.camera:
             return False
 
-        auto = "-auto"
-        if auto in param_name:
-            new_param_name = param_name[:-len(auto)]
-            logger.debug("Camera %s param_name %s and value %s", self.get_name(), param_name, value)
+        if update_object_param:
+            self.dct_params[param_name].set(value)
+
+        logger.debug("Camera %s param_name %s and value %s", self.get_name(), param_name, value)
+        if self.key_auto_param in param_name:
+            new_param_name = param_name[:-len(self.key_auto_param)]
             self.camera.set_property_auto(new_param_name, value)
         elif "White Balance" in param_name:
             if "red" in param_name:
@@ -222,7 +243,6 @@ class Firewire(Media_streaming):
                 log.print_function(logger.error, "Can define the right color %s" % param_name)
                 return False
         else:
-            logger.debug("Camera %s param_name %s and value %s", self.get_name(), param_name, value)
             self.camera.set_property(param_name, value)
         return True
 
