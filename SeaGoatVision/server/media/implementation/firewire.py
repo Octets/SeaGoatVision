@@ -107,6 +107,7 @@ class Firewire(Media_streaming):
                 log.printerror_stacktrace(logger, "%s - name: %s, value: %s" % (e, name, value))
 
     def serialize(self):
+        return [param.serialize() for param in self.get_properties_param()]
 
     def is_opened(self):
         return self.camera is not None
