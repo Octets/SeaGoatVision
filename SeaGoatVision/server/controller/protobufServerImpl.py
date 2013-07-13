@@ -28,6 +28,7 @@ import json
 import socket
 import threading
 from SeaGoatVision.commons import log
+from SeaGoatVision.commons.keys import *
 
 logger = log.get_logger(__name__)
 
@@ -77,7 +78,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def need_notify(self, controller, request, done):
-        #logger.debug("need_notify request %s", str(request).replace("\n", " "))
+        # logger.debug("need_notify request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.StatusResponse()
@@ -102,7 +103,8 @@ class ProtobufServerImpl(server_pb2.CommandService):
         try:
             # dont start a filterchain execution if it already exist
             response.status = int(not self.manager.start_filterchain_execution(request.execution_name,
-                    request.media_name, request.filterchain_name, file_name=request.file_name))
+                    request.media_name, request.filterchain_name, file_name=request.file_name,
+                            is_client_manager=request.is_client_manager))
             if response.status:
                 response.message = "This filterchain_execution already exist."
         except Exception as e:
@@ -129,7 +131,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def get_real_fps_execution(self, controller, request, done):
-        #logger.info("get_real_fps_execution request %s", str(request).replace("\n", " "))
+        # logger.info("get_real_fps_execution request %s", str(request).replace("\n", " "))
 
         # Create a reply
         response = server_pb2.GetRealFpsExecutionResponse()
@@ -332,10 +334,12 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def cmd_to_media(self, controller, request, done):
-        logger.info("cmd_to_media request %s", str(request).replace("\n", " "))
+        if request.cmd != set_key_media_frame():
+            logger.info("cmd_to_media request %s", str(request).replace("\n", " "))
 
         response = server_pb2.StatusResponse()
-        response.status = int(not self.manager.cmd_to_media(request.media_name, request.cmd))
+        response.status = int(not self.manager.cmd_to_media(request.media_name, request.cmd,
+                                                            value=request.value))
 
         done.run(response)
 

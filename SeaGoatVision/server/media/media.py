@@ -30,6 +30,10 @@ class Media(object):
         self.thread = None
         self.media_name = None
         self.active_loop = True
+        self.is_client_manager = False
+
+    def set_is_client_manager(self, is_client_manager):
+        self.is_client_manager = is_client_manager
 
     def is_media_streaming(self):
         # complete it into media_streaming and media_video
@@ -63,7 +67,7 @@ class Media(object):
         return -1
 
     def get_info(self):
-        fps = int(1/self.sleep_time) if self.thread else -1
+        fps = int(1 / self.sleep_time) if self.thread else -1
         return {"fps" : fps, "nb_frame" : self.get_total_frames()}
 
     def serialize(self):
@@ -80,11 +84,13 @@ class Media(object):
     def open(self):
         # IMPORTANT, if inherit, call this at the end
         # the thread need to be start when device is ready
+        logger.info("Open media %s" % self.get_name())
+        if self.is_client_manager:
+            return True
         if self.thread:
             return False
         self.thread = Thread_media(self)
         self.thread.start()
-        logger.info("Open media %s" % self.get_name())
         return True
 
     def next(self):
@@ -96,11 +102,13 @@ class Media(object):
         pass
 
     def close(self):
+        logger.info("Close media %s" % self.get_name())
+        if self.is_client_manager:
+            return True
         if not self.thread:
             return False
         self.thread.stop()
         self.thread = None
-        logger.info("Close media %s" % self.get_name())
         return True
 
     def reload(self):

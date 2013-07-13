@@ -115,7 +115,7 @@ class ControllerProtobuf():
     ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
-    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None):
+    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None, is_client_manager=False):
         """
             Start a filterchain on the server.
             Param : str - The unique execution name
@@ -128,6 +128,7 @@ class ControllerProtobuf():
         request.filterchain_name = filterchain_name
         if file_name:
             request.file_name = file_name
+        request.is_client_manager = is_client_manager
 
         # Make an synchronous call
         returnValue = None
@@ -330,10 +331,12 @@ class ControllerProtobuf():
 
         return returnValue
 
-    def cmd_to_media(self, media_name, cmd):
+    def cmd_to_media(self, media_name, cmd, value=None):
         request = server_pb2.CmdMediaRequest()
         request.media_name = media_name
         request.cmd = cmd
+        if value:
+            request.value = value
         # Make an synchronous call
         try:
             response = self.service.cmd_to_media(request, timeout=10000)

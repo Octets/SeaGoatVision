@@ -43,3 +43,6 @@ def get_key_media_pause():
 
 def get_key_media_loop():
     return "toggle_loop"
+
+def set_key_media_frame():
+    return "frame_media"

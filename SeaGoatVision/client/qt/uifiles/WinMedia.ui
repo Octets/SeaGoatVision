@@ -249,9 +249,31 @@
            </widget>
           </item>
           <item>
+           <widget class="QSpinBox" name="spin_box_fps">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>50</number>
+            </property>
+            <property name="value">
+             <number>15</number>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="loopchb">
             <property name="enabled">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
@@ -275,9 +297,9 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
-           <widget class="QSlider" name="timeslider">
+           <widget class="QSlider" name="slider_frame">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>

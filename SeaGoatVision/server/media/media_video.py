@@ -59,19 +59,30 @@ class Media_video(Media):
         return -1
 
     def do_cmd(self, action, value):
-        if not self.thread:
+        if not self.thread and not self.is_client_manager:
             return False
         if action == get_key_media_play():
             if self.thread.pause:
                 self.thread.pause = False
                 return True
+            return False
         elif action == get_key_media_pause():
             if not self.thread.pause:
                 self.thread.pause = True
                 return True
+            return False
         elif action == get_key_media_loop():
             self.set_loop_enable(not self.active_loop)
-        return False
+        elif action == set_key_media_frame():
+            self.change_frame(value)
+        else:
+            return False
+        return True
+
+    def change_frame(self, value):
+        if self.movie:
+            self.movie.set_position(value)
+            self.notify_observer(self.movie.next())
 
     def set_file(self, file_name):
         self.file_name = file_name

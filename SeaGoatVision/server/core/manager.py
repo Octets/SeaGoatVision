@@ -90,7 +90,7 @@ class Manager:
     ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
-    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None):
+    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None, is_client_manager=False):
         execution = self.dct_exec.get(execution_name, None)
 
         if execution:
@@ -113,6 +113,8 @@ class Manager:
 
         if media.is_media_video() and file_name:
             media.set_file(file_name)
+
+        media.set_is_client_manager(is_client_manager)
 
         filterchain.set_media_param(media.get_dct_media_param())
 

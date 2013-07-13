@@ -166,14 +166,20 @@ class WinExecution(QtCore.QObject):
                                       QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
             return False
         file_name = self.shared_info.get("path_media")
-        status = self.controller.start_filterchain_execution(execution_name, media_name, filterchain_name, file_name)
+        is_client_manager = media_name == get_media_file_video_name()
+        status = self.controller.start_filterchain_execution(execution_name, media_name,
+                                                             filterchain_name, file_name=file_name,
+                                                             is_client_manager=is_client_manager)
         if not status:
             self.cancel()
             return False
         self.ui.lstExecution.addItem(execution_name)
         self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
         self._mode_edit(False)
-        self.shared_info.set("start_execution", None)
+        self.shared_info.set("start_execution", {"media" : media_name,
+                                                 "execution_name" : execution_name,
+                                                 "filterchain_name" : filterchain_name,
+                                                 "file_name" : file_name})
         return True
 
     def _mode_edit(self, mode_edit):

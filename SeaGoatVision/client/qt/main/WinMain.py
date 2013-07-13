@@ -160,6 +160,7 @@ class WinMain(QtGui.QMainWindow):
         self.start_pull = False
         for viewer in self.dct_preview.values():
             viewer.closeEvent()
+        self.winMedia.stop()
 
     def poll_notify_server(self):
         sleep = 2

@@ -23,6 +23,8 @@ from PySide.QtGui import QIcon
 from SeaGoatVision.commons.keys import *
 from SeaGoatVision.client.qt import config
 from PySide.QtGui import QFileDialog
+import threading
+import time
 
 from PySide import QtCore
 from SeaGoatVision.commons import log
@@ -38,7 +40,7 @@ class WinMedia(QtCore.QObject):
         self.shared_info.connect("start_execution", self.set_info)
 
         self.is_recorded = False
-        self.is_pause = False
+        self.is_play = False
         self.record_icon = QIcon(self.ressource_icon_path + "RecordVideoAction.png")
         self.save_record_icon = QIcon(self.ressource_icon_path + "SaveServerImageAction.png")
         self.play_icon = QIcon("/usr/share/icons/gnome/24x24/actions/player_play.png")
@@ -47,7 +49,18 @@ class WinMedia(QtCore.QObject):
         self.dct_media = None
         self.last_selected_media = config.default_media_selected
 
+        self.last_value_frame = 0
+        self.max_frame = 0
+
+        self.shared_info.connect("start_execution", self._start_execution)
+
+        self.thread_player = player_file(controller, self._get_actual_no_frame, self.set_slider_value)
+        self.thread_player.start()
         self.reload_ui()
+
+    def stop(self):
+        if self.thread_player:
+            self.thread_player.close()
 
     def reload_ui(self):
         self.ui = get_ui(self)
@@ -59,6 +72,9 @@ class WinMedia(QtCore.QObject):
         self.ui.btnplay.clicked.connect(self.play)
         self.ui.loopchb.clicked.connect(self.active_loop)
         self.ui.movieLineEdit.textChanged.connect(self._movie_changed)
+        self.ui.slider_frame.valueChanged.connect(self._slider_value_change)
+        self.ui.txtframe.returnPressed.connect(self._txt_frame_value_change)
+        self.ui.spin_box_fps.valueChanged.connect(self._change_fps)
 
         self._set_record_icon()
         self._set_play_icon()
@@ -98,6 +114,42 @@ class WinMedia(QtCore.QObject):
     def _movie_changed(self):
         self.shared_info.set("path_media", self.ui.movieLineEdit.text())
 
+    def set_slider_value(self, value):
+        self.ui.slider_frame.setValue(value)
+
+    def _slider_value_change(self, value):
+        self.ui.txtframe.setText(str(value))
+        self._txt_frame_value_change()
+
+    def _txt_frame_value_change(self):
+        str_value = self.ui.txtframe.text()
+        try:
+            value = int(str_value)
+        except:
+            self.ui.txtframe.setText(str(self.last_value_frame))
+            return
+        if value < 1 or value > self.max_frame:
+            self.ui.txtframe.setText(str(self.last_value_frame))
+            return
+        self.last_value_frame = value
+        self.ui.txtframe.setText(str(value))
+        self.set_frame_video(value)
+
+    def _change_fps(self, value):
+        self.thread_player.set_fps(value)
+
+    def _get_actual_no_frame(self):
+        return self.ui.slider_frame.value()
+
+    def _start_execution(self, value=None):
+        if not value or type(value) is not dict:
+            return
+        media_name = value.get("media")
+        if media_name == get_media_file_video_name():
+            self.set_slider_value(1)
+            self.is_play = False
+            self.play()
+
     def click_record_button(self):
         if not self.is_recorded:
             path = self.ui.txt_name_record.text()
@@ -124,6 +176,12 @@ class WinMedia(QtCore.QObject):
         if len(filename) > 0:
             self.ui.movieLineEdit.setText(filename)
 
+    def set_frame_video(self, value):
+        media_name = self.shared_info.get("media")
+        if not media_name:
+            return
+        self.controller.cmd_to_media(media_name, set_key_media_frame(), value=value - 1)
+
     def set_info(self, value=None):
         # Ignore the value
         media_name = self.shared_info.get("media")
@@ -132,8 +190,12 @@ class WinMedia(QtCore.QObject):
         info = self.controller.get_info_media(media_name)
         if not info:
             logger.warning("WinMedia: info is empty from get_info_media.")
-        self.ui.lblframe.setText("/%s" % info.get("nb_frame", "-1"))
-        self.ui.txtframe.setText("0")
+        self.max_frame = info.get("nb_frame", -1)
+        self.ui.lblframe.setText("/%s" % self.max_frame)
+        self.ui.txtframe.setText(str(self.last_value_frame))
+        self.ui.slider_frame.setMinimum(1)
+        self.ui.slider_frame.setMaximum(self.max_frame)
+        self.thread_player.set_max_frame(self.max_frame)
         self.ui.lblFPS.setText("%s" % info.get("fps", "-1"))
         record_name = info.get("record_file_name", "")
         self.ui.txt_name_record.setText("%s" % record_name)
@@ -141,25 +203,27 @@ class WinMedia(QtCore.QObject):
         self._set_record_icon()
 
     def play(self):
-        media_name = self.ui.cbMedia.currentText()
-        if self.is_pause:
-            if self.controller.cmd_to_media(media_name, get_key_media_play()):
-                self.is_pause = False
-                self._set_play_icon()
+        #media_name = self.ui.cbMedia.currentText()
+        if self.is_play:
+            #if self.controller.cmd_to_media(media_name, get_key_media_play()):
+            self.thread_player.set_pause(True)
+            self.is_play = False
+            self._set_play_icon()
         else:
-            if self.controller.cmd_to_media(media_name, get_key_media_pause()):
-                self.is_pause = True
-                self._set_play_icon()
+            #if self.controller.cmd_to_media(media_name, get_key_media_pause()):
+            self.thread_player.set_pause(False)
+            self.is_play = True
+            self._set_play_icon()
 
     def active_loop(self):
         media_name = self.ui.cbMedia.currentText()
         self.controller.cmd_to_media(media_name, get_key_media_loop())
 
     def _set_play_icon(self):
-        if not self.is_pause:
-            self.ui.btnplay.setIcon(self.pause_icon)
-        else:
+        if not self.is_play:
             self.ui.btnplay.setIcon(self.play_icon)
+        else:
+            self.ui.btnplay.setIcon(self.pause_icon)
 
     def _set_record_icon(self):
         if not self.is_recorded:
@@ -184,3 +248,45 @@ class WinMedia(QtCore.QObject):
         # TODO Need to resend signal if it's the same media? Maybe not necessary
         self.ui.cbMedia.setCurrentIndex(index)
         return True
+
+class player_file(threading.Thread):
+    def __init__(self, controller, call_get_frame, call_set_frame):
+        threading.Thread.__init__(self)
+        self.controller = controller
+        self.call_get_frame = call_get_frame
+        self.call_set_frame = call_set_frame
+        self.set_fps(15)
+        self.stop = False
+        self.sleep_time = 1
+        self.pause = True
+        self.loop = True
+        self.max_frame = 0
+
+    def get_fps(self):
+        return self.fps
+
+    def set_max_frame(self, value):
+        self.max_frame = value
+
+    def set_fps(self, value):
+        self.fps = value
+        self.time_wait = 1.0 / value
+
+    def set_pause(self, value):
+        self.pause = value
+
+    def run(self):
+        while not self.stop:
+            while self.pause:
+                time.sleep(self.sleep_time)
+            frame = self.call_get_frame()
+            if self.max_frame <= frame:
+                frame = 0
+            self.call_set_frame(frame + 1)
+            time.sleep(self.time_wait)
+
+    def is_stopped(self):
+        return self.stop
+
+    def close(self):
+        self.stop = True
