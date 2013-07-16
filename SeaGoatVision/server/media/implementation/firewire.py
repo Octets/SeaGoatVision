@@ -28,6 +28,8 @@ from PIL import Image
 import cv2
 import cv2.cv as cv
 from SeaGoatVision.commons import log
+import time
+import thread
 
 logger = log.get_logger(__name__)
 
@@ -74,6 +76,7 @@ class Firewire(Media_streaming):
         self.deserialize(self.config.read_media(self.get_name()))
         self.update_all_property()
         self.is_streaming = False
+        self.in_thread_open_camera = False
         # TODO: this is an hack that cause memory leak
         self.lst_garbage_camera = []
 
@@ -141,6 +144,17 @@ class Firewire(Media_streaming):
                                )
         return True
 
+    def thread_open_camera(self):
+        self.in_thread_open_camera = True
+        while self.in_thread_open_camera:
+            time.sleep(1)
+            if self.open_camera():
+                self.initialize()
+                if self.open():
+                    self.in_thread_open_camera = False
+                else:
+                    log.print_function(logger.error, "Cannot reopen the camera... wait again :(~")
+
     def open_camera(self):
         try:
             ctx = video1394.DC1394Context()
@@ -165,13 +179,15 @@ class Firewire(Media_streaming):
         if not self.camera:
             return False
 
-        self.camera.start(force_rgb8=True)
+        self.camera.initEvent.addObserver(self.camera_init)
         self.camera.grabEvent.addObserver(self.camera_observer)
         self.camera.stopEvent.addObserver(self.camera_close)
-        self.is_streaming = True
-        # call open when video is ready
+        self.camera.start(force_rgb8=True)
         return True
+
+    def camera_init(self):
         Media_streaming.open(self)
+        self.is_streaming = True
 
     def camera_observer(self, im, timestamp):
         if self.is_rgb or not self.is_mono:
@@ -197,7 +213,10 @@ class Firewire(Media_streaming):
         self.lst_garbage_camera.append(self.camera)
         self.camera = None
         self.actual_image = None
+        self.is_streaming = False
         # reopen the camera
+        thread.start_new_thread(self.thread_open_camera, ())
+        """
         if self.open_camera():
             self.open()
         else:
@@ -205,6 +224,7 @@ class Firewire(Media_streaming):
             # TODO: hack, always keep a reference to the camera
             self.lst_garbage_camera.append(self.camera)
             self.camera = None
+        """
 
     def get_properties_param(self):
         return self.dct_params.values()
@@ -294,9 +314,11 @@ class Firewire(Media_streaming):
     def close(self):
         # Only the manager can call this close or the reload on media.py
         Media_streaming.close(self)
+        self.in_thread_open_camera = False
         self.is_streaming = False
         if self.camera:
             self.camera.stop()
+            self.camera.initEvent.removeObserver(self.camera_init)
             self.camera.grabEvent.removeObserver(self.camera_observer)
             self.camera.stopEvent.removeObserver(self.camera_close)
             # TODO: hack, always keep a reference to the camera
