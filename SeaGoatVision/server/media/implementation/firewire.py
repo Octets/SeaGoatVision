@@ -139,6 +139,7 @@ class Firewire(Media_streaming):
                                iso_speed=self.own_config.iso_speed,
                                operation_mode=self.own_config.operation_mode
                                )
+        return True
 
     def open_camera(self):
         try:
@@ -169,6 +170,7 @@ class Firewire(Media_streaming):
         self.camera.stopEvent.addObserver(self.camera_close)
         self.is_streaming = True
         # call open when video is ready
+        return True
         Media_streaming.open(self)
 
     def camera_observer(self, im, timestamp):
@@ -264,19 +266,21 @@ class Firewire(Media_streaming):
             if not self.buffer_last_timestamp:
                 self.buffer_last_timestamp = True
                 return None
-            logger.warning("No image receive from %s" % (self.get_name()))
+            log.print_function(logger.warning, "No image receive from %s" % (self.get_name()))
             return None
         if not diff_time:
             self.count_not_receive += 1
             if self.count_not_receive >= self.max_not_receive:
                 # logger.error("Didn't receive since %d images. Restart the camera %s??" % (self.count_not_receive, self.id))
-                logger.error("Didn't receive since %d images on camera %s" % (self.count_not_receive, self.id))
+                logger.error("Didn't receive since %d images on camera %s" % (self.count_not_receive, self.get_name()))
                 self.actual_timestamp = self.last_timestamp = -1
                 self.count_not_receive = 0
                 # TODO need to reload?
-                # self.reload()
-                # logger.info("Restart finished with camera %s" % (self.id))
-                return None
+                #if not self.reload():
+                #    logger.error("reload camera %s" % self.get_name())
+                #else:
+                #    logger.info("Restart finished with camera %s" % (self.get_name()))
+                #return None
             # ignore if only missing one image
             if not self.buffer_last_timestamp:
                 self.buffer_last_timestamp = True

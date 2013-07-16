@@ -111,6 +111,9 @@ class Media(object):
         self.thread = None
         return True
 
+    def initialize(self):
+        pass
+
     def reload(self):
         if not self.thread:
             return True
@@ -118,6 +121,7 @@ class Media(object):
         if not status:
             return False
         # TODO force re-init filterchain
+        self.initialize()
         status = self.open()
         return status
 
