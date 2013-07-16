@@ -74,6 +74,8 @@ class Firewire(Media_streaming):
         self.deserialize(self.config.read_media(self.get_name()))
         self.update_all_property()
         self.is_streaming = False
+        # TODO: this is an hack that cause memory leak
+        self.lst_garbage_camera = []
 
     def _create_params(self):
         self.dct_params = {}
@@ -189,6 +191,8 @@ class Firewire(Media_streaming):
         # clean camera
         self.camera.grabEvent.removeObserver(self.camera_observer)
         self.camera.stopEvent.removeObserver(self.camera_close)
+        # TODO: hack, always keep a reference to the camera
+        self.lst_garbage_camera.append(self.camera)
         self.camera = None
         self.actual_image = None
         # reopen the camera
@@ -196,6 +200,8 @@ class Firewire(Media_streaming):
             self.open()
         else:
             logger.warning("Cannot find the camera")
+            # TODO: hack, always keep a reference to the camera
+            self.lst_garbage_camera.append(self.camera)
             self.camera = None
 
     def get_properties_param(self):
@@ -289,6 +295,8 @@ class Firewire(Media_streaming):
             self.camera.stop()
             self.camera.grabEvent.removeObserver(self.camera_observer)
             self.camera.stopEvent.removeObserver(self.camera_close)
+            # TODO: hack, always keep a reference to the camera
+            self.lst_garbage_camera.append(self.camera)
             self.camera = None
             return True
         return False
