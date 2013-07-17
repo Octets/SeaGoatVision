@@ -41,7 +41,11 @@ class Firewire(Media_streaming):
         super(Firewire, self).__init__()
         self.config = Configuration()
         self.camera = None
+        self.is_streaming = False
+        self.loop_try_open_camera = False
         self.dct_params = {}
+        # TODO: this is an hack that cause memory leak
+        self.lst_garbage_camera = []
 
         self.cam_guid = config.guid
         self.cam_no = config.no
@@ -58,27 +62,22 @@ class Firewire(Media_streaming):
         self.max_not_receive = fps * 2
         self.buffer_last_timestamp = False
         self.own_config = config
-
-        if not self.open_camera():
-            return
-        self.initialize()
-
-        self.shape = (800, 600)
-
         self.is_rgb = config.is_rgb
         self.is_mono = config.is_mono
         self.is_format_7 = config.is_format7
         self.is_yuv = config.is_yuv
         self.actual_image = None
+        self.shape = (800, 600)
+        self.count_no_image = 0
+        self.max_no_image = 60
+
+        if not self.try_open_camera(repeat_loop=3, sleep_time=0):
+            return
 
         self._create_params()
 
         self.deserialize(self.config.read_media(self.get_name()))
         self.update_all_property()
-        self.is_streaming = False
-        self.in_thread_open_camera = False
-        # TODO: this is an hack that cause memory leak
-        self.lst_garbage_camera = []
 
     def _create_params(self):
         self.dct_params = {}
@@ -136,24 +135,49 @@ class Firewire(Media_streaming):
     def initialize(self):
         if not self.camera:
             return False
-        self.camera.initialize(reset_bus=True,
+        try:
+            self.camera.initialize(reset_bus=True,
                                mode=self.own_config.mode,
                                framerate=self.own_config.framerate,
                                iso_speed=self.own_config.iso_speed,
                                operation_mode=self.own_config.operation_mode
                                )
+        except:
+            return False
         return True
 
-    def thread_open_camera(self):
-        self.in_thread_open_camera = True
-        while self.in_thread_open_camera:
-            time.sleep(1)
+    def try_open_camera(self, open_streaming=False, repeat_loop= -1, sleep_time=1):
+        # param :
+        # int repeat_loop - if -1, it's an infinite loop, else it's the number loop
+        # bool open_streaming - if true, try to start the streaming of seagoat and the firewire
+        # can be use in threading or in init
+
+        self.loop_try_open_camera = True
+        while self.loop_try_open_camera:
+            # need to wait 1 second if camera just shutdown, else it's crash
+            time.sleep(sleep_time)
+            # check if can access to the camera
+            logger.debug("open camera %s" % self.get_name())
             if self.open_camera():
-                self.initialize()
-                if self.open():
-                    self.in_thread_open_camera = False
-                else:
-                    log.print_function(logger.error, "Cannot reopen the camera... wait again :(~")
+                logger.debug("initialize camera %s" % self.get_name())
+                if self.initialize():
+                    if open_streaming:
+                        logger.debug("open firewire %s" % self.get_name())
+                        if self.open():
+                            logger.debug("Open with success %s" % self.get_name())
+                            self.loop_try_open_camera = False
+                            return True
+                    else:
+                        logger.debug("Finish with initialize")
+                        self.loop_try_open_camera = False
+                        return True
+            # check if need to continue the loop
+            if not repeat_loop:
+                self.loop_try_open_camera = False
+                return False
+            if repeat_loop > 0:
+                repeat_loop -= 1
+            log.print_function(logger.error, "Cannot open the camera %s" % self.get_name())
 
     def open_camera(self):
         try:
@@ -177,12 +201,18 @@ class Firewire(Media_streaming):
 
     def open(self):
         if not self.camera:
-            return False
+            # try to open the camera
+            # caution, can cause an infinite loop
+            return self.try_open_camera(repeat_loop=3, open_streaming=True, sleep_time=0)
 
         self.camera.initEvent.addObserver(self.camera_init)
         self.camera.grabEvent.addObserver(self.camera_observer)
         self.camera.stopEvent.addObserver(self.camera_close)
-        self.camera.start(force_rgb8=True)
+        try:
+            self.camera.start(force_rgb8=True)
+        except:
+            # if was called by try_open_camera, maybe they have another chance to reopen
+            return False
         return True
 
     def camera_init(self):
@@ -215,16 +245,9 @@ class Firewire(Media_streaming):
         self.actual_image = None
         self.is_streaming = False
         # reopen the camera
-        thread.start_new_thread(self.thread_open_camera, ())
-        """
-        if self.open_camera():
-            self.open()
-        else:
-            logger.warning("Cannot find the camera")
-            # TODO: hack, always keep a reference to the camera
-            self.lst_garbage_camera.append(self.camera)
-            self.camera = None
-        """
+        kwargs = {"open_streaming" : True}
+        # TODO how using kwargs???
+        thread.start_new_thread(self.try_open_camera, (True,))
 
     def get_properties_param(self):
         return self.dct_params.values()
@@ -287,6 +310,10 @@ class Firewire(Media_streaming):
                 self.buffer_last_timestamp = True
                 return None
             log.print_function(logger.warning, "No image receive from %s" % (self.get_name()))
+            self.count_no_image += 1
+            if self.count_no_image > self.max_no_image:
+                self.count_no_image = 0
+                self.camera_close()
             return None
         if not diff_time:
             self.count_not_receive += 1
@@ -295,12 +322,6 @@ class Firewire(Media_streaming):
                 logger.error("Didn't receive since %d images on camera %s" % (self.count_not_receive, self.get_name()))
                 self.actual_timestamp = self.last_timestamp = -1
                 self.count_not_receive = 0
-                # TODO need to reload?
-                #if not self.reload():
-                #    logger.error("reload camera %s" % self.get_name())
-                #else:
-                #    logger.info("Restart finished with camera %s" % (self.get_name()))
-                #return None
             # ignore if only missing one image
             if not self.buffer_last_timestamp:
                 self.buffer_last_timestamp = True
@@ -314,7 +335,7 @@ class Firewire(Media_streaming):
     def close(self):
         # Only the manager can call this close or the reload on media.py
         Media_streaming.close(self)
-        self.in_thread_open_camera = False
+        self.loop_try_open_camera = False
         self.is_streaming = False
         if self.camera:
             self.camera.stop()
@@ -325,4 +346,6 @@ class Firewire(Media_streaming):
             self.lst_garbage_camera.append(self.camera)
             self.camera = None
             return True
+        else:
+            logger.warning("Camera %s already close." % self.get_name())
         return False
