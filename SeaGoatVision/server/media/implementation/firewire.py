@@ -44,6 +44,7 @@ class Firewire(Media_streaming):
         self.is_streaming = False
         self.loop_try_open_camera = False
         self.dct_params = {}
+        self.call_stop = False
         # TODO: this is an hack that cause memory leak
         self.lst_garbage_camera = []
 
@@ -71,7 +72,7 @@ class Firewire(Media_streaming):
         self.count_no_image = 0
         self.max_no_image = 60
 
-        if not self.try_open_camera(repeat_loop=3, sleep_time=0):
+        if not self.try_open_camera(repeat_loop=3, sleep_time=1):
             return
 
         self._create_params()
@@ -133,6 +134,7 @@ class Firewire(Media_streaming):
         return True
 
     def initialize(self):
+        logger.debug("initialize camera %s" % self.get_name())
         if not self.camera:
             return False
         try:
@@ -156,13 +158,12 @@ class Firewire(Media_streaming):
         while self.loop_try_open_camera:
             # need to wait 1 second if camera just shutdown, else it's crash
             time.sleep(sleep_time)
+            if self.call_stop:
+                return False
             # check if can access to the camera
-            logger.debug("open camera %s" % self.get_name())
             if self.open_camera():
-                logger.debug("initialize camera %s" % self.get_name())
                 if self.initialize():
                     if open_streaming:
-                        logger.debug("open firewire %s" % self.get_name())
                         if self.open():
                             logger.debug("Open with success %s" % self.get_name())
                             self.loop_try_open_camera = False
@@ -180,6 +181,7 @@ class Firewire(Media_streaming):
             log.print_function(logger.error, "Cannot open the camera %s" % self.get_name())
 
     def open_camera(self):
+        logger.debug("open camera %s" % self.get_name())
         try:
             ctx = video1394.DC1394Context()
         except:
@@ -200,19 +202,25 @@ class Firewire(Media_streaming):
         return False
 
     def open(self):
+        logger.debug("open firewire %s" % self.get_name())
+        self.call_stop = False
         if not self.camera:
             # try to open the camera
             # caution, can cause an infinite loop
-            return self.try_open_camera(repeat_loop=3, open_streaming=True, sleep_time=0)
+            return self.try_open_camera(repeat_loop=3, open_streaming=True, sleep_time=1)
 
         self.camera.initEvent.addObserver(self.camera_init)
         self.camera.grabEvent.addObserver(self.camera_observer)
         self.camera.stopEvent.addObserver(self.camera_close)
         try:
+            logger.debug("camera %s start." % self.get_name())
             self.camera.start(force_rgb8=True)
+            logger.debug("camera %s start terminated." % self.get_name())
         except:
-            # if was called by try_open_camera, maybe they have another chance to reopen
-            return False
+            self.camera.stop()
+            self.lst_garbage_camera.append(self.camera)
+            # something crash, restart the camera
+            return self.try_open_camera(repeat_loop=1, open_streaming=True, sleep_time=1)
         return True
 
     def camera_init(self):
@@ -329,12 +337,16 @@ class Firewire(Media_streaming):
             else:
                 logger.warning("Receive no more image from %s, timestamp %d" % (self.get_name(), self.actual_timestamp))
                 return None
+        # reinitilize all protection
         self.buffer_last_timestamp = False
+        self.count_no_image = 0
+        self.count_not_receive = 0
         return self.actual_image
 
     def close(self):
         # Only the manager can call this close or the reload on media.py
         Media_streaming.close(self)
+        self.call_stop = True
         self.loop_try_open_camera = False
         self.is_streaming = False
         if self.camera:
