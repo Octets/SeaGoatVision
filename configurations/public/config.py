@@ -22,6 +22,7 @@
 import datetime
 from configurations.template_media.conf_webcam import Conf_webcam
 from configurations.template_media.conf_firewire import Conf_firewire
+from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
 
 # keep always true for public configuration
 # It's useful if you need to disable private config
@@ -44,8 +45,20 @@ lst_media = []
 
 # add camera webcam with default value
 cam = Conf_webcam()
+# cam.name = "Webcam" # already use the default name
 lst_media.append(cam)
 
+# example of firewire
+# cam = Conf_firewire()
+# cam.guid = 0x123456789
+# cam.name = "Firewire"
+# lst_media.append(cam)
+
+# exemple of Pygame_cam, alternative of webcam
+# cam = Conf_pygame_cam()
+# cam.path = "/dev/video0"
+# cam.name = "Webcam"
+# lst_media.append(cam)
 
 ## Filterchain
 show_public_filterchain = True
