@@ -20,17 +20,12 @@
 """
 Description : Manage the resource of the server: filters and media
 """
-import os
-import ConfigParser
 import inspect
 
 from configuration import Configuration
-from SeaGoatVision.commons.param import Param
-from SeaGoatVision.commons.keys import *
+from SeaGoatVision.commons import keys
 from SeaGoatVision.server.core import filterchain
-from SeaGoatVision.server.core import utils
 from SeaGoatVision.server import media
-import types
 import filters
 from filter import Filter
 from SeaGoatVision.commons import log
@@ -99,13 +94,13 @@ class Resource(object):
             if o_filterchain:
                 return o_filterchain
 
-        if filterchain_name and filterchain_name != get_empty_filterchain_name():
+        if filterchain_name and filterchain_name != keys.get_empty_filterchain_name():
             data = self.config.read_filterchain(filterchain_name)
             if not data:
                 return None
             o_filterchain = filterchain.FilterChain(filterchain_name, serialize=data)
         else:
-            o_filterchain = filterchain.FilterChain(get_empty_filterchain_name())
+            o_filterchain = filterchain.FilterChain(keys.get_empty_filterchain_name())
 
         self.dct_filterchain[filterchain_name] = o_filterchain
         return o_filterchain
@@ -131,7 +126,7 @@ class Resource(object):
         chain = filterchain.FilterChain(filterchain_name)
         index = 0
         for s_filter in lst_str_filters:
-            if s_filter == get_empty_filter_name():
+            if s_filter == keys.get_empty_filter_name():
                 continue
             # Exception, remove the last -#
             pos = s_filter.rfind("-")
@@ -170,21 +165,21 @@ class Resource(object):
                         if "execute" in vars(filtre)}
 
     def reload_filter(self, filter_name):
-        filter = self.dct_filter.get(filter_name, None)
-        if not filter:
+        o_filter = self.dct_filter.get(filter_name, None)
+        if not o_filter:
             log.print_function(logger.error, "The filter %s not exist in the list." % filter_name)
             return None
         # reload the module
-        if filter.__module__ == "SeaGoatVision.server.cpp.create_module":
+        if o_filter.__module__ == "SeaGoatVision.server.cpp.create_module":
             module = filter.__module_init__
         else:
-            module = self._module_name(filter.__module__)
+            module = self._module_name(o_filter.__module__)
         reload(module)
         filter_class = getattr(module, filter_name)
-        filter = filter_class()
-        filter.set_name(filter_name)
+        o_filter = filter_class()
+        o_filter.set_name(filter_name)
         self.dct_filter[filter_name] = filter_class
-        return filter
+        return o_filter
 
     def create_filter(self, filter_name, index):
         filter_class = self.get_filter_from_filterName(filter_name)
@@ -214,7 +209,7 @@ class Resource(object):
             else:
                 log.print_function(logger.error, "Camera %s not detected" % name)
         # Force media_video
-        dct_media[get_media_file_video_name()] = media.media_video.Media_video(get_media_file_video_name())
+        dct_media[keys.get_media_file_video_name()] = media.media_video.Media_video(keys.get_media_file_video_name())
 
         self.dct_media = dct_media
 

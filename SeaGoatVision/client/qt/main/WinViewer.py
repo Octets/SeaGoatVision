@@ -24,14 +24,12 @@ Description : Windows to "view" a filterchain execution
 import time
 
 from SeaGoatVision.client.qt.utils import get_ui
-from SeaGoatVision.commons.keys import *
 from PIL import Image
 from PySide import QtCore
 from PySide import QtGui
-from PySide.QtGui import QPainter
 from PySide.QtGui import QColor
 from PySide.QtGui import QPen
-from PySide.QtCore import Qt
+#from PySide.QtCore import Qt
 import socket
 import threading
 import StringIO
@@ -258,7 +256,7 @@ class LightWidget(QtGui.QWidget):
         if not self.last_is_red:
             try:
                 self.update()
-            except Exception as e:
+            except Exception:
                 pass
         self.last_is_red = True
 
@@ -267,7 +265,7 @@ class LightWidget(QtGui.QWidget):
         if self.last_is_red:
             try:
                 self.update()
-            except Exception as e:
+            except Exception:
                 pass
         self.last_is_red = False
 

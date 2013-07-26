@@ -28,7 +28,7 @@ import json
 import socket
 import threading
 from SeaGoatVision.commons import log
-from SeaGoatVision.commons.keys import *
+from SeaGoatVision.commons import keys
 
 logger = log.get_logger(__name__)
 
@@ -268,7 +268,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                         response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(),
                                             max_float_v=item.get_max(), lst_value_float=item.get_list_value())
                     elif item.get_type() is unicode or item.get_type() is str:
-                         response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
+                        response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
         except Exception as e:
             log.printerror_stacktrace(logger, e)
 
@@ -334,7 +334,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         done.run(response)
 
     def cmd_to_media(self, controller, request, done):
-        if request.cmd != set_key_media_frame():
+        if request.cmd != keys.set_key_media_frame():
             logger.info("cmd_to_media request %s", str(request).replace("\n", " "))
 
         response = server_pb2.StatusResponse()
@@ -370,7 +370,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
                         response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(),
                                             max_float_v=item.get_max(), lst_value_float=item.get_list_value())
                     elif item.get_type() is unicode or item.get_type() is str:
-                         response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
+                        response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
         except Exception as e:
             log.printerror_stacktrace(logger, e)
 
@@ -498,7 +498,7 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # Create a reply
         response = server_pb2.StatusResponse()
         try:
-            lstStrFilter = [filter.name for filter in request.lst_str_filters]
+            lstStrFilter = [o_filter.name for o_filter in request.lst_str_filters]
             response.status = int(not self.manager.modify_filterchain(request.old_filterchain_name, request.new_filterchain_name,
                                                                       lstStrFilter, request.default_media))
         except Exception as e:
@@ -574,9 +574,9 @@ class ProtobufServerImpl(server_pb2.CommandService):
         # Create a reply
         response = server_pb2.GetFilterListResponse()
         dct_filter = self.manager.get_filter_list()
-        for filter in dct_filter.keys():
-            response.filters.append(filter)
-            response.doc.append(dct_filter[filter])
+        for o_filter in dct_filter.keys():
+            response.filters.append(o_filter)
+            response.doc.append(dct_filter[o_filter])
 
         # We're done, call the run method of the done callback
         done.run(response)

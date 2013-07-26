@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
-from SeaGoatVision.commons.keys import *
+from SeaGoatVision.commons import keys
 from SeaGoatVision.client.qt.shared_info import Shared_info
 
 from PySide import QtCore
@@ -75,7 +75,7 @@ class WinExecution(QtCore.QObject):
         filterchain_name = self.ui.txtFilterchain.text()
         first_filterchain_name = filterchain_name
         if not filterchain_name:
-            filterchain_name = get_empty_filterchain_name()
+            filterchain_name = keys.get_empty_filterchain_name()
         if self.mode_edit or not first_filterchain_name:
             if not self._execute(execution_name, media_name, filterchain_name):
                 return
@@ -144,7 +144,6 @@ class WinExecution(QtCore.QObject):
         self.ui.lstExecution.clear()
         for execution_name in self.controller.get_execution_list():
             self.ui.lstExecution.addItem(execution_name)
-        contain_execution = bool(self.ui.lstExecution.count())
 
     def _get_selected_list(self, uiList):
         noLine = uiList.currentRow()
@@ -166,7 +165,7 @@ class WinExecution(QtCore.QObject):
                                       QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
             return False
         file_name = self.shared_info.get("path_media")
-        is_client_manager = media_name == get_media_file_video_name()
+        is_client_manager = media_name == keys.get_media_file_video_name()
         status = self.controller.start_filterchain_execution(execution_name, media_name,
                                                              filterchain_name, file_name=file_name,
                                                              is_client_manager=is_client_manager)

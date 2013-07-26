@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
-from SeaGoatVision.commons.keys import *
+from SeaGoatVision.commons import keys
 from SeaGoatVision.client.qt.shared_info import Shared_info
 
 from PySide import QtGui
@@ -73,7 +73,7 @@ class WinFilterChain(QtCore.QObject):
         if self.edit_mode and not self.mode_new:
             return
         txt = ""
-        if value != get_media_file_video_name():
+        if value != keys.get_media_file_video_name():
             txt = value
         self.ui.media_default_edit.setText(txt)
 
@@ -208,7 +208,7 @@ class WinFilterChain(QtCore.QObject):
             filterchain_name = self._get_selected_filterchain_name()
         self.ui.filterListWidget.clear()
 
-        if filterchain_name == get_empty_filterchain_name():
+        if filterchain_name == keys.get_empty_filterchain_name():
             return
 
         info = self.controller.get_filterchain_info(filterchain_name)
@@ -217,7 +217,7 @@ class WinFilterChain(QtCore.QObject):
             logger.warning("Recieve empty filter list from filterchain %s" % filterchain_name)
             return
         for o_filter in lst_filter:
-            if o_filter.name == get_empty_filter_name():
+            if o_filter.name == keys.get_empty_filter_name():
                 continue
             self.ui.filterListWidget.addItem(o_filter.name)
         default_media = info.get("default_media", "")
@@ -229,7 +229,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.filterchainEdit.clear()
         for filterlist in self.controller.get_filterchain_list():
             self.ui.filterchainListWidget.addItem(filterlist.name)
-        self.ui.filterchainListWidget.addItem(get_empty_filterchain_name())
+        self.ui.filterchainListWidget.addItem(keys.get_empty_filterchain_name())
 
     def moveUpSelectedFilter(self):
         self._move_curent_item_on_qtList(self.ui.filterListWidget, -1)
@@ -258,8 +258,8 @@ class WinFilterChain(QtCore.QObject):
             filterchain_name = self._get_selected_filterchain_name()
 
             # Exception, don't edit or delete special empty filterchain
-            self.ui.deleteButton.setEnabled(filterchain_name != get_empty_filterchain_name())
-            self.ui.editButton.setEnabled(filterchain_name != get_empty_filterchain_name())
+            self.ui.deleteButton.setEnabled(filterchain_name != keys.get_empty_filterchain_name())
+            self.ui.editButton.setEnabled(filterchain_name != keys.get_empty_filterchain_name())
             self.shared_info.set("filterchain", filterchain_name)
         else:
             self._list_filterchain_is_selected(False)

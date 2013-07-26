@@ -22,7 +22,7 @@ import cv2
 from media import Media
 from implementation.movie import Movie
 from implementation.imagefolder import ImageFolder
-from SeaGoatVision.commons.keys import *
+from SeaGoatVision.commons import keys
 
 class Media_video(Media):
     def __init__(self, name):
@@ -45,7 +45,7 @@ class Media_video(Media):
             self.movie.reset()
 
     def get_type_media(self):
-        return get_media_type_video_name()
+        return keys.get_media_type_video_name()
 
     def open(self):
         Media.open(self)
@@ -61,19 +61,19 @@ class Media_video(Media):
     def do_cmd(self, action, value):
         if not self.thread and not self.is_client_manager:
             return False
-        if action == get_key_media_play():
+        if action == keys.get_key_media_play():
             if self.thread.pause:
                 self.thread.pause = False
                 return True
             return False
-        elif action == get_key_media_pause():
+        elif action == keys.get_key_media_pause():
             if not self.thread.pause:
                 self.thread.pause = True
                 return True
             return False
-        elif action == get_key_media_loop():
+        elif action == keys.get_key_media_loop():
             self.set_loop_enable(not self.active_loop)
-        elif action == set_key_media_frame():
+        elif action == keys.set_key_media_frame():
             self.change_frame(value)
         else:
             return False

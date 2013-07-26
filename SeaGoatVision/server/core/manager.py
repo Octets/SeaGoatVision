@@ -24,7 +24,6 @@ Description :
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
 from resource import Resource
-from SeaGoatVision.commons.keys import *
 from SeaGoatVision.commons import log
 import thread
 
@@ -73,14 +72,14 @@ class Manager:
         self.notify_event_client[self.id_client_notify] = False
         return self.id_client_notify
 
-    def need_notify(self, id):
-        notify = self.notify_event_client.get(id, None)
+    def need_notify(self, i_id):
+        notify = self.notify_event_client.get(i_id, None)
         if notify is None:
             # logger.warning("The client id %s is not in the notify list.")
             return False
         if not notify:
             return False
-        self.notify_event_client[id] = False
+        self.notify_event_client[i_id] = False
         return True
 
     def _active_notify(self):
@@ -238,7 +237,6 @@ class Manager:
                 - string, execution_name to select an execution
                 - string, filter_name to select the filter
         """
-        ret_value = False
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return False
@@ -316,13 +314,13 @@ class Manager:
     ############################ FILTERCHAIN  ################################
     ##########################################################################
     def reload_filter(self, filter_name=None):
-        filter = self.resource.reload_filter(filter_name)
-        if filter is None:
+        o_filter = self.resource.reload_filter(filter_name)
+        if o_filter is None:
             return False
         for execution in self.dct_exec.values():
             filterchain = execution.get(KEY_FILTERCHAIN, None)
             if filterchain:
-                filterchain.reload_filter(filter)
+                filterchain.reload_filter(o_filter)
         return True
 
     def get_params_filterchain(self, execution_name, filter_name):
@@ -342,17 +340,17 @@ class Manager:
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return False
-        filter = filterchain.get_filter(name=filter_name)
-        if not filter:
+        o_filter = filterchain.get_filter(name=filter_name)
+        if not o_filter:
             log.print_function(logger.error, "Don't find filter %s on filterchain %s" % (filter_name, filterchain.get_name()))
             return False
-        param = filter.get_params(param_name=param_name)
+        param = o_filter.get_params(param_name=param_name)
         if not param:
             log.print_function(logger.error, "Don't find param %s on filter %s" % (param_name, filter_name))
             return False
 
         param.set(value)
-        filter.configure()
+        o_filter.configure()
         return True
 
     def save_params(self, execution_name):

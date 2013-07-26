@@ -20,12 +20,9 @@
 """Contains the FilterChain class and helper functions to work with the filter chain."""
 
 from SeaGoatVision.server.core.filter import Filter
-from SeaGoatVision.server.core import utils
-from SeaGoatVision.commons.param import Param
-from SeaGoatVision.commons.keys import *
+from SeaGoatVision.commons import keys
 import cv2
 import cv2.cv as cv
-import ConfigParser
 import numpy as np
 from SeaGoatVision.commons import log
 
@@ -57,7 +54,7 @@ class FilterChain(object):
             self.deserialize(filterchain_name, serialize)
         else:
             # add default filter
-            self.add_filter(Filter(get_empty_filter_name()))
+            self.add_filter(Filter(keys.get_empty_filter_name()))
 
     def destroy(self):
         # clean everything!
@@ -65,18 +62,18 @@ class FilterChain(object):
             self.remove_filter_output_observer(obs)
 
         for obs in self.original_image_observer:
-            self.remove_image_observer(obs, get_filter_original_name())
+            self.remove_image_observer(obs, keys.get_filter_original_name())
 
         for filter_name, lst_obs in self.image_observers.items():
             for obs in lst_obs:
                 self.remove_image_observer(obs, filter_name)
 
-        for filter in self.filters:
-            filter.destroy()
+        for o_filter in self.filters:
+            o_filter.destroy()
 
     def serialize(self):
         # Keep list of filter with param
-        dct = {"lst_filter":[filter.serialize() for filter in self.filters if filter.name != get_empty_filter_name()]}
+        dct = {"lst_filter":[o_filter.serialize() for o_filter in self.filters if filter.name != keys.get_empty_filter_name()]}
         if self.default_media_name:
             dct["default_media_name"] = self.default_media_name
         return dct
@@ -89,7 +86,7 @@ class FilterChain(object):
         self.filters = []
         index = 0
         # add default filter
-        self.add_filter(Filter(get_empty_filter_name()))
+        self.add_filter(Filter(keys.get_empty_filter_name()))
         for filter_to_ser in lst_filter:
             filter_name = filter_to_ser.get("filter_name", None)
             o_filter = self.resource.create_filter(filter_name, index)
@@ -129,20 +126,20 @@ class FilterChain(object):
         class Filter: pass
         retValue = []
         for item in self.filters:
-            filter = Filter()
-            setattr(filter, "name", item.get_name())
-            setattr(filter, "doc", item.__doc__)
-            retValue.append(filter)
+            o_filter = Filter()
+            setattr(o_filter, "name", item.get_name())
+            setattr(o_filter, "doc", item.__doc__)
+            retValue.append(o_filter)
         return retValue
 
-    def get_params(self, filter=None, filter_name=None):
+    def get_params(self, o_filter=None, filter_name=None):
         if filter_name:
-            filter = self.get_filter(name=filter_name)
-            if not filter:
+            o_filter = self.get_filter(name=filter_name)
+            if not o_filter:
                 return None
-        if filter:
-            return filter.get_params()
-        return [(filter.get_name(), filter.get_params()) for filter in self.filters]
+        if o_filter:
+            return o_filter.get_params()
+        return [(o_filter.get_name(), o_filter.get_params()) for o_filter in self.filters]
 
     def __getitem__(self, index):
         return self.filters[index]
@@ -157,19 +154,19 @@ class FilterChain(object):
                 return lst_filter[0]
         return None
 
-    def add_filter(self, filter):
-        self.filters.append(filter)
-        filter.set_global_params(self.dct_global_param)
+    def add_filter(self, o_filter):
+        self.filters.append(o_filter)
+        o_filter.set_global_params(self.dct_global_param)
 
-    def remove_filter(self, filter):
-        self.filters.remove(filter)
+    def remove_filter(self, o_filter):
+        self.filters.remove(o_filter)
 
-    def reload_filter(self, filter):
+    def reload_filter(self, o_filter):
         # TODO: not working because module name change
         # example of __module__:
         index = 0
         for item in self.filters:
-            if item.__class__.__name__ == filter.__class__.__name__:
+            if item.__class__.__name__ == o_filter.__class__.__name__:
                 # remote observer
                 filter_output_obs_copy = self.filter_output_observers[:]
                 for output in filter_output_obs_copy:
@@ -188,7 +185,7 @@ class FilterChain(object):
     def add_image_observer(self, observer, filter_name):
         # Exception for original image
         b_original = False
-        if get_filter_original_name() == filter_name:
+        if keys.get_filter_original_name() == filter_name:
             b_original = True
             lstObserver = self.original_image_observer
         else:
@@ -207,7 +204,7 @@ class FilterChain(object):
 
     def remove_image_observer(self, observer, filter_name):
         b_original = False
-        if get_filter_original_name() == filter_name:
+        if keys.get_filter_original_name() == filter_name:
             b_original = True
             lstObserver = self.original_image_observer
         else:

@@ -20,7 +20,7 @@
 from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.client.qt.shared_info import Shared_info
 from PySide.QtGui import QIcon
-from SeaGoatVision.commons.keys import *
+from SeaGoatVision.commons import keys
 from SeaGoatVision.client.qt import config
 from PySide.QtGui import QFileDialog
 import threading
@@ -102,9 +102,9 @@ class WinMedia(QtCore.QObject):
         if not media_type:
             self.shared_info.set("media", None)
             return
-        if media_type == get_media_type_video_name():
+        if media_type == keys.get_media_type_video_name():
             frame_video.setVisible(True)
-        elif media_type == get_media_type_streaming_name():
+        elif media_type == keys.get_media_type_streaming_name():
             frame_webcam.setVisible(True)
             self.shared_info.set("path_media", None)
         self.shared_info.set("media", media_name)
@@ -151,7 +151,7 @@ class WinMedia(QtCore.QObject):
         if not value or type(value) is not dict:
             return
         media_name = value.get("media")
-        if media_name == get_media_file_video_name():
+        if media_name == keys.get_media_file_video_name():
             self.set_slider_value(1)
             self.is_play = False
             self.play()
@@ -186,7 +186,7 @@ class WinMedia(QtCore.QObject):
         media_name = self.shared_info.get("media")
         if not media_name:
             return
-        self.controller.cmd_to_media(media_name, set_key_media_frame(), value=value - 1)
+        self.controller.cmd_to_media(media_name, keys.set_key_media_frame(), value=value - 1)
 
     def set_info(self, value=None):
         # Ignore the value
@@ -211,19 +211,19 @@ class WinMedia(QtCore.QObject):
     def play(self):
         #media_name = self.ui.cbMedia.currentText()
         if self.is_play:
-            #if self.controller.cmd_to_media(media_name, get_key_media_play()):
+            #if self.controller.cmd_to_media(media_name, keys.get_key_media_play()):
             self.thread_player.set_pause(True)
             self.is_play = False
             self._set_play_icon()
         else:
-            #if self.controller.cmd_to_media(media_name, get_key_media_pause()):
+            #if self.controller.cmd_to_media(media_name, keys.get_key_media_pause()):
             self.thread_player.set_pause(False)
             self.is_play = True
             self._set_play_icon()
 
     def active_loop(self):
         media_name = self.ui.cbMedia.currentText()
-        self.controller.cmd_to_media(media_name, get_key_media_loop())
+        self.controller.cmd_to_media(media_name, keys.get_key_media_loop())
 
     def _set_play_icon(self):
         if not self.is_play:
@@ -242,7 +242,7 @@ class WinMedia(QtCore.QObject):
     def get_file_path(self):
         item_cbmedia = self.ui.cbMedia.currentText()
         media_type = self.dct_media.get(item_cbmedia, None)
-        if media_type != get_media_type_video_name():
+        if media_type != keys.get_media_type_video_name():
             return None
         return self.ui.movieLineEdit.text()
 
@@ -251,7 +251,7 @@ class WinMedia(QtCore.QObject):
         index = self.ui.cbMedia.findText(media_name)
         if index < 0:
             return False
-        # TODO Need to resend signal if it's the same media? Maybe not necessary
+        # TODO Need to re-send signal if it's the same media? Maybe not necessary
         self.ui.cbMedia.setCurrentIndex(index)
         return True
 

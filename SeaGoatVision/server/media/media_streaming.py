@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from media import Media
-from SeaGoatVision.commons.keys import get_media_type_streaming_name
+from SeaGoatVision.commons import keys
 #from recording.video_recorder import Video_recorder
 from recording.image_recorder import Image_recorder
 
@@ -46,7 +46,7 @@ class Media_streaming(Media):
         return info
 
     def get_type_media(self):
-        return get_media_type_streaming_name()
+        return keys.get_media_type_streaming_name()
 
     def start_record(self, path=None):
         return self.recorder.start(self.shape, path=path)
