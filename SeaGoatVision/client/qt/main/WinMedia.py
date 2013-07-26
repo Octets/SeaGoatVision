@@ -54,6 +54,7 @@ class WinMedia(QtCore.QObject):
 
         self.shared_info.connect("start_execution", self._start_execution)
 
+        # TODO optimize starting thread.
         self.thread_player = player_file(controller, self._get_actual_no_frame, self.set_slider_value)
         self.thread_player.start()
         self.reload_ui()
@@ -115,7 +116,12 @@ class WinMedia(QtCore.QObject):
         self.shared_info.set("path_media", self.ui.movieLineEdit.text())
 
     def set_slider_value(self, value):
-        self.ui.slider_frame.setValue(value)
+        last_value = self.ui.slider_frame.value()
+        if last_value != value:
+            self.ui.slider_frame.setValue(value)
+        else:
+            # force change value in video context
+            self._slider_value_change(value)
 
     def _slider_value_change(self, value):
         self.ui.txtframe.setText(str(value))
@@ -159,7 +165,7 @@ class WinMedia(QtCore.QObject):
                 # TODO improve error message
                 logger.error("Trying start record...")
             else:
-               self.is_recorded = True
+                self.is_recorded = True
         else:
             if not self.controller.stop_record(self.ui.cbMedia.currentText()):
                 logger.error("Trying stop record...")
@@ -276,6 +282,8 @@ class player_file(threading.Thread):
         self.pause = value
 
     def run(self):
+        # TODO optimize me if only 1 image
+        # set first image
         while not self.stop:
             while self.pause:
                 time.sleep(self.sleep_time)

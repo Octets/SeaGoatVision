@@ -39,7 +39,7 @@ class ImageFolder:
     def next(self):
         if not self.file_names:
             return None
-        if self.pos >= len(self.file_names):
+        if self.pos > len(self.file_names):
             self.pos = 0
             raise StopIteration
 

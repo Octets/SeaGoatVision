@@ -83,6 +83,9 @@ class Media_video(Media):
         if self.movie:
             self.movie.set_position(value)
             self.notify_observer(self.movie.next())
+        elif self.imagefolder:
+            self.imagefolder.set_pos(value)
+            self.notify_observer(self.imagefolder.next())
 
     def set_file(self, file_name):
         self.file_name = file_name
@@ -97,6 +100,7 @@ class Media_video(Media):
             self.imagefolder = ImageFolder()
             self.imagefolder.read_image(file_name)
             return True
+        #if the file is not a video, videocapture not return None
         # check if it's supported video
         video = cv2.VideoCapture(file_name)
         if video:
