@@ -85,7 +85,7 @@ class Resource(object):
     def delete_filterchain(self, filterchain_name):
         if filterchain_name in self.dct_filterchain:
             del self.dct_filterchain[filterchain_name]
-        self.config.delete_filterchain(filterchain_name)
+        return self.config.delete_filterchain(filterchain_name)
 
     def get_filterchain(self, filterchain_name, force_new_filterchain=False):
         # check if already instance
@@ -136,13 +136,13 @@ class Resource(object):
             index += 1
             if o_filter is None:
                 # error, cancel the transaction
-                return False
+                return None
             chain.add_filter(o_filter)
 
         chain.set_default_media_name(default_media)
         self.config.write_filterchain(chain)
         self.dct_filterchain[filterchain_name] = chain
-        return True
+        return chain
 
     #### Filter
     def get_filter_info_list(self):
@@ -171,7 +171,7 @@ class Resource(object):
             return None
         # reload the module
         if o_filter.__module__ == "SeaGoatVision.server.cpp.create_module":
-            module = filter.__module_init__
+            module = o_filter.__module_init__
         else:
             module = self._module_name(o_filter.__module__)
         reload(module)

@@ -164,12 +164,12 @@ class Configuration(object):
     def write_media(self, media):
         return self._write_configuration(media, self._get_media_filename)
 
-    def _write_configuration(self, object, fct_filename):
-        file_name = fct_filename(object.get_name())
+    def _write_configuration(self, obj, fct_filename):
+        file_name = fct_filename(obj.get_name())
         f = open(file_name, "w")
         if not f:
             return False
-        str_value = json.dumps(object.serialize(), indent=4)
+        str_value = json.dumps(obj.serialize(), indent=4)
         f.write(str_value)
         f.close()
         return True
