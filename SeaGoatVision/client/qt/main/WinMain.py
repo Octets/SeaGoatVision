@@ -19,7 +19,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
-from SeaGoatVision.client.qt.shared_info import Shared_info
+#from SeaGoatVision.client.qt.shared_info import Shared_info
 
 from WinFilterList import WinFilterList
 from WinMedia import WinMedia
@@ -154,7 +154,7 @@ class WinMain(QtGui.QMainWindow):
             self.removeDockWidget(viewer.ui)
             del self.dct_preview[uid]
         else:
-            logger.error("Don't find DockWidget %s" % execution_name)
+            logger.error("Don't find DockWidget on uid %s" % uid)
 
     def quit(self):
         self.start_pull = False

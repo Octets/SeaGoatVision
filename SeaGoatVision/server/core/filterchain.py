@@ -73,7 +73,7 @@ class FilterChain(object):
 
     def serialize(self):
         # Keep list of filter with param
-        dct = {"lst_filter":[o_filter.serialize() for o_filter in self.filters if filter.name != keys.get_empty_filter_name()]}
+        dct = {"lst_filter":[o_filter.serialize() for o_filter in self.filters if o_filter.name != keys.get_empty_filter_name()]}
         if self.default_media_name:
             dct["default_media_name"] = self.default_media_name
         return dct
@@ -249,7 +249,8 @@ class FilterChain(object):
                 break
 
             lst_observer = self.image_observers.get(f.get_name(), [])
-            self.send_image(image, lst_observer)
+            if lst_observer:
+                self.send_image(image, lst_observer)
         return image
 
     def send_image(self, image, lst_observer):
