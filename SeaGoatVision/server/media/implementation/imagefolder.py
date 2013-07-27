@@ -73,8 +73,10 @@ class ImageFolder:
         for root, _, files in os.walk(folder):
             for filename in files:
                 path = os.path.join(root, filename)
-                image = cv2.imread(path)
-                if image is not None:
-                    images.append(path)
+                # TODO do we need to check if file is real image??
+                #image = cv2.imread(path)
+                #if image is not None:
+                #    images.append(path)
+                images.append(path)
         list.sort(images)
         return images
