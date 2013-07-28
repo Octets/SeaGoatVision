@@ -47,6 +47,12 @@ class Filter(object):
     def get_name(self):
         return self.name
 
+    def get_code_name(self):
+        key = "-"
+        if key in self.name:
+            return self.name[:self.name.rfind("-")]
+        return self.name
+
     def set_name(self, name):
         self.name = name
 

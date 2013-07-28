@@ -33,6 +33,7 @@ from SeaGoatVision.commons import log
 logger = log.get_logger(__name__)
 
 class Resource(object):
+    # TODO the ressource.py need to manage execution access
     _instance = None
 
     def __new__(cls):
@@ -114,15 +115,20 @@ class Resource(object):
 
     def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters, default_media):
         # create new filterchain
-        if self.create_filterchain(new_filterchain_name, lst_str_filters, default_media):
+        if self.config.is_filterchain_exist(old_filterchain_name):
+            active_old_filterchain = old_filterchain_name
+        else:
+            active_old_filterchain = None
+        if self.create_filterchain(new_filterchain_name, lst_str_filters, default_media=default_media, \
+                                   old_configuration=active_old_filterchain):
             # delete old filterchain
             if old_filterchain_name != new_filterchain_name:
-                self.delete_filterchain(old_filterchain_name)
+                return self.delete_filterchain(old_filterchain_name)
             return True
         # error with create filterchain
         return False
 
-    def create_filterchain(self, filterchain_name, lst_str_filters, default_media=None):
+    def create_filterchain(self, filterchain_name, lst_str_filters, default_media=None, old_configuration=None):
         chain = filterchain.FilterChain(filterchain_name)
         index = 0
         for s_filter in lst_str_filters:
@@ -140,6 +146,14 @@ class Resource(object):
             chain.add_filter(o_filter)
 
         chain.set_default_media_name(default_media)
+        if old_configuration:
+            old_chain_data = self.config.read_filterchain(old_configuration)
+            if old_chain_data:
+                if not chain.deserialize_update(filterchain_name, old_chain_data):
+                    logger.warning("Cannot deserialize old configuration of filterchain %s." % (filterchain_name))
+            else:
+                logger.warning("The filterchain %s is supposed to be in memory if old exist." % filterchain_name)
+
         self.config.write_filterchain(chain)
         self.dct_filterchain[filterchain_name] = chain
         return chain

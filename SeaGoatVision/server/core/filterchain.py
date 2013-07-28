@@ -102,6 +102,19 @@ class FilterChain(object):
             log.print_function(logger.warning, "Deserialize filterchain %s failed." % name)
         return status
 
+    def deserialize_update(self, name, value):
+        status = True
+        self.filterchain_name = name
+        lst_filter = value.get("lst_filter", [])
+        self.default_media_name = value.get("default_media_name", None)
+
+        for o_filter in self.filters:
+            # find is appropriate filter if exist
+            for filter_ser in lst_filter:
+                if filter_ser.get("filter_name", None) == o_filter.get_code_name():
+                    status &= o_filter.deserialize(filter_ser)
+        return status
+
     def count(self):
         return len(self.filters)
 

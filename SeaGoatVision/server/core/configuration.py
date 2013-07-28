@@ -66,8 +66,10 @@ class Configuration(object):
             if not self.print_configuration:
                 logger.info("Loading private configuration.")
         self.print_configuration = True
-        self.ext_filterchain = ".filterchain"
-        self.ext_media = ".media"
+        self.type_filterchain = "filterchain"
+        self.type_media = "media"
+        self.ext_filterchain = ".%s" % self.type_filterchain
+        self.ext_media = ".%s" % self.type_media
 
     #### General config
     def get_tcp_output_config(self):
@@ -134,16 +136,14 @@ class Configuration(object):
 
     def read_filterchain(self, filterchain_name):
         file_name = self._get_filterchain_filename(filterchain_name)
-        return self._read_configuration(file_name, "filterchain", False)
+        return self._read_configuration(file_name, self.type_filterchain, False)
 
     def read_media(self, media_name):
         file_name = self._get_media_filename(media_name)
-        return self._read_configuration(file_name, "media", True)
+        return self._read_configuration(file_name, self.type_media, True)
 
     def _read_configuration(self, file_name, type_name, ignore_not_exist):
-        if not os.path.isfile(file_name):
-            if not ignore_not_exist:
-                log.print_function(logger.error, "The %s config %s not exist." % (file_name, type_name))
+        if not self._is_config_exist(file_name, type_name, ignore_not_exist):
             return None
         f = open(file_name, "r")
         if not f:
@@ -177,9 +177,25 @@ class Configuration(object):
     def delete_filterchain(self, filterchain_name):
         file_name = self._get_filterchain_filename(filterchain_name)
         try:
-            return os.remove(file_name)
+            os.remove(file_name)
         except OSError:
             return False
+        return True
+
+    def _is_config_exist(self, file_name, type_name, ignore_not_exist):
+        if not os.path.isfile(file_name):
+            if not ignore_not_exist:
+                log.print_function(logger.error, "The %s config %s not exist." % (file_name, type_name))
+            return False
+        return True
+
+    def is_filterchain_exist(self, filterchain_name):
+        file_name = self._get_filterchain_filename(filterchain_name)
+        return self._is_config_exist(file_name, self.type_filterchain, False)
+
+    def is_media_exist(self, media_name):
+        file_name = self._get_media_filename(media_name)
+        return self._is_config_exist(file_name, self.type_media, False)
 
     def _get_filterchain_filename(self, filterchain_name):
         return "%s%s%s" % (self.dir_filterchain, filterchain_name, self.ext_filterchain)
