@@ -34,7 +34,7 @@ Don't forget to active the "community" repositorie. See https://wiki.archlinux.o
 	pacman -S python2 python2-numpy python2-scipy opencv protobuf protobuf-python python2-pyside python2-pyqt python2-imaging
 
 #### Windows : ####
-Install the following dependencies :
+Install the following dependencies:
 
  - Python:	http://python.org/ftp/python/2.7.3/python-2.7.3.msi
  - Numpy:	http://sourceforge.net/projects/numpy/files/NumPy/	# Choose the installer
@@ -58,7 +58,7 @@ To check if your package management have opencv 2.4;
 	sudo apt-get install cmake cmake-gui gcc pkg-config libavformat-dev libswscale-dev
 
 ###2. Download the archive manually###
-	From here : http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.4.5/opencv-2.4.5.tar.gz
+	From here: http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.4.5/opencv-2.4.5.tar.gz
 	Go to directory containing downloaded file with a command line.
 
 ###3. Extract the archive###
@@ -86,14 +86,3 @@ On the root of the project:
 	git submodule init
 	git submodule update
 	make
-
-FAQ
----
-
-1. Error on compiling filter in c++ with opencv. Example, with the filter ScipyExample.py.
-Do you install opencv-dev? Is this repertory exist : /usr/local/include/opencv
-If not, maybe you need this : sudo ln -s /usr/include/opencv /usr/local/include/opencv
-
-2. Error when recording video.
-Maybe you need to compile opencv with ffmpeg. Be sure you install ffmpeg dependance.
-About fedora package, follow this : https://bugzilla.redhat.com/show_bug.cgi?id=812628
