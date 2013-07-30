@@ -186,7 +186,7 @@ class FilterChain(object):
                     self.remove_filter_output_observer(output)
                 # recreate the instance
                 # index -1 to ignore the default filter
-                o_filter.set_name("%s-%d" % (filter.get_name(), index - 1))
+                o_filter.set_name("%s-%d" % (o_filter.get_name(), index - 1))
                 obj = self.filters[index]
                 self.filters[index] = o_filter
                 del obj
