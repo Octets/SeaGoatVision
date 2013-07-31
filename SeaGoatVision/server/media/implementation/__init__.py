@@ -24,11 +24,3 @@ It can be a a webcam, list of files from the hard drive or anything else.
 Media should implement the iterator protocol:
     http://docs.python.org/library/stdtypes.html#iterator-types
 """
-
-import os
-
-for f in os.listdir(os.path.dirname(__file__)):
-    if f.endswith(".pyc") or f.endswith(".py"):
-        filename, _ = os.path.splitext(f)
-        code = 'from %(module)s import *' % {'module' : filename} 
-        exec code

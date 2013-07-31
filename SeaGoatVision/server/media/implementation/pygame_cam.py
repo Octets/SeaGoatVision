@@ -18,12 +18,14 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-import cv
-import pygame
-import pygame.camera
-from pygame.locals import *
 import thread
 import numpy as np
+try:
+    #import pygame
+    import pygame.camera
+    #from pygame.locals import *
+except:
+    pass
 
 from SeaGoatVision.server.media.media_streaming import Media_streaming
 from SeaGoatVision.server.core.configuration import Configuration
@@ -108,7 +110,7 @@ class Pygame_cam(Media_streaming):
             image = pygame.surfarray.pixels3d(image_surface)
             image = np.rot90(image, 3)
             copy_image = np.zeros(image.shape, np.float32)
-            copy_image = cv2.cvtColor(image, cv.CV_BGR2RGB, copy_image)
+            copy_image = cv2.cvtColor(image, cv2.cv.CV_BGR2RGB, copy_image)
             self.image = copy_image
 
     def next(self):
