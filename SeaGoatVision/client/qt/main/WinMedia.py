@@ -286,6 +286,8 @@ class player_file(threading.Thread):
         # set first image
         while not self.stop:
             while self.pause:
+                if self.stop:
+                    return
                 time.sleep(self.sleep_time)
             frame = self.call_get_frame()
             if self.max_frame <= frame:
