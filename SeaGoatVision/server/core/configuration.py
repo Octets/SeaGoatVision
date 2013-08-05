@@ -191,11 +191,11 @@ class Configuration(object):
 
     def is_filterchain_exist(self, filterchain_name):
         file_name = self._get_filterchain_filename(filterchain_name)
-        return self._is_config_exist(file_name, self.type_filterchain, False)
+        return self._is_config_exist(file_name, self.type_filterchain, True)
 
     def is_media_exist(self, media_name):
         file_name = self._get_media_filename(media_name)
-        return self._is_config_exist(file_name, self.type_media, False)
+        return self._is_config_exist(file_name, self.type_media, True)
 
     def _get_filterchain_filename(self, filterchain_name):
         return "%s%s%s" % (self.dir_filterchain, filterchain_name, self.ext_filterchain)
