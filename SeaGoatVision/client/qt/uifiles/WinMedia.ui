@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>WinSource</class>
- <widget class="QDockWidget" name="WinSource">
+ <class>WinMedia</class>
+ <widget class="QDockWidget" name="WinMedia">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -23,7 +23,7 @@
    <set>QDockWidget::AllDockWidgetFeatures</set>
   </property>
   <property name="windowTitle">
-   <string>Image provider</string>
+   <string>Media</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">

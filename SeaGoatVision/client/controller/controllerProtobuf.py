@@ -270,7 +270,7 @@ class ControllerProtobuf():
     ##########################################################################
     def get_media_list(self):
         """
-            Get the list for image provider.
+            Get the list for media.
         """
         request = server_pb2.GetMediaListRequest()
         # Make an synchronous call
