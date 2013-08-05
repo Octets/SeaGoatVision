@@ -137,7 +137,10 @@ class Media(object):
             self.open()
 
     def remove_observer(self, observer):
-        self.lst_observer.remove(observer)
+        if observer in self.lst_observer:
+            self.lst_observer.remove(observer)
+        else:
+            logger.warning("Observer missing into media %s" % (self.get_name()))
         if not self.lst_observer:
             self.close()
 
