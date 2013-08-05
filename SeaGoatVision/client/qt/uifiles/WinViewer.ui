@@ -102,7 +102,7 @@
         <rect>
          <x>0</x>
          <y>40</y>
-         <width>345</width>
+         <width>461</width>
          <height>33</height>
         </rect>
        </property>
@@ -216,6 +216,21 @@
           <item>
            <property name="text">
             <string>300%</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>500%</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>700%</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1000%</string>
            </property>
           </item>
          </widget>
