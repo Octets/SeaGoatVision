@@ -227,6 +227,11 @@ class Param(object):
             return (self.force_type(self.value), self.force_type(self.thres_h))
         return self.force_type(self.value)
 
+    def get_pos_list(self):
+        if not self.lst_value:
+            return -1
+        return self.lst_value.index(self.get())
+
     def set(self, value, thres_h=None):
         if type(value) is unicode:
             value = str(value)
