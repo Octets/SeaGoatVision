@@ -1,5 +1,3 @@
-import cv2
-from cv2 import cv
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 from PIL import Image
@@ -14,7 +12,7 @@ class HDR(Filter):
         self.resize = False
 
         self.strength = Param("strength", 0.0, min_v=0.0, max_v=3.0)
-        self.naturalness = Param("naturalness", 1.0, min_v=0.0, max_v=1.0)
+        self.naturalness = Param("naturalness", 10, min_v=0, max_v=10)
         # self.sub_lum = Param("sub_lum", 100, min_v=0, max_v=255)
         # self.shift_x = Param("shift_x", 0, min_v=-800, max_v=800)
         # self.shift_y = Param("shift_y", 0, min_v=-600, max_v=600)
@@ -27,21 +25,6 @@ class HDR(Filter):
         self.images = []
         self.imgs = []
         self.first_time = True
-
-    def execute2(self, image):
-        if self.first_time:
-            lst_img = ["/home/mathben/git/hdr/orig_%d.jpg" % i for i in range(4)]
-            # lst_img= ["/home/mathben/git/hdr/orig_%d.jpg" % i for i in [0,2,3]]
-            self.imgs = [Image.open(img) for img in lst_img]
-            self.first_time = False
-        imgs = self.imgs
-        images = self.get_hdr(imgs, strength=self.strength.get(), naturalness=self.naturalness.get())
-        if images:
-            image = images[0]
-            # transform to bgr
-            cv2.cvtColor(image, cv.CV_BGR2RGB, image)
-            return image
-        return None
 
     def execute(self, image):
         show_hdr = self.show_hdr.get()
@@ -67,8 +50,10 @@ class HDR(Filter):
 
         if not show_hdr:
             return self.images[show_no - 1]
-
-        return self.get_hdr(self.images, strength=self.strength.get(), naturalness=self.naturalness.get())
+        nature = self.naturalness.get()
+        if nature:
+            nature = nature / 10.0
+        return self.get_hdr(self.images, strength=self.strength.get(), naturalness=nature)
 
     """
     SOURCE: https://sites.google.com/site/bpowah/hdrandpythonpil
@@ -82,31 +67,6 @@ class HDR(Filter):
     cur_dir = folder where the project folders are located
     images are auto-sorted by degree of exposure (image brightness)
     """
-
-    def get_imgs(self, lst_image_path):
-        """
-        load a list of images from folder
-        sort them from lightest to darkest
-        """
-        drks = []
-        # imgs = [Image.open(os.path.join(self.indir,fn)) for fn in self.fns]
-        imgs = [Image.open(img_path) for img_path in lst_image_path]
-        for img in imgs:
-            samp = img.resize((50, 50))  # crop(box=((10,10,20,20)))
-            drks.append(sum(samp.getdata(band=0)))
-        if self.resize:
-            newsize = tuple([int(x * self.resize) for x in img.size])
-            imgs = [img.resize(newsize) for img in imgs]
-
-        newdrks = sorted(drks)
-        idxs = [drks.index(x) for x in newdrks]
-        imgs = [imgs[x] for x in idxs]
-        # self.fns = [self.fns[x] for x in idxs]
-
-        self.drks = drks
-        self.idxs = idxs
-
-        return imgs
 
     def get_masks(self, imgs, cur_str):
         """
