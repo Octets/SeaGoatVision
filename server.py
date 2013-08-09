@@ -1,10 +1,10 @@
-#! /usr/bin/env python
+#! /usr/bin/env python2.7
 
-#    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
+#    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
-#    This file is part of CapraVision.
-#    
-#    CapraVision is free software: you can redistribute it and/or modify
+#    This file is part of SeaGoatVision.
+#
+#    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
@@ -16,14 +16,19 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 """
 Description : Run the vision server
-Authors: Mathieu Benoit (mathben963@gmail.com)
-Date : October 2012
 """
+import argparse
+
+import sys
+argument = sys.argv[1:]
+from SeaGoatVision.server.mainserver import run
+from SeaGoatVision.commons import log
 
 if __name__ == '__main__':
-    from CapraVision.server.mainserver import run
-    run()
-
+    parser = argparse.ArgumentParser(description='Vision Server')
+    parser.add_argument('--port', type=int, default="0", help='Port of the host.')
+    args = parser.parse_args(args=argument)
+    port = args.port if args.port else None
+    run(p_port=port)

@@ -1,5 +1,13 @@
 *.pyc
-*~
 .project
 .pydevproject
-/build
+.settings
+
+build
+filters/private
+thirdparty/private
+configurations/private
+
+# text editor
+*.swp
+*~

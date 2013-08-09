@@ -1,0 +1,8 @@
+This is directory of configuration where it's contain filterchain and global configuration.
+
+To have your own configuration, create a private folder and copy the public directory to the private and edit the configuration.
+
+The public configuration is the default configuration to have a fast environnement with demo and one webcam.
+
+Read public/config.py for more information about global configuration.
+Filterchain configuration is json file.
