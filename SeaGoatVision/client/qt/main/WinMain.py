@@ -31,6 +31,7 @@ from WinFilter import WinFilter
 from WinCamera import WinCamera
 from PySide import QtGui
 from PySide import QtCore
+from PyQt4.QtGui import QApplication
 from SeaGoatVision.commons import log
 import thread
 import time
@@ -81,6 +82,7 @@ class WinMain(QtGui.QMainWindow):
         self.winExecution.onExecutionChanged.connect(self.winFilterChain.select_filterchain)
 
         self._addToolBar()
+        self._addMenuBar()
 
         self.setCentralWidget(self.WinMainViewer.ui)
 
@@ -170,3 +172,17 @@ class WinMain(QtGui.QMainWindow):
             if status:
                 logger.info("Update client - WinExecution receive notification.")
                 self.winExecution.update_execution_list()
+
+    def _addMenuBar(self):
+        actionReconSeaGoat = QtGui.QAction("Reconnect to server",self)
+        actionReconSeaGoat.setEnabled(False)
+        #actionReloadWidget = QtGui.QAction("Reload widget", self)
+        #actionReloadWidget.setEnabled(False)
+        actionQuit = QtGui.QAction("Quit", self)
+        actionQuit.triggered.connect(self.close)
+        menuFile = QtGui.QMenu("File")
+        menuFile.addAction(actionReconSeaGoat)
+        #menuFile.addAction(actionReloadWidget)
+        menuFile.addAction(actionQuit)
+        menuBar = self.menuBar()
+        menuBar.addMenu(menuFile)
