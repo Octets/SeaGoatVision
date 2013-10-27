@@ -22,6 +22,7 @@ Description : Start the Vision Server
 """
 
 import os
+import sys
 
 from core.configuration import Configuration
 from SeaGoatVision.commons import log
@@ -39,7 +40,7 @@ def run(p_port=None):
     pid = os.getpid()
     sFileLockName = "/tmp/SeaGoat.lock"
     if is_lock(sFileLockName):
-        exit(-1)
+        sys.exit(-1)
 
     fileLock = open(sFileLockName, "w")
     fileLock.write("%s" % pid)
@@ -52,6 +53,12 @@ def run(p_port=None):
 
     # Create and register the service
     server = jsonrpc_server_impl.Jsonrpc_server_impl(port)
+    try:
+        server.register()
+    except Exception as e:
+        log.printerror_stacktrace(logger, e)
+        server.close()
+        sys.exit(1)
 
     # Start the server
     logger.info('Serving on port %s - pid %s', port, pid)

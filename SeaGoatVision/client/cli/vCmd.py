@@ -27,18 +27,10 @@ from SeaGoatVision.commons import log
 logger = log.get_logger(__name__)
 
 class VCmd(cmd.Cmd):
-    def __init__(self, local=False, host="localhost", port=8090, completekey='tab', stdin=None, stdout=None, quiet=False):
+    def __init__(self, ctr, local=False, host="localhost", port=8090, completekey='tab', stdin=None, stdout=None, quiet=False):
         cmd.Cmd.__init__(self, completekey=completekey, stdin=stdin, stdout=stdout)
         self.quiet = quiet
-        if local:
-            from SeaGoatVision.server.core.manager import Manager
-            self.controller = Manager()
-        else:
-            import jsonrpclib
-            self.controller = jsonrpclib.Server('http://%s:%s' % (host, port))
-
-        # Directly connected to the vision server
-        # self.controller = Manager()
+        self.controller = ctr
 
         if not self.controller.is_connected():
             logger.info("Vision server is not accessible.")

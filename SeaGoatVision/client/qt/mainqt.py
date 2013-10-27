@@ -27,21 +27,13 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
-def run(local=False, host="localhost", port=8090):
-    if local:
-        from SeaGoatVision.server.core.manager import Manager
-        # Directly connected to the vision server
-        c = Manager()
-    else:
-        import jsonrpclib
-        c = jsonrpclib.Server('http://%s:%s' % (host, port))
-
-    if not c.is_connected():
+def run(ctr, local=False, host="localhost", port=8090):
+    if not ctr.is_connected():
         logger.critical("Vision server is not accessible. Exit now.")
         return
 
     app = QApplication(sys.argv)
-    win = main.WinMain(c, host=host, islocal=local)
+    win = main.WinMain(ctr, host=host, islocal=local)
     win.show()
     try:
         rint = app.exec_()
@@ -49,6 +41,6 @@ def run(local=False, host="localhost", port=8090):
         logger.critical("Exit error : %s" % e)
     # close the server
     win.quit()
-    c.close()
+    ctr.close()
 
     return rint

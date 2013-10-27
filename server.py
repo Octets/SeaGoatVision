@@ -24,7 +24,6 @@ import argparse
 import sys
 argument = sys.argv[1:]
 from SeaGoatVision.server.mainserver import run
-from SeaGoatVision.commons import log
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Vision Server')

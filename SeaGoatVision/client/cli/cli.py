@@ -22,7 +22,7 @@ Description : Run the command line interface to communicate with the SeaGoatVisi
 """
 import fileinput
 
-def run(local=False, host="localhost", port=8090, quiet=False):
+def run(ctr, local=False, host="localhost", port=8090, quiet=False):
     from vCmd import VCmd
-    VCmd(stdin=fileinput.input(), local=local, host=host, port=port, quiet=quiet).cmdloop()
+    VCmd(ctr, stdin=fileinput.input(), local=local, host=host, port=port, quiet=quiet).cmdloop()
     return 0

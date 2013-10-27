@@ -36,6 +36,8 @@ class Jsonrpc_server_impl():
         self.server = SimpleJSONRPCServer((host, port))
         self.manager = Manager()
         self.dct_observer = {}
+
+    def register(self):
         # register all rpc callback
         self.server.register_function(self.close, "close")
         self.server.register_function(self.add_image_observer, "add_image_observer")
@@ -209,7 +211,7 @@ class Jsonrpc_server_impl():
         # We're done, call the run method of the done callback
         done.run(response)
         """
-    """
+    
     def set_image_observer(self, controller, request, done):
         logger.info("set_image_observer request %s", str(request).replace("\n", " "))
 
@@ -254,7 +256,7 @@ class Jsonrpc_server_impl():
         if observer:
             observer.close()
             del self.dct_observer[request.execution_name]
-    """
+
 class Observer(threading.Thread):
     def __init__(self, port):
         threading.Thread.__init__(self)
