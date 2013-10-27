@@ -34,9 +34,8 @@ class VCmd(cmd.Cmd):
             from SeaGoatVision.server.core.manager import Manager
             self.controller = Manager()
         else:
-            from SeaGoatVision.client.controller.controllerProtobuf import ControllerProtobuf
-            # Protobuf
-            self.controller = ControllerProtobuf(host, port, quiet=quiet)
+            import jsonrpclib
+            self.controller = jsonrpclib.Server('http://%s:%s' % (host, port))
 
         # Directly connected to the vision server
         # self.controller = Manager()
@@ -74,7 +73,7 @@ class VCmd(cmd.Cmd):
             else:
                 logger.info("No lstFilterChain")
         else:
-             logger.info(lst_name)
+            logger.info(lst_name)
 
     def do_add_output_observer(self, line):
         # execution_name

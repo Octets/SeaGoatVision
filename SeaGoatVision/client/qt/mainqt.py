@@ -33,9 +33,8 @@ def run(local=False, host="localhost", port=8090):
         # Directly connected to the vision server
         c = Manager()
     else:
-        from SeaGoatVision.client.controller.controllerProtobuf import ControllerProtobuf
-        # Protobuf
-        c = ControllerProtobuf(host, port)
+        import jsonrpclib
+        c = jsonrpclib.Server('http://%s:%s' % (host, port))
 
     if not c.is_connected():
         logger.critical("Vision server is not accessible. Exit now.")

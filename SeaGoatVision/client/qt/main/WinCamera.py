@@ -48,7 +48,7 @@ class WinCamera(WinParamParent):
 
         self.lst_param = self.controller.get_params_media(self.media_name)
         if self.lst_param is None:
-           self.lst_param = []
+            self.lst_param = []
 
         if not self.lst_param:
             self.ui.lbl_param_name.setText("%s - Empty params" % self.media_name)

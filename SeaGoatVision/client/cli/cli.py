@@ -20,7 +20,6 @@
 """
 Description : Run the command line interface to communicate with the SeaGoatVision Server
 """
-import sys
 import fileinput
 
 def run(local=False, host="localhost", port=8090, quiet=False):
