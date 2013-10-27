@@ -29,17 +29,22 @@ class Conf_firewire:
         self.name = "Firewire"
         self.no = -1
         self.default_fps = None
+        self.is_rgb = False
+        self.is_format7 = False
+        self.is_mono = False
+        self.is_yuv = True
+        self.iso_speed = None
+        self.mode = None
+        self.framerate = None
+        self.operation_mode = None
 
         # specific for firewire device
         self.guid = None
         try:
+            # default value if not setted
             self.iso_speed = video1394.ISO_SPEED_400
             self.mode = video1394.VIDEO_MODE_800x600_YUV422
             self.framerate = video1394.FRAMERATE_15
             self.operation_mode = video1394.OPERATION_MODE_LEGACY
-            self.is_rgb = False
-            self.is_format7 = False
-            self.is_mono = False
-            self.is_yuv = True
         except:
             pass

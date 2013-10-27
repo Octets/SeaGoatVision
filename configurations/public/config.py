@@ -19,10 +19,12 @@
 
 # This file contain configuration about server.py
 
-import datetime
+
+# Uncomment the other camera module when you need it.
+#import datetime
 from configurations.template_media.conf_webcam import Conf_webcam
-from configurations.template_media.conf_firewire import Conf_firewire
-from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
+#from configurations.template_media.conf_firewire import Conf_firewire
+#from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
 
 # keep always true for public configuration
 # It's useful if you need to disable private config
