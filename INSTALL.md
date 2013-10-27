@@ -23,10 +23,10 @@ Installation
 
 ###B. Install dependencies###
 #### Ubuntu : ####
-	sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf protobuf-compiler python-pyside python-qt4 python-imaging
+	sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf protobuf-compiler python-pyside python-qt4 python-imaging libopencv-dev
 
 #### Fedora : ####
-	sudo yum install python numpy scipy opencv-python protobuf-python protobuf protobuf-compiler python-pyside PyQT4 python-imaging
+	sudo yum install python numpy scipy opencv-python protobuf-python protobuf protobuf-compiler python-pyside PyQT4 python-imaging opencv-devel
 
 #### Arch Linux : ####
 Don't forget to active the "community" repositorie. See https://wiki.archlinux.org/index.php/Pacman
