@@ -43,9 +43,9 @@ class WinFilter(WinParamParent):
             self.ui.lbl_param_name.setText("Empty params")
             return
 
-        self.lst_param = self.controller.get_params_filterchain(self.execution_name, filter_name=self.filter_name)
+        self.lst_param = self.controller.get_params_filterchain(self.execution_name, self.filter_name)
         if self.lst_param is None:
-           self.lst_param = []
+            self.lst_param = []
 
         if not self.lst_param:
             self.ui.lbl_param_name.setText("%s - Empty params" % self.filter_name)

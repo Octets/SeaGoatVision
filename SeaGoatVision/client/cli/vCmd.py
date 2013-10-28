@@ -58,7 +58,7 @@ class VCmd(cmd.Cmd):
 
     def do_get_filterchain_list(self, line):
         lstFilterChain = self.controller.get_filterchain_list()
-        lst_name = [item.name for item in lstFilterChain]
+        lst_name = [item.get("name") for item in lstFilterChain]
         if not self.quiet:
             if lstFilterChain is not None:
                 logger.info("Nombre de ligne %s, tableau : %s" % (len(lstFilterChain), lst_name))
@@ -94,7 +94,7 @@ class VCmd(cmd.Cmd):
             if filterchain == "None":
                 filterchain = ""
 
-        self.controller.start_filterchain_execution(name, media, filterchain)
+        self.controller.start_filterchain_execution(name, media, filterchain, None, False)
 
     def do_stop_filterchain_execution(self, line):
         # execution_name
@@ -107,7 +107,7 @@ class VCmd(cmd.Cmd):
         path = None
         if len(param) > 1:
             path = param[1]
-        self.controller.start_record(param[0], path=path)
+        self.controller.start_record(param[0], path)
 
     def do_stop_record(self, line):
         # media_name

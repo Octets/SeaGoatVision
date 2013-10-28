@@ -228,7 +228,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.filterListWidget.clear()
         self.ui.filterchainEdit.clear()
         for filterlist in self.controller.get_filterchain_list():
-            self.ui.filterchainListWidget.addItem(filterlist.name)
+            self.ui.filterchainListWidget.addItem(filterlist.get("name"))
         self.ui.filterchainListWidget.addItem(keys.get_empty_filterchain_name())
 
     def moveUpSelectedFilter(self):

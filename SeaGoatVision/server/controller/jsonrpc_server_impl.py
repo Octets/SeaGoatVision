@@ -27,7 +27,6 @@ from SeaGoatVision.server.core.manager import Manager
 import socket
 import threading
 from SeaGoatVision.commons import log
-from SeaGoatVision.commons import keys
 
 logger = log.get_logger(__name__)
 
@@ -43,6 +42,8 @@ class Jsonrpc_server_impl():
         self.server.register_function(self.add_image_observer, "add_image_observer")
         self.server.register_function(self.set_image_observer, "set_image_observer")
         self.server.register_function(self.remove_image_observer, "remove_image_observer")
+        self.server.register_function(self.get_params_media, "get_params_media")
+        self.server.register_function(self.get_params_filterchain, "get_params_filterchain")
         
         self.server.register_function(self.manager.is_connected, "is_connected")
         self.server.register_function(self.manager.add_notify_server, "add_notify_server")
@@ -52,7 +53,6 @@ class Jsonrpc_server_impl():
         self.server.register_function(self.manager.get_real_fps_execution, "get_real_fps_execution")
         self.server.register_function(self.manager.add_output_observer, "add_output_observer")
         self.server.register_function(self.manager.remove_output_observer, "remove_output_observer")
-        #self.server.register_function(self.manager.get_params_filterchain, "get_params_filterchain") # oups??
         self.server.register_function(self.manager.get_execution_list, "get_execution_list")
         self.server.register_function(self.manager.get_execution_info, "get_execution_info")
         self.server.register_function(self.manager.get_media_list, "get_media_list")
@@ -68,7 +68,7 @@ class Jsonrpc_server_impl():
         self.server.register_function(self.manager.reload_filter, "reload_filter")
         self.server.register_function(self.manager.save_params, "save_params")
         self.server.register_function(self.manager.get_filter_list, "get_filter_list")
-        self.server.register_function(self.get_params_media, "get_params_media")
+        self.server.register_function(self.manager.get_params_media, "get_filterchain_info")
 
     def run(self):
         self.server.serve_forever()
@@ -110,31 +110,6 @@ class Jsonrpc_server_impl():
     """
 
     """
-    def get_params_filterchain(self, controller, request, done):
-        logger.info("get_params_filterchain request %s", str(request).replace("\n", " "))
-
-        # Create a reply
-        response = server_pb2.GetParamsFilterchainResponse()
-        try:
-            ret = self.manager.get_params_filterchain(request.execution_name, request.filter_name)
-            if ret is not None:
-                for item in ret:
-                    if item.get_type() is int:
-                        response.params.add(name=item.get_name(), value_int=item.get(), min_v=item.get_min(),
-                                            max_v=item.get_max(), lst_value_int=item.get_list_value())
-                    elif item.get_type() is bool:
-                        response.params.add(name=item.get_name(), value_bool=item.get())
-                    elif item.get_type() is float:
-                        response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(),
-                                            max_float_v=item.get_max(), lst_value_float=item.get_list_value())
-                    elif item.get_type() is unicode or item.get_type() is str:
-                        response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
-        except Exception as e:
-            log.printerror_stacktrace(logger, e)
-
-        # We're done, call the run method of the done callback
-        done.run(response)
-
     def update_param_media(self, controller, request, done):
         logger.info("update_param_media request %s", str(request).replace("\n", " "))
 
@@ -163,10 +138,16 @@ class Jsonrpc_server_impl():
         done.run(response)
 
     """
+    def get_params_filterchain(self, execution_name, filter_name):
+        lst_param = self.manager.get_params_filterchain(execution_name, filter_name)
+        return self._serialize_param(lst_param)
+
     def get_params_media(self, media_name):
-        lst_params = self.manager.get_params_media(media_name)
-        lst_ser_params = [param.serialize() for param in lst_params]
-        return lst_ser_params
+        lst_param = self.manager.get_params_media(media_name)
+        return self._serialize_param(lst_param)
+
+    def _serialize_param(self, lst_param_obj):
+        return [param.serialize() for param in lst_param_obj]
 
     ##########################################################################
     ############################## OBSERVATOR ################################

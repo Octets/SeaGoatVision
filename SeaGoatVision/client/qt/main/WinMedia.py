@@ -161,7 +161,7 @@ class WinMedia(QtCore.QObject):
             path = self.ui.txt_name_record.text()
             if not path:
                 path = None
-            if not self.controller.start_record(self.ui.cbMedia.currentText(), path=path):
+            if not self.controller.start_record(self.ui.cbMedia.currentText(), path):
                 # TODO improve error message
                 logger.error("Trying start record...")
             else:

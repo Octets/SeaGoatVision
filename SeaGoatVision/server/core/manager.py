@@ -50,7 +50,7 @@ class Manager:
         self.id_client_notify = 0
 
         # launch command on start
-        thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self, ))
+        thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
 
     def close(self):
         logger.info("Close manager and close server.")
@@ -89,7 +89,7 @@ class Manager:
     ##########################################################################
     ######################## EXECUTION FILTER ################################
     ##########################################################################
-    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name=None, is_client_manager=False):
+    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name, is_client_manager):
         execution = self.dct_exec.get(execution_name, None)
 
         if execution:
@@ -156,11 +156,7 @@ class Manager:
         if not exec_info:
             log.print_function(logger.error, "Cannot get execution info, it's empty.")
             return None
-        class Exec_info: pass
-        o_exec_info = Exec_info()
-        setattr(o_exec_info, KEY_MEDIA, exec_info[KEY_MEDIA].get_name())
-        setattr(o_exec_info, KEY_FILTERCHAIN, exec_info[KEY_FILTERCHAIN].get_name())
-        return o_exec_info
+        return {KEY_MEDIA:exec_info[KEY_MEDIA].get_name(), KEY_FILTERCHAIN:exec_info[KEY_FILTERCHAIN].get_name()}
 
     def get_real_fps_execution(self, execution_name):
         media = self._get_media(execution_name=execution_name)
@@ -190,7 +186,7 @@ class Manager:
             return {}
         return media.get_info()
 
-    def start_record(self, media_name, path=None):
+    def start_record(self, media_name, path):
         media = self._get_media(media_name=media_name)
         if not media:
             return False
@@ -313,7 +309,7 @@ class Manager:
     ##########################################################################
     ############################ FILTERCHAIN  ################################
     ##########################################################################
-    def reload_filter(self, filter_name=None):
+    def reload_filter(self, filter_name):
         o_filter = self.resource.reload_filter(filter_name)
         if o_filter is None:
             return False

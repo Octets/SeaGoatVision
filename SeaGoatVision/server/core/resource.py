@@ -70,10 +70,7 @@ class Resource(object):
         class FilterChain: pass
         lstFilterChain = []
         for fc_name in self.config.list_filterchain():
-                filterChain = FilterChain()
-                setattr(filterChain, "name", fc_name)
-                setattr(filterChain, "doc", None)
-                lstFilterChain.append(filterChain)
+            lstFilterChain.append({"name":fc_name, "doc": None})
         return lstFilterChain
 
     def upload_filterchain(self, filterchain_name, s_contain):

@@ -133,8 +133,8 @@ class WinExecution(QtCore.QObject):
         if not exec_info:
             logger.error("WinExecution Internal sync error with execution info :(")
             return
-        self.ui.txtFilterchain.setText(exec_info.filterchain)
-        self.ui.txtMedia.setText(exec_info.media)
+        self.ui.txtFilterchain.setText(exec_info.get("filterchain"))
+        self.ui.txtMedia.setText(exec_info.get("media"))
 
     def update_execution_list(self):
         self.mode_edit = False
@@ -167,8 +167,7 @@ class WinExecution(QtCore.QObject):
         file_name = self.shared_info.get("path_media")
         is_client_manager = media_name == keys.get_media_file_video_name()
         status = self.controller.start_filterchain_execution(execution_name, media_name,
-                                                             filterchain_name, file_name=file_name,
-                                                             is_client_manager=is_client_manager)
+                                                             filterchain_name, file_name, is_client_manager)
         if not status:
             self.cancel()
             return False

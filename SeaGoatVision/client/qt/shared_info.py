@@ -38,7 +38,7 @@ class Shared_info(object):
 
             cls.dct_signal = {}
             for key in cls.dct_variable.keys():
-                 cls.dct_signal[key] = []
+                cls.dct_signal[key] = []
 
             # instance class
             cls._instance = super(Shared_info, cls).__new__(cls)
