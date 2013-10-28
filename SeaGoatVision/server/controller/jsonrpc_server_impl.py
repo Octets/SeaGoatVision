@@ -68,7 +68,7 @@ class Jsonrpc_server_impl():
         self.server.register_function(self.manager.reload_filter, "reload_filter")
         self.server.register_function(self.manager.save_params, "save_params")
         self.server.register_function(self.manager.get_filter_list, "get_filter_list")
-        self.server.register_function(self.manager.get_params_media, "get_params_media")
+        self.server.register_function(self.get_params_media, "get_params_media")
 
     def run(self):
         self.server.serve_forever()
@@ -162,32 +162,11 @@ class Jsonrpc_server_impl():
         # We're done, call the run method of the done callback
         done.run(response)
 
-
-    def get_params_media(self, controller, request, done):
-        logger.info("get_params_media request %s", str(request).replace("\n", " "))
-
-        # Create a reply
-        response = server_pb2.GetParamsMediaResponse()
-        try:
-            ret = self.manager.get_params_media(request.media_name)
-            if ret is not None:
-                for item in ret:
-                    if item.get_type() is int:
-                        response.params.add(name=item.get_name(), value_int=item.get(), min_v=item.get_min(),
-                                            max_v=item.get_max(), lst_value_int=item.get_list_value())
-                    elif item.get_type() is bool:
-                        response.params.add(name=item.get_name(), value_bool=item.get())
-                    elif item.get_type() is float:
-                        response.params.add(name=item.get_name(), value_float=item.get(), min_float_v=item.get_min(),
-                                            max_float_v=item.get_max(), lst_value_float=item.get_list_value())
-                    elif item.get_type() is unicode or item.get_type() is str:
-                        response.params.add(name=item.get_name(), value_str=item.get(), lst_value_str=item.get_list_value())
-        except Exception as e:
-            log.printerror_stacktrace(logger, e)
-
-        # We're done, call the run method of the done callback
-        done.run(response)
     """
+    def get_params_media(self, media_name):
+        lst_params = self.manager.get_params_media(media_name)
+        lst_ser_params = [param.serialize() for param in lst_params]
+        return lst_ser_params
 
     ##########################################################################
     ############################## OBSERVATOR ################################

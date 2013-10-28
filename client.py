@@ -50,8 +50,8 @@ if __name__ == '__main__':
         ctr = Manager()
     else:
         # Connect on remote with jsonrpc
-        import jsonrpclib
-        ctr = jsonrpclib.Server('http://%s:%s' % (args.host, args.port))
+        from SeaGoatVision.client.controller.json_client import Json_client 
+        ctr = Json_client(args.port, host=args.host)
 
     sInterface = args.interface.lower()
     if sInterface == "qt":
