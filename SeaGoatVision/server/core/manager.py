@@ -25,6 +25,7 @@ from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
 from resource import Resource
 from SeaGoatVision.commons import log
+import inspect
 import thread
 
 logger = log.get_logger(__name__)
@@ -58,25 +59,35 @@ class Manager:
             execution[KEY_MEDIA].close()
         self.server_observer.stop()
 
+    def _post_command_(self, arg):
+        funct_name = inspect.currentframe().f_back.f_code.co_name
+        del arg["self"]
+        # special case, observer is reference
+        if "observer" in arg:
+            arg["observer"] = "REF"
+        if arg:
+            logger.info("Request : %s - %s" % (funct_name, arg))
+        else:
+            logger.info("Request : %s" % (funct_name))
+
     ##########################################################################
     ################################ CLIENT ##################################
     ##########################################################################
     def is_connected(self):
+        self._post_command_(locals())
         return True
 
     ##########################################################################
     ############################# SERVER STATE ###############################
     ##########################################################################
     def add_notify_server(self):
+        self._post_command_(locals())
         self.id_client_notify += 1
         self.notify_event_client[self.id_client_notify] = False
         return self.id_client_notify
 
     def need_notify(self, i_id):
         notify = self.notify_event_client.get(i_id, None)
-        if notify is None:
-            # logger.warning("The client id %s is not in the notify list.")
-            return False
         if not notify:
             return False
         self.notify_event_client[i_id] = False
@@ -90,6 +101,7 @@ class Manager:
     ######################## EXECUTION FILTER ################################
     ##########################################################################
     def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name, is_client_manager):
+        self._post_command_(locals())
         execution = self.dct_exec.get(execution_name, None)
 
         if execution:
@@ -126,6 +138,7 @@ class Manager:
         return True
 
     def stop_filterchain_execution(self, execution_name):
+        self._post_command_(locals())
         execution = self.dct_exec.get(execution_name, None)
 
         if not execution:
@@ -149,9 +162,11 @@ class Manager:
         return True
 
     def get_execution_list(self):
+        self._post_command_(locals())
         return self.dct_exec.keys()
 
     def get_execution_info(self, execution_name):
+        self._post_command_(locals())
         exec_info = self.dct_exec.get(execution_name, None)
         if not exec_info:
             log.print_function(logger.error, "Cannot get execution info, it's empty.")
@@ -159,6 +174,7 @@ class Manager:
         return {KEY_MEDIA:exec_info[KEY_MEDIA].get_name(), KEY_FILTERCHAIN:exec_info[KEY_FILTERCHAIN].get_name()}
 
     def get_real_fps_execution(self, execution_name):
+        #self._post_command_(locals())
         media = self._get_media(execution_name=execution_name)
         if not media:
             return -1
@@ -168,10 +184,12 @@ class Manager:
     ################################ MEDIA ###################################
     ##########################################################################
     def get_media_list(self):
+        self._post_command_(locals())
         return {name: self.resource.get_media(name).get_type_media()
                 for name in self.resource.get_media_name_list()}
 
     def cmd_to_media(self, media_name, cmd, value=None):
+        self._post_command_(locals())
         media = self._get_media(media_name=media_name)
         if not media:
             return False
@@ -181,12 +199,14 @@ class Manager:
         return media.do_cmd(cmd, value)
 
     def get_info_media(self, media_name):
+        self._post_command_(locals())
         media = self._get_media(media_name=media_name)
         if not media:
             return {}
         return media.get_info()
 
     def start_record(self, media_name, path):
+        self._post_command_(locals())
         media = self._get_media(media_name=media_name)
         if not media:
             return False
@@ -196,6 +216,7 @@ class Manager:
         return media.start_record(path=path)
 
     def stop_record(self, media_name):
+        self._post_command_(locals())
         media = self._get_media(media_name=media_name)
         if not media:
             return False
@@ -205,18 +226,21 @@ class Manager:
         return media.stop_record()
 
     def get_params_media(self, media_name):
+        self._post_command_(locals())
         media = self._get_media(media_name=media_name)
         if not media:
             return []
         return media.get_properties_param()
 
     def update_param_media(self, media_name, param_name, value):
+        self._post_command_(locals())
         media = self._get_media(media_name=media_name)
         if not media:
             return False
         return media.update_property_param(param_name, value)
 
     def save_params_media(self, media_name):
+        self._post_command_(locals())
         media = self._get_media(media_name=media_name)
         if not media:
             return False
@@ -233,6 +257,7 @@ class Manager:
                 - string, execution_name to select an execution
                 - string, filter_name to select the filter
         """
+        self._post_command_(locals())
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return False
@@ -247,6 +272,7 @@ class Manager:
                 - string, filter_name_old , filter to replace
                 - string, filter_name_new , filter to use
         """
+        self._post_command_(locals())
         if filter_name_old == filter_name_new:
             log.print_function(logger.error, "New and old filter_name is equal: %s" % filter_name_old)
             return False
@@ -264,6 +290,7 @@ class Manager:
                 - string, execution_name to select an execution
                 - string, filter_name , filter to remove
         """
+        self._post_command_(locals())
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return False
@@ -274,6 +301,7 @@ class Manager:
             attach the output information of execution to tcp_server
             supported only one observer. Add observer to tcp_server
         """
+        self._post_command_(locals())
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return False
@@ -289,6 +317,7 @@ class Manager:
             remove the output information of execution to tcp_server
             supported only one observer. remove observer to tcp_server
         """
+        self._post_command_(locals())
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return False
@@ -310,6 +339,7 @@ class Manager:
     ############################ FILTERCHAIN  ################################
     ##########################################################################
     def reload_filter(self, filter_name):
+        self._post_command_(locals())
         o_filter = self.resource.reload_filter(filter_name)
         if o_filter is None:
             return False
@@ -322,6 +352,7 @@ class Manager:
     def get_params_filterchain(self, execution_name, filter_name):
         # get actual filter from execution
         # TODO search information from configuration if execution not exist
+        self._post_command_(locals())
         if not execution_name:
             return None
         filterchain = self._get_filterchain(execution_name)
@@ -330,9 +361,11 @@ class Manager:
         return filterchain.get_params(filter_name=filter_name)
 
     def get_filterchain_info(self, filterchain_name):
+        self._post_command_(locals())
         return self.resource.get_filterchain_info(filterchain_name)
 
     def update_param(self, execution_name, filter_name, param_name, value):
+        self._post_command_(locals())
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return False
@@ -351,27 +384,33 @@ class Manager:
 
     def save_params(self, execution_name):
         "Force serialization and overwrite config"
+        self._post_command_(locals())
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return False
         return self.config.write_filterchain(filterchain)
 
     def get_filterchain_list(self):
+        self._post_command_(locals())
         return self.resource.get_filterchain_list()
 
     def upload_filterchain(self, filterchain_name, s_file_contain):
+        self._post_command_(locals())
         return self.resource.upload_filterchain(filterchain_name, s_file_contain)
 
     def delete_filterchain(self, filterchain_name):
+        self._post_command_(locals())
         return self.resource.delete_filterchain(filterchain_name)
 
     def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters, default_media):
+        self._post_command_(locals())
         return self.resource.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters, default_media)
 
     ##########################################################################
     ############################### FILTER  ##################################
     ##########################################################################
     def get_filter_list(self):
+        self._post_command_(locals())
         return self.resource.get_filter_info_list()
 
     ##########################################################################
