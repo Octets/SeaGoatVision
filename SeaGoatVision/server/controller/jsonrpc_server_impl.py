@@ -32,7 +32,7 @@ logger = log.get_logger(__name__)
 
 class Jsonrpc_server_impl():
     def __init__(self, port, host='localhost'):
-        self.server = SimpleJSONRPCServer((host, port))
+        self.server = SimpleJSONRPCServer((host, port), logRequests=False)
         self.manager = Manager()
         self.dct_observer = {}
 
@@ -44,7 +44,7 @@ class Jsonrpc_server_impl():
         self.server.register_function(self.remove_image_observer, "remove_image_observer")
         self.server.register_function(self.get_params_media, "get_params_media")
         self.server.register_function(self.get_params_filterchain, "get_params_filterchain")
-        
+
         self.server.register_function(self.manager.is_connected, "is_connected")
         self.server.register_function(self.manager.add_notify_server, "add_notify_server")
         self.server.register_function(self.manager.need_notify, "need_notify")
@@ -68,7 +68,9 @@ class Jsonrpc_server_impl():
         self.server.register_function(self.manager.reload_filter, "reload_filter")
         self.server.register_function(self.manager.save_params, "save_params")
         self.server.register_function(self.manager.get_filter_list, "get_filter_list")
-        self.server.register_function(self.manager.get_params_media, "get_filterchain_info")
+        self.server.register_function(self.manager.get_filterchain_info, "get_filterchain_info")
+        self.server.register_function(self.manager.update_param_media, "update_param_media")
+        self.server.register_function(self.manager.update_param, "update_param")
 
     def run(self):
         self.server.serve_forever()
@@ -79,65 +81,6 @@ class Jsonrpc_server_impl():
             observer.close()
         self.manager.close()
 
-    """
-
-    def update_param(self, controller, request, done):
-        logger.info("update_param request %s", str(request).replace("\n", " "))
-
-        # Create a reply
-        response = server_pb2.StatusResponse()
-        try:
-            value = None
-            if request.param.HasField("value_int"):
-                value = request.param.value_int
-            if request.param.HasField("value_bool"):
-                value = request.param.value_bool
-            if request.param.HasField("value_float"):
-                value = request.param.value_float
-            if request.param.HasField("value_str"):
-                value = request.param.value_str
-            try:
-                response.status = not(self.manager.update_param(request.execution_name, request.filter_name, request.param.name, value))
-            except Exception as e:
-                response.status = 1
-                response.message = e
-        except Exception as e:
-            log.printerror_stacktrace(logger, e)
-            response.status = -1
-
-        # We're done, call the run method of the done callback
-        done.run(response)
-    """
-
-    """
-    def update_param_media(self, controller, request, done):
-        logger.info("update_param_media request %s", str(request).replace("\n", " "))
-
-        # Create a reply
-        response = server_pb2.StatusResponse()
-        try:
-            value = None
-            if request.param.HasField("value_int"):
-                value = request.param.value_int
-            if request.param.HasField("value_bool"):
-                value = request.param.value_bool
-            if request.param.HasField("value_float"):
-                value = request.param.value_float
-            if request.param.HasField("value_str"):
-                value = request.param.value_str
-            try:
-                response.status = not(self.manager.update_param_media(request.media_name, request.param.name, value))
-            except Exception as e:
-                response.status = 1
-                response.message = e
-        except Exception as e:
-            log.printerror_stacktrace(logger, e)
-            response.status = -1
-
-        # We're done, call the run method of the done callback
-        done.run(response)
-
-    """
     def get_params_filterchain(self, execution_name, filter_name):
         lst_param = self.manager.get_params_filterchain(execution_name, filter_name)
         return self._serialize_param(lst_param)
@@ -147,75 +90,43 @@ class Jsonrpc_server_impl():
         return self._serialize_param(lst_param)
 
     def _serialize_param(self, lst_param_obj):
-        return [param.serialize() for param in lst_param_obj]
+        if lst_param_obj:
+            return [param.serialize() for param in lst_param_obj]
+        return []
 
     ##########################################################################
     ############################## OBSERVATOR ################################
     ##########################################################################
-    def add_image_observer(self, observer, execution_name, filter_name):
-        """
-        port = request.port
-        try:
-            observer = Observer(port)
-            self.dct_observer[request.execution_name] = observer
-            if self.manager.add_image_observer(observer.observer, request.execution_name, request.filter_name):
-                response.status = 0
-                observer.start()
-            else:
-                response.status = 1
-                response.message = "This add_image_observer can't add observer."
-        except Exception as e:
-            log.printerror_stacktrace(logger, e)
-            response.status = -1
+    def add_image_observer(self, port, execution_name, filter_name):
+        observer = Observer(port)
+        self.dct_observer[execution_name] = observer
+        if self.manager.add_image_observer(observer.observer, execution_name, filter_name):
+            observer.start()
+            return True
+        else:
+            self._remove_image_observer(execution_name)
+        return False
 
-        # We're done, call the run method of the done callback
-        done.run(response)
-        """
-    
-    def set_image_observer(self, controller, request, done):
-        logger.info("set_image_observer request %s", str(request).replace("\n", " "))
+    def set_image_observer(self, execution_name, filter_name_old, filter_name_new):
+        observer = self.dct_observer.get(execution_name, None)
+        if observer and self.manager.set_image_observer(observer.observer, execution_name, filter_name_old, filter_name_new):
+            return True
+        return False
 
-        # Create a reply
-        response = server_pb2.StatusResponse()
-        try:
-            observer = self.dct_observer.get(request.execution_name, None)
-            if observer and self.manager.set_image_observer(observer.observer, request.execution_name, request.filter_name_old, request.filter_name_new):
-                response.status = 0
-            else:
-                response.status = 1
-                response.message = "This set_image_observer can't change observer."
-        except Exception as e:
-            log.printerror_stacktrace(logger, e)
-            response.status = -1
+    def remove_image_observer(self, execution_name, filter_name):
+        observer = self.dct_observer.get(execution_name, None)
+        status = False
+        if observer and self.manager.remove_image_observer(observer.observer, execution_name, filter_name):
+            status = True
+        self._remove_image_observer(execution_name)
+        return status
 
-        # We're done, call the run method of the done callback
-        done.run(response)
-
-    def remove_image_observer(self, controller, request, done):
-        logger.info("remove_image_observer request %s", str(request).replace("\n", " "))
-
-        # Create a reply
-        response = server_pb2.StatusResponse()
-        try:
-            observer = self.dct_observer.get(request.execution_name, None)
-            if observer and self.manager.remove_image_observer(observer.observer, request.execution_name, request.filter_name):
-                response.status = 0
-            else:
-                response.status = 1
-                response.message = "This remove_image_observer can't remove observer."
-
-        except Exception as e:
-            log.printerror_stacktrace(logger, e)
-            response.status = -1
-
-        # We're done, call the run method of the done callback
-        done.run(response)
-
+    def _remove_image_observer(self, execution_name):
         # close the socket
-        observer = self.dct_observer.get(request.execution_name, None)
+        observer = self.dct_observer.get(execution_name, None)
         if observer:
             observer.close()
-            del self.dct_observer[request.execution_name]
+            del self.dct_observer[execution_name]
 
 class Observer(threading.Thread):
     def __init__(self, port):
