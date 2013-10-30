@@ -31,7 +31,6 @@ from WinFilter import WinFilter
 from WinCamera import WinCamera
 from PySide import QtGui
 from PySide import QtCore
-from PyQt4.QtGui import QApplication
 from SeaGoatVision.commons import log
 import thread
 import time

@@ -53,6 +53,11 @@ if __name__ == '__main__':
         from SeaGoatVision.client.controller.json_client import Json_client 
         ctr = Json_client(args.port, host=args.host)
 
+    if not ctr.is_connected():
+        logger.critical("Vision server is not accessible. Exit now.")
+        ctr.close()
+        sys.exit(-1)
+
     sInterface = args.interface.lower()
     if sInterface == "qt":
         sys.exit(runQt(ctr, local=args.local, host=args.host, port=args.port))

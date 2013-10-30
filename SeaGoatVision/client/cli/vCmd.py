@@ -32,10 +32,6 @@ class VCmd(cmd.Cmd):
         self.quiet = quiet
         self.controller = ctr
 
-        if not self.controller.is_connected():
-            logger.info("Vision server is not accessible.")
-            return None
-
         if self.quiet:
             self.prompt = ""
 
