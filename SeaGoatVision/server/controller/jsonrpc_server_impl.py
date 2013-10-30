@@ -38,7 +38,6 @@ class Jsonrpc_server_impl():
 
     def register(self):
         # register all rpc callback
-        self.server.register_function(self.close, "close")
         self.server.register_function(self.add_image_observer, "add_image_observer")
         self.server.register_function(self.set_image_observer, "set_image_observer")
         self.server.register_function(self.remove_image_observer, "remove_image_observer")
@@ -80,6 +79,7 @@ class Jsonrpc_server_impl():
         for observer in self.dct_observer.values():
             observer.close()
         self.manager.close()
+        self.server.shutdown()
 
     def get_params_filterchain(self, execution_name, filter_name):
         lst_param = self.manager.get_params_filterchain(execution_name, filter_name)

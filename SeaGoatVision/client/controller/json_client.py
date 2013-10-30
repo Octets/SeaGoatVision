@@ -38,6 +38,10 @@ class Json_client():
             return getattr(self.rpc, name)
         return cb_rpc()
 
+    def close(self):
+        # Do nothing, cannot close the server.
+        pass
+
     def add_image_observer(self, observer, execution_name, filter_name):
         """
             Inform the server what filter we want to observe
