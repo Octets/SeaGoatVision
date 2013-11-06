@@ -34,9 +34,7 @@ class Json_client():
         self._hostname = host
 
     def __getattr__(self, name):
-        def cb_rpc():
-            return getattr(self.rpc, name)
-        return cb_rpc()
+        return getattr(self.rpc, name)
 
     def close(self):
         # Do nothing, cannot close the server.
