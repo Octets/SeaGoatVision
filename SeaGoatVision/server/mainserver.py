@@ -32,7 +32,7 @@ path = config.get_log_file_path()
 if path:
     log.add_handler(path)
 # Import required RPC modules
-from controller import jsonrpc_server_impl
+from controller import jsonrpc_server
 
 def run(p_port=None):
     global config
@@ -52,7 +52,7 @@ def run(p_port=None):
         port = p_port
 
     # Create and register the service
-    server = jsonrpc_server_impl.Jsonrpc_server_impl(port)
+    server = jsonrpc_server.Jsonrpc_server(port)
     try:
         server.register()
     except Exception as e:

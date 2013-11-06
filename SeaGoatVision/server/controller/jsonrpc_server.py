@@ -30,7 +30,7 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
-class Jsonrpc_server_impl():
+class Jsonrpc_server():
     def __init__(self, port, host='localhost'):
         self.server = SimpleJSONRPCServer((host, port), logRequests=False)
         self.manager = Manager()
