@@ -37,8 +37,9 @@ class Json_client():
         return getattr(self.rpc, name)
 
     def close(self):
-        # Do nothing, cannot close the server.
-        pass
+        # close all socket
+        for observer in self.observer:
+            observer.stop()
 
     def add_image_observer(self, observer, execution_name, filter_name):
         """
