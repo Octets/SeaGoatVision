@@ -70,7 +70,7 @@ show_public_filterchain = True
 show_public_filter = True
 
 ## Other
-def cmd_on_start(manager):
-    # you can add command directly with the manager when the server is ready
+def cmd_on_start(cmdHandler):
+    # you can add command directly with the cmdHandler when the server is ready
     pass
 

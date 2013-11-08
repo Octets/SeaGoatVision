@@ -23,7 +23,7 @@ Description : JsonRPC server implementation
 
 # Import required RPC modules
 from jsonrpclib.SimpleJSONRPCServer import SimpleJSONRPCServer
-from SeaGoatVision.server.core.manager import Manager
+from SeaGoatVision.server.core.cmdHandler import CmdHandler
 import socket
 import threading
 from SeaGoatVision.commons import log
@@ -33,7 +33,7 @@ logger = log.get_logger(__name__)
 class Jsonrpc_server():
     def __init__(self, port, host='localhost'):
         self.server = SimpleJSONRPCServer((host, port), logRequests=False)
-        self.manager = Manager()
+        self.cmdHandler = CmdHandler()
         self.dct_observer = {}
 
     def register(self):
@@ -44,32 +44,32 @@ class Jsonrpc_server():
         self.server.register_function(self.get_params_media, "get_params_media")
         self.server.register_function(self.get_params_filterchain, "get_params_filterchain")
 
-        self.server.register_function(self.manager.is_connected, "is_connected")
-        self.server.register_function(self.manager.add_notify_server, "add_notify_server")
-        self.server.register_function(self.manager.need_notify, "need_notify")
-        self.server.register_function(self.manager.start_filterchain_execution, "start_filterchain_execution")
-        self.server.register_function(self.manager.stop_filterchain_execution, "stop_filterchain_execution")
-        self.server.register_function(self.manager.get_real_fps_execution, "get_real_fps_execution")
-        self.server.register_function(self.manager.add_output_observer, "add_output_observer")
-        self.server.register_function(self.manager.remove_output_observer, "remove_output_observer")
-        self.server.register_function(self.manager.get_execution_list, "get_execution_list")
-        self.server.register_function(self.manager.get_execution_info, "get_execution_info")
-        self.server.register_function(self.manager.get_media_list, "get_media_list")
-        self.server.register_function(self.manager.start_record, "start_record")
-        self.server.register_function(self.manager.stop_record, "stop_record")
-        self.server.register_function(self.manager.cmd_to_media, "cmd_to_media")
-        self.server.register_function(self.manager.get_info_media, "get_info_media")
-        self.server.register_function(self.manager.save_params_media, "save_params_media")
-        self.server.register_function(self.manager.get_filterchain_list, "get_filterchain_list")
-        self.server.register_function(self.manager.delete_filterchain, "delete_filterchain")
-        self.server.register_function(self.manager.upload_filterchain, "upload_filterchain")
-        self.server.register_function(self.manager.modify_filterchain, "modify_filterchain")
-        self.server.register_function(self.manager.reload_filter, "reload_filter")
-        self.server.register_function(self.manager.save_params, "save_params")
-        self.server.register_function(self.manager.get_filter_list, "get_filter_list")
-        self.server.register_function(self.manager.get_filterchain_info, "get_filterchain_info")
-        self.server.register_function(self.manager.update_param_media, "update_param_media")
-        self.server.register_function(self.manager.update_param, "update_param")
+        self.server.register_function(self.cmdHandler.is_connected, "is_connected")
+        self.server.register_function(self.cmdHandler.add_notify_server, "add_notify_server")
+        self.server.register_function(self.cmdHandler.need_notify, "need_notify")
+        self.server.register_function(self.cmdHandler.start_filterchain_execution, "start_filterchain_execution")
+        self.server.register_function(self.cmdHandler.stop_filterchain_execution, "stop_filterchain_execution")
+        self.server.register_function(self.cmdHandler.get_real_fps_execution, "get_real_fps_execution")
+        self.server.register_function(self.cmdHandler.add_output_observer, "add_output_observer")
+        self.server.register_function(self.cmdHandler.remove_output_observer, "remove_output_observer")
+        self.server.register_function(self.cmdHandler.get_execution_list, "get_execution_list")
+        self.server.register_function(self.cmdHandler.get_execution_info, "get_execution_info")
+        self.server.register_function(self.cmdHandler.get_media_list, "get_media_list")
+        self.server.register_function(self.cmdHandler.start_record, "start_record")
+        self.server.register_function(self.cmdHandler.stop_record, "stop_record")
+        self.server.register_function(self.cmdHandler.cmd_to_media, "cmd_to_media")
+        self.server.register_function(self.cmdHandler.get_info_media, "get_info_media")
+        self.server.register_function(self.cmdHandler.save_params_media, "save_params_media")
+        self.server.register_function(self.cmdHandler.get_filterchain_list, "get_filterchain_list")
+        self.server.register_function(self.cmdHandler.delete_filterchain, "delete_filterchain")
+        self.server.register_function(self.cmdHandler.upload_filterchain, "upload_filterchain")
+        self.server.register_function(self.cmdHandler.modify_filterchain, "modify_filterchain")
+        self.server.register_function(self.cmdHandler.reload_filter, "reload_filter")
+        self.server.register_function(self.cmdHandler.save_params, "save_params")
+        self.server.register_function(self.cmdHandler.get_filter_list, "get_filter_list")
+        self.server.register_function(self.cmdHandler.get_filterchain_info, "get_filterchain_info")
+        self.server.register_function(self.cmdHandler.update_param_media, "update_param_media")
+        self.server.register_function(self.cmdHandler.update_param, "update_param")
 
     def run(self):
         self.server.serve_forever()
@@ -78,15 +78,15 @@ class Jsonrpc_server():
         logger.info("Close jsonrpc server.")
         for observer in self.dct_observer.values():
             observer.close()
-        self.manager.close()
+        self.cmdHandler.close()
         self.server.shutdown()
 
     def get_params_filterchain(self, execution_name, filter_name):
-        lst_param = self.manager.get_params_filterchain(execution_name, filter_name)
+        lst_param = self.cmdHandler.get_params_filterchain(execution_name, filter_name)
         return self._serialize_param(lst_param)
 
     def get_params_media(self, media_name):
-        lst_param = self.manager.get_params_media(media_name)
+        lst_param = self.cmdHandler.get_params_media(media_name)
         return self._serialize_param(lst_param)
 
     def _serialize_param(self, lst_param_obj):
@@ -100,7 +100,7 @@ class Jsonrpc_server():
     def add_image_observer(self, port, execution_name, filter_name):
         observer = Observer(port)
         self.dct_observer[execution_name] = observer
-        if self.manager.add_image_observer(observer.observer, execution_name, filter_name):
+        if self.cmdHandler.add_image_observer(observer.observer, execution_name, filter_name):
             observer.start()
             return True
         else:
@@ -109,14 +109,14 @@ class Jsonrpc_server():
 
     def set_image_observer(self, execution_name, filter_name_old, filter_name_new):
         observer = self.dct_observer.get(execution_name, None)
-        if observer and self.manager.set_image_observer(observer.observer, execution_name, filter_name_old, filter_name_new):
+        if observer and self.cmdHandler.set_image_observer(observer.observer, execution_name, filter_name_old, filter_name_new):
             return True
         return False
 
     def remove_image_observer(self, execution_name, filter_name):
         observer = self.dct_observer.get(execution_name, None)
         status = False
-        if observer and self.manager.remove_image_observer(observer.observer, execution_name, filter_name):
+        if observer and self.cmdHandler.remove_image_observer(observer.observer, execution_name, filter_name):
             status = True
         self._remove_image_observer(execution_name)
         return status

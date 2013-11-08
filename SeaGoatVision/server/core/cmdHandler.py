@@ -33,7 +33,7 @@ logger = log.get_logger(__name__)
 KEY_MEDIA = "media"
 KEY_FILTERCHAIN = "filterchain"
 
-class Manager:
+class CmdHandler:
     def __init__(self):
         """
             Structure of dct_execution
@@ -54,7 +54,7 @@ class Manager:
         thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
 
     def close(self):
-        logger.info("Close manager and close server.")
+        logger.info("Close cmdHandler and close server.")
         for execution in self.dct_exec.values():
             execution[KEY_MEDIA].close()
         self.server_observer.stop()

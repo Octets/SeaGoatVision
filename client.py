@@ -45,12 +45,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.local:
-        from SeaGoatVision.server.core.manager import Manager
+        from SeaGoatVision.server.core.cmdHandler import CmdHandler
         # Directly connected to the vision server
-        ctr = Manager()
+        ctr = CmdHandler()
     else:
         # Connect on remote with jsonrpc
-        from SeaGoatVision.client.controller.json_client import Json_client 
+        from SeaGoatVision.client.controller.json_client import Json_client
         ctr = Json_client(args.port, host=args.host)
 
     if not ctr.is_connected():
