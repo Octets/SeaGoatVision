@@ -292,7 +292,7 @@ class player_file(threading.Thread):
             frame = self.call_get_frame()
             if self.max_frame <= frame:
                 frame = 0
-            self.call_set_frame(frame + 1)
+                self.call_set_frame(frame + 1)
             time.sleep(self.time_wait)
 
     def is_stopped(self):

@@ -23,16 +23,17 @@ Description : launch vision client. Can choose multiple client
 import sys
 import argparse
 from SeaGoatVision.commons import log
+from SeaGoatVision.client.controller.subscriber import Subscriber
 
 logger = log.get_logger(__name__)
 
-def runQt(ctr, local=False, host="localhost", port=8090):
+def runQt(ctr, subscriber, local=False, host="localhost", port=8090):
     from SeaGoatVision.client.qt.mainqt import run
-    return run(ctr, local=local, host=host, port=port)
+    return run(ctr, subscriber, local=local, host=host, port=port)
 
-def runCli(ctr, local=False, host="localhost", port=8090, quiet=False):
+def runCli(ctr, subscriber, local=False, host="localhost", port=8090, quiet=False):
     from SeaGoatVision.client.cli.cli import run
-    return run(ctr, local=local, host=host, port=port, quiet=quiet)
+    return run(ctr, subscriber, local=local, host=host, port=port, quiet=quiet)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Open client for vision server.')
@@ -58,10 +59,12 @@ if __name__ == '__main__':
         ctr.close()
         sys.exit(-1)
 
+    subscriber = Subscriber(ctr, 5031, addr=args.host)
+
     sInterface = args.interface.lower()
     if sInterface == "qt":
-        sys.exit(runQt(ctr, local=args.local, host=args.host, port=args.port))
+        sys.exit(runQt(ctr, subscriber, local=args.local, host=args.host, port=args.port))
     elif sInterface == "cli":
-        sys.exit(runCli(ctr, local=args.local, host=args.host, port=args.port, quiet=args.quiet))
+        sys.exit(runCli(ctr, subscriber, local=args.local, host=args.host, port=args.port, quiet=args.quiet))
     else:
         logger.error("Interface not supported : %s", sInterface)

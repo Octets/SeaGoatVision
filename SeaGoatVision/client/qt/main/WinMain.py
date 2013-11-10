@@ -39,11 +39,12 @@ logger = log.get_logger(__name__)
 
 class WinMain(QtGui.QMainWindow):
 
-    def __init__(self, controller, host="localhost", islocal=False):
+    def __init__(self, controller, subscriber, host="localhost", islocal=False):
         super(WinMain, self).__init__()
 
         self.host = host
         self.controller = controller
+        self.subscriber = subscriber
         self.dct_preview = {}
         self.ui = get_ui(self)
         self.uid_iter = 0
@@ -97,6 +98,8 @@ class WinMain(QtGui.QMainWindow):
         else:
             self.start_pull = False
 
+        self.subscriber.start()
+
     def _addToolBar(self):
         self.toolbar = QtGui.QToolBar()
         self.addToolBar(self.toolbar)
@@ -141,7 +144,7 @@ class WinMain(QtGui.QMainWindow):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winMedia.ui)
 
     def addPreview(self, execution_name, media_name, filterchain_name):
-        winviewer = WinViewer(self.controller, execution_name, media_name, filterchain_name, self.host, self.uid_iter)
+        winviewer = WinViewer(self.controller, self.subscriber, execution_name, media_name, filterchain_name, self.host, self.uid_iter)
         self.dct_preview[self.uid_iter] = winviewer
         self.uid_iter += 1
         self.WinMainViewer.grid.addWidget(winviewer.ui)
@@ -162,6 +165,7 @@ class WinMain(QtGui.QMainWindow):
         for viewer in self.dct_preview.values():
             viewer.closeEvent()
         self.winMedia.stop()
+        self.subscriber.stop()
 
     def poll_notify_server(self):
         sleep = 2

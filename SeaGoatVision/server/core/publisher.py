@@ -57,14 +57,16 @@ class Publisher():
         topic = self._get_topic(key)
         if not topic:
             logger.warning("Cannot subscribe, key not exist : %s" % key)
-            return False
+            return 0
+        self._incr_topic(key)
+        return topic
 
     def publish(self, key, data):
         if not self.socket:
             return False
         #logger.debug("Send to key %s data %s." % (key, data))
         topic = self._get_topic_if_client_in_topic(key)
-        if topic:
+        if not topic:
             logger.warning("Key not exist : %s" % key)
             return False
         self.socket.send("%s %s" % (topic, data))
