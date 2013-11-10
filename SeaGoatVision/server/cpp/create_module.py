@@ -20,7 +20,7 @@
 import numpy as np
 import scipy.weave.ext_tools as ext_tools
 import os
-import sys
+#import sys
 import time
 
 from SeaGoatVision.server.core.filter import Filter

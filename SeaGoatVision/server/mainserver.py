@@ -99,7 +99,7 @@ def is_lock(sFileLockName):
     return bIsLocked
 
 def check_pid(pid):
-    """ Check For the existence of a unix pid. """
+    """ Check For the existence of a pid. """
     try:
         os.kill(pid, 0)
     except OSError:
