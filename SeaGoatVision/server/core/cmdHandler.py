@@ -24,6 +24,7 @@ Description :
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
 from resource import Resource
+from publisher import Publisher
 from SeaGoatVision.commons import log
 import inspect
 import thread
@@ -50,6 +51,11 @@ class CmdHandler:
         self.notify_event_client = {}
         self.id_client_notify = 0
 
+        # initialize subscriber server
+        self.publisher = Publisher(5031)
+        self.resource.set_all_publisher(self.publisher)
+        self.publisher.start()
+
         # launch command on start
         thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
 
@@ -58,6 +64,7 @@ class CmdHandler:
         for execution in self.dct_exec.values():
             execution[KEY_MEDIA].close()
         self.server_observer.stop()
+        self.publisher.stop()
 
     def _post_command_(self, arg):
         funct_name = inspect.currentframe().f_back.f_code.co_name

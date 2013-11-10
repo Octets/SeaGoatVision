@@ -47,7 +47,7 @@ class Publisher():
         if topic:
             logger.warning("Key already exist : %s" % key)
             return topic
-        topic = self.dct_global_key(key, None)
+        topic = self.dct_global_key.get(key, None)
         if not topic:
             topic = self.new_topic_no
             self.new_topic_no += 1
@@ -62,26 +62,37 @@ class Publisher():
     def publish(self, key, data):
         if not self.socket:
             return False
+        #logger.debug("Send to key %s data %s." % (key, data))
         topic = self._get_topic_if_client_in_topic(key)
         if topic:
             logger.warning("Key not exist : %s" % key)
             return False
         self.socket.send("%s %s" % (topic, data))
+        return True
 
-    def run(self):
+    def start(self):
         if self.socket:
             return False
+        logger.info("Publisher on port %d is ready." % self.port)
         # Ignore the zmq.PUB error in Eclipse.
         self.socket = self.context.socket(zmq.PUB)
         self.socket.bind("tcp://*:%s" % self.port)
         return True
 
-    def close(self):
+    def stop(self):
         if not self.socket:
             return False
             self.socket.close()
             self.socket = None
         return True
+
+    def get_callback_publish(self, key):
+        # get a callback with the same key
+        # caution, always use self.publish to use validation
+        publish = self.publish
+        def cb_publish(data):
+            publish(key, data)
+        return cb_publish
 
     def _get_topic(self, key):
         dct_data = self.dct_key_topic.get(key, None)
