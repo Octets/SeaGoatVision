@@ -13,6 +13,7 @@ Requirements
  - Numpy
  - Scipy
  - JSON-RPC
+ - ZeroMQ
 
 Until OpenCV 2.4 is fully supported, the preferred way is to compile OpenCV manually:
 http://opencv.willowgarage.com/wiki/InstallGuide
@@ -25,17 +26,17 @@ Installation
 ###B. Install dependencies
 #### Ubuntu :
     sudo apt-get install python python-numpy python-scipy python-opencv python-pyside python-qt4 python-imaging libopencv-dev python-pip
-    sudo pip install jsonrpclib-pelix
+    sudo pip install jsonrpclib-pelix pyzmq
 
 #### Fedora :
 	sudo yum install python numpy scipy opencv-python python-pyside PyQT4 python-imaging opencv-devel python-pip
-	sudo pip install jsonrpclib-pelix
+	sudo pip install jsonrpclib-pelix pyzmq
 
 #### Arch Linux :
 Don't forget to active the "community" repositorie. See https://wiki.archlinux.org/index.php/Pacman
 
 	pacman -S python2 python2-numpy python2-scipy opencv python2-pyside python2-pyqt python2-imaging python2-pip
-	sudo pip2 install jsonrpclib-pelix
+	sudo pip2 install jsonrpclib-pelix pyzmq
 
 #### Windows :
 Install the following dependencies:
@@ -48,6 +49,8 @@ Install the following dependencies:
  - PIL:		http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe
  - OpenCV:	http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv	# OpenCV installer for Windows.
  - pip:		https://github.com/simpleservices/app_report-python/wiki/How-to-install-pip-on-Windows
+
+  pip install jsonrpclib-pelix pyzmq
 
 ### C. Third-party
 Note: The third-party pydc1394 is dependant of cython 0.19. Be sure you have it, else install it with easy_install from his website. You don't need Pydc1394 if you haven't Firewire camera.
