@@ -217,9 +217,10 @@ class WinFilterChain(QtCore.QObject):
             logger.warning("Recieve empty filter list from filterchain %s" % filterchain_name)
             return
         for o_filter in lst_filter:
-            if o_filter.name == keys.get_empty_filter_name():
+            name = o_filter.get("name", "")
+            if name == keys.get_empty_filter_name():
                 continue
-            self.ui.filterListWidget.addItem(o_filter.name)
+            self.ui.filterListWidget.addItem(name)
         default_media = info.get("default_media", "")
         self.ui.media_default_edit.setText(default_media)
 
