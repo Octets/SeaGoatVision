@@ -32,8 +32,6 @@ from WinCamera import WinCamera
 from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.commons import log
-import thread
-import time
 
 logger = log.get_logger(__name__)
 
@@ -58,7 +56,7 @@ class WinMain(QtGui.QMainWindow):
         self.winCamera = WinCamera(self.controller)
         self.winFilterList = WinFilterList(self.controller)
         self.winMedia = WinMedia(self.controller)
-        self.winExecution = WinExecution(self.controller)
+        self.winExecution = WinExecution(self.controller, subscriber)
         self.winFilterChain = WinFilterChain(self.controller)
         self.WinMainViewer = WinMainViewer()
 
@@ -85,19 +83,6 @@ class WinMain(QtGui.QMainWindow):
         self._addMenuBar()
 
         self.setCentralWidget(self.WinMainViewer.ui)
-
-        # register to notify server
-        if not islocal:
-            self.id = self.controller.add_notify_server()
-            self.start_pull = self.id is not None
-            try:
-                if self.start_pull:
-                    thread.start_new_thread(self.poll_notify_server, ())
-            except Exception as e:
-                log.printerror_stacktrace(logger, e)
-        else:
-            self.start_pull = False
-
         self.subscriber.start()
 
     def _addToolBar(self):
@@ -166,15 +151,6 @@ class WinMain(QtGui.QMainWindow):
             viewer.closeEvent()
         self.winMedia.stop()
         self.subscriber.stop()
-
-    def poll_notify_server(self):
-        sleep = 2
-        while self.start_pull:
-            time.sleep(sleep)
-            status = self.controller.need_notify(self.id)
-            if status:
-                logger.info("Update client - WinExecution receive notification.")
-                self.winExecution.update_execution_list()
 
     def _addMenuBar(self):
         actionReconSeaGoat = QtGui.QAction("Reconnect to server",self)

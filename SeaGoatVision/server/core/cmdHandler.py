@@ -26,6 +26,7 @@ from configuration import Configuration
 from resource import Resource
 from publisher import Publisher
 from SeaGoatVision.commons import log
+from SeaGoatVision.commons import keys
 import inspect
 import thread
 
@@ -59,6 +60,8 @@ class CmdHandler:
         # launch command on start
         thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
 
+        self.publisher.register(keys.get_key_execution_list())
+
     def close(self):
         logger.info("Close cmdHandler and close server.")
         for execution in self.dct_exec.values():
@@ -83,26 +86,6 @@ class CmdHandler:
     def is_connected(self):
         self._post_command_(locals())
         return True
-
-    ##########################################################################
-    ############################# SERVER STATE ###############################
-    ##########################################################################
-    def add_notify_server(self):
-        self._post_command_(locals())
-        self.id_client_notify += 1
-        self.notify_event_client[self.id_client_notify] = False
-        return self.id_client_notify
-
-    def need_notify(self, i_id):
-        notify = self.notify_event_client.get(i_id, None)
-        if not notify:
-            return False
-        self.notify_event_client[i_id] = False
-        return True
-
-    def _active_notify(self):
-        for notify in self.notify_event_client.keys():
-            self.notify_event_client[notify] = True
 
     ##########################################################################
     ######################## EXECUTION FILTER ################################
@@ -140,7 +123,7 @@ class CmdHandler:
 
         self.dct_exec[execution_name] = {KEY_FILTERCHAIN: filterchain, KEY_MEDIA : media}
 
-        self._active_notify()
+        self.publisher.publish(keys.get_key_execution_list(), "+%s" % execution_name)
 
         return True
 
@@ -165,7 +148,7 @@ class CmdHandler:
         observer.remove_observer(filterchain.execute)
         filterchain.destroy()
         del self.dct_exec[execution_name]
-        self._active_notify()
+        self.publisher.publish(keys.get_key_execution_list(), "-%s" % execution_name)
         return True
 
     def get_execution_list(self):
@@ -180,7 +163,7 @@ class CmdHandler:
             return None
         return {KEY_MEDIA:exec_info[KEY_MEDIA].get_name(), KEY_FILTERCHAIN:exec_info[KEY_FILTERCHAIN].get_name()}
 
-    def get_real_fps_execution(self, execution_name):
+    def get_fps_execution(self, execution_name):
         #self._post_command_(locals())
         media = self._get_media(execution_name=execution_name)
         if not media:

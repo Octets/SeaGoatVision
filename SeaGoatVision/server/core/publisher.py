@@ -69,7 +69,7 @@ class Publisher():
         if not topic:
             logger.warning("Key not exist : %s" % key)
             return False
-        self.socket.send("%s %s" % (topic, data))
+        self.socket.send_string("%s %s" % (topic, data))
         return True
 
     def start(self):
