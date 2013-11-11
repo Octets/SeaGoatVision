@@ -70,6 +70,7 @@ class Jsonrpc_server():
         self.server.register_function(self.cmdHandler.get_filterchain_info, "get_filterchain_info")
         self.server.register_function(self.cmdHandler.update_param_media, "update_param_media")
         self.server.register_function(self.cmdHandler.update_param, "update_param")
+        self.server.register_function(self.cmdHandler.subscribe, "subscribe")
 
     def run(self):
         self.server.serve_forever()
