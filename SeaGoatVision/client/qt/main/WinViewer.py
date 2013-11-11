@@ -128,7 +128,7 @@ class WinViewer(QtGui.QDockWidget):
             logger.warning("Recieve empty filter list from filterchain %s" % self.filterchain_name)
             return
         for sFilter in lst_filter:
-            self.ui.filterComboBox.addItem(sFilter.name)
+            self.ui.filterComboBox.addItem(sFilter.get("name", ""))
         self.ui.filterComboBox.setCurrentIndex(self.ui.filterComboBox.count() - 1)
 
     def _changeFilter(self):

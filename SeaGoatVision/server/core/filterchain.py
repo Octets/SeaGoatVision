@@ -139,10 +139,7 @@ class FilterChain(object):
         class Filter: pass
         retValue = []
         for item in self.filters:
-            o_filter = Filter()
-            setattr(o_filter, "name", item.get_name())
-            setattr(o_filter, "doc", item.__doc__)
-            retValue.append(o_filter)
+            retValue.append(item.serialize_info())
         return retValue
 
     def get_params(self, o_filter=None, filter_name=None):

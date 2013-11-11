@@ -33,6 +33,9 @@ class Filter(object):
     def serialize(self):
         return {"filter_name":self.__class__.__name__, "lst_param":[param.serialize() for param in self.get_params()]}
 
+    def serialize_info(self):
+        return {"name":self.name, "doc":self.__doc__}
+
     def deserialize(self, value):
         status = True
         for param_ser in value.get("lst_param"):
