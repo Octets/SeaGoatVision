@@ -19,7 +19,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
-#from SeaGoatVision.client.qt.shared_info import Shared_info
 
 from WinFilterList import WinFilterList
 from WinMedia import WinMedia
