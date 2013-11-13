@@ -229,3 +229,7 @@ class Resource(object):
 
     def get_media(self, name):
         return self.dct_media.get(name, None)
+
+    def set_all_publisher(self, publisher):
+        for media in self.dct_media.values():
+            media.set_publisher(publisher)

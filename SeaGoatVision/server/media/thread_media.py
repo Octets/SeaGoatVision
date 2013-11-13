@@ -25,13 +25,14 @@ logger = log.get_logger(__name__)
 class Thread_media(threading.Thread):
     """Media thread to process the images.
     """
-    def __init__(self, media):
+    def __init__(self, media, publisher):
         threading.Thread.__init__(self)
         # self.daemon = True
         self.media = media
         self.running = False
         self.pause = False
         self.nb_fps = 0
+        self.publisher = publisher
 
     def run(self):
         sleep_time_per_fps = self.media.sleep_time
@@ -72,6 +73,7 @@ class Thread_media(threading.Thread):
 
             start_time = time.time()
             if start_time - first_fps_time > 1:
+                self.publisher(nb_fps)
                 self.nb_fps = nb_fps
                 nb_fps = 0
                 first_fps_time = start_time

@@ -31,9 +31,10 @@ class WinExecution(QtCore.QObject):
     onPreviewClick = QtCore.Signal(object, object, object)
     onExecutionChanged = QtCore.Signal(object)
 
-    def __init__(self, controller):
+    def __init__(self, controller, subscriber):
         super(WinExecution, self).__init__()
         self.controller = controller
+        self.subscriber = subscriber
         self.shared_info = Shared_info()
 
         self.mode_edit = False
@@ -43,6 +44,8 @@ class WinExecution(QtCore.QObject):
 
         self.shared_info.connect("media", self._change_media)
         self.shared_info.connect("filterchain", self._change_filterchain)
+
+        self.subscriber.subscribe(keys.get_key_execution_list(), self.update_execution_list)
 
     def reload_ui(self):
         self.ui = get_ui(self)
@@ -55,7 +58,7 @@ class WinExecution(QtCore.QObject):
         self.ui.lstExecution.currentItemChanged.connect(self._on_selected_lstExecution_change)
         self.ui.lstExecution.itemClicked.connect(self._lst_execution_clicked)
 
-        self.update_execution_list()
+        self._update_execution_list()
 
     def preview(self):
         # feature, if not into edit mode, we are create a new execution
@@ -95,7 +98,6 @@ class WinExecution(QtCore.QObject):
         if noLine >= 0:
             execution_name = self.ui.txtExecution.text()
             self.controller.stop_filterchain_execution(execution_name)
-            self.ui.lstExecution.takeItem(noLine)
             self._enable_stop_button(False)
 
     def new(self):
@@ -136,13 +138,31 @@ class WinExecution(QtCore.QObject):
         self.ui.txtFilterchain.setText(exec_info.get("filterchain"))
         self.ui.txtMedia.setText(exec_info.get("media"))
 
-    def update_execution_list(self):
+    def update_execution_list(self, data):
+        operator = data[0]
+        execution_name = data[1:]
+        if operator == "+":
+            self.ui.lstExecution.addItem(execution_name)
+            self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
+        elif operator == "-":
+            # more easy to update all, like that, the client is protected by modification
+            for row in range(self.ui.lstExecution.count()):
+                item = self.ui.lstExecution.item(row)
+                if item and item.text() == execution_name:
+                    self.ui.lstExecution.takeItem(row)
+                    break
+            self._clear_form(True)
+        else:
+            logger.warning("Error in update_execution_list, wrong operator : %s" % operator)
+
+    def _update_execution_list(self):
         self.mode_edit = False
         self._mode_edit(self.mode_edit)
 
         self.last_index += 1
         self.ui.lstExecution.clear()
-        for execution_name in self.controller.get_execution_list():
+        exec_list = self.controller.get_execution_list()
+        for execution_name in exec_list:
             self.ui.lstExecution.addItem(execution_name)
 
     def _get_selected_list(self, uiList):
@@ -171,13 +191,12 @@ class WinExecution(QtCore.QObject):
         if not status:
             self.cancel()
             return False
-        self.ui.lstExecution.addItem(execution_name)
-        self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
         self._mode_edit(False)
-        self.shared_info.set("start_execution", {"media" : media_name,
-                                                 "execution_name" : execution_name,
-                                                 "filterchain_name" : filterchain_name,
-                                                 "file_name" : file_name})
+        exec_info = {"media" : media_name,
+                     "execution_name" : execution_name,
+                     "filterchain_name" : filterchain_name,
+                     "file_name" : file_name}
+        self.shared_info.set("start_execution", exec_info)
         return True
 
     def _mode_edit(self, mode_edit):

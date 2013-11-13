@@ -45,11 +45,9 @@ class Jsonrpc_server():
         self.server.register_function(self.get_params_filterchain, "get_params_filterchain")
 
         self.server.register_function(self.cmdHandler.is_connected, "is_connected")
-        self.server.register_function(self.cmdHandler.add_notify_server, "add_notify_server")
-        self.server.register_function(self.cmdHandler.need_notify, "need_notify")
         self.server.register_function(self.cmdHandler.start_filterchain_execution, "start_filterchain_execution")
         self.server.register_function(self.cmdHandler.stop_filterchain_execution, "stop_filterchain_execution")
-        self.server.register_function(self.cmdHandler.get_real_fps_execution, "get_real_fps_execution")
+        self.server.register_function(self.cmdHandler.get_fps_execution, "get_fps_execution")
         self.server.register_function(self.cmdHandler.add_output_observer, "add_output_observer")
         self.server.register_function(self.cmdHandler.remove_output_observer, "remove_output_observer")
         self.server.register_function(self.cmdHandler.get_execution_list, "get_execution_list")
@@ -70,6 +68,7 @@ class Jsonrpc_server():
         self.server.register_function(self.cmdHandler.get_filterchain_info, "get_filterchain_info")
         self.server.register_function(self.cmdHandler.update_param_media, "update_param_media")
         self.server.register_function(self.cmdHandler.update_param, "update_param")
+        self.server.register_function(self.cmdHandler.subscribe, "subscribe")
 
     def run(self):
         self.server.serve_forever()

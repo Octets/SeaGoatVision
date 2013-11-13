@@ -19,7 +19,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
-#from SeaGoatVision.client.qt.shared_info import Shared_info
 
 from WinFilterList import WinFilterList
 from WinMedia import WinMedia
@@ -32,18 +31,17 @@ from WinCamera import WinCamera
 from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.commons import log
-import thread
-import time
 
 logger = log.get_logger(__name__)
 
 class WinMain(QtGui.QMainWindow):
 
-    def __init__(self, controller, host="localhost", islocal=False):
+    def __init__(self, controller, subscriber, host="localhost", islocal=False):
         super(WinMain, self).__init__()
 
         self.host = host
         self.controller = controller
+        self.subscriber = subscriber
         self.dct_preview = {}
         self.ui = get_ui(self)
         self.uid_iter = 0
@@ -57,7 +55,7 @@ class WinMain(QtGui.QMainWindow):
         self.winCamera = WinCamera(self.controller)
         self.winFilterList = WinFilterList(self.controller)
         self.winMedia = WinMedia(self.controller)
-        self.winExecution = WinExecution(self.controller)
+        self.winExecution = WinExecution(self.controller, subscriber)
         self.winFilterChain = WinFilterChain(self.controller)
         self.WinMainViewer = WinMainViewer()
 
@@ -84,18 +82,7 @@ class WinMain(QtGui.QMainWindow):
         self._addMenuBar()
 
         self.setCentralWidget(self.WinMainViewer.ui)
-
-        # register to notify server
-        if not islocal:
-            self.id = self.controller.add_notify_server()
-            self.start_pull = self.id is not None
-            try:
-                if self.start_pull:
-                    thread.start_new_thread(self.poll_notify_server, ())
-            except Exception as e:
-                log.printerror_stacktrace(logger, e)
-        else:
-            self.start_pull = False
+        self.subscriber.start()
 
     def _addToolBar(self):
         self.toolbar = QtGui.QToolBar()
@@ -141,7 +128,7 @@ class WinMain(QtGui.QMainWindow):
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.winMedia.ui)
 
     def addPreview(self, execution_name, media_name, filterchain_name):
-        winviewer = WinViewer(self.controller, execution_name, media_name, filterchain_name, self.host, self.uid_iter)
+        winviewer = WinViewer(self.controller, self.subscriber, execution_name, media_name, filterchain_name, self.host, self.uid_iter)
         self.dct_preview[self.uid_iter] = winviewer
         self.uid_iter += 1
         self.WinMainViewer.grid.addWidget(winviewer.ui)
@@ -162,15 +149,7 @@ class WinMain(QtGui.QMainWindow):
         for viewer in self.dct_preview.values():
             viewer.closeEvent()
         self.winMedia.stop()
-
-    def poll_notify_server(self):
-        sleep = 2
-        while self.start_pull:
-            time.sleep(sleep)
-            status = self.controller.need_notify(self.id)
-            if status:
-                logger.info("Update client - WinExecution receive notification.")
-                self.winExecution.update_execution_list()
+        self.subscriber.stop()
 
     def _addMenuBar(self):
         actionReconSeaGoat = QtGui.QAction("Reconnect to server",self)

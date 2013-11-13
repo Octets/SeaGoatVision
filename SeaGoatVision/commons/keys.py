@@ -46,3 +46,10 @@ def get_key_media_loop():
 
 def set_key_media_frame():
     return "frame_media"
+
+# used by ZeroMQ
+def get_key_execution_list():
+    return "execution_list"
+
+def get_lst_key_topic_pubsub():
+    return {"all_output_filter":1, get_key_execution_list():2}

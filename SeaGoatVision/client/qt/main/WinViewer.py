@@ -33,12 +33,11 @@ from PySide.QtGui import QPen
 import socket
 import threading
 import StringIO
-import thread
 from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
-class WinViewer(QtCore.QObject):
+class WinViewer(QtGui.QDockWidget):
     """Show the media after being processed by the filter chain.
     The window receives a filter in its constructor.
     This is the last executed filter on the media.
@@ -47,15 +46,17 @@ class WinViewer(QtCore.QObject):
     newImage = QtCore.Signal(QtGui.QImage)
     closePreview = QtCore.Signal(object)
 
-    def __init__(self, controller, execution_name, media_name, filterchain_name, host, uid):
+    def __init__(self, controller, subscriber, execution_name, media_name, filterchain_name, host, uid):
         super(WinViewer, self).__init__()
         self.host = host
         self.port = 5030
 
         self.controller = controller
+        self.subscriber = subscriber
         self.execution_name = execution_name
         self.uid = uid
         self.filterchain_name = filterchain_name
+        self.media_name = media_name
 
         self.actualFilter = None
         self.size = 1
@@ -70,13 +71,12 @@ class WinViewer(QtCore.QObject):
 
         if self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter):
             self.__add_output_observer()
-            self.update_execution_thread = True
-            thread.start_new_thread(self.update_execution_name, ())
-
+            self.subscriber.subscribe(self.media_name, self.update_fps)
         self.light_observer.start()
 
     def reload_ui(self):
         self.ui = get_ui(self)
+        self.ui.lbl_media_name.setText(self.media_name)
         self.newImage.connect(self.setPixmap)
         self.ui.filterComboBox.currentIndexChanged.connect(self._changeFilter)
         self.ui.closeButton.clicked.connect(self.__close)
@@ -93,7 +93,6 @@ class WinViewer(QtCore.QObject):
         if self.thread_output:
             self.thread_output.stop()
         self.light_observer.stop()
-        self.update_execution_thread = False
         logger.info("WinViewer %s quit." % (self.execution_name))
 
     ######################################################################
@@ -142,13 +141,8 @@ class WinViewer(QtCore.QObject):
         data = str(data).strip()
         logger.info("Qt output exec %s - %s" % (self.execution_name, data))
 
-    def update_execution_name(self):
-        while self.update_execution_thread:
-            fps = self.controller.get_real_fps_execution(self.execution_name)
-            if fps is None:
-                fps = -1
-            self.ui.lbl_real_fps.setText("%s" % fps)
-            time.sleep(2)
+    def update_fps(self, data):
+        self.ui.lbl_fps.setText("%s" % data)
 
     def updateImage(self, image):
         self.light_observer.active_light()
@@ -159,7 +153,7 @@ class WinViewer(QtCore.QObject):
             self.lastSecondFps = iActualTime
             self.fpsCount = 1
         elif iActualTime - self.lastSecondFps > 1.0:
-            self.ui.lbl_fps.setText("%d" % int(self.fpsCount))
+            self.ui.lbl_stream_fps.setText("%d" % int(self.fpsCount))
             # new set
             self.lastSecondFps = iActualTime
             self.fpsCount = 1

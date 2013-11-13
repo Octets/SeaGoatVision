@@ -31,6 +31,7 @@ class Media(object):
         self.media_name = None
         self.active_loop = True
         self.is_client_manager = False
+        self.publisher = None
 
     def set_is_client_manager(self, is_client_manager):
         self.is_client_manager = is_client_manager
@@ -89,7 +90,7 @@ class Media(object):
             return True
         if self.thread:
             return False
-        self.thread = Thread_media(self)
+        self.thread = Thread_media(self, self._get_cb_publisher())
         self.thread.start()
         return True
 
@@ -151,3 +152,16 @@ class Media(object):
 
     def set_loop_enable(self, enable):
         self.active_loop = enable
+
+    def set_publisher(self, publisher):
+        self.publisher = publisher
+
+    def get_publisher(self):
+        return self.publisher
+
+    def _get_cb_publisher(self):
+        if not self.publisher:
+            return None
+        key = self.get_name()
+        self.publisher.register(key)
+        return self.publisher.get_callback_publish(key)
