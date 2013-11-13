@@ -110,8 +110,4 @@ class Listen_output(threading.Thread):
 
     def stop(self):
         self.is_stopped = True
-        try:
-            self.socket.shutdown(self.socket.SHUT_RDWR)
-        except:
-            pass
         self.socket.close()

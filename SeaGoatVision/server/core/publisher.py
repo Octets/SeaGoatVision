@@ -25,12 +25,8 @@ import zmq
 from SeaGoatVision.commons import keys
 from SeaGoatVision.commons import log
 
-CST_TOPIC_KEY = "topic"
-CST_NB_CLIENT_KEY = "client"
-
 logger = log.get_logger(__name__)
 
-# TODO missing unsubscribe and deregister
 class Publisher():
     def __init__(self, port):
         # list of key associated with topic number
@@ -43,7 +39,7 @@ class Publisher():
         self.new_topic_no = 100
 
     def register(self, key):
-        topic = self._get_topic(key)
+        topic = self.dct_key_topic.get(key, None)
         if topic:
             logger.warning("Key already exist : %s" % key)
             return topic
@@ -51,21 +47,21 @@ class Publisher():
         if not topic:
             topic = self.new_topic_no
             self.new_topic_no += 1
-        self.dct_key_topic[key] = {CST_TOPIC_KEY:topic, CST_NB_CLIENT_KEY:0}
+        self.dct_key_topic[key] = topic
 
     def subscribe(self, key):
-        topic = self._get_topic(key)
+        # just inform the client if the key is registed
+        topic = self.dct_key_topic.get(key, None)
         if not topic:
             logger.warning("Cannot subscribe, key not exist : %s" % key)
             return 0
-        self._incr_topic(key)
         return topic
 
     def publish(self, key, data):
         if not self.socket:
             return False
         #logger.debug("Send to key %s data %s." % (key, data))
-        topic = self._get_topic_if_client_in_topic(key)
+        topic = self.dct_key_topic.get(key, None)
         if not topic:
             logger.warning("Key not exist : %s" % key)
             return False
@@ -95,23 +91,3 @@ class Publisher():
         def cb_publish(data):
             publish(key, data)
         return cb_publish
-
-    def _get_topic(self, key):
-        dct_data = self.dct_key_topic.get(key, None)
-        if not dct_data:
-            return None
-        return dct_data.get(CST_TOPIC_KEY, None)
-
-    def _incr_topic(self, key):
-        dct_data = self.dct_key_topic.get(key, None)
-        if not dct_data:
-            return None
-        dct_data[CST_NB_CLIENT_KEY] += 1
-
-    def _get_topic_if_client_in_topic(self, key):
-        dct_data = self.dct_key_topic.get(key, None)
-        if not dct_data:
-            return None
-        if dct_data[CST_NB_CLIENT_KEY]:
-            return dct_data.get(CST_TOPIC_KEY, None)
-        return None
