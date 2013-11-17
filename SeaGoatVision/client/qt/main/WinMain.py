@@ -145,7 +145,6 @@ class WinMain(QtGui.QMainWindow):
             logger.error("Don't find DockWidget on uid %s" % uid)
 
     def quit(self):
-        self.start_pull = False
         for viewer in self.dct_preview.values():
             viewer.closeEvent()
         self.winMedia.stop()

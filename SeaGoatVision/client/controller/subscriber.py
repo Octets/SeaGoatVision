@@ -30,7 +30,6 @@ CST_NB_CLIENT_KEY = "client"
 
 logger = log.get_logger(__name__)
 
-# TODO missing unsubscribe
 class Subscriber():
     def __init__(self, controller, port, addr="localhost"):
         self.controller = controller
@@ -44,7 +43,6 @@ class Subscriber():
         self.server.start()
 
     def stop(self):
-        # TODO desubscribe all
         self.server.stop()
 
     def subscribe(self, key, callback):
@@ -87,6 +85,7 @@ class Listen_output(threading.Thread):
         # Ignore the zmq.PUB error in Eclipse.
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.SUB)
+        self.socket.setsockopt(zmq.RCVTIMEO, 1000)
         self.is_stopped = False
         self.observer = observer
         self.addr = addr
@@ -99,8 +98,13 @@ class Listen_output(threading.Thread):
                 data = self.socket.recv()
                 if data:
                     self.observer(data)
-            except:
+            except zmq.error.ZMQError:
+                #ignore it, it's the timeout
+                pass
+            except Exception as e:
+                log.printerror_stacktrace(logger, e)
                 self.is_stopped = True
+        self.socket.close()
 
     def add_subscriber(self, no):
         self.socket.setsockopt(zmq.SUBSCRIBE, str(no))
@@ -110,4 +114,3 @@ class Listen_output(threading.Thread):
 
     def stop(self):
         self.is_stopped = True
-        self.socket.close()
