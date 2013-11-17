@@ -24,6 +24,7 @@ Description : Windows to "view" a filterchain execution
 import time
 
 from SeaGoatVision.client.qt.utils import get_ui
+from SeaGoatVision.commons import keys
 from PIL import Image
 from PySide import QtCore
 from PySide import QtGui
@@ -57,6 +58,7 @@ class WinViewer(QtGui.QDockWidget):
         self.uid = uid
         self.filterchain_name = filterchain_name
         self.media_name = media_name
+        self.is_turn_off = False
 
         self.actualFilter = None
         self.size = 1
@@ -72,6 +74,7 @@ class WinViewer(QtGui.QDockWidget):
         if self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter):
             self.__add_output_observer()
             self.subscriber.subscribe(self.media_name, self.update_fps)
+            self.subscriber.subscribe(keys.get_key_execution_list(), self.update_execution)
         self.light_observer.start()
 
     def reload_ui(self):
@@ -84,15 +87,17 @@ class WinViewer(QtGui.QDockWidget):
 
         self._updateFilters()
         self.actualFilter = self.ui.filterComboBox.currentText()
+        self.ui.lbl_exec.setText(self.execution_name)
 
     def closeEvent(self):
         # this is fake closeEvent, it's called by button close with signal
-        if self.actualFilter:
+        if not self.is_turn_off and self.actualFilter:
             self.controller.remove_image_observer(self.updateImage, self.execution_name, self.actualFilter)
             self.controller.remove_output_observer(self.execution_name)
         if self.thread_output:
             self.thread_output.stop()
-        self.light_observer.stop()
+        if not self.is_turn_off:
+            self.light_observer.stop()
         logger.info("WinViewer %s quit." % (self.execution_name))
 
     ######################################################################
@@ -182,6 +187,15 @@ class WinViewer(QtGui.QDockWidget):
         textSize = textSize[:-1]
         self.size = float(textSize) / 100
 
+    def update_execution(self, data):
+        # check if the execution name is removed
+        operator = data[0]
+        execution_name = data[1:]
+        if operator == "-" and execution_name == self.execution_name:
+            self.is_turn_off = True
+            self.light_observer.turn_off()
+            self.light_observer.stop()
+
 class Listen_output(threading.Thread):
     def __init__(self, observer, host, port):
         threading.Thread.__init__(self)
@@ -226,14 +240,18 @@ class Light_observer(threading.Thread):
     def active_light(self):
         self.light = True
 
+    def turn_off(self):
+        self.stop()
+        self.uiwidget.set_black()
+
     def run(self):
         while not self.is_stopped:
-            time.sleep(1)
             if self.light:
                 self.uiwidget.set_green()
                 self.light = False
             else:
                 self.uiwidget.set_red()
+            time.sleep(1)
 
     def stop(self):
         self.is_stopped = True
@@ -244,6 +262,7 @@ class LightWidget(QtGui.QWidget):
         self.color = QColor()
         self.last_is_red = True
         self.set_red()
+        self.is_black = False
 
     def set_red(self):
         self.color.setRgb(255, 0, 0)
@@ -262,6 +281,14 @@ class LightWidget(QtGui.QWidget):
             except Exception:
                 pass
         self.last_is_red = False
+
+    def set_black(self):
+        self.color.setRgb(0, 0, 0)
+        try:
+            self.update()
+        except Exception:
+            pass
+        self.is_black = True
 
     def paintEvent(self, e):
         qp = QtGui.QPainter()

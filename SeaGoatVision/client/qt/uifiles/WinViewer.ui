@@ -67,31 +67,16 @@
          <number>10</number>
         </property>
         <item>
-         <widget class="QLabel" name="label">
-          <property name="maximumSize">
-           <size>
-            <width>50</width>
-            <height>16777215</height>
-           </size>
-          </property>
+         <widget class="QLabel" name="lbl_exec">
           <property name="text">
-           <string>Filter:</string>
+           <string>-exec-</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="filterComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
+         <widget class="QLabel" name="lbl_media_name">
+          <property name="text">
+           <string>-media-</string>
           </property>
          </widget>
         </item>
@@ -101,7 +86,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>40</y>
+         <y>80</y>
          <width>491</width>
          <height>33</height>
         </rect>
@@ -110,13 +95,6 @@
         <property name="leftMargin">
          <number>10</number>
         </property>
-        <item>
-         <widget class="QLabel" name="lbl_media_name">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QLabel" name="label_3">
           <property name="sizePolicy">
@@ -246,6 +224,50 @@
          <widget class="QToolButton" name="closeButton">
           <property name="text">
            <string>Close</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>40</y>
+         <width>491</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="maximumSize">
+           <size>
+            <width>50</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Filter:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="filterComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
           </property>
          </widget>
         </item>
