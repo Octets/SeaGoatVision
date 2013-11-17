@@ -59,6 +59,7 @@ class WinViewer(QtGui.QDockWidget):
         self.filterchain_name = filterchain_name
         self.media_name = media_name
         self.is_turn_off = False
+        self.execution_stopped = False
 
         self.actualFilter = None
         self.size = 1
@@ -91,13 +92,15 @@ class WinViewer(QtGui.QDockWidget):
 
     def closeEvent(self):
         # this is fake closeEvent, it's called by button close with signal
-        if not self.is_turn_off and self.actualFilter:
+        if self.is_turn_off:
+            return
+        if not self.execution_stopped and self.actualFilter:
             self.controller.remove_image_observer(self.updateImage, self.execution_name, self.actualFilter)
             self.controller.remove_output_observer(self.execution_name)
         if self.thread_output:
             self.thread_output.stop()
-        if not self.is_turn_off:
-            self.light_observer.stop()
+        self.subscriber.desubscribe(self.media_name, self.update_fps)
+        self.light_observer.stop()
         logger.info("WinViewer %s quit." % (self.execution_name))
 
     ######################################################################
@@ -192,9 +195,10 @@ class WinViewer(QtGui.QDockWidget):
         operator = data[0]
         execution_name = data[1:]
         if operator == "-" and execution_name == self.execution_name:
-            self.is_turn_off = True
+            self.execution_stopped = True
             self.light_observer.turn_off()
-            self.light_observer.stop()
+            self.closeEvent()
+            self.is_turn_off = True
 
 class Listen_output(threading.Thread):
     def __init__(self, observer, host, port):

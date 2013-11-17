@@ -47,7 +47,7 @@ class Subscriber():
 
     def subscribe(self, key, callback):
         if self._add_callback(key, callback):
-            # callback already added
+            # topic already created
             return True
         topic = self.controller.subscribe(key)
         if not topic:
@@ -56,7 +56,21 @@ class Subscriber():
         self.dct_key_topic_cb[key] = (topic, [callback])
         self.server.add_subscriber(topic)
         return True
-        
+
+    def desubscribe(self, key, callback):
+        lst_topic = self.dct_key_topic_cb.get(key, None)
+        if lst_topic is None:
+            return False
+        lst_cb = lst_topic[1]
+        if callback not in lst_cb:
+            return False
+        # remove the callback
+        lst_cb.remove(callback)
+        # if list is empty, remove the key
+        if not lst_cb:
+            del self.dct_key_topic_cb[key]
+        return True
+
     def _add_callback(self, key, callback):
         lst_topic = self.dct_key_topic_cb.get(key, None)
         if lst_topic is None:
@@ -77,7 +91,7 @@ class Subscriber():
         for lst_topic in self.dct_key_topic_cb.values():
             if lst_topic[0] == topic:
                 for cb in lst_topic[1]:
-                    cb(message) 
+                    cb(message)
 
 class Listen_output(threading.Thread):
     def __init__(self, observer, addr, port):

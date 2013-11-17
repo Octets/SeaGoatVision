@@ -71,6 +71,9 @@ class Thread_media(threading.Thread):
                     return
                 time.sleep(sleep_time_per_fps)
 
+            if not self.running:
+                return
+
             start_time = time.time()
             if start_time - first_fps_time > 1:
                 self.publisher(nb_fps)
