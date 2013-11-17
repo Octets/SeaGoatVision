@@ -49,6 +49,12 @@ class Publisher():
             self.new_topic_no += 1
         self.dct_key_topic[key] = topic
 
+    def deregister(self, key):
+        if key not in self.dct_key_topic:
+            logger.warning("Key already removed : %s" % key)
+            return
+        del self.dct_key_topic[key]
+
     def subscribe(self, key):
         # just inform the client if the key is registed
         topic = self.dct_key_topic.get(key, None)

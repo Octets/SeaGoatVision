@@ -68,6 +68,7 @@ class CmdHandler:
             execution[KEY_MEDIA].close()
         self.server_observer.stop()
         self.publisher.stop()
+        self.publisher.deregister(keys.get_key_execution_list())
 
     def _post_command_(self, arg):
         funct_name = inspect.currentframe().f_back.f_code.co_name

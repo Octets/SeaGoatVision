@@ -90,7 +90,8 @@ class Media(object):
             return True
         if self.thread:
             return False
-        self.thread = Thread_media(self, self._get_cb_publisher())
+        cb_publisher = self._get_cb_publisher()
+        self.thread = Thread_media(self, cb_publisher)
         self.thread.start()
         return True
 
@@ -104,6 +105,7 @@ class Media(object):
 
     def close(self):
         logger.info("Close media %s" % self.get_name())
+        self._remove_cb_publisher()
         if self.is_client_manager:
             return True
         if not self.thread:
@@ -165,3 +167,9 @@ class Media(object):
         key = self.get_name()
         self.publisher.register(key)
         return self.publisher.get_callback_publish(key)
+
+    def _remove_cb_publisher(self):
+        if not self.publisher:
+            return None
+        key = self.get_name()
+        self.publisher.deregister(key)
