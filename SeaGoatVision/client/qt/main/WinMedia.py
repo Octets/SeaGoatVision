@@ -115,7 +115,7 @@ class WinMedia(QtCore.QObject):
     def _movie_changed(self):
         self.shared_info.set("path_media", self.ui.movieLineEdit.text())
 
-    def set_slider_value(self, value):
+    def set_slider_value(self, value, force_value=False):
         last_value = self.ui.slider_frame.value()
         if last_value != value:
             self.ui.slider_frame.setValue(value)
@@ -291,8 +291,10 @@ class player_file(threading.Thread):
                 time.sleep(self.sleep_time)
             frame = self.call_get_frame()
             if self.max_frame <= frame:
-                frame = 0
-                self.call_set_frame(frame + 1)
+                frame = 1
+            else:
+                frame += 1
+            self.call_set_frame(frame)
             time.sleep(self.time_wait)
 
     def is_stopped(self):
