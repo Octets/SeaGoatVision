@@ -34,13 +34,20 @@
 <h2>
 <a name="description" class="anchor" href="#description"><span class="octicon octicon-link"></span></a>Description</h2>
 
-<p>SeaGoatVision is a vision server to execute filter on picture.</p>
+<p>SeaGoatVision is a computer vision system running into a server.</p>
+
+<p>Actually, this platform is used to doing robotic.</p>
+
+<p>Principal feature :</p>
 
 <ul>
-<li>Manage multiple client</li>
+<li>Manage multiple client and media</li>
 <li>Run filterchain</li>
-<li>Manage multiple source</li>
+<li>Control filter by parameters</li>
 <li>Give environnement for debug and create filter</li>
+<li>Run in local or in remote</li>
+<li>Can send message to other platform</li>
+<li>Execute Python and C++ filters</li>
 </ul><h2>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
@@ -64,7 +71,7 @@
 <h2>
 <a name="known-bugs" class="anchor" href="#known-bugs"><span class="octicon octicon-link"></span></a>Known bugs</h2>
 
-<p>It's not a release version, the project is in developpement.</p>
+<p>The bugs is showing in issues of the project : <a href="https://github.com/Octets/SeaGoatVision/issues?labels=bug&amp;page=1&amp;state=open">https://github.com/Octets/SeaGoatVision/issues?labels=bug&amp;page=1&amp;state=open</a></p>
 
 <h2>
 <a name="troubleshooting" class="anchor" href="#troubleshooting"><span class="octicon octicon-link"></span></a>Troubleshooting</h2>
@@ -74,7 +81,7 @@
 <h2>
 <a name="credits" class="anchor" href="#credits"><span class="octicon octicon-link"></span></a>Credits</h2>
 
-<p>Thanks club Capra and club Sonia for support us.</p>
+<p>Thanks club Capra and club Sonia to support us.</p>
 
 <ul>
 <li><a href="http://capra.etsmtl.ca">http://capra.etsmtl.ca</a></li>
@@ -82,7 +89,10 @@
 </ul><h2>
 <a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog</h2>
 
-<p>Waiting for release.</p>
+<ul>
+<li>0.2 : version with Qt graphic interface, GTK is removed. Integrate Firewire camera, client/server with Protobuf, add parameters between client and filter/media. The analyser of filter and the camera Ethernet is removed temporary.</li>
+<li>0.1 : version with GTK graphic interface. Ready for the Capra competition. Can create and run filterchain, reload filters, save parameters, observer filters output, run python and c++ filters, and record video.</li>
+</ul>
       </section>
     </div>
 
