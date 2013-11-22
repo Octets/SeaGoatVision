@@ -1,7 +1,7 @@
 SeaGoatVision
 =============
 SeaGoatVision is a vision server to develop and execute filter on different media.
-This Vision Serveur is tested on OpenCV 2.4.5 with Python 2.7 on Fedora 18, Ubuntu 12.04 and Arch Linux.
+This Vision Server is tested on OpenCV 2.4.5 with Python 2.7 on Fedora 18, Ubuntu 12.04, Arch Linux and OSX 10.9.
 
 Requirements
 ------------
@@ -66,7 +66,7 @@ Then, from the terminal:
 	sudo easy_install pip pil
 	sudo pip install numpy scipy pyqt libopencv jsonrpclib-pelix pyzmq 
 
-Finally, you will need to compile OpenCV from source. Please refer to the FAQ for this.
+Finally, you will need to compile OpenCV with python bindings from source. Please refer to the FAQ for this.
 
 ### C. Third-party
 Note: The third-party pydc1394 is dependant of cython 0.19. Be sure you have it, else install it with easy_install from his website. You don't need Pydc1394 if you haven't Firewire camera.
