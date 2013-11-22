@@ -52,6 +52,22 @@ Install the following dependencies:
 
   pip install jsonrpclib-pelix pyzmq
 
+#### Mac OSX :
+Start by installing Xcode command-line tools. On 10.9 Mavericks, this is as straightforward as entering this line in a terminal:
+
+	xcode-select --install
+
+On previous versions, you'll have to download the package from Apple Dev website at http://developers.apple.com/downloads . 
+
+You will also need the QT4 library. Grab it from the official QT Project site (http://qtproject.org/downloads). You'll also need to fetch the PySide Mac binary from the side. Install both.
+
+Then, from the terminal:
+
+	sudo easy_install pip pil
+	sudo pip install numpy scipy pyqt libopencv jsonrpclib-pelix pyzmq 
+
+Finally, you will need to compile OpenCV from source. Please refer to the FAQ for this.
+
 ### C. Third-party
 Note: The third-party pydc1394 is dependant of cython 0.19. Be sure you have it, else install it with easy_install from his website. You don't need Pydc1394 if you haven't Firewire camera.
 
