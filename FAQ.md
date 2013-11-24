@@ -19,11 +19,11 @@ Sometime, you need specific function in Opencv, this is the procedure to install
 	sudo apt-get install cmake cmake-gui gcc pkg-config libavformat-dev libswscale-dev
 
 ####b. Download the archive manually
-	From here: http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.4.5/opencv-2.4.5.tar.gz
+	From here: http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.7/
 	Go to directory containing downloaded file with a command line.
 
 ####c. Extract the archive
-	tar -xvf OpenCV-2.4.5.tar.gz && cd OpenCV-2.4.5
+	tar -xvf opencv-2.4.7.tar.gz && cd opencv-2.4.7
 
 ####d. Configure
 	mkdir release
