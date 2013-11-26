@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
+#    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -19,6 +19,7 @@
 
 import cv2
 import cv2.cv as cv
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
 # Heritence of Filter is facultatif if you need framework tools.
