@@ -61,11 +61,15 @@ class WinMain(QtGui.QMainWindow):
 
         # Add default widget
         self.show_win_filter(first_time=True)
-        #self.show_win_camera(first_time=True)
         self.show_win_filterlist(first_time=True)
         self.show_win_filterchain(first_time=True)
         self.show_win_media(first_time=True)
         self.show_win_execution(first_time=True)
+        self.show_win_camera(first_time=True)
+
+        # Tabify dockwidget
+        self.tabifyDockWidget(self.winMedia.ui, self.winCamera.ui)
+        self.tabifyDockWidget(self.winFilter.ui, self.winFilterList.ui)
 
         # Signal
         self.winFilterList.onAddFilter.connect(self.winFilterChain.add_filter)
