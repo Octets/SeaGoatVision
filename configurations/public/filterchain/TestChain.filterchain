@@ -13,5 +13,6 @@
             ], 
             "filter_name": "TestSeagoat"
         }
-    ]
+    ], 
+    "default_media_name": "Empty"
 }

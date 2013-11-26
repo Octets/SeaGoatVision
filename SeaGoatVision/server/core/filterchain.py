@@ -106,7 +106,8 @@ class FilterChain(object):
         status = True
         self.filterchain_name = name
         lst_filter = value.get("lst_filter", [])
-        self.default_media_name = value.get("default_media_name", None)
+        if self.default_media_name is None:
+            self.default_media_name = value.get("default_media_name", None)
 
         for o_filter in self.filters:
             # find is appropriate filter if exist
