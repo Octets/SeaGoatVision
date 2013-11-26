@@ -17,42 +17,22 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def get_filter_original_name():
-    return "-- original --"
+import cv2
+import cv2.cv as cv
+from SeaGoatVision.commons.param import Param
+from SeaGoatVision.server.core.filter import Filter
 
-def get_media_type_streaming_name():
-    return "Streaming"
+# This filter is created to test communication in Seagoat with unit test
+class TestSeagoat(Filter):
 
-def get_media_type_video_name():
-    return "Video"
+    def __init__(self):
+        Filter.__init__(self)
+        self.param_str = Param("param_str", "")
 
-def get_media_file_video_name():
-    return "File"
+    def configure(self):
+        # This is called when param is modify
+        pass
 
-def get_media_empty_name():
-    return "Empty"
-
-def get_empty_filterchain_name():
-    return "-- empty filterchain --"
-
-def get_empty_filter_name():
-    return "-- empty filter --"
-
-def get_key_media_play():
-    return "play"
-
-def get_key_media_pause():
-    return "pause"
-
-def get_key_media_loop():
-    return "toggle_loop"
-
-def set_key_media_frame():
-    return "frame_media"
-
-# used by ZeroMQ
-def get_key_execution_list():
-    return "execution_list"
-
-def get_lst_key_topic_pubsub():
-    return {"all_output_filter":1, get_key_execution_list():2}
+    def execute(self, image):
+        self.notify_output_observers(self.param_str.get())
+        return image

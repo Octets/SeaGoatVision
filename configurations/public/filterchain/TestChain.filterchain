@@ -1,0 +1,17 @@
+{
+    "lst_filter": [
+        {
+            "lst_param": [
+                {
+                    "thres_h": null, 
+                    "name": "param_str", 
+                    "lst_value": null, 
+                    "min_v": null, 
+                    "value": "salut", 
+                    "max_v": null
+                }
+            ], 
+            "filter_name": "TestSeagoat"
+        }
+    ]
+}

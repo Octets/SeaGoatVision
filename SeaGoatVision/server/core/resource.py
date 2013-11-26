@@ -220,7 +220,14 @@ class Resource(object):
             else:
                 log.print_function(logger.error, "Camera %s not detected" % name)
         # Force media_video
-        dct_media[keys.get_media_file_video_name()] = media.media_video.Media_video(keys.get_media_file_video_name())
+        media_video = media.media_video.Media_video(keys.get_media_file_video_name())
+        dct_media[keys.get_media_file_video_name()] = media_video
+        # TODO this is a hack to remove missing key warning about publisher
+        # Register in publisher
+        #media_video._get_cb_publisher()
+        # Force create empty media
+        from SeaGoatVision.server.media.implementation.empty import Empty
+        dct_media[keys.get_media_empty_name()] = Empty(keys.get_media_empty_name())
 
         self.dct_media = dct_media
 

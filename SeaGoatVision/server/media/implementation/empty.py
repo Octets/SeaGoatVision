@@ -17,42 +17,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def get_filter_original_name():
-    return "-- original --"
+from SeaGoatVision.server.media.media_streaming import Media_streaming
+import numpy as np
 
-def get_media_type_streaming_name():
-    return "Streaming"
+class Empty(Media_streaming):
+    """Do nothing"""
 
-def get_media_type_video_name():
-    return "Video"
+    def __init__(self, name):
+        # Go into configuration/template_media for more information
+        super(Empty, self).__init__()
+        self.media_name = name
+        self.image = np.zeros((1, 1), np.float32)
 
-def get_media_file_video_name():
-    return "File"
-
-def get_media_empty_name():
-    return "Empty"
-
-def get_empty_filterchain_name():
-    return "-- empty filterchain --"
-
-def get_empty_filter_name():
-    return "-- empty filter --"
-
-def get_key_media_play():
-    return "play"
-
-def get_key_media_pause():
-    return "pause"
-
-def get_key_media_loop():
-    return "toggle_loop"
-
-def set_key_media_frame():
-    return "frame_media"
-
-# used by ZeroMQ
-def get_key_execution_list():
-    return "execution_list"
-
-def get_lst_key_topic_pubsub():
-    return {"all_output_filter":1, get_key_execution_list():2}
+    def next(self):
+        return self.image

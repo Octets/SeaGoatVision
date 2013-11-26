@@ -264,7 +264,7 @@ class FilterChain(object):
         return image
 
     def send_image(self, image, lst_observer):
-        if type(image) is not np.ndarray or not image.size:
+        if type(image) is not np.ndarray or not image.size or image.ndim != 3:
             return
         # copy the picture because the next filter will modify him
         # transform it in rgb

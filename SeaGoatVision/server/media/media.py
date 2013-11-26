@@ -75,7 +75,7 @@ class Media(object):
         pass
 
     def deserialize(self, data):
-        pass
+        return True
 
     def get_real_fps(self):
         if self.thread:
