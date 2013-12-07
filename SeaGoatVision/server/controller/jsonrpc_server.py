@@ -42,7 +42,9 @@ class Jsonrpc_server():
         self.server.register_function(self.set_image_observer, "set_image_observer")
         self.server.register_function(self.remove_image_observer, "remove_image_observer")
         self.server.register_function(self.get_params_media, "get_params_media")
+        self.server.register_function(self.get_param_media, "get_param_media")
         self.server.register_function(self.get_params_filterchain, "get_params_filterchain")
+        self.server.register_function(self.get_param_filterchain, "get_param_filterchain")
 
         self.server.register_function(self.cmdHandler.is_connected, "is_connected")
         self.server.register_function(self.cmdHandler.start_filterchain_execution, "start_filterchain_execution")
@@ -84,13 +86,23 @@ class Jsonrpc_server():
         lst_param = self.cmdHandler.get_params_filterchain(execution_name, filter_name)
         return self._serialize_param(lst_param)
 
+    def get_param_filterchain(self, execution_name, filter_name, param_name):
+        param = self.cmdHandler.get_param_filterchain(execution_name, filter_name, param_name)
+        return self._serialize_param(param)
+
     def get_params_media(self, media_name):
         lst_param = self.cmdHandler.get_params_media(media_name)
         return self._serialize_param(lst_param)
 
-    def _serialize_param(self, lst_param_obj):
-        if lst_param_obj:
-            return [param.serialize() for param in lst_param_obj]
+    def get_param_media(self, media_name, param_name):
+        param = self.cmdHandler.get_param_media(media_name, param_name)
+        return self._serialize_param(param)
+
+    def _serialize_param(self, param_obj):
+        if type(param_obj) is list:
+            return [param.serialize() for param in param_obj]
+        else:
+            return param_obj.serialize()
         return []
 
     ##########################################################################

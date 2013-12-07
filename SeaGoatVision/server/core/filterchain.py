@@ -143,12 +143,14 @@ class FilterChain(object):
             retValue.append(item.serialize_info())
         return retValue
 
-    def get_params(self, o_filter=None, filter_name=None):
+    def get_params(self, o_filter=None, filter_name=None, param_name=None):
         if filter_name:
             o_filter = self.get_filter(name=filter_name)
             if not o_filter:
                 return None
         if o_filter:
+            if param_name:
+                return o_filter.get_params(param_name=param_name)
             return o_filter.get_params()
         return [(o_filter.get_name(), o_filter.get_params()) for o_filter in self.filters]
 

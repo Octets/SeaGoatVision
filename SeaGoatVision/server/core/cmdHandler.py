@@ -223,6 +223,17 @@ class CmdHandler:
             return []
         return media.get_properties_param()
 
+    def get_param_media(self, media_name, param_name):
+        self._post_command_(locals())
+        media = self._get_media(media_name=media_name)
+        if not media:
+            return []
+        lst_param = media.get_properties_param()
+        for param in lst_param:
+            if param.get_name() == param_name:
+                return param
+        return None
+
     def update_param_media(self, media_name, param_name, value):
         self._post_command_(locals())
         media = self._get_media(media_name=media_name)
@@ -356,6 +367,17 @@ class CmdHandler:
         if not filterchain:
             return None
         return filterchain.get_params(filter_name=filter_name)
+
+    def get_param_filterchain(self, execution_name, filter_name, param_name):
+        # get actual filter from execution
+        # TODO search information from configuration if execution not exist
+        self._post_command_(locals())
+        if not execution_name:
+            return None
+        filterchain = self._get_filterchain(execution_name)
+        if not filterchain:
+            return None
+        return filterchain.get_params(filter_name=filter_name, param_name=param_name)
 
     def get_filterchain_info(self, filterchain_name):
         self._post_command_(locals())
