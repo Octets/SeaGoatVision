@@ -43,10 +43,10 @@ class WinParamParent(QtGui.QDockWidget):
         self.lst_param = []
         self.dct_param = {}
         self.setValueFloat = None
-        self.media_name = None
 
         self.layout = self.ui.layout_params
         self.cb_param = self.ui.cb_filter_param
+        self.actuel_widget = None
 
         self.ui.saveButton.clicked.connect(self.save)
         self.ui.resetButton.clicked.connect(self.reset)
@@ -105,6 +105,8 @@ class WinParamParent(QtGui.QDockWidget):
         layout = QtGui.QHBoxLayout()
         layout.addWidget(slider)
         layout.addWidget(spinbox)
+
+        self.actuel_widget = spinbox
         return layout
 
     def getFloatWidget(self, param, cb_value_change):
@@ -197,6 +199,7 @@ class WinParamParent(QtGui.QDockWidget):
             self.line_edit.setText(param.get())
             self.line_edit.returnPressed.connect(self.signal_edit_line)
             layout.addWidget(self.line_edit)
+            self.actuel_widget = self.line_edit
         else:
             self.combo = QtGui.QComboBox()
             self.combo.addItems([str(v) for v in lst_value])

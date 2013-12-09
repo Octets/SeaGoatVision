@@ -51,8 +51,8 @@ class WinMain(QtGui.QMainWindow):
         self.showMaximized()
 
         # create dockWidgets
-        self.winFilter = WinFilter(self.controller)
-        self.winCamera = WinCamera(self.controller)
+        self.winFilter = WinFilter(self.controller, subscriber)
+        self.winCamera = WinCamera(self.controller, subscriber)
         self.winFilterList = WinFilterList(self.controller)
         self.winMedia = WinMedia(self.controller)
         self.winExecution = WinExecution(self.controller, subscriber)

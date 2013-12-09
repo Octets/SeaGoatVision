@@ -20,13 +20,18 @@
 from PySide import QtGui
 from WinParamParent import WinParamParent
 from SeaGoatVision.commons import log
+from SeaGoatVision.commons.param import Param
+from SeaGoatVision.commons import keys
+import json
 
 logger = log.get_logger(__name__)
 
 class WinFilter(WinParamParent):
-    def __init__(self, controller):
+    def __init__(self, controller, subscriber):
         super(WinFilter, self).__init__(controller)
+        self.subscriber = subscriber
         self.shared_info.connect("filter", self.set_filter)
+        self.subscriber.subscribe(keys.get_key_filter_param(), self.update_filter_param)
 
     def set_filter(self, value=None):
         # Ignore the value
@@ -59,6 +64,20 @@ class WinFilter(WinParamParent):
 
         # Select first item
         self.on_cb_param_item_changed(0)
+
+    def update_filter_param(self, json_data):
+        data = json.loads(json_data)
+        execution_name = data.get("execution_name", None)
+        param_ser = data.get("param", None)
+        if not execution_name and execution_name != self.execution_name:
+            return
+        param = Param("temp", None, serialize=param_ser)
+        if self.actuel_widget:
+            type = param.get_type()
+            if type is int or type is float:
+                self.actuel_widget.setValue(param.get())
+            elif type is str:
+                self.actuel_widget.setText(param.get())
 
     def on_cb_param_item_changed(self, index):
         self.ui.lbl_param_name.setText("%s - %s" % (self.execution_name, self.filter_name))

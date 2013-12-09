@@ -54,5 +54,19 @@ def set_key_media_frame():
 def get_key_execution_list():
     return "execution_list"
 
+def get_key_filter_param():
+    return "filter_param"
+
+def get_key_media_param():
+    return "media_param"
+
+def get_key_all_output_filter():
+    return "all_output_filter"
+
 def get_lst_key_topic_pubsub():
-    return {"all_output_filter":1, get_key_execution_list():2}
+    return {
+            get_key_all_output_filter():1,
+            get_key_execution_list():2,
+            get_key_filter_param():3,
+            get_key_media_param():4,
+            }

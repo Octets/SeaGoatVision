@@ -28,6 +28,7 @@ from publisher import Publisher
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons import keys
 import inspect
+import json
 import thread
 
 logger = log.get_logger(__name__)
@@ -61,6 +62,8 @@ class CmdHandler:
         thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
 
         self.publisher.register(keys.get_key_execution_list())
+        self.publisher.register(keys.get_key_filter_param())
+        self.publisher.register(keys.get_key_media_param())
 
     def close(self):
         logger.info("Close cmdHandler and close server.")
@@ -165,7 +168,7 @@ class CmdHandler:
         return {KEY_MEDIA:exec_info[KEY_MEDIA].get_name(), KEY_FILTERCHAIN:exec_info[KEY_FILTERCHAIN].get_name()}
 
     def get_fps_execution(self, execution_name):
-        #self._post_command_(locals())
+        # self._post_command_(locals())
         media = self._get_media(execution_name=execution_name)
         if not media:
             return -1
@@ -239,7 +242,20 @@ class CmdHandler:
         media = self._get_media(media_name=media_name)
         if not media:
             return False
-        return media.update_property_param(param_name, value)
+        status = media.update_property_param(param_name, value)
+        if status:
+            lst_param = media.get_properties_param()
+            param = None
+            for param in lst_param:
+                if param.get_name() == param_name:
+                    break
+            if not param:
+                log.print_function(logger.error, "Missing param %s in media %s." % (param_name, media_name))
+                return False
+            data = {"media":media_name, "param":param.serialize()}
+            json_data = json.dumps(data)
+            self.publisher.publish(keys.get_key_media_param(), "%s" % json_data)
+        return status
 
     def save_params_media(self, media_name):
         self._post_command_(locals())
@@ -399,6 +415,10 @@ class CmdHandler:
 
         param.set(value)
         o_filter.configure()
+        # send from publisher
+        data = {"execution_name":execution_name, "param":param.serialize()}
+        json_data = json.dumps(data)
+        self.publisher.publish(keys.get_key_filter_param(), "%s" % json_data)
         return True
 
     def save_params(self, execution_name):

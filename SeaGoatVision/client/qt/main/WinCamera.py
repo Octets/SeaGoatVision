@@ -20,13 +20,19 @@
 from PySide import QtGui
 from WinParamParent import WinParamParent
 from SeaGoatVision.commons import log
+from SeaGoatVision.commons.param import Param
+from SeaGoatVision.commons import keys
+import json
 
 logger = log.get_logger(__name__)
 
 class WinCamera(WinParamParent):
-    def __init__(self, controller):
+    def __init__(self, controller, subscriber):
         super(WinCamera, self).__init__(controller)
+        self.subscriber = subscriber
+        self.media_name = None
         self.shared_info.connect("media", self.set_camera)
+        self.subscriber.subscribe(keys.get_key_media_param(), self.update_media_param)
 
     def reload_ui(self):
         super(WinCamera, self).reload_ui()
@@ -62,6 +68,20 @@ class WinCamera(WinParamParent):
 
         self.on_cb_param_item_changed(0)
 
+    def update_media_param(self, json_data):
+        data = json.loads(json_data)
+        media = data.get("media", None)
+        param_ser = data.get("param", None)
+        if not media and media != self.media_name:
+            return
+        param = Param("temp", None, serialize=param_ser)
+        if self.actuel_widget:
+            type = param.get_type()
+            if type is int or type is float:
+                self.actuel_widget.setValue(param.get())
+            elif type is str:
+                self.actuel_widget.setText(param.get())
+
     def on_cb_param_item_changed(self, index):
         self.ui.lbl_param_name.setText("%s" % (self.media_name))
 
@@ -96,10 +116,9 @@ class WinCamera(WinParamParent):
                     logger.error("Change value %s of param %s." % (value, param.get_name()))
             return set
 
-        cb_value_change = create_value_change(param)
-        self.cb_value_change = cb_value_change
+        self.cb_value_change = create_value_change(param)
 
-        layout = getWidget[param.get_type()](param, cb_value_change)
+        layout = getWidget[param.get_type()](param, self.cb_value_change)
         groupBox.setLayout(layout)
 
         return groupBox
