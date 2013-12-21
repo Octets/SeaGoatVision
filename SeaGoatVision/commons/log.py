@@ -27,8 +27,7 @@ import os
 last_print_duplicate = ""
 last_time_print = time.time()
 spam_delay_sec = 5
-formatter = logging.Formatter("[%(asctime)s-%(levelname)s-%(name)s] %(message)s",
-                                  "%H:%M:%S")
+formatter = logging.Formatter("[%(asctime)s.%(msecs)d-%(levelname)s-%(name)s] %(message)s", "%H:%M:%S")
 dct_file_handler = {}
 dct_logger = {}
 
