@@ -104,6 +104,14 @@ class Configuration(object):
                 return self.public_config.show_public_filter
         return self.public_config.show_public_filter
 
+    def get_is_show_private_filter(self):
+        if self.private_config:
+            try:
+                return self.private_config.active_configuration
+            except:
+                pass
+        return False
+
     def get_path_save_record(self):
         if self.private_config:
             try:

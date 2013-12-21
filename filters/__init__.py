@@ -22,4 +22,5 @@ config = Configuration()
 
 if config.get_is_show_public_filter():
     from public import *
-from private import *
+if config.get_is_show_private_filter():
+    from private import *

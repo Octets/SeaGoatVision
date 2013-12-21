@@ -26,7 +26,6 @@ from configuration import Configuration
 from SeaGoatVision.commons import keys
 from SeaGoatVision.server.core import filterchain
 from SeaGoatVision.server import media
-import filters
 from filter import Filter
 from SeaGoatVision.commons import log
 
@@ -169,6 +168,7 @@ class Resource(object):
         # TODO : redo an import
         # TODO "class" key is important?
         # update list of filter
+        import filters
         self.dct_filter = {name: filtre
                         for name, filtre in vars(filters).items()
                         if inspect.isclass(filtre)
