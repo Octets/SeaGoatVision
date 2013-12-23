@@ -27,7 +27,8 @@ from SeaGoatVision.server.mainserver import run
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Vision Server')
-    parser.add_argument('--port', type=int, default="0", help='Port of the host.')
+    parser.add_argument("-p", '--port', type=int, default="0", help='port of the host')
+    parser.add_argument("-v", '--verbose', action="store_true", help="increase output verbosity")
     args = parser.parse_args(args=argument)
     port = args.port if args.port else None
-    run(p_port=port)
+    run(p_port=port, verbose=args.verbose)

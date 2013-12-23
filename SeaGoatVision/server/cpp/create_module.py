@@ -24,6 +24,7 @@ import os
 import time
 
 from SeaGoatVision.server.core.filter import Filter
+from SeaGoatVision.server.core.configuration import Configuration
 from cpp_code import *
 from python_code import *
 from SeaGoatVision.commons import log
@@ -34,6 +35,7 @@ BUILD_DIR = 'build'
 RELOAD_DIR = os.path.join('build', 'reload')
 has_configure = False
 has_destroy = False
+config = Configuration()
 
 def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=[], extra_compile_arg=[]):
     """
@@ -89,11 +91,12 @@ def _create_build(cppfiles):
 def _create_module(cpptimestamps, module, modname, mod):
     try:
         logger.info("Begin compile %s.", modname)
+        no_verbose = 3 if config.get_verbose() else 0
         if cpptimestamps.has_key(modname):
             # Reloaded modules are saved in the reload folder for easy cleanup
-            mod.compile(RELOAD_DIR)
+            mod.compile(RELOAD_DIR, verbose=no_verbose)
         else:
-            mod.compile(BUILD_DIR)
+            mod.compile(BUILD_DIR, verbose=no_verbose)
 
         cppmodule = __import__(modname)
         params = {}

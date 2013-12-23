@@ -30,6 +30,7 @@ from configurations.template_media.conf_imageGenerator import Conf_imageGenerato
 # keep always true for public configuration
 # It's useful if you need to disable private config
 active_configuration = True
+verbose = False
 
 ## Log
 # no log When log_path is None else put a string path with file_name

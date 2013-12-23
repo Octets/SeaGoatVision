@@ -34,8 +34,9 @@ if path:
 # Import required RPC modules
 from controller import jsonrpc_server
 
-def run(p_port=None):
+def run(p_port=None, verbose=False):
     global config
+    config.set_verbose(verbose)
     # recheck if its locked because the last check is maybe a false lock
     pid = os.getpid()
     sFileLockName = "/tmp/SeaGoat.lock"

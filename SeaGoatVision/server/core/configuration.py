@@ -49,6 +49,7 @@ class Configuration(object):
             except:
                 cls.private_config = None
             cls.print_configuration = False
+            cls.verbose = False
             # instance class
             cls._instance = super(Configuration, cls).__new__(cls)
         return cls._instance
@@ -71,70 +72,94 @@ class Configuration(object):
         self.ext_filterchain = ".%s" % self.type_filterchain
         self.ext_media = ".%s" % self.type_media
 
+    #### Setter ####
+    def set_verbose(self, is_verbose):
+        self.verbose = is_verbose
+
     #### General config
-    def get_tcp_output_config(self):
-        if self.private_config:
-            try:
-                return self.private_config.port_tcp_output
-            except:
-                return self.public_config.port_tcp_output
-        return self.public_config.port_tcp_output
+    def get_verbose(self):
+        if self.verbose:
+            return True
 
-    def get_lst_media_config(self):
+        response = self.public_config.verbose
         if self.private_config:
             try:
-                return self.private_config.lst_media
-            except:
-                return self.public_config.lst_media
-        return self.public_config.lst_media
-
-    def get_is_show_public_filterchain(self):
-        if self.private_config:
-            try:
-                return self.private_config.show_public_filterchain
-            except:
-                return self.public_config.show_public_filterchain
-        return self.public_config.show_public_filterchain
-
-    def get_is_show_public_filter(self):
-        if self.private_config:
-            try:
-                return self.private_config.show_public_filter
-            except:
-                return self.public_config.show_public_filter
-        return self.public_config.show_public_filter
-
-    def get_is_show_private_filter(self):
-        if self.private_config:
-            try:
-                return self.private_config.active_configuration
+                response = self.private_config.verbose
             except:
                 pass
-        return False
+        return response
+
+    def get_tcp_output_config(self):
+        response = self.public_config.port_tcp_output
+        if self.private_config:
+            try:
+                response = self.private_config.port_tcp_output
+            except:
+                pass
+        return response
+
+    def get_lst_media_config(self):
+        response = self.public_config.lst_media
+        if self.private_config:
+            try:
+                response = self.private_config.lst_media
+            except:
+                pass
+        return response
+
+    def get_is_show_public_filterchain(self):
+        response = self.public_config.show_public_filterchain
+        if self.private_config:
+            try:
+                response = self.private_config.show_public_filterchain
+            except:
+                pass
+        return response
+
+    def get_is_show_public_filter(self):
+        response = self.public_config.show_public_filter
+        if self.private_config:
+            try:
+                response = self.private_config.show_public_filter
+            except:
+                pass
+        return response
+
+    def get_is_show_private_filter(self):
+        response = False
+        if self.private_config:
+            try:
+                response = self.private_config.active_configuration
+            except:
+                pass
+        return response
 
     def get_path_save_record(self):
+        response = self.public_config.path_save_record
         if self.private_config:
             try:
-                return self.private_config.path_save_record
+                response = self.private_config.path_save_record
             except:
-                return self.public_config.path_save_record
-        return self.public_config.path_save_record
+                pass
+        return response
 
     def get_log_file_path(self):
+        response = self.public_config.log_path
         if self.private_config:
             try:
-                return self.private_config.log_path
+                response = self.private_config.log_path
             except:
-                return self.public_config.log_path
-        return self.public_config.log_path
+                pass
+        return response
 
     def get_dct_cmd_on_start(self):
+        response = self.public_config.cmd_on_start
         if self.private_config:
             try:
-                return self.private_config.cmd_on_start
+                response = self.private_config.cmd_on_start
             except:
-                return self.public_config.cmd_on_start
-        return self.public_config.cmd_on_start
+                pass
+        return response
 
     #### Filterchain
     def list_filterchain(self):
