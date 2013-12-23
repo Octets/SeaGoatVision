@@ -17,8 +17,11 @@
 
 # This Makefile manage filter in cpp situate in folder filters.
 # Build is done into directory build
+.PHONY : filter third_party clean_python clean_third_party clean
 
-all: third_party
+all: third_party filter
+
+filter:
 	./filters/build_cpp_filter.py
 
 third_party:
