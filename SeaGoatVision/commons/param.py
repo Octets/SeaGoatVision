@@ -41,14 +41,17 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class Param(object):
+
     """Param autodetect basic type
     force_type need to be a <type>
     If you want specific type, cast it to basic type and use force_type
     Param manager type : bool, str, int and float
     """
-    def __init__(self, name, value, min_v=None, max_v=None, lst_value=None, \
-                force_type=None, thres_h=None, serialize=None):
+
+    def __init__(self, name, value, min_v=None, max_v=None, lst_value=None,
+                 force_type=None, thres_h=None, serialize=None):
         # contant float
         self.delta_float = 0.0001
         # Exception, can serialize
@@ -68,11 +71,14 @@ class Param(object):
         if serialize:
             status = self.deserialize(serialize)
             if not status:
-                raise Exception("Wrong deserialize parameter, can't know the name.")
-            logger.debug("Param %s deserialization complete, value %s" % (self.name, self.value))
+                raise Exception(
+                    "Wrong deserialize parameter, can't know the name.")
+            logger.debug(
+                "Param %s deserialization complete, value %s" %
+                (self.name, self.value))
             return
 
-        if type(name) is not str and type(name) is not unicode:
+        if not isinstance(name, str) and not isinstance(name, unicode):
             raise Exception("Name must be string value.")
 
         self._init_param(value, min_v, max_v, lst_value, force_type, thres_h)
@@ -104,24 +110,30 @@ class Param(object):
             if min_v is not None:
                 type_min = type(min_v)
                 if not (type_min is float or type_min is int or type_min is long):
-                    raise Exception("min_v must be float or int, type is %s." % type_min)
+                    raise Exception(
+                        "min_v must be float or int, type is %s." %
+                        type_min)
             if max_v is not None:
                 type_max = type(max_v)
-                if not( type_max is float or type_max is int or type_max is long):
-                    raise Exception("max_v must be float or int, type is %s." % type(max_v))
+                if not(type_max is float or type_max is int or type_max is long):
+                    raise Exception(
+                        "max_v must be float or int, type is %s." %
+                        type(max_v))
             if lst_value is not None and \
-                    not(type(lst_value) is tuple or type(lst_value) is list):
-                raise Exception("lst_value must be list or tuple, type is %s." % type(lst_value))
+                    not(isinstance(lst_value, tuple) or isinstance(lst_value, list)):
+                raise Exception(
+                    "lst_value must be list or tuple, type is %s." %
+                    type(lst_value))
             if type_t is float:
                 min_v = None if min_v is None else float(min_v)
                 max_v = None if max_v is None else float(max_v)
                 lst_value = None if lst_value is None else \
-                            [float(value) for value in lst_value]
+                    [float(value) for value in lst_value]
             if type_t is int:
                 min_v = None if min_v is None else int(min_v)
                 max_v = None if max_v is None else int(max_v)
                 lst_value = None if lst_value is None else \
-                            [int(value) for value in lst_value]
+                    [int(value) for value in lst_value]
         self.min_v = min_v
         self.max_v = max_v
         self.lst_value = lst_value
@@ -131,16 +143,16 @@ class Param(object):
     def serialize(self):
         self.last_serialize_value = self.value
         # Force_type is not supported
-        return {"name":self.name,
-                "value":self.value,
-                "min_v":self.min_v,
-                "max_v":self.max_v,
-                "lst_value":self.lst_value,
+        return {"name": self.name,
+                "value": self.value,
+                "min_v": self.min_v,
+                "max_v": self.max_v,
+                "lst_value": self.lst_value,
                 #"force_type":self.force_type,
-                "thres_h":self.thres_h}
+                "thres_h": self.thres_h}
 
     def deserialize(self, value):
-        if type(value) is not dict:
+        if not isinstance(value, dict):
             return False
         name = value.get("name", None)
         if not name:
@@ -200,7 +212,9 @@ class Param(object):
 
     def remove_notify(self, callback):
         if callback not in self.lst_notify:
-            logger.warning("The callback wasn't in the list of notify %s" % self.get_name())
+            logger.warning(
+                "The callback wasn't in the list of notify %s" %
+                self.get_name())
             return
         self.lst_notify.remove(callback)
 
@@ -214,7 +228,9 @@ class Param(object):
 
     def remove_notify_reset(self, callback):
         if callback not in self.lst_notify_reset:
-            logger.warning("The callback wasn't in the list of notify reset %s" % self.get_name())
+            logger.warning(
+                "The callback wasn't in the list of notify reset %s" %
+                self.get_name())
             return
         self.lst_notify_reset.remove(callback)
 
@@ -233,49 +249,49 @@ class Param(object):
         return self.lst_value.index(self.get())
 
     def set(self, value, thres_h=None):
-        if type(value) is unicode:
+        if isinstance(value, unicode):
             value = str(value)
         if self.type_t is bool:
             value = bool(value)
 
-        if self.type_t is int and (type(value) is float or type(value) is long):
+        if self.type_t is int and (isinstance(value, float) or isinstance(value, long)):
             value = int(value)
-        if self.type_t is float and type(value) is int:
+        if self.type_t is float and isinstance(value, int):
             value = float(value)
-        if type(value) is not self.type_t:
-            raise Exception("value is wrong type. Expected %s and receive %s" \
-                    % (self.type_t, type(value)))
+        if not isinstance(value, self.type_t):
+            raise Exception("value is wrong type. Expected %s and receive %s"
+                            % (self.type_t, type(value)))
         if self.type_t is int or self.type_t is float:
             if self.min_v is not None and value < self.min_v - self.delta_float:
-                raise Exception("Value %s is lower then min %s" % \
-                    (value, self.min_v))
+                raise Exception("Value %s is lower then min %s" %
+                               (value, self.min_v))
             if self.max_v is not None and value > self.max_v + self.delta_float:
-                raise Exception("Value %s is upper then max %s" % \
-                    (value, self.max_v))
+                raise Exception("Value %s is upper then max %s" %
+                               (value, self.max_v))
             if self.lst_value is not None and value not in self.lst_value:
                 raise Exception("value %s is not in lst of value" % (value))
         if self.thres_h is not None:
             if thres_h is None:
                 if value > self.thres_h:
                     msg = "Threshold bot %s is upper then threshold top %s." \
-                           % (value, self.thres_h)
+                        % (value, self.thres_h)
                     raise Exception(msg)
             else:
-                if self.type_t is int and type(thres_h) is float:
+                if self.type_t is int and isinstance(thres_h, float):
                     thres_h = int(thres_h)
-                if self.type_t is float and type(thres_h) is int:
+                if self.type_t is float and isinstance(thres_h, int):
                     thres_h = float(thres_h)
-                if type(thres_h) is not self.type_t:
+                if not isinstance(thres_h, self.type_t):
                     msg = "value is wrong type. Expected %s and receive %s" \
                         % (self.type_t, type(thres_h))
                     raise Exception(msg)
                 elif value > thres_h:
                     msg = "Threshold low %s is upper then threshold hight %s." \
-                           % (value, thres_h)
+                        % (value, thres_h)
                     raise Exception(msg)
                 if thres_h > self.max_v:
-                    raise Exception("Threshold hight %s is upper then max %s." \
-                            % (thres_h, self.max_v))
+                    raise Exception("Threshold hight %s is upper then max %s."
+                                    % (thres_h, self.max_v))
                 self.thres_h = thres_h
         self.value = value
         # send the value on all notify callback

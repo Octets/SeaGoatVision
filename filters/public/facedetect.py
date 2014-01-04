@@ -7,14 +7,16 @@ import os
 from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.commons.param import Param
 
+
 class FaceDetection(Filter):
+
     """Detect faces and eyes"""
 
     def __init__(self):
         Filter.__init__(self)
         self.nb_face = 1
         self.eye_detect_name = os.path.join('data', 'facedetect',
-                                        'haarcascade_eye_tree_eyeglasses.xml')
+                                            'haarcascade_eye_tree_eyeglasses.xml')
         self.face_detect_name = os.path.join('data', 'facedetect',
                                              'haarcascade_frontalface_alt.xml')
         self.eye_cascade = cv2.CascadeClassifier()
@@ -31,7 +33,7 @@ class FaceDetection(Filter):
                                                    2,
                                                    0 | cv.CV_HAAR_SCALE_IMAGE,
                                                    (30, 30)
-                                                )
+                                                   )
         for face in faces:
             faceimg = self.draw_rectangle(image, face, (0, 0, 255))
 
@@ -69,8 +71,7 @@ class FaceDetection(Filter):
         c_x = (maxx - minx) / 2 + minx
         c_y = (maxy - miny) / 2 + miny
         if self.notify_filter.get():
-            self.notify_output_observers("facedetect%d : x=%d, y=%d" % \
-                (self.nb_face, c_x, c_y))
+            self.notify_output_observers("facedetect%d : x=%d, y=%d" %
+                                        (self.nb_face, c_x, c_y))
         self.nb_face += 1
         return image[miny:maxy, minx:maxx]
-

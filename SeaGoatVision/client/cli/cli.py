@@ -22,8 +22,16 @@ Description : Run the command line interface to communicate with the SeaGoatVisi
 """
 import fileinput
 
-def run(ctr, subscriber, local=False, host="localhost", port=8090, quiet=False):
-    #TODO implement using subscriber
+
+def run(ctr, subscriber, local=False,
+        host="localhost", port=8090, quiet=False):
+    # TODO implement using subscriber
     from vCmd import VCmd
-    VCmd(ctr, stdin=fileinput.input(), local=local, host=host, port=port, quiet=quiet).cmdloop()
+    VCmd(
+        ctr,
+        stdin=fileinput.input(),
+        local=local,
+        host=host,
+        port=port,
+        quiet=quiet).cmdloop()
     return 0

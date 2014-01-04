@@ -20,7 +20,9 @@
 from SeaGoatVision.server.media.media_streaming import Media_streaming
 import numpy as np
 
+
 class Empty(Media_streaming):
+
     """Do nothing"""
 
     def __init__(self, name):

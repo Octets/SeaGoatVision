@@ -34,6 +34,7 @@ if path:
 # Import required RPC modules
 from controller import jsonrpc_server
 
+
 def run(p_port=None, verbose=False):
     global config
     config.set_verbose(verbose)
@@ -75,6 +76,7 @@ def run(p_port=None, verbose=False):
         # force closing the file
         os.remove(sFileLockName)
 
+
 def is_lock(sFileLockName):
     # Create lock file
     # This technique counter the concurrence
@@ -90,14 +92,20 @@ def is_lock(sFileLockName):
         if pid.isdigit():
             pid = int(pid)
             if check_pid(pid):
-                logger.info("SeaGoat already run with the pid : %s - lock file %s", pid, sFileLockName)
+                logger.info(
+                    "SeaGoat already run with the pid : %s - lock file %s",
+                    pid,
+                    sFileLockName)
                 fileLock.close()
             else:
                 # its a false lock
                 bIsLocked = False
         else:
-            logger.info("SeaGoat lock is corrupted, see file : %s", sFileLockName)
+            logger.info(
+                "SeaGoat lock is corrupted, see file : %s",
+                sFileLockName)
     return bIsLocked
+
 
 def check_pid(pid):
     """ Check For the existence of a pid. """
@@ -107,4 +115,3 @@ def check_pid(pid):
         return False
     else:
         return True
-

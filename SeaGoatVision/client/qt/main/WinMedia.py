@@ -31,7 +31,9 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class WinMedia(QtCore.QObject):
+
     def __init__(self, controller):
         super(WinMedia, self).__init__()
         self.ressource_icon_path = "SeaGoatVision/client/ressource/img/"
@@ -41,10 +43,16 @@ class WinMedia(QtCore.QObject):
 
         self.is_recorded = False
         self.is_play = False
-        self.record_icon = QIcon(self.ressource_icon_path + "RecordVideoAction.png")
-        self.save_record_icon = QIcon(self.ressource_icon_path + "SaveServerImageAction.png")
-        self.play_icon = QIcon("/usr/share/icons/gnome/24x24/actions/player_play.png")
-        self.pause_icon = QIcon("/usr/share/icons/gnome/24x24/actions/player_pause.png")
+        self.record_icon = QIcon(
+            self.ressource_icon_path +
+            "RecordVideoAction.png")
+        self.save_record_icon = QIcon(
+            self.ressource_icon_path +
+            "SaveServerImageAction.png")
+        self.play_icon = QIcon(
+            "/usr/share/icons/gnome/24x24/actions/player_play.png")
+        self.pause_icon = QIcon(
+            "/usr/share/icons/gnome/24x24/actions/player_pause.png")
 
         self.dct_media = None
         self.last_selected_media = config.default_media_selected
@@ -55,7 +63,10 @@ class WinMedia(QtCore.QObject):
         self.shared_info.connect("start_execution", self._start_execution)
 
         # TODO optimize starting thread.
-        self.thread_player = player_file(controller, self._get_actual_no_frame, self.set_slider_value)
+        self.thread_player = player_file(
+            controller,
+            self._get_actual_no_frame,
+            self.set_slider_value)
         self.thread_player.start()
         self.reload_ui()
 
@@ -91,7 +102,7 @@ class WinMedia(QtCore.QObject):
         self._change_media(after_update=True)
         self.ui.cbMedia.currentIndexChanged.connect(self._change_media)
 
-    def _change_media(self, index= -1, after_update=False):
+    def _change_media(self, index=-1, after_update=False):
         media_name = self.ui.cbMedia.currentText()
         frame_webcam = self.ui.frame_webcam
         frame_webcam.setVisible(False)
@@ -148,7 +159,7 @@ class WinMedia(QtCore.QObject):
         return self.ui.slider_frame.value()
 
     def _start_execution(self, value=None):
-        if not value or type(value) is not dict:
+        if not value or not isinstance(value, dict):
             return
         media_name = value.get("media")
         if media_name == keys.get_media_file_video_name():
@@ -186,7 +197,10 @@ class WinMedia(QtCore.QObject):
         media_name = self.shared_info.get("media")
         if not media_name:
             return
-        self.controller.cmd_to_media(media_name, keys.set_key_media_frame(), value=value - 1)
+        self.controller.cmd_to_media(
+            media_name,
+            keys.set_key_media_frame(),
+            value=value - 1)
 
     def set_info(self, value=None):
         # Ignore the value
@@ -209,14 +223,16 @@ class WinMedia(QtCore.QObject):
         self._set_record_icon()
 
     def play(self):
-        #media_name = self.ui.cbMedia.currentText()
+        # media_name = self.ui.cbMedia.currentText()
         if self.is_play:
-            #if self.controller.cmd_to_media(media_name, keys.get_key_media_play()):
+            # if self.controller.cmd_to_media(media_name,
+            # keys.get_key_media_play()):
             self.thread_player.set_pause(True)
             self.is_play = False
             self._set_play_icon()
         else:
-            #if self.controller.cmd_to_media(media_name, keys.get_key_media_pause()):
+            # if self.controller.cmd_to_media(media_name,
+            # keys.get_key_media_pause()):
             self.thread_player.set_pause(False)
             self.is_play = True
             self._set_play_icon()
@@ -251,11 +267,14 @@ class WinMedia(QtCore.QObject):
         index = self.ui.cbMedia.findText(media_name)
         if index < 0:
             return False
-        # TODO Need to re-send signal if it's the same media? Maybe not necessary
+        # TODO Need to re-send signal if it's the same media? Maybe not
+        # necessary
         self.ui.cbMedia.setCurrentIndex(index)
         return True
 
+
 class player_file(threading.Thread):
+
     def __init__(self, controller, call_get_frame, call_set_frame):
         threading.Thread.__init__(self)
         self.controller = controller

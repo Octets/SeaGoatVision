@@ -5,6 +5,7 @@ from scipy.ndimage import label
 from SeaGoatVision.server.core.filter import Filter
 # http://stackoverflow.com/questions/11294859/how-to-define-the-markers-for-watershed-in-opencv
 
+
 def segment_on_dt(a, img):
     border = cv2.dilate(img, None, iterations=5)
     border = border - cv2.erode(border, None)
@@ -24,7 +25,9 @@ def segment_on_dt(a, img):
     lbl = lbl.astype(np.uint8)
     return 255 - lbl
 
+
 class Watershed(Filter):
+
     def __init__(self):
         Filter.__init__(self)
 
@@ -43,7 +46,8 @@ class Watershed(Filter):
 
     def method2(self, image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        ret, thresh = cv2.threshold(
+            gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
         fg = cv2.erode(thresh, None, iterations=2)
         bgt = cv2.dilate(thresh, None, iterations=3)
         ret, bg = cv2.threshold(bgt, 1, 128, 1)
@@ -51,7 +55,7 @@ class Watershed(Filter):
         marker32 = np.int32(marker)
         cv2.watershed(image, marker32)
         m = cv2.convertScaleAbs(marker32)
-        ret, thresh = cv2.threshold(m, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        ret, thresh = cv2.threshold(
+            m, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
         res = cv2.bitwise_and(image, image, mask=thresh)
         return res
-

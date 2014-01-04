@@ -17,6 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 def init_code(call_c_init):
     """
     This method returns the code to initialize the parameters
@@ -34,6 +35,7 @@ def init_code(call_c_init):
         """
     return code
 
+
 def destroy_code():
     """
     call the destructor
@@ -41,6 +43,7 @@ def destroy_code():
     return """
         destroy();
     """
+
 
 def execute_code():
     """
@@ -53,16 +56,19 @@ def execute_code():
             image = ret.data;
     """
 
+
 def set_original_image_code():
     return """
         cv::Mat mat_original(Nimage_original[0], Nimage_original[1], CV_8UC(3), image_original);
         original_image = mat_original;
     """
 
+
 def set_global_params_code():
     return """
         global_param = dct_global_param;
     """
+
 
 def params_code():
     """
@@ -354,6 +360,7 @@ def params_code():
         }
     """
 
+
 def notify_code():
     """
     Notify send information to output observer.
@@ -383,6 +390,7 @@ def notify_code():
         }
     """
 
+
 def help_code():
     """
     Return the code that returns the help string from a c++ file
@@ -394,6 +402,7 @@ def help_code():
         return_val = "";
         #endif
     """
+
 
 def config_code():
     """

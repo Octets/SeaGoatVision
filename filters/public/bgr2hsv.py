@@ -21,13 +21,14 @@ import cv2
 import cv2.cv as cv
 from SeaGoatVision.server.core.filter import Filter
 
+
 class BGR2HSV(Filter):
+
     """Convert to Hue Saturation Brightness/Value"""
+
     def __init__(self):
         Filter.__init__(self)
 
     def execute(self, image):
-        cv2.cvtColor(image, cv.CV_BGR2HSV, image)
+        cv2.cvtColor(image, cv.CV_BGR2YCrCb, image)
         return image
-
-

@@ -25,7 +25,9 @@ import sys
 from SeaGoatVision.server.core.filter import Filter
 import scipy.weave as weave
 
+
 class Exec(Filter):
+
     """Create and edit a filter on the fly for testing purposes"""
 
     def __init__(self):
@@ -48,19 +50,19 @@ class Exec(Filter):
 
     def exec_python(self, image):
         if self._ccode is not None:
-            exec self._ccode
+            exec(self._ccode)
         return image
 
     def exec_cpp(self, numpy_array):
         weave.inline(
-        """
+            """
         // Convert numpy array to C++ Mat object
         // The image data is accessed directly, there is no copy
         cv::Mat image(Nnumpy_array[0], Nnumpy_array[1], CV_8UC(3), numpy_array);
         """ + self.code,
-        arg_names=['numpy_array'],
-        headers=['<opencv2/opencv.hpp>', '<opencv2/gpu/gpu.hpp>'],
-        extra_objects=["`pkg-config --cflags --libs opencv`"])
+            arg_names=['numpy_array'],
+            headers=['<opencv2/opencv.hpp>', '<opencv2/gpu/gpu.hpp>'],
+            extra_objects=["`pkg-config --cflags --libs opencv`"])
 
         return numpy_array
 

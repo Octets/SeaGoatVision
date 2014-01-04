@@ -21,8 +21,11 @@ import cv2
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class Blur(Filter):
+
     """Smoothes an image using the normalized box filter"""
+
     def __init__(self):
         Filter.__init__(self)
         self.kernel_width = Param("width", 3, min_v=1, max_v=10)
@@ -30,7 +33,6 @@ class Blur(Filter):
 
     def execute(self, image):
         cv2.blur(image, (self.kernel_width.get(),
-                        self.kernel_height.get()),
-                        image)
+                         self.kernel_height.get()),
+                 image)
         return image
-

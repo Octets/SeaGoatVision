@@ -28,6 +28,7 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class Configuration(object):
     _instance = None
 
@@ -38,7 +39,9 @@ class Configuration(object):
             try:
                 from configurations.private import config as private_config
             except Exception as e:
-                logger.info("Ignore missing private configuration because: %s" % e)
+                logger.info(
+                    "Ignore missing private configuration because: %s" %
+                    e)
             # first instance
             cls.public_config = public_config
             try:
@@ -72,11 +75,11 @@ class Configuration(object):
         self.ext_filterchain = ".%s" % self.type_filterchain
         self.ext_media = ".%s" % self.type_media
 
-    #### Setter ####
+    # Setter ####
     def set_verbose(self, is_verbose):
         self.verbose = is_verbose
 
-    #### General config
+    # General config
     def get_verbose(self):
         if self.verbose:
             return True
@@ -161,7 +164,7 @@ class Configuration(object):
                 pass
         return response
 
-    #### Filterchain
+    # Filterchain
     def list_filterchain(self):
         if not os.path.isdir(self.dir_filterchain):
             return []
@@ -180,13 +183,18 @@ class Configuration(object):
             return None
         f = open(file_name, "r")
         if not f:
-            log.print_function(logger.error, "Can't open %s %s." % (file_name, type_name))
+            log.print_function(
+                logger.error, "Can't open %s %s." %
+                (file_name, type_name))
             return None
         str_value = f.readlines()
         try:
             value = json.loads("".join(str_value))
         except:
-            log.print_function(logger.error,  "The file %s not contain json data." % file_name)
+            log.print_function(
+                logger.error,
+                "The file %s not contain json data." %
+                file_name)
             value = None
         f.close()
         return value
@@ -218,7 +226,9 @@ class Configuration(object):
     def _is_config_exist(self, file_name, type_name, ignore_not_exist):
         if not os.path.isfile(file_name):
             if not ignore_not_exist:
-                log.print_function(logger.error, "The %s config %s not exist." % (file_name, type_name))
+                log.print_function(
+                    logger.error, "The %s config %s not exist." %
+                    (file_name, type_name))
             return False
         return True
 

@@ -19,10 +19,12 @@
 
 import cv2
 import numpy as np
-from SeaGoatVision.commons.param import  Param
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class ParticleFilter(Filter):
+
     """Remove small particles from the image.
         The image is first converted to grayscale and is then eroded and
         the remaining blobs are filtered according to the area of the blobs."""
@@ -36,17 +38,17 @@ class ParticleFilter(Filter):
 
     def configure(self):
         self._kernel = cv2.getStructuringElement(
-                                                 cv2.MORPH_CROSS,
-                                                 (self.kernel_width.get(),
-                                                  self.kernel_height.get()))
+            cv2.MORPH_CROSS,
+            (self.kernel_width.get(),
+             self.kernel_height.get()))
 
     def execute(self, image):
         cv2.erode(image, self._kernel, image)
         gray = cv2.split(image)[0]
         contours, _ = cv2.findContours(
-                                       gray,
-                                       cv2.RETR_TREE,
-                                       cv2.CHAIN_APPROX_SIMPLE)
+            gray,
+            cv2.RETR_TREE,
+            cv2.CHAIN_APPROX_SIMPLE)
 
         image = np.zeros(image.shape, np.uint8)
         for contour in contours:
@@ -56,6 +58,5 @@ class ParticleFilter(Filter):
                                  [contour],
                                  - 1,
                                  (255, 255, 255),
-                                 thickness= -1)
+                                 thickness=-1)
         return image
-

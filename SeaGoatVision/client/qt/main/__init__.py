@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -22,5 +22,5 @@ import os
 for f in os.listdir(os.path.dirname(__file__)):
     if f.endswith(".pyc") or f.endswith(".py"):
         file, _ = os.path.splitext(f)
-        code = 'from %(module)s import *' % {'module' : file}
-        exec code
+        code = 'from %(module)s import *' % {'module': file}
+        exec(code)

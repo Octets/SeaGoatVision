@@ -9,7 +9,9 @@ import os
 import sys
 from SeaGoatVision.server.core.filter import Filter
 
+
 class FaceSwap(Filter):
+
     """Swap faces"""
 
     def __init__(self):
@@ -28,14 +30,12 @@ class FaceSwap(Filter):
                                                    2,
                                                    0 | cv.CV_HAAR_SCALE_IMAGE,
                                                    (30, 30)
-                                                )
+                                                   )
         for i in xrange(0, len(faces)):
             lastface = faces[i - 1]
             face = faces[i]
             lastrect = self.get_image_size(image, face)
             face = cv2.resize(face, (lastmaxy - lastminy, lastmaxx - lastminx))
-
-
 
             faceimg, coord = self.get_image_data(image, face)
             y, x, _ = faceimg.shape
@@ -54,7 +54,7 @@ class FaceSwap(Filter):
 
             face = cv2.resize(face, (lastmaxy - lastminy, lastmaxx - lastminx))
             welp = image[lastminy:lastmaxy,
-                  lastminx:lastmaxx]
+                         lastminx:lastmaxx]
 
             image[lastminy:lastmaxy,
                   lastminx:lastmaxx] = cv2.addWeighted(welp, 0.5, face, 0.5, 0.0)  # cv2.merge((gray,gray,gray))

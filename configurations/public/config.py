@@ -21,30 +21,31 @@
 
 
 # Uncomment the other camera module when you need it.
-#import datetime
+# import datetime
 from configurations.template_media.conf_webcam import Conf_webcam
 from configurations.template_media.conf_imageGenerator import Conf_imageGenerator
-#from configurations.template_media.conf_firewire import Conf_firewire
-#from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
+# from configurations.template_media.conf_firewire import Conf_firewire
+# from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
 
 # keep always true for public configuration
 # It's useful if you need to disable private config
 active_configuration = True
 verbose = False
 
-## Log
+# Log
 # no log When log_path is None else put a string path with file_name
 log_path = None
 # exemple of log_path
-#log_path = "/tmp/log_%s.log" % datetime.datetime.now().strftime("%Y-%m-%d_%I:%M:%S")
+# log_path = "/tmp/log_%s.log" %
+# datetime.datetime.now().strftime("%Y-%m-%d_%I:%M:%S")
 
-## Networking
-### Server tcp output notification
+# Networking
+# Server tcp output notification
 port_tcp_output = 8090
 
 
-## Media
-path_save_record = "" # empty string will record on root of seagoat project
+# Media
+path_save_record = ""  # empty string will record on root of seagoat project
 lst_media = []
 
 # add camera webcam with default value
@@ -68,15 +69,16 @@ lst_media.append(cam)
 # cam.name = "Webcam"
 # lst_media.append(cam)
 
-## Filterchain
+# Filterchain
 show_public_filterchain = True
 
 
-## Filter
+# Filter
 show_public_filter = True
 
-## Other
+# Other
+
+
 def cmd_on_start(cmdHandler):
     # you can add command directly with the cmdHandler when the server is ready
     pass
-

@@ -20,12 +20,15 @@
 import cv2
 import cv2.cv as cv
 import numpy as np
-from SeaGoatVision.commons.param import  Param
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class HoughTransform(Filter):
+
     """Apply a Canny filter to the image then
     finds lines in a binary image using the standard Hough transform"""
+
     def __init__(self):
         Filter.__init__(self)
         self.canny1 = Param("Canny1", 50, min_v=1, max_v=256)
@@ -37,7 +40,11 @@ class HoughTransform(Filter):
 
     def execute(self, image):
         edges = cv2.Canny(image, self.canny1.get(), self.canny2.get())
-        lines = cv2.HoughLines(edges, self.rho.get(), cv.CV_PI / self.theta.get(), self.threshold.get())
+        lines = cv2.HoughLines(
+            edges,
+            self.rho.get(),
+            cv.CV_PI / self.theta.get(),
+            self.threshold.get())
         if lines is None:
             return image
         rho = lines[:, :, 0]

@@ -20,7 +20,9 @@
 import cv2
 import cv2.cv as cv
 
+
 class Movie:
+
     def __init__(self, file_name):
         self.video = None
         self.isplaying = True

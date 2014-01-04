@@ -30,7 +30,7 @@ from PySide import QtCore
 from PySide import QtGui
 from PySide.QtGui import QColor
 from PySide.QtGui import QPen
-#from PySide.QtCore import Qt
+# from PySide.QtCore import Qt
 import socket
 import threading
 import StringIO
@@ -38,7 +38,9 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class WinViewer(QtGui.QDockWidget):
+
     """Show the media after being processed by the filter chain.
     The window receives a filter in its constructor.
     This is the last executed filter on the media.
@@ -47,7 +49,8 @@ class WinViewer(QtGui.QDockWidget):
     newImage = QtCore.Signal(QtGui.QImage)
     closePreview = QtCore.Signal(object)
 
-    def __init__(self, controller, subscriber, execution_name, media_name, filterchain_name, host, uid):
+    def __init__(self, controller, subscriber,
+                 execution_name, media_name, filterchain_name, host, uid):
         super(WinViewer, self).__init__()
         self.host = host
         self.port = 5030
@@ -75,7 +78,9 @@ class WinViewer(QtGui.QDockWidget):
         if self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter):
             self.__add_output_observer()
             self.subscriber.subscribe(self.media_name, self.update_fps)
-            self.subscriber.subscribe(keys.get_key_execution_list(), self.update_execution)
+            self.subscriber.subscribe(
+                keys.get_key_execution_list(),
+                self.update_execution)
         self.light_observer.start()
 
     def reload_ui(self):
@@ -84,7 +89,8 @@ class WinViewer(QtGui.QDockWidget):
         self.newImage.connect(self.setPixmap)
         self.ui.filterComboBox.currentIndexChanged.connect(self._changeFilter)
         self.ui.closeButton.clicked.connect(self.__close)
-        self.ui.sizeComboBox.currentIndexChanged[str].connect(self.setImageScale)
+        self.ui.sizeComboBox.currentIndexChanged[
+            str].connect(self.setImageScale)
 
         self._updateFilters()
         self.actualFilter = self.ui.filterComboBox.currentText()
@@ -95,7 +101,10 @@ class WinViewer(QtGui.QDockWidget):
         if self.is_turn_off:
             return
         if not self.execution_stopped and self.actualFilter:
-            self.controller.remove_image_observer(self.updateImage, self.execution_name, self.actualFilter)
+            self.controller.remove_image_observer(
+                self.updateImage,
+                self.execution_name,
+                self.actualFilter)
             self.controller.remove_output_observer(self.execution_name)
         if self.thread_output:
             self.thread_output.stop()
@@ -103,9 +112,9 @@ class WinViewer(QtGui.QDockWidget):
         self.light_observer.stop()
         logger.info("WinViewer %s quit." % (self.execution_name))
 
-    ######################################################################
-    ####################### PRIVATE FUNCTION  ############################
-    ######################################################################
+    #
+    # PRIVATE FUNCTION  ############################
+    #
     def _get_light_observer(self):
         # call me just one time
         light_widget = LightWidget()
@@ -120,9 +129,12 @@ class WinViewer(QtGui.QDockWidget):
         self.closePreview.emit(self.uid)
 
     def __add_output_observer(self):
-        self.thread_output = Listen_output(self.updateLog, self.host, self.port)
+        self.thread_output = Listen_output(
+            self.updateLog,
+            self.host,
+            self.port)
         self.thread_output.start()
-        ########### TODO fait un thread de client dude
+        # TODO fait un thread de client dude
         self.controller.add_output_observer(self.execution_name)
 
     def _updateFilters(self):
@@ -133,16 +145,23 @@ class WinViewer(QtGui.QDockWidget):
             return
         lst_filter = info.get("filters", None)
         if not lst_filter:
-            logger.warning("Recieve empty filter list from filterchain %s" % self.filterchain_name)
+            logger.warning(
+                "Recieve empty filter list from filterchain %s" %
+                self.filterchain_name)
             return
         for sFilter in lst_filter:
             self.ui.filterComboBox.addItem(sFilter.get("name", ""))
-        self.ui.filterComboBox.setCurrentIndex(self.ui.filterComboBox.count() - 1)
+        self.ui.filterComboBox.setCurrentIndex(
+            self.ui.filterComboBox.count() - 1)
 
     def _changeFilter(self):
         if self.actualFilter:
             filter_name = self.ui.filterComboBox.currentText()
-            self.controller.set_image_observer(self.updateImage, self.execution_name, self.actualFilter, filter_name)
+            self.controller.set_image_observer(
+                self.updateImage,
+                self.execution_name,
+                self.actualFilter,
+                filter_name)
             self.actualFilter = filter_name
 
     def updateLog(self, data):
@@ -181,7 +200,7 @@ class WinViewer(QtGui.QDockWidget):
         data = buff.getvalue()
         buff.close()
         qimage = QtGui.QImage.fromData(data)
-        if self.size <> 1.0:
+        if self.size != 1.0:
             shape = image.shape
             qimage = qimage.scaled(shape[1] * self.size, shape[0] * self.size)
         self.newImage.emit(qimage)
@@ -200,7 +219,9 @@ class WinViewer(QtGui.QDockWidget):
             self.closeEvent()
             self.is_turn_off = True
 
+
 class Listen_output(threading.Thread):
+
     def __init__(self, observer, host, port):
         threading.Thread.__init__(self)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -234,7 +255,9 @@ class Listen_output(threading.Thread):
             pass
         self.socket.close()
 
+
 class Light_observer(threading.Thread):
+
     def __init__(self, uiwidget):
         threading.Thread.__init__(self)
         self.uiwidget = uiwidget
@@ -260,7 +283,9 @@ class Light_observer(threading.Thread):
     def stop(self):
         self.is_stopped = True
 
+
 class LightWidget(QtGui.QWidget):
+
     def __init__(self):
         super(LightWidget, self).__init__()
         self.color = QColor()

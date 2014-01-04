@@ -19,11 +19,14 @@
 
 import cv2
 import numpy as np
-from SeaGoatVision.commons.param import  Param
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class Perspective(Filter):
+
     """Wrap perspective"""
+
     def __init__(self):
         Filter.__init__(self)
         self.topleftx = Param("Top Left X", 0, min_v=0, max_v=640)

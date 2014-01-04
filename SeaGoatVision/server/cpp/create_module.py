@@ -17,18 +17,19 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
-import scipy.weave.ext_tools as ext_tools
 import os
-#import sys
 import time
 
+from SeaGoatVision.commons import log
 from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.server.core.configuration import Configuration
 from cpp_code import *
+import numpy as np
 from python_code import *
-from SeaGoatVision.commons import log
+import scipy.weave.ext_tools as ext_tools
 
+
+# import sys
 logger = log.get_logger(__name__)
 
 BUILD_DIR = 'build'
@@ -37,7 +38,9 @@ has_configure = False
 has_destroy = False
 config = Configuration()
 
-def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=[], extra_compile_arg=[]):
+
+def import_all_cpp_filter(
+        cppfiles, cpptimestamps, module, file, extra_link_arg=[], extra_compile_arg=[]):
     """
     This method finds and compile every c++ filters
     If a c++ file changed, the file must be recompiled in a new .so file
@@ -57,18 +60,20 @@ def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=
         code = "cv::Mat execute(cv::Mat "
         if code not in cppcode:
             code += "image)"
-            log.print_function(logger.error, "Missing execute function into %s like \"%s\"" % (filename, code))
+            log.print_function(
+                logger.error, "Missing execute function into %s like \"%s\"" %
+                (filename, code))
             continue
 
         # Verify if there are changes in the c++ code file.  If there are
         # changes, add a timestamp to the filter .so file name to force a
         # reimportation of the new filter.
-        if cppfiles.has_key(filename):
+        if filename in cppfiles:
             if cppcode != cppfiles[filename]:
                 cpptimestamps[filename] = str(int(time.time()))
         cppfiles[filename] = cppcode
 
-        if cpptimestamps.has_key(filename):
+        if filename in cpptimestamps:
             modname = filename + cpptimestamps[filename]
         else:
             modname = filename
@@ -79,6 +84,7 @@ def import_all_cpp_filter(cppfiles, cpptimestamps, module, file, extra_link_arg=
 
         _create_module(cpptimestamps, module, filename, mod)
 
+
 def _create_build(cppfiles):
     if not os.path.exists(BUILD_DIR):
         os.mkdir(BUILD_DIR)
@@ -88,11 +94,12 @@ def _create_build(cppfiles):
         for f in os.listdir(RELOAD_DIR):
             os.remove(os.path.join(RELOAD_DIR, f))
 
+
 def _create_module(cpptimestamps, module, modname, mod):
     try:
         logger.info("Begin compile %s.", modname)
         no_verbose = 3 if config.get_verbose() else 0
-        if cpptimestamps.has_key(modname):
+        if modname in cpptimestamps:
             # Reloaded modules are saved in the reload folder for easy cleanup
             mod.compile(RELOAD_DIR, verbose=no_verbose)
         else:
@@ -100,18 +107,25 @@ def _create_module(cpptimestamps, module, modname, mod):
 
         cppmodule = __import__(modname)
         params = {}
-        dct_fct = {'__init__' : create_init(getattr(cppmodule, 'init_' + modname), params),
-                    'execute' : create_execute(getattr(cppmodule, 'exec_' + modname)),
-                    'py_init_param' : py_init_param,
-                    'py_init_global_param' : py_init_global_param,
-                    'set_original_image' : create_set_original_image(getattr(cppmodule, 'set_original_image_' + modname)),
-                    'set_global_params_cpp' : create_set_global_params(getattr(cppmodule, 'set_global_params_' + modname)),
-                    '__doc__' : getattr(cppmodule, 'help_' + modname)()
-                }
+        dct_fct = {
+            '__init__':
+            create_init(getattr(cppmodule, 'init_' + modname), params),
+            'execute':
+            create_execute(getattr(cppmodule, 'exec_' + modname)),
+            'py_init_param': py_init_param,
+            'py_init_global_param': py_init_global_param,
+            'set_original_image': create_set_original_image(
+                getattr(cppmodule, 'set_original_image_' + modname)),
+            'set_global_params_cpp': create_set_global_params(
+                getattr(cppmodule, 'set_global_params_' + modname)),
+            '__doc__': getattr(cppmodule, 'help_' + modname)()
+        }
         if has_configure:
-            dct_fct['configure'] = create_configure(getattr(cppmodule, 'config_' + modname))
+            dct_fct['configure'] = create_configure(
+                getattr(cppmodule, 'config_' + modname))
         if has_destroy:
-            dct_fct['destroy'] = create_destroy(getattr(cppmodule, 'destroy_' + modname))
+            dct_fct['destroy'] = create_destroy(
+                getattr(cppmodule, 'destroy_' + modname))
 
         clazz = type(modname,
                      (Filter,),
@@ -121,6 +135,7 @@ def _create_module(cpptimestamps, module, modname, mod):
         del clazz
     except Exception as e:
         log.printerror_stacktrace(logger, e)
+
 
 def _create_python_code(mod, modname, cppcode):
     # param variable size
@@ -137,7 +152,14 @@ def _create_python_code(mod, modname, cppcode):
     mod.add_function(func)
 
     # __init__
-    func = ext_tools.ext_function('init_' + modname, init_code("void init()" in cppcode), ['p', 'pip', 'py_notify', 'dct_global_param', 'pip_global'])
+    func = ext_tools.ext_function(
+        'init_' + modname,
+        init_code("void init()" in cppcode),
+        ['p',
+         'pip',
+         'py_notify',
+         'dct_global_param',
+         'pip_global'])
     func.customize.add_support_code(params_code())
     func.customize.add_support_code(notify_code())
     mod.add_function(func)
@@ -162,11 +184,17 @@ def _create_python_code(mod, modname, cppcode):
         has_destroy = False
 
     # set original image
-    func = ext_tools.ext_function('set_original_image_' + modname, set_original_image_code(), ['image_original'])
+    func = ext_tools.ext_function(
+        'set_original_image_' + modname,
+        set_original_image_code(),
+        ['image_original'])
     mod.add_function(func)
 
     # set global params
-    func = ext_tools.ext_function('set_global_params_' + modname, set_global_params_code(), ['dct_global_param'])
+    func = ext_tools.ext_function(
+        'set_global_params_' + modname,
+        set_global_params_code(),
+        ['dct_global_param'])
     mod.add_function(func)
 
     # execute
@@ -176,6 +204,7 @@ def _create_python_code(mod, modname, cppcode):
     func.customize.add_support_code(cppcode)
     func.customize.add_support_code(notify_code())
     mod.add_function(func)
+
 
 def _compile_cpp(modname, cppcode, lst_extra_link, lst_extra_compile):
     # Compile filters
@@ -194,5 +223,4 @@ def _compile_cpp(modname, cppcode, lst_extra_link, lst_extra_compile):
     # add debug symbol
     mod.customize.add_extra_compile_arg("-g")
     mod.customize.add_extra_compile_arg("-pipe")
-
     return mod

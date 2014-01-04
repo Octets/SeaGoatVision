@@ -24,7 +24,9 @@ from implementation.movie import Movie
 from implementation.imagefolder import ImageFolder
 from SeaGoatVision.commons import keys
 
+
 class Media_video(Media):
+
     def __init__(self, name):
         super(Media_video, self).__init__()
         self.movie = None
@@ -100,7 +102,7 @@ class Media_video(Media):
             self.imagefolder = ImageFolder()
             self.imagefolder.read_image(file_name)
             return True
-        #if the file is not a video, videocapture not return None
+        # if the file is not a video, videocapture not return None
         # check if it's supported video
         video = cv2.VideoCapture(file_name)
         if video:

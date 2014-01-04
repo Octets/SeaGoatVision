@@ -22,7 +22,9 @@ import cv2
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class BilateralFilter(Filter):
+
     """Applies the bilateral filter to an image."""
 
     def __init__(self):
@@ -33,7 +35,6 @@ class BilateralFilter(Filter):
 
     def execute(self, image):
         return cv2.bilateralFilter(image,
-                            self.diameter.get(),
-                            self.sigma_color.get(),
-                            self.sigma_space.get())
-
+                                   self.diameter.get(),
+                                   self.sigma_color.get(),
+                                   self.sigma_space.get())

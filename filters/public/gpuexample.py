@@ -28,7 +28,9 @@
 import scipy.weave as weave
 from SeaGoatVision.server.core.filter import Filter
 
+
 class GPUExample(Filter):
+
     """Example on how to use scipy.weave to access the GPU with OpenCV.
         http://opencv.willowgarage.com/wiki/OpenCV_GPU"""
 
@@ -44,7 +46,7 @@ class GPUExample(Filter):
         image.data = image"""
 
         weave.inline(
-        """
+            """
         // Convert numpy array to C++ Mat object
         // The image data is accessed directly, there is no copy
         cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
@@ -61,8 +63,8 @@ class GPUExample(Filter):
         // The numpy image is modified here.  No further steps are required
         gpuimg.download(mat);
         """,
-        arg_names=['image'],
-        headers=['<opencv2/opencv.hpp>', '<opencv2/gpu/gpu.hpp>'],
-        extra_objects=["`pkg-config --cflags --libs opencv`"])
+            arg_names=['image'],
+            headers=['<opencv2/opencv.hpp>', '<opencv2/gpu/gpu.hpp>'],
+            extra_objects=["`pkg-config --cflags --libs opencv`"])
 
         return image

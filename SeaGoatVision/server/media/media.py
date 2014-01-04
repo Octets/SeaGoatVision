@@ -23,7 +23,9 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class Media(object):
+
     def __init__(self):
         self.sleep_time = 1 / 30.0
         self.lst_observer = []
@@ -50,7 +52,7 @@ class Media(object):
         pass
 
     def get_dct_media_param(self):
-        return {param.get_name():param for param in self.get_properties_param()}
+        return {param.get_name(): param for param in self.get_properties_param()}
 
     def get_properties_param(self):
         return []
@@ -69,7 +71,7 @@ class Media(object):
 
     def get_info(self):
         fps = int(1 / self.sleep_time) if self.thread else -1
-        return {"fps" : fps, "nb_frame" : self.get_total_frames()}
+        return {"fps": fps, "nb_frame": self.get_total_frames()}
 
     def serialize(self):
         pass
@@ -143,7 +145,9 @@ class Media(object):
         if observer in self.lst_observer:
             self.lst_observer.remove(observer)
         else:
-            logger.warning("Observer missing into media %s" % (self.get_name()))
+            logger.warning(
+                "Observer missing into media %s" %
+                (self.get_name()))
         if not self.lst_observer:
             self.close()
 

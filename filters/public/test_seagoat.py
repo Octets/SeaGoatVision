@@ -23,6 +23,8 @@ from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
 # This filter is created to test communication in Seagoat with unit test
+
+
 class TestSeagoat(Filter):
 
     def __init__(self):

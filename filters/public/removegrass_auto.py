@@ -21,6 +21,7 @@ import cv2
 import numpy as np
 from SeaGoatVision.server.core.filter import Filter
 
+
 class RemoveGrassAuto(Filter):
 
     def __init__(self):
@@ -44,4 +45,3 @@ class RemoveGrassAuto(Filter):
         image = cv2.merge((blue, green, red))
 
         return image
-

@@ -22,7 +22,9 @@ from SeaGoatVision.commons.param import Param
 import scipy
 from SeaGoatVision.server.core.filter import Filter
 
+
 class Rotate(Filter):
+
     """Draw a black rectangle on top of the image"""
 
     def __init__(self):

@@ -23,7 +23,9 @@ import numpy as np
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class Canny(Filter):
+
     """Apply a canny filter to the image"""
 
     def __init__(self):
@@ -41,4 +43,3 @@ class Canny(Filter):
         cv2.merge((gray, gray, gray), image)
 
         return image
-

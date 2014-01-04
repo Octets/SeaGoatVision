@@ -33,7 +33,9 @@ import thread
 
 logger = log.get_logger(__name__)
 
+
 class Firewire(Media_streaming):
+
     """Return images from a Firewire device."""
 
     def __init__(self, config):
@@ -94,10 +96,18 @@ class Firewire(Media_streaming):
                     param = Param("%s%s" % (name, self.key_auto_param), False)
                     param.add_notify_reset(self.update_property_param)
                     self.dct_params[param.get_name()] = param
-                    param = Param("%s-red" % name, value["RV_value"], min_v=value["min"], max_v=value["max"])
+                    param = Param(
+                        "%s-red" % name,
+                        value["RV_value"],
+                        min_v=value["min"],
+                        max_v=value["max"])
                     param.add_notify_reset(self.update_property_param)
                     self.dct_params[param.get_name()] = param
-                    param = Param("%s-blue" % name, value["BU_value"], min_v=value["min"], max_v=value["max"])
+                    param = Param(
+                        "%s-blue" % name,
+                        value["BU_value"],
+                        min_v=value["min"],
+                        max_v=value["max"])
                     param.add_notify_reset(self.update_property_param)
                     self.dct_params[param.get_name()] = param
                     continue
@@ -105,11 +115,17 @@ class Firewire(Media_streaming):
                     param = Param("%s%s" % (name, self.key_auto_param), False)
                     param.add_notify_reset(self.update_property_param)
                     self.dct_params[param.get_name()] = param
-                param = Param(name, value["value"], min_v=value["min"], max_v=value["max"])
+                param = Param(
+                    name,
+                    value["value"],
+                    min_v=value["min"],
+                    max_v=value["max"])
                 param.add_notify_reset(self.update_property_param)
                 self.dct_params[param.get_name()] = param
             except Exception as e:
-                log.printerror_stacktrace(logger, "%s - name: %s, value: %s" % (e, name, value))
+                log.printerror_stacktrace(
+                    logger, "%s - name: %s, value: %s" %
+                    (e, name, value))
 
     def serialize(self):
         return [param.serialize() for param in self.get_properties_param()]
@@ -139,16 +155,17 @@ class Firewire(Media_streaming):
             return False
         try:
             self.camera.initialize(reset_bus=True,
-                               mode=self.own_config.mode,
-                               framerate=self.own_config.framerate,
-                               iso_speed=self.own_config.iso_speed,
-                               operation_mode=self.own_config.operation_mode
-                               )
+                                   mode=self.own_config.mode,
+                                   framerate=self.own_config.framerate,
+                                   iso_speed=self.own_config.iso_speed,
+                                   operation_mode=self.own_config.operation_mode
+                                   )
         except:
             return False
         return True
 
-    def try_open_camera(self, open_streaming=False, repeat_loop= -1, sleep_time=1):
+    def try_open_camera(
+            self, open_streaming=False, repeat_loop=-1, sleep_time=1):
         # param :
         # int repeat_loop - if -1, it's an infinite loop, else it's the number loop
         # bool open_streaming - if true, try to start the streaming of seagoat and the firewire
@@ -165,7 +182,9 @@ class Firewire(Media_streaming):
                 if self.initialize():
                     if open_streaming:
                         if self.open():
-                            logger.debug("Open with success %s" % self.get_name())
+                            logger.debug(
+                                "Open with success %s" %
+                                self.get_name())
                             self.loop_try_open_camera = False
                             return True
                     else:
@@ -178,7 +197,9 @@ class Firewire(Media_streaming):
                 return False
             if repeat_loop > 0:
                 repeat_loop -= 1
-            log.print_function(logger.error, "Cannot open the camera %s" % self.get_name())
+            log.print_function(
+                logger.error, "Cannot open the camera %s" %
+                self.get_name())
 
     def open_camera(self):
         logger.debug("open camera %s" % self.get_name())
@@ -198,7 +219,10 @@ class Firewire(Media_streaming):
         if self.camera is not None:
             return True
         else:
-            log.print_function(logger.warning, "No Firewire camera detected - %s." % self.id)
+            log.print_function(
+                logger.warning,
+                "No Firewire camera detected - %s." %
+                self.id)
         return False
 
     def open(self):
@@ -243,7 +267,9 @@ class Firewire(Media_streaming):
             # we already close the camera
             return
         # anormal close, do something!
-        logger.error("Receive events camera close %s, retry to reopen it." % (self.id))
+        logger.error(
+            "Receive events camera close %s, retry to reopen it." %
+            (self.id))
         # clean camera
         self.camera.grabEvent.removeObserver(self.camera_observer)
         self.camera.stopEvent.removeObserver(self.camera_close)
@@ -253,7 +279,7 @@ class Firewire(Media_streaming):
         self.actual_image = None
         self.is_streaming = False
         # reopen the camera
-        kwargs = {"open_streaming" : True}
+        kwargs = {"open_streaming": True}
         # TODO how using kwargs???
         thread.start_new_thread(self.try_open_camera, (True,))
 
@@ -275,22 +301,33 @@ class Firewire(Media_streaming):
                 if active_key in key:
                     contain_auto_variable = True
                     if self.key_auto_param in key:
-                        self.update_property_param(key, value.get(), update_object_param=False)
+                        self.update_property_param(
+                            key,
+                            value.get(),
+                            update_object_param=False)
             if contain_auto_variable:
                 continue
             # find auto key disable and cancel it
             if self.key_auto_param in key:
                 continue
-            self.update_property_param(key, value.get(), update_object_param=False)
+            self.update_property_param(
+                key,
+                value.get(),
+                update_object_param=False)
 
-    def update_property_param(self, param_name, value, update_object_param=True):
+    def update_property_param(
+            self, param_name, value, update_object_param=True):
         if not self.camera:
             return False
 
         if update_object_param:
             self.dct_params[param_name].set(value)
 
-        logger.debug("Camera %s param_name %s and value %s", self.get_name(), param_name, value)
+        logger.debug(
+            "Camera %s param_name %s and value %s",
+            self.get_name(),
+            param_name,
+            value)
         if self.key_auto_param in param_name:
             new_param_name = param_name[:-len(self.key_auto_param)]
             self.camera.set_property_auto(new_param_name, value)
@@ -300,7 +337,10 @@ class Firewire(Media_streaming):
             elif "blue" in param_name:
                 self.camera.set_whitebalance(BU_value=value)
             else:
-                log.print_function(logger.error, "Can define the right color %s" % param_name)
+                log.print_function(
+                    logger.error,
+                    "Can define the right color %s" %
+                    param_name)
                 return False
         else:
             self.camera.set_property(param_name, value)
@@ -311,13 +351,16 @@ class Firewire(Media_streaming):
             return None
 
         diff_time = self.last_timestamp - self.actual_timestamp
-        # logger.debug("actual time %s, last time %s, diff %s" % (self.actual_timestamp, self.last_timestamp, diff_time))
+        # logger.debug("actual time %s, last time %s, diff %s" %
+        # (self.actual_timestamp, self.last_timestamp, diff_time))
         self.actual_timestamp = self.last_timestamp
         if self.last_timestamp == -1:
             if not self.buffer_last_timestamp:
                 self.buffer_last_timestamp = True
                 return None
-            log.print_function(logger.warning, "No image receive from %s" % (self.get_name()))
+            log.print_function(
+                logger.warning, "No image receive from %s" %
+                (self.get_name()))
             self.count_no_image += 1
             if self.count_no_image > self.max_no_image:
                 self.count_no_image = 0
@@ -326,8 +369,11 @@ class Firewire(Media_streaming):
         if not diff_time:
             self.count_not_receive += 1
             if self.count_not_receive >= self.max_not_receive:
-                # logger.error("Didn't receive since %d images. Restart the camera %s??" % (self.count_not_receive, self.id))
-                logger.error("Didn't receive since %d images on camera %s" % (self.count_not_receive, self.get_name()))
+                # logger.error("Didn't receive since %d images. Restart the
+                # camera %s??" % (self.count_not_receive, self.id))
+                logger.error(
+                    "Didn't receive since %d images on camera %s" %
+                    (self.count_not_receive, self.get_name()))
                 self.actual_timestamp = self.last_timestamp = -1
                 self.count_not_receive = 0
             # ignore if only missing one image
@@ -335,7 +381,9 @@ class Firewire(Media_streaming):
                 self.buffer_last_timestamp = True
                 return self.actual_image
             else:
-                logger.warning("Receive no more image from %s, timestamp %d" % (self.get_name(), self.actual_timestamp))
+                logger.warning(
+                    "Receive no more image from %s, timestamp %d" %
+                    (self.get_name(), self.actual_timestamp))
                 return None
         # reinitilize all protection
         self.buffer_last_timestamp = False

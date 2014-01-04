@@ -22,7 +22,9 @@ import cv2
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class Rectangle(Filter):
+
     """Draw a black rectangle on top of the image"""
 
     def __init__(self):
@@ -34,9 +36,8 @@ class Rectangle(Filter):
 
     def execute(self, image):
         cv2.rectangle(image,
-            (self.x1.get(), self.y1.get()),
-            (self.x2.get(), self.y2.get()),
-            (0, 0, 0),
-            cv2.cv.CV_FILLED)
+                     (self.x1.get(), self.y1.get()),
+                     (self.x2.get(), self.y2.get()),
+                     (0, 0, 0),
+                      cv2.cv.CV_FILLED)
         return image
-

@@ -95,9 +95,9 @@ class LineTest:
         noise = self.remove_line(filtered, mapping)
 
         ret_image = np.zeros(image.shape, np.uint8)
-        ret_image[:,:,0] = undetected
-        ret_image[:,:,1] = detected 
-        ret_image[:,:,2] = noise | undetected 
+        ret_image[:,:, 0] = undetected
+        ret_image[:,:, 1] = detected 
+        ret_image[:,:, 2] = noise | undetected 
         
         return cv2.resize(ret_image, (400, 300))
     
@@ -111,13 +111,13 @@ class LineTest:
         # Find the center of the blob
         moment = cv2.moments(cf)
         m00 = moment['m00']
-        if m00 <> 0:
+        if m00 != 0:
             x = int(moment['m10'] / m00)
             y = int(moment['m01'] / m00)
         else:
             x = cf[0][0][0]
             y = cf[0][0][1]
-        min_dist = sys.maxint
+        min_dist = sys.maxsize
         
         # If there are many lines, we find the closest one
         for cm in cnt_map:

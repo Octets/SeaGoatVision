@@ -21,7 +21,9 @@ import cv2
 import cv2.cv as cv
 from SeaGoatVision.server.core.filter import Filter
 
+
 class ConvexHull(Filter):
+
     def __init__(self):
         Filter.__init__(self)
 

@@ -19,7 +19,9 @@
 
 from SeaGoatVision.server.media.implementation.webcam import Webcam
 
+
 class Conf_webcam:
+
     def __init__(self):
         self.media = Webcam
         self.name = "Webcam"

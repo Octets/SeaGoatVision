@@ -25,7 +25,9 @@ import numpy as np
 
 logger = log.get_logger(__name__)
 
+
 class ImageGenerator(Media_streaming):
+
     """Return a generate image."""
 
     def __init__(self, config):
@@ -48,7 +50,7 @@ class ImageGenerator(Media_streaming):
         default_width = 800
         param = Param("width", default_width, min_v=1, max_v=1200)
         self.dct_params["width"] = param
-        
+
         default_height = 600
         param = Param("height", default_height, min_v=1, max_v=1200)
         self.dct_params["height"] = param
@@ -58,13 +60,15 @@ class ImageGenerator(Media_streaming):
         self.dct_params["fps"] = param
 
     def serialize(self):
-        return {"width":self.dct_params.get("width").get(), "height":self.dct_params.get("height"), "fps":self.dct_params.get("fps").get()}
+        return {"width": self.dct_params.get("width").get(), "height": self.dct_params.get("height"), "fps": self.dct_params.get("fps").get()}
 
     def deserialize(self, data):
         if not data:
             return False
-        if type(data) is not dict:
-            log.print_function(logger.error, "Wrong format data, suppose to be dict into camera %s" % self.get_name())
+        if not isinstance(data, dict):
+            log.print_function(
+                logger.error, "Wrong format data, suppose to be dict into camera %s" %
+                self.get_name())
             return False
         res = data.get("width", None)
         if res:

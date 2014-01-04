@@ -25,7 +25,9 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class Webcam(Media_streaming):
+
     """Return images from the webcam."""
 
     def __init__(self, config):
@@ -49,29 +51,34 @@ class Webcam(Media_streaming):
         self.dct_params = {}
 
         default_resolution_name = "800x600"
-        self.dct_resolution = {default_resolution_name:(800, 600),
-                               "320x240":(320, 240),
-                               "640x480":(640, 480),
-                               "1024x768":(1024, 768),
-                               "1280x960":(1280, 960)}
-        param = Param("resolution", default_resolution_name, lst_value=self.dct_resolution.keys())
+        self.dct_resolution = {default_resolution_name: (800, 600),
+                               "320x240": (320, 240),
+                               "640x480": (640, 480),
+                               "1024x768": (1024, 768),
+                               "1280x960": (1280, 960)}
+        param = Param(
+            "resolution",
+            default_resolution_name,
+            lst_value=self.dct_resolution.keys())
         param.add_notify_reset(self.reset_property_param)
         self.dct_params["resolution"] = param
 
         default_fps_name = "30"
-        self.dct_fps = {default_fps_name:30, "15":15, "7.5":7.5}
+        self.dct_fps = {default_fps_name: 30, "15": 15, "7.5": 7.5}
         param = Param("fps", default_fps_name, lst_value=self.dct_fps.keys())
         param.add_notify_reset(self.reset_property_param)
         self.dct_params["fps"] = param
 
     def serialize(self):
-        return {"resolution":self.dct_params.get("resolution").get(), "fps":self.dct_params.get("fps").get()}
+        return {"resolution": self.dct_params.get("resolution").get(), "fps": self.dct_params.get("fps").get()}
 
     def deserialize(self, data):
         if not data:
             return False
-        if type(data) is not dict:
-            log.print_function(logger.error, "Wrong format data, suppose to be dict into camera %s" % self.get_name())
+        if not isinstance(data, dict):
+            log.print_function(
+                logger.error, "Wrong format data, suppose to be dict into camera %s" %
+                self.get_name())
             return False
         res = data.get("resolution", None)
         if res:
@@ -83,7 +90,8 @@ class Webcam(Media_streaming):
 
     def open(self):
         try:
-            shape = self.dct_resolution[self.dct_params.get("resolution").get()]
+            shape = self.dct_resolution[
+                self.dct_params.get("resolution").get()]
             fps = self.dct_fps[self.dct_params.get("fps").get()]
 
             self.video = cv2.VideoCapture(self.own_config.no)
@@ -91,7 +99,9 @@ class Webcam(Media_streaming):
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, shape[1])
             self.video.set(cv2.cv.CV_CAP_PROP_FPS, fps)
         except Exception as e:
-            log.printerror_stacktrace(logger, "Open camera %s: %s" % (self.get_name(), e))
+            log.printerror_stacktrace(
+                logger, "Open camera %s: %s" %
+                (self.get_name(), e))
             return False
         # call open when video is ready
         return Media_streaming.open(self)

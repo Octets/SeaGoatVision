@@ -21,11 +21,14 @@ import numpy as np
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class ColorThreshold(Filter):
+
     """Apply a binary threshold on the three channels of the images
         Each channel have a minimum and a maximum value.
         Everything within this threshold is white (255, 255, 255)
         Everything else is black (0, 0, 0)"""
+
     def __init__(self):
         Filter.__init__(self)
         self.blue = Param("Blue", 20, min_v=1, max_v=256, thres_h=256)
@@ -39,17 +42,17 @@ class ColorThreshold(Filter):
     def configure(self):
         min_v, max_v = self.blue.get()
         self._barray = np.array([1.0 * (min_v <= x <= max_v)
-                            for x in range(0, 256)], dtype=np.float32)
+                                 for x in range(0, 256)], dtype=np.float32)
         min_v, max_v = self.green.get()
         self._garray = np.array([1.0 * (min_v <= x <= max_v)
-                            for x in range(0, 256)], dtype=np.float32)
+                                 for x in range(0, 256)], dtype=np.float32)
         min_v, max_v = self.red.get()
         self._rarray = np.array([1.0 * (min_v <= x <= max_v)
-                            for x in range(0, 256)], dtype=np.float32)
+                                 for x in range(0, 256)], dtype=np.float32)
 
     def execute(self, image):
         image[:, :, 0] = image[:, :, 1] = image[:, :, 2] = (
-                                            255 * self._barray[image[:, :, 0]] *
-                                            self._garray[image[:, :, 1]] *
-                                            self._rarray[image[:, :, 2]])
+            255 * self._barray[image[:, :, 0]] *
+            self._garray[image[:, :, 1]] *
+            self._rarray[image[:, :, 2]])
         return image

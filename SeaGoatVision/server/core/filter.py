@@ -22,7 +22,9 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class Filter(object):
+
     def __init__(self, name=None):
         self._output_observers = list()
         self.original_image = None
@@ -31,10 +33,10 @@ class Filter(object):
         self.dct_media_param = {}
 
     def serialize(self):
-        return {"filter_name":self.__class__.__name__, "lst_param":[param.serialize() for param in self.get_params()]}
+        return {"filter_name": self.__class__.__name__, "lst_param": [param.serialize() for param in self.get_params()]}
 
     def serialize_info(self):
-        return {"name":self.name, "doc":self.__doc__}
+        return {"name": self.name, "doc": self.__doc__}
 
     def deserialize(self, value):
         status = True
@@ -76,7 +78,10 @@ class Filter(object):
         # complete the list and point on it
         for key, param in self.dct_global_param.items():
             if key in dct_global_param:
-                log.print_function(logger.error, "Duplicate key on dct_global_param : %s", key)
+                log.print_function(
+                    logger.error,
+                    "Duplicate key on dct_global_param : %s",
+                    key)
                 continue
             dct_global_param[key] = param
         self.dct_global_param = dct_global_param
@@ -88,7 +93,10 @@ class Filter(object):
     def add_global_params(self, param):
         name = param.get_name()
         if name in self.dct_global_param:
-            log.print_function(logger.error, "This param is already in the list : %s", name)
+            log.print_function(
+                logger.error,
+                "This param is already in the list : %s",
+                name)
             return
         self.dct_global_param[name] = param
 

@@ -26,7 +26,9 @@ import socket
 import exceptions
 logger = log.get_logger(__name__)
 
+
 class Json_client():
+
     def __init__(self, port, host=""):
         self.rpc = jsonrpclib.Server('http://%s:%s' % (host, port))
         self._lst_port = []
@@ -61,7 +63,8 @@ class Json_client():
             local_observer.start()
         return status
 
-    def set_image_observer(self, observer, execution_name, filter_name_old, filter_name_new):
+    def set_image_observer(
+            self, observer, execution_name, filter_name_old, filter_name_new):
         find = False
         for o_observer in self.observer:
             if observer == o_observer.observer:
@@ -76,7 +79,8 @@ class Json_client():
         pass
 
     def get_params_filterchain(self, execution_name, filter_name):
-        lst_param_ser = self.rpc.get_params_filterchain(execution_name, filter_name)
+        lst_param_ser = self.rpc.get_params_filterchain(
+            execution_name, filter_name)
         return self._deserialize_param(lst_param_ser)
 
     def get_params_media(self, media_name):
@@ -91,7 +95,9 @@ class Json_client():
         self._lst_port.append(port)
         return port
 
+
 class Observer(threading.Thread):
+
     def __init__(self, observer, hostname, port):
         threading.Thread.__init__(self)
         self.observer = observer
@@ -127,7 +133,8 @@ class Observer(threading.Thread):
 
                     sData += data[i + 1:]
                     for packet in range(1, nb_packet):
-                        data, _ = self.socket.recvfrom(self.buffer)  # 262144 # 8192
+                        data, _ = self.socket.recvfrom(
+                            self.buffer)  # 262144 # 8192
                         if data[0] != "c":
                             # print("wrong type index continue")
                             continue
@@ -149,7 +156,7 @@ class Observer(threading.Thread):
 
                     self.observer(np.loads(sData))
                 except Exception as e:
-                    if type(e) is not exceptions.EOFError:
+                    if not isinstance(e, exceptions.EOFError):
                         if not self.close:
                             logger.error("udp observer : %s", e)
         else:

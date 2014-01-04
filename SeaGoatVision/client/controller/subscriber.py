@@ -30,7 +30,9 @@ CST_NB_CLIENT_KEY = "client"
 
 logger = log.get_logger(__name__)
 
+
 class Subscriber():
+
     def __init__(self, controller, port, addr="localhost"):
         self.controller = controller
         # list of key associated with topic number
@@ -79,7 +81,9 @@ class Subscriber():
         if callback not in lst_cb:
             lst_cb.append(callback)
         else:
-            logger.warning("Callback already added on key %s : %s" % (key, callback))
+            logger.warning(
+                "Callback already added on key %s : %s" %
+                (key, callback))
         return True
 
     def _recv_callback_topic(self, data):
@@ -93,7 +97,9 @@ class Subscriber():
                 for cb in lst_topic[1]:
                     cb(message)
 
+
 class Listen_output(threading.Thread):
+
     def __init__(self, observer, addr, port):
         threading.Thread.__init__(self)
         # Ignore the zmq.PUB error in Eclipse.
@@ -113,7 +119,7 @@ class Listen_output(threading.Thread):
                 if data:
                     self.observer(data)
             except zmq.error.ZMQError:
-                #ignore it, it's the timeout
+                # ignore it, it's the timeout
                 pass
             except Exception as e:
                 log.printerror_stacktrace(logger, e)

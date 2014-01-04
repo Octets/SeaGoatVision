@@ -20,7 +20,9 @@
 import cv2
 import os
 
+
 class ImageFolder:
+
     def __init__(self):
         self.file_names = []
         self.pos = 0
@@ -54,7 +56,7 @@ class ImageFolder:
     def current_pos(self):
         return self.pos
 
-    def current_file_name(self, pos= -1):
+    def current_file_name(self, pos=-1):
         if pos == -1:
             pos = self.pos
         return self.file_names[pos]
@@ -74,8 +76,8 @@ class ImageFolder:
             for filename in files:
                 path = os.path.join(root, filename)
                 # TODO do we need to check if file is real image??
-                #image = cv2.imread(path)
-                #if image is not None:
+                # image = cv2.imread(path)
+                # if image is not None:
                 #    images.append(path)
                 images.append(path)
         list.sort(images)

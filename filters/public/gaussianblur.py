@@ -18,11 +18,14 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-from SeaGoatVision.commons.param import  Param
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class GaussianBlur(Filter):
+
     """Smoothes an image using a Gaussian filter"""
+
     def __init__(self):
         Filter.__init__(self)
         self.kernel_height = Param("Kernel Height", 3, min_v=1, max_v=256)
@@ -34,9 +37,7 @@ class GaussianBlur(Filter):
         cv2.GaussianBlur(image,
                          (self.kernel_height.get(),
                           self.kernel_width.get()),
-                     sigmaX=self.sigma_x.get(),
-                     sigmaY=self.sigma_y.get(),
-                     dst=image)
+                         sigmaX=self.sigma_x.get(),
+                         sigmaY=self.sigma_y.get(),
+                         dst=image)
         return image
-
-

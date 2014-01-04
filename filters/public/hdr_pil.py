@@ -4,8 +4,11 @@ from PIL import Image
 from copy import copy
 import numpy as np
 
+
 class HDR(Filter):
+
     """High-dynamic-range_imaging with python PIL - works with files"""
+
     def __init__(self):
         Filter.__init__(self)
         self.case = 'test'
@@ -19,7 +22,13 @@ class HDR(Filter):
 
         self.show_image = Param("show_images", 1, min_v=1, max_v=10)
         self.limit_image = Param("limit_image", 4, min_v=1, max_v=10)
-        self.debug_show = Param("show_debug", "show_normal", lst_value=["show_normal", "show_sat", "show_con"])
+        self.debug_show = Param(
+            "show_debug",
+            "show_normal",
+            lst_value=[
+                "show_normal",
+                "show_sat",
+                "show_con"])
         self.show_hdr = Param("show_hdr", False)
         self.index = 0
         self.images = []
@@ -99,8 +108,10 @@ class HDR(Filter):
 
         lut = [i + st * up[i] * lo[i] * (up[i] - lo[i]) / ct ** 3 for i in ln]
         for i in ln:
-            if lut[i] < 1:lut[i] = 1
-            if lut[i] > 255:lut[i] = 255
+            if lut[i] < 1:
+                lut[i] = 1
+            if lut[i] > 255:
+                lut[i] = 255
         return im.point(lut)
 
     def merge(self, imgs, cur_str):
@@ -109,7 +120,7 @@ class HDR(Filter):
         adjacent images
         """
         masks = self.get_masks(imgs, cur_str)
-        imx = lambda i:Image.composite(imgs[i], imgs[i + 1], masks[i])
+        imx = lambda i: Image.composite(imgs[i], imgs[i + 1], masks[i])
         return [imx(i) for i in range(len(masks))]
 
     def merge_all(self, imgs, cur_str):

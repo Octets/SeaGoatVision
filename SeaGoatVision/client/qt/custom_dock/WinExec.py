@@ -19,20 +19,21 @@
 
 from SeaGoatVision.client.qt.utils import get_ui
 
+
 class WinExec:
 
     def __init__(self):
 
-        #self.filtre = filtre
-        #self.filtre_init = copy.copy(filtre)
-        #self.cb = cb
+        # self.filtre = filtre
+        # self.filtre_init = copy.copy(filtre)
+        # self.cb = cb
 
         self.ui = get_ui(self)
-        #self.window = ui.get_object(win_name(self))
-        #self.txtCurrent = ui.get_object('txtCurrent')
-        #self.txtWorking = ui.get_object('txtWorking')
+        # self.window = ui.get_object(win_name(self))
+        # self.txtCurrent = ui.get_object('txtCurrent')
+        # self.txtWorking = ui.get_object('txtWorking')
 
-        #self.init_window()
+        # self.init_window()
 
     def init_window(self):
         self.txtCurrent.get_buffer().set_text(self.filtre.code)

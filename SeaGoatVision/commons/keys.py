@@ -17,56 +17,73 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 def get_filter_original_name():
     return "-- original --"
+
 
 def get_media_type_streaming_name():
     return "Streaming"
 
+
 def get_media_type_video_name():
     return "Video"
+
 
 def get_media_file_video_name():
     return "File"
 
+
 def get_media_empty_name():
     return "Empty"
+
 
 def get_empty_filterchain_name():
     return "-- empty filterchain --"
 
+
 def get_empty_filter_name():
     return "-- empty filter --"
+
 
 def get_key_media_play():
     return "play"
 
+
 def get_key_media_pause():
     return "pause"
 
+
 def get_key_media_loop():
     return "toggle_loop"
+
 
 def set_key_media_frame():
     return "frame_media"
 
 # used by ZeroMQ
+
+
 def get_key_execution_list():
     return "execution_list"
+
 
 def get_key_filter_param():
     return "filter_param"
 
+
 def get_key_media_param():
     return "media_param"
+
 
 def get_key_all_output_filter():
     return "all_output_filter"
 
+
 def get_lst_key_topic_pubsub():
     return {
-            get_key_all_output_filter():1,
-            get_key_execution_list():2,
-            get_key_filter_param():3,
-            get_key_media_param():4,
-            }
+        get_key_all_output_filter(): 1,
+        get_key_execution_list(): 2,
+        get_key_filter_param(): 3,
+        get_key_media_param(): 4,
+    }

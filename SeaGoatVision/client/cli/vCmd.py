@@ -20,24 +20,32 @@
 """
 Description : Implementation of cmd, command line of python
 """
-# SOURCE of this code about the commande line : http://www.doughellmann.com/PyMOTW/cmd/
+# SOURCE of this code about the commande line :
+# http://www.doughellmann.com/PyMOTW/cmd/
 import cmd
 from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class VCmd(cmd.Cmd):
-    def __init__(self, ctr, local=False, host="localhost", port=8090, completekey='tab', stdin=None, stdout=None, quiet=False):
-        cmd.Cmd.__init__(self, completekey=completekey, stdin=stdin, stdout=stdout)
+
+    def __init__(self, ctr, local=False, host="localhost", port=8090,
+                 completekey='tab', stdin=None, stdout=None, quiet=False):
+        cmd.Cmd.__init__(
+            self,
+            completekey=completekey,
+            stdin=stdin,
+            stdout=stdout)
         self.quiet = quiet
         self.controller = ctr
 
         if self.quiet:
             self.prompt = ""
 
-    ##########################################################################
+    #
     # List of command
-    ##########################################################################
+    #
     def do_is_connected(self, line):
         if not self.quiet:
             if self.controller.is_connected():
@@ -48,7 +56,9 @@ class VCmd(cmd.Cmd):
     def do_get_filter_list(self, line):
         lstFilter = self.controller.get_filter_list()
         if lstFilter is not None:
-            logger.info("Nombre de ligne %s, tableau : %s" % (len(lstFilter), lstFilter))
+            logger.info(
+                "Nombre de ligne %s, tableau : %s" %
+                (len(lstFilter), lstFilter))
         else:
             logger.info("No filterlist")
 
@@ -57,7 +67,9 @@ class VCmd(cmd.Cmd):
         lst_name = [item.get("name") for item in lstFilterChain]
         if not self.quiet:
             if lstFilterChain is not None:
-                logger.info("Nombre de ligne %s, tableau : %s" % (len(lstFilterChain), lst_name))
+                logger.info(
+                    "Nombre de ligne %s, tableau : %s" %
+                    (len(lstFilterChain), lst_name))
             else:
                 logger.info("No lstFilterChain")
         else:
@@ -90,7 +102,8 @@ class VCmd(cmd.Cmd):
             if filterchain == "None":
                 filterchain = ""
 
-        self.controller.start_filterchain_execution(name, media, filterchain, None, False)
+        self.controller.start_filterchain_execution(
+            name, media, filterchain, None, False)
 
     def do_stop_filterchain_execution(self, line):
         # execution_name

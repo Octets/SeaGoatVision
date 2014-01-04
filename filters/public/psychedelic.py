@@ -19,10 +19,12 @@
 
 import numpy as np
 
-from SeaGoatVision.commons.param import  Param
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class Psychedelic(Filter):
+
     """Acid trip"""
 
     def __init__(self):

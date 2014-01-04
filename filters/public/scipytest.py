@@ -5,7 +5,9 @@ import numpy
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class ScipyExample(Filter):
+
     """Example on how to use scipy.weave inside filters.
         The code loop inside the entire image
         and reduce the value of each pixels by half"""
@@ -26,7 +28,7 @@ class ScipyExample(Filter):
             key = value.get_name()
             param[key] = value.get()
         weave.inline(
-        """
+            """
         py::tuple notify_args(1);
         notify_args[0] = "patatoum";
         notify.call(notify_args);
@@ -40,10 +42,10 @@ class ScipyExample(Filter):
 
         cv::circle(mat, cv::Point(circlex, circley), mat.cols/4, cv::Scalar(colorr, colorg, colorb), -1);
         """,
-        arg_names=['image', 'notify', 'param'],
-        include_dirs=['/usr/local/include/opencv/'],
-        headers=['<cv.h>', '<cxcore.h>'],
-        # libraries = ['ml', 'cvaux', 'highgui', 'cv', 'cxcore'],
-        extra_objects=["`pkg-config --cflags --libs opencv`"]
+            arg_names=['image', 'notify', 'param'],
+            include_dirs=['/usr/local/include/opencv/'],
+            headers=['<cv.h>', '<cxcore.h>'],
+            # libraries = ['ml', 'cvaux', 'highgui', 'cv', 'cxcore'],
+            extra_objects=["`pkg-config --cflags --libs opencv`"]
         )
         return image

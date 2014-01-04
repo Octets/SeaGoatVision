@@ -27,7 +27,9 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class Publisher():
+
     def __init__(self, port):
         # list of key associated with topic number
         self.dct_key_topic = {}
@@ -66,7 +68,7 @@ class Publisher():
     def publish(self, key, data):
         if not self.socket:
             return False
-        #logger.debug("Send to key %s data %s." % (key, data))
+        # logger.debug("Send to key %s data %s." % (key, data))
         topic = self.dct_key_topic.get(key, None)
         if not topic:
             logger.warning("Key not exist : %s" % key)
@@ -94,6 +96,7 @@ class Publisher():
         # get a callback with the same key
         # caution, always use self.publish to use validation
         publish = self.publish
+
         def cb_publish(data):
             publish(key, data)
         return cb_publish

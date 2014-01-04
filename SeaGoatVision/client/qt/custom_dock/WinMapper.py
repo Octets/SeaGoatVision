@@ -21,7 +21,9 @@ from SeaGoatVision.client.qt.utils import *
 import cv2
 import numpy as np
 
+
 class WinMapper:
+
     """Tool to identify lines in images
         Drawing code adapted from gtk demo drawingarea.py
     """
@@ -86,9 +88,10 @@ class WinMapper:
 
     def configure_surface(self):
         self.surface = self.drwImage.get_window().create_similar_surface(
-                                                                         cairo.CONTENT_COLOR_ALPHA,
-                                                                         self.pixbuf_image.get_width(),
-                                                                         self.pixbuf_image.get_height())
+            cairo.CONTENT_COLOR_ALPHA,
+            self.pixbuf_image.get_width(
+            ),
+            self.pixbuf_image.get_height())
         context = cairo.Context(self.surface)
         context.set_source_rgba(0, 0, 0, 0)
         context.paint()
@@ -97,7 +100,7 @@ class WinMapper:
         self.matrices = []
         self.matrices.append(np.zeros(
                              (self.pixbuf_image.get_height(),
-                             self.pixbuf_image.get_width()), np.bool))
+                              self.pixbuf_image.get_width()), np.bool))
 
     def draw(self, widget, x, y):
         self.draw_brush(widget, x, y, self.spnSize.get_value_as_int())
@@ -107,9 +110,9 @@ class WinMapper:
         rect = self.brush_size(x, y, size)
         context = cairo.Context(self.surface)
         context.set_source_rgba(
-                                self.color.red,
-                                self.color.green,
-                                self.color.blue, 1)
+            self.color.red,
+            self.color.green,
+            self.color.blue, 1)
 
         Gdk.cairo_rectangle(context, rect)
         context.fill()
@@ -154,8 +157,9 @@ class WinMapper:
             s = f.read()
             f.close()
             self.matrices[-1] = np.fromstring(s, np.bool).reshape(
-                                                                  self.pixbuf_image.get_height(),
-                                                                  self.pixbuf_image.get_width())
+                self.pixbuf_image.get_height(
+                ),
+                self.pixbuf_image.get_width())
 
     def apply_matrix_to_pixbuf(self):
         for x in xrange(0, self.pixbuf_image.get_width() - 1):
@@ -167,7 +171,7 @@ class WinMapper:
         dialog = Gtk.FileChooserDialog("Choose an image folder", None,
                                        Gtk.FileChooserAction.SELECT_FOLDER,
                                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                       Gtk.STOCK_OK, Gtk.ResponseType.OK))
+                                        Gtk.STOCK_OK, Gtk.ResponseType.OK))
 
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -198,7 +202,7 @@ class WinMapper:
         if self.msg_confirm_clear() == Gtk.ResponseType.YES:
             self.matrices.append(np.zeros(
                                  (self.pixbuf_image.get_height(),
-                                 self.pixbuf_image.get_width()), np.bool))
+                                  self.pixbuf_image.get_width()), np.bool))
             self.configure_surface()
             self.drwImage.queue_draw()
 
@@ -261,7 +265,7 @@ class WinMapper:
     def on_drwImage_motion_notify_event(self, widget, event):
         (window, x, y, state) = event.window.get_pointer()
         if (state & Gdk.ModifierType.BUTTON1_MASK
-            and self.pixbuf_image is not None):
+                and self.pixbuf_image is not None):
             self.draw(widget, x, y)
         return True
 

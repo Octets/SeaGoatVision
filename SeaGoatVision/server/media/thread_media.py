@@ -22,9 +22,12 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class Thread_media(threading.Thread):
+
     """Media thread to process the images.
     """
+
     def __init__(self, media, publisher):
         threading.Thread.__init__(self)
         # self.daemon = True
@@ -53,7 +56,9 @@ class Thread_media(threading.Thread):
                     no_reset += 1
                     if no_reset >= protection_max_reset:
                         self.running = False
-                        log.print_function(logger.error, "Max reset - close media %s" % self.media.get_name())
+                        log.print_function(
+                            logger.error, "Max reset - close media %s" %
+                            self.media.get_name())
                     continue
                 else:
                     while not self.media.active_loop:

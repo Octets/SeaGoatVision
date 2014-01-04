@@ -27,6 +27,7 @@ logger = log.get_logger(__name__)
 
 BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
 
+
 class Server:
 
     def __init__(self):
@@ -73,6 +74,7 @@ class Server:
                 if handler in self.handlers:
                     self.handlers.remove(handler)
                 logger.warning("Client disconnected %s", handler.info)
+
 
 class ClientHandler:
 

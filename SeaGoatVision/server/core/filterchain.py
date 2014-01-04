@@ -28,13 +28,17 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class FilterChain(object):
+
     """ Observable.  Contains the chain of filters to execute on an image.
 
     The observer must be a method that receive a filter and an image as param.
     The observer method is called after each execution of a filter in the filter chain.
     """
-    def __init__(self, filterchain_name, serialize=None, default_media_name=None):
+
+    def __init__(self, filterchain_name,
+                 serialize=None, default_media_name=None):
         # to limit the infini import, we import in the init
         from resource import Resource
         self.resource = Resource()
@@ -47,7 +51,8 @@ class FilterChain(object):
         self.original_image_observer = []
         self.dct_global_param = {}
         self.dct_media_param = {}
-        # If starting filterchain with empty media_name, we take the default media
+        # If starting filterchain with empty media_name, we take the default
+        # media
         self.default_media_name = default_media_name
 
         if serialize:
@@ -73,7 +78,8 @@ class FilterChain(object):
 
     def serialize(self):
         # Keep list of filter with param
-        dct = {"lst_filter":[o_filter.serialize() for o_filter in self.filters if o_filter.name != keys.get_empty_filter_name()]}
+        dct = {"lst_filter": [o_filter.serialize()
+                              for o_filter in self.filters if o_filter.name != keys.get_empty_filter_name()]}
         if self.default_media_name:
             dct["default_media_name"] = self.default_media_name
         return dct
@@ -92,14 +98,23 @@ class FilterChain(object):
             o_filter = self.resource.create_filter(filter_name, index)
             index += 1
             if not o_filter:
-                log.print_function(logger.warning, "Cannot create filter %s, maybe it not exists." % filter_name)
+                log.print_function(
+                    logger.warning,
+                    "Cannot create filter %s, maybe it not exists." %
+                    filter_name)
                 continue
             status &= o_filter.deserialize(filter_to_ser)
             self.add_filter(o_filter)
         if status:
-            log.print_function(logger.info, "Deserialize filterchain %s success." % name)
+            log.print_function(
+                logger.info,
+                "Deserialize filterchain %s success." %
+                name)
         else:
-            log.print_function(logger.warning, "Deserialize filterchain %s failed." % name)
+            log.print_function(
+                logger.warning,
+                "Deserialize filterchain %s failed." %
+                name)
         return status
 
     def deserialize_update(self, name, value):
@@ -137,7 +152,8 @@ class FilterChain(object):
         return self.filter_output_observers
 
     def get_filter_list(self):
-        class Filter: pass
+        class Filter:
+            pass
         retValue = []
         for item in self.filters:
             retValue.append(item.serialize_info())
@@ -162,7 +178,8 @@ class FilterChain(object):
             # TODO not better return self[index] ??
             return self.filters[index]
         elif name is not None:
-            lst_filter = [o_filter for o_filter in self.filters if o_filter.get_name() == name]
+            lst_filter = [
+                o_filter for o_filter in self.filters if o_filter.get_name() == name]
             if lst_filter:
                 return lst_filter[0]
         return None
@@ -205,7 +222,10 @@ class FilterChain(object):
             lstObserver = self.image_observers.get(filter_name, [])
         if lstObserver:
             if observer in lstObserver:
-                log.print_function(logger.warning, "This observer already observer the filter %s" % filter_name)
+                log.print_function(
+                    logger.warning,
+                    "This observer already observer the filter %s" %
+                    filter_name)
                 return False
             else:
                 lstObserver.append(observer)
@@ -229,7 +249,10 @@ class FilterChain(object):
                     del self.image_observers[filter_name]
                 return True
 
-        log.print_function(logger.warning, "This observer is not in observation list for filter %s" % filter_name)
+        log.print_function(
+            logger.warning,
+            "This observer is not in observation list for filter %s" %
+            filter_name)
         return False
 
     def add_filter_output_observer(self, output):
@@ -247,7 +270,7 @@ class FilterChain(object):
         return True
 
     def execute(self, image):
-        original_image = np.copy(image);
+        original_image = np.copy(image)
         # first image observator
         if self.original_image_observer:
             self.send_image(original_image, self.original_image_observer)
@@ -267,7 +290,7 @@ class FilterChain(object):
         return image
 
     def send_image(self, image, lst_observer):
-        if type(image) is not np.ndarray or not image.size or image.ndim != 3:
+        if not isinstance(image, np.ndarray) or not image.size or image.ndim != 3:
             return
         # copy the picture because the next filter will modify him
         # transform it in rgb

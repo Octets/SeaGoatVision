@@ -19,12 +19,12 @@
 
 from SeaGoatVision.server.media.implementation.pygame_cam import Pygame_cam
 
+
 class Conf_pygame_cam:
+
     def __init__(self):
         self.media = Pygame_cam
         self.name = "pygame_cam"
         self.no = "0"
         self.path = "/dev/video%s" % self.no
         self.default_fps = None
-        
-        

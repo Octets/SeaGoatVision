@@ -36,7 +36,9 @@ logger = log.get_logger(__name__)
 KEY_MEDIA = "media"
 KEY_FILTERCHAIN = "filterchain"
 
+
 class CmdHandler:
+
     def __init__(self):
         """
             Structure of dct_execution
@@ -84,36 +86,46 @@ class CmdHandler:
         else:
             logger.info("Request : %s" % (funct_name))
 
-    ##########################################################################
-    ################################ CLIENT ##################################
-    ##########################################################################
+    #
+    # CLIENT ##################################
+    #
     def is_connected(self):
         self._post_command_(locals())
         return True
 
-    ##########################################################################
-    ######################## EXECUTION FILTER ################################
-    ##########################################################################
-    def start_filterchain_execution(self, execution_name, media_name, filterchain_name, file_name, is_client_manager):
+    #
+    # EXECUTION FILTER ################################
+    #
+    def start_filterchain_execution(
+            self, execution_name, media_name, filterchain_name, file_name, is_client_manager):
         self._post_command_(locals())
         execution = self.dct_exec.get(execution_name, None)
 
         if execution:
-            log.print_function(logger.error, "The execution %s is already created." % (execution_name))
+            log.print_function(
+                logger.error, "The execution %s is already created." %
+                (execution_name))
             return False
 
-        filterchain = self.resource.get_filterchain(filterchain_name, force_new_filterchain=True)
+        filterchain = self.resource.get_filterchain(
+            filterchain_name,
+            force_new_filterchain=True)
         if not filterchain:
-            log.print_function(logger.error, "Filterchain %s not exist or contain error." % (filterchain_name))
+            log.print_function(
+                logger.error, "Filterchain %s not exist or contain error." %
+                (filterchain_name))
             return False
 
-        # Exception, if not media_name, we take the default media_name from the filterchain
+        # Exception, if not media_name, we take the default media_name from the
+        # filterchain
         if not media_name:
             media_name = filterchain.get_default_media_name()
 
         media = self.resource.get_media(media_name)
         if not media:
-            log.print_function(logger.error, "Media %s not exist or you didn't set the default media on filterchain." % (media_name))
+            log.print_function(
+                logger.error, "Media %s not exist or you didn't set the default media on filterchain." %
+                (media_name))
             return False
 
         if media.is_media_video() and file_name:
@@ -125,9 +137,12 @@ class CmdHandler:
 
         media.add_observer(filterchain.execute)
 
-        self.dct_exec[execution_name] = {KEY_FILTERCHAIN: filterchain, KEY_MEDIA : media}
+        self.dct_exec[execution_name] = {
+            KEY_FILTERCHAIN: filterchain, KEY_MEDIA: media}
 
-        self.publisher.publish(keys.get_key_execution_list(), "+%s" % execution_name)
+        self.publisher.publish(
+            keys.get_key_execution_list(), "+%s" %
+            execution_name)
 
         return True
 
@@ -136,23 +151,32 @@ class CmdHandler:
         execution = self.dct_exec.get(execution_name, None)
 
         if not execution:
-            log.print_function(logger.warning, "The execution %s is already stopped." % execution_name)
+            log.print_function(
+                logger.warning,
+                "The execution %s is already stopped." %
+                execution_name)
             return False
 
         # Remove execution image observer from media
         observer = execution.get(KEY_MEDIA, None)
         if observer is None:
-            logger.critical("Not found the observer about execution %s" % execution_name)
+            logger.critical(
+                "Not found the observer about execution %s" %
+                execution_name)
             return False
         filterchain = execution.get(KEY_FILTERCHAIN, None)
         if filterchain is None:
-            logger.critical("Not found the filterchain about execution %s" % execution_name)
+            logger.critical(
+                "Not found the filterchain about execution %s" %
+                execution_name)
             return False
 
         observer.remove_observer(filterchain.execute)
         filterchain.destroy()
         del self.dct_exec[execution_name]
-        self.publisher.publish(keys.get_key_execution_list(), "-%s" % execution_name)
+        self.publisher.publish(
+            keys.get_key_execution_list(), "-%s" %
+            execution_name)
         return True
 
     def get_execution_list(self):
@@ -163,9 +187,11 @@ class CmdHandler:
         self._post_command_(locals())
         exec_info = self.dct_exec.get(execution_name, None)
         if not exec_info:
-            log.print_function(logger.error, "Cannot get execution info, it's empty.")
+            log.print_function(
+                logger.error,
+                "Cannot get execution info, it's empty.")
             return None
-        return {KEY_MEDIA:exec_info[KEY_MEDIA].get_name(), KEY_FILTERCHAIN:exec_info[KEY_FILTERCHAIN].get_name()}
+        return {KEY_MEDIA: exec_info[KEY_MEDIA].get_name(), KEY_FILTERCHAIN: exec_info[KEY_FILTERCHAIN].get_name()}
 
     def get_fps_execution(self, execution_name):
         # self._post_command_(locals())
@@ -174,9 +200,9 @@ class CmdHandler:
             return -1
         return media.get_real_fps()
 
-    ##########################################################################
-    ################################ MEDIA ###################################
-    ##########################################################################
+    #
+    # MEDIA ###################################
+    #
     def get_media_list(self):
         self._post_command_(locals())
         return {name: self.resource.get_media(name).get_type_media()
@@ -188,7 +214,10 @@ class CmdHandler:
         if not media:
             return False
         if media.is_media_streaming():
-            log.print_function(logger.error, "Cannot send a command to a streaming media %s." % media_name)
+            log.print_function(
+                logger.error,
+                "Cannot send a command to a streaming media %s." %
+                media_name)
             return False
         return media.do_cmd(cmd, value)
 
@@ -205,7 +234,10 @@ class CmdHandler:
         if not media:
             return False
         if media.is_media_video():
-            log.print_function(logger.error, "Cannot start record to a media media %s." % media_name)
+            log.print_function(
+                logger.error,
+                "Cannot start record to a media media %s." %
+                media_name)
             return False
         return media.start_record(path=path)
 
@@ -215,7 +247,10 @@ class CmdHandler:
         if not media:
             return False
         if media.is_media_video():
-            log.print_function(logger.error, "Cannot stop record to a media media %s." % media_name)
+            log.print_function(
+                logger.error,
+                "Cannot stop record to a media media %s." %
+                media_name)
             return False
         return media.stop_record()
 
@@ -250,11 +285,15 @@ class CmdHandler:
                 if param.get_name() == param_name:
                     break
             if not param:
-                log.print_function(logger.error, "Missing param %s in media %s." % (param_name, media_name))
+                log.print_function(
+                    logger.error, "Missing param %s in media %s." %
+                    (param_name, media_name))
                 return False
-            data = {"media":media_name, "param":param.serialize()}
+            data = {"media": media_name, "param": param.serialize()}
             json_data = json.dumps(data)
-            self.publisher.publish(keys.get_key_media_param(), "%s" % json_data)
+            self.publisher.publish(
+                keys.get_key_media_param(), "%s" %
+                json_data)
         return status
 
     def save_params_media(self, media_name):
@@ -264,9 +303,9 @@ class CmdHandler:
             return False
         return self.config.write_media(media)
 
-    ##########################################################################
-    #############################  OBSERVER  #################################
-    ##########################################################################
+    #
+    # OBSERVER  #################################
+    #
     def add_image_observer(self, observer, execution_name, filter_name):
         """
             Inform the server what filter we want to observe
@@ -281,7 +320,8 @@ class CmdHandler:
             return False
         return filterchain.add_image_observer(observer, filter_name)
 
-    def set_image_observer(self, observer, execution_name, filter_name_old, filter_name_new):
+    def set_image_observer(
+            self, observer, execution_name, filter_name_old, filter_name_new):
         """
             Inform the server what filter we want to change observer
             Param :
@@ -292,7 +332,10 @@ class CmdHandler:
         """
         self._post_command_(locals())
         if filter_name_old == filter_name_new:
-            log.print_function(logger.error, "New and old filter_name is equal: %s" % filter_name_old)
+            log.print_function(
+                logger.error,
+                "New and old filter_name is equal: %s" %
+                filter_name_old)
             return False
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
@@ -326,7 +369,8 @@ class CmdHandler:
 
         status = True
         if self.server_observer.send not in filterchain.get_filter_output_observers():
-            status = filterchain.add_filter_output_observer(self.server_observer.send)
+            status = filterchain.add_filter_output_observer(
+                self.server_observer.send)
         self.nb_observer_client += 1
         return status
 
@@ -349,19 +393,19 @@ class CmdHandler:
             return filterchain.remove_filter_output_observer(self.server_observer.send)
         return True
 
-    ##########################################################################
-    ############################ PUBLISHER  ##################################
-    ##########################################################################
+    #
+    # PUBLISHER  ##################################
+    #
     def subscribe(self, key):
         return self.publisher.subscribe(key)
 
-    ##########################################################################
-    ########################## CONFIGURATION  ################################
-    ##########################################################################
+    #
+    # CONFIGURATION  ################################
+    #
 
-    ##########################################################################
-    ############################ FILTERCHAIN  ################################
-    ##########################################################################
+    #
+    # FILTERCHAIN  ################################
+    #
     def reload_filter(self, filter_name):
         self._post_command_(locals())
         o_filter = self.resource.reload_filter(filter_name)
@@ -406,17 +450,21 @@ class CmdHandler:
             return False
         o_filter = filterchain.get_filter(name=filter_name)
         if not o_filter:
-            log.print_function(logger.error, "Don't find filter %s on filterchain %s" % (filter_name, filterchain.get_name()))
+            log.print_function(
+                logger.error, "Don't find filter %s on filterchain %s" %
+                (filter_name, filterchain.get_name()))
             return False
         param = o_filter.get_params(param_name=param_name)
         if not param:
-            log.print_function(logger.error, "Don't find param %s on filter %s" % (param_name, filter_name))
+            log.print_function(
+                logger.error, "Don't find param %s on filter %s" %
+                (param_name, filter_name))
             return False
 
         param.set(value)
         o_filter.configure()
         # send from publisher
-        data = {"execution_name":execution_name, "param":param.serialize()}
+        data = {"execution_name": execution_name, "param": param.serialize()}
         json_data = json.dumps(data)
         self.publisher.publish(keys.get_key_filter_param(), "%s" % json_data)
         return True
@@ -441,24 +489,26 @@ class CmdHandler:
         self._post_command_(locals())
         return self.resource.delete_filterchain(filterchain_name)
 
-    def modify_filterchain(self, old_filterchain_name, new_filterchain_name, lst_str_filters, default_media):
+    def modify_filterchain(self, old_filterchain_name,
+                           new_filterchain_name, lst_str_filters, default_media):
         self._post_command_(locals())
         return self.resource.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters, default_media)
 
-    ##########################################################################
-    ############################### FILTER  ##################################
-    ##########################################################################
+    #
+    # FILTER  ##################################
+    #
     def get_filter_list(self):
         self._post_command_(locals())
         return self.resource.get_filter_info_list()
 
-    ##########################################################################
-    ############################## PRIVATE  ##################################
-    ##########################################################################
+    #
+    # PRIVATE  ##################################
+    #
     def _get_execution(self, execution_name):
         dct_execution = self.dct_exec.get(execution_name, {})
         if not dct_execution:
-            msg = "Don't find execution %s. List execution name: %s" % (execution_name, self.dct_exec.keys())
+            msg = "Don't find execution %s. List execution name: %s" % (
+                execution_name, self.dct_exec.keys())
             log.print_function(logger.warning, msg, last_stack=True)
             return None
         return dct_execution
@@ -479,7 +529,11 @@ class CmdHandler:
         if media_name:
             media = self.resource.get_media(media_name)
             if not media:
-                log.print_function(logger.error, "Cannot found the media %s." % media_name, last_stack=True)
+                log.print_function(
+                    logger.error,
+                    "Cannot found the media %s." %
+                    media_name,
+                    last_stack=True)
                 return None
         elif execution_name:
             dct_execution = self._get_execution(execution_name)

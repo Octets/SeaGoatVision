@@ -27,6 +27,7 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class WinExecution(QtCore.QObject):
     onPreviewClick = QtCore.Signal(object, object, object)
     onExecutionChanged = QtCore.Signal(object)
@@ -45,7 +46,9 @@ class WinExecution(QtCore.QObject):
         self.shared_info.connect("media", self._change_media)
         self.shared_info.connect("filterchain", self._change_filterchain)
 
-        self.subscriber.subscribe(keys.get_key_execution_list(), self.update_execution_list)
+        self.subscriber.subscribe(
+            keys.get_key_execution_list(),
+            self.update_execution_list)
 
     def reload_ui(self):
         self.ui = get_ui(self)
@@ -55,7 +58,8 @@ class WinExecution(QtCore.QObject):
         self.ui.executeButton.clicked.connect(self.execute)
         self.ui.previewButton.clicked.connect(self.preview)
         self.ui.stopButton.clicked.connect(self.stop)
-        self.ui.lstExecution.currentItemChanged.connect(self._on_selected_lstExecution_change)
+        self.ui.lstExecution.currentItemChanged.connect(
+            self._on_selected_lstExecution_change)
         self.ui.lstExecution.itemClicked.connect(self._lst_execution_clicked)
 
         self._update_execution_list()
@@ -67,7 +71,8 @@ class WinExecution(QtCore.QObject):
                 self._mode_edit(True)
             execution_name = self.ui.txtExecution.text()
             if not execution_name:
-                # this case is when no selected item in the list, so select the first and restart
+                # this case is when no selected item in the list, so select the
+                # first and restart
                 self.ui.lstExecution.setCurrentRow(0)
                 self.preview()
                 return
@@ -110,9 +115,9 @@ class WinExecution(QtCore.QObject):
     def get_execution_name(self):
         return self._get_selected_execution_name()
 
-    ######################################################################
-    ####################### PRIVATE FUNCTION  ############################
-    ######################################################################
+    #
+    # PRIVATE FUNCTION  ############################
+    #
     def _lst_execution_clicked(self):
         execution_name = self.ui.txtExecution.text()
         filterchain_name = self.ui.txtFilterchain.text()
@@ -133,7 +138,8 @@ class WinExecution(QtCore.QObject):
         self.ui.txtExecution.setText(execution)
         exec_info = self.controller.get_execution_info(execution)
         if not exec_info:
-            logger.error("WinExecution Internal sync error with execution info :(")
+            logger.error(
+                "WinExecution Internal sync error with execution info :(")
             return
         self.ui.txtFilterchain.setText(exec_info.get("filterchain"))
         self.ui.txtMedia.setText(exec_info.get("media"))
@@ -143,9 +149,11 @@ class WinExecution(QtCore.QObject):
         execution_name = data[1:]
         if operator == "+":
             self.ui.lstExecution.addItem(execution_name)
-            self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
+            self.ui.lstExecution.setCurrentRow(
+                self.ui.lstExecution.count() - 1)
         elif operator == "-":
-            # more easy to update all, like that, the client is protected by modification
+            # more easy to update all, like that, the client is protected by
+            # modification
             for row in range(self.ui.lstExecution.count()):
                 item = self.ui.lstExecution.item(row)
                 if item and item.text() == execution_name:
@@ -153,7 +161,9 @@ class WinExecution(QtCore.QObject):
                     break
             self._clear_form(True)
         else:
-            logger.warning("Error in update_execution_list, wrong operator : %s" % operator)
+            logger.warning(
+                "Error in update_execution_list, wrong operator : %s" %
+                operator)
 
     def _update_execution_list(self):
         self.mode_edit = False
@@ -186,16 +196,17 @@ class WinExecution(QtCore.QObject):
             return False
         file_name = self.shared_info.get("path_media")
         is_client_manager = media_name == keys.get_media_file_video_name()
-        status = self.controller.start_filterchain_execution(execution_name, media_name,
-                                                             filterchain_name, file_name, is_client_manager)
+        status = self.controller.start_filterchain_execution(
+            execution_name, media_name,
+            filterchain_name, file_name, is_client_manager)
         if not status:
             self.cancel()
             return False
         self._mode_edit(False)
-        exec_info = {"media" : media_name,
-                     "execution_name" : execution_name,
-                     "filterchain_name" : filterchain_name,
-                     "file_name" : file_name}
+        exec_info = {"media": media_name,
+                     "execution_name": execution_name,
+                     "filterchain_name": filterchain_name,
+                     "file_name": file_name}
         self.shared_info.set("start_execution", exec_info)
         return True
 
@@ -218,7 +229,8 @@ class WinExecution(QtCore.QObject):
                 self.ui.txtMedia.setText(media_name)
 
     def _enable_stop_button(self, mode_edit):
-        self.ui.stopButton.setEnabled(bool(not mode_edit and self.ui.lstExecution.count()))
+        self.ui.stopButton.setEnabled(
+            bool(not mode_edit and self.ui.lstExecution.count()))
 
     def _get_selected_execution_name(self):
         noLine = self.ui.lstExecution.currentRow()

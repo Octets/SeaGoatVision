@@ -26,13 +26,17 @@ import json
 
 logger = log.get_logger(__name__)
 
+
 class WinCamera(WinParamParent):
+
     def __init__(self, controller, subscriber):
         super(WinCamera, self).__init__(controller)
         self.subscriber = subscriber
         self.media_name = None
         self.shared_info.connect("media", self.set_camera)
-        self.subscriber.subscribe(keys.get_key_media_param(), self.update_media_param)
+        self.subscriber.subscribe(
+            keys.get_key_media_param(),
+            self.update_media_param)
 
     def reload_ui(self):
         super(WinCamera, self).reload_ui()
@@ -42,9 +46,11 @@ class WinCamera(WinParamParent):
         # Ignore the value
         self.ui.txt_search.setText("")
         self.dct_param = {}
-        self.cb_param.currentIndexChanged.disconnect(self.on_cb_param_item_changed)
+        self.cb_param.currentIndexChanged.disconnect(
+            self.on_cb_param_item_changed)
         self.cb_param.clear()
-        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+        self.cb_param.currentIndexChanged.connect(
+            self.on_cb_param_item_changed)
 
         self.media_name = self.shared_info.get("media")
         self.clear_widget()
@@ -57,7 +63,9 @@ class WinCamera(WinParamParent):
             self.lst_param = []
 
         if not self.lst_param:
-            self.ui.lbl_param_name.setText("%s - Empty params" % self.media_name)
+            self.ui.lbl_param_name.setText(
+                "%s - Empty params" %
+                self.media_name)
             self.clear_widget()
             return
 
@@ -99,21 +107,24 @@ class WinCamera(WinParamParent):
         groupBox.setTitle(param.get_name())
 
         getWidget = {
-            int : self.getIntegerWidget,
-            float : self.getFloatWidget,
-            str : self.getStrWidget,
-            bool : self.getBoolWidget,
-            }
+            int: self.getIntegerWidget,
+            float: self.getFloatWidget,
+            str: self.getStrWidget,
+            bool: self.getBoolWidget,
+        }
 
         def create_value_change(param):
             def set(value):
                 if param.get_type() is bool:
                     value = bool(value)
-                status = self.controller.update_param_media(self.media_name, param.get_name(), value)
+                status = self.controller.update_param_media(
+                    self.media_name, param.get_name(), value)
                 if status:
                     param.set(value)
                 else:
-                    logger.error("Change value %s of param %s." % (value, param.get_name()))
+                    logger.error(
+                        "Change value %s of param %s." %
+                        (value, param.get_name()))
             return set
 
         self.cb_value_change = create_value_change(param)
@@ -129,7 +140,10 @@ class WinCamera(WinParamParent):
     def reset(self):
         for param in self.lst_param:
             param.reset()
-            status = self.controller.update_param_media(self.media_name, param.get_name(), param.get())
+            status = self.controller.update_param_media(
+                self.media_name,
+                param.get_name(),
+                param.get())
         self.set_camera()
 
     def save(self):

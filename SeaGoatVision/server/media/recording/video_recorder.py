@@ -26,7 +26,9 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class Video_recorder:
+
     def __init__(self, media):
         self.writer = None
         self.media = media
@@ -44,16 +46,19 @@ class Video_recorder:
             if "/" not in path:
                 name = "%s%s.avi" % (self.config.get_path_save_record(), path)
             else:
-                # TODO need to add extension when giving all path with filename?
+                # TODO need to add extension when giving all path with
+                # filename?
                 name = path
                 if os.path.isdir(path):
                     add_format_name = True
         else:
             add_format_name = True
             # TODO mkdir if directory
-            name =  self.config.get_path_save_record()
+            name = self.config.get_path_save_record()
         if add_format_name:
-            name += "%s.avi" % time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime())
+            name += "%s.avi" % time.strftime(
+                "%Y_%m_%d_%H_%M_%S",
+                time.gmtime())
 
         if os.path.isfile(name):
             log.print_function(logger.error, "File already exist %s" % name)
@@ -67,9 +72,19 @@ class Video_recorder:
         # fourcc = cv.CV_FOURCC('F', 'L', 'V', '1')
         # fourcc = cv.CV_FOURCC('V', 'P', '8', '0') # not work
         # fourcc = cv.CV_FOURCC('M', 'J', 'P', 'G')
-        # fourcc = cv.CV_FOURCC('D', 'I', 'B', ' ')  # Uncompressed RGB, 24 or 32 bit  - not working linux
-        fourcc = cv.CV_FOURCC('I', 'Y', 'U', 'V')  # Uncompressed YUV, 4:2:0 chroma subsampled , same of 'I420'
-        self.writer = cv2.VideoWriter(filename=name, fourcc=fourcc, fps=fps, frameSize=shape, isColor=1)
+        # fourcc = cv.CV_FOURCC('D', 'I', 'B', ' ')  # Uncompressed RGB, 24 or
+        # 32 bit  - not working linux
+        fourcc = cv.CV_FOURCC(
+            'I',
+            'Y',
+            'U',
+            'V')  # Uncompressed YUV, 4:2:0 chroma subsampled , same of 'I420'
+        self.writer = cv2.VideoWriter(
+            filename=name,
+            fourcc=fourcc,
+            fps=fps,
+            frameSize=shape,
+            isColor=1)
         self.writer.open(name, fourcc, fps, shape, 1)
         self.media.add_observer(self.writer.write)
         return True

@@ -20,31 +20,49 @@
 import cv2
 import numpy as np
 
-from SeaGoatVision.commons.param import  Param
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class SectionFilter(Filter):
+
     """"""
 
     def __init__(self):
         Filter.__init__(self)
-        self.kernel_erode_height = Param("Kernel Erode Height", 3, min_v=1, max_v=255)
-        self.kernel_erode_width = Param("Kernel Dilate Width", 3, min_v=1, max_v=255)
-        self.kernel_dilate_height = Param("Kernel Erode Height", 5, min_v=1, max_v=255)
-        self.kernel_dilate_width = Param("Kernel Dilate Width", 5, min_v=1, max_v=255)
+        self.kernel_erode_height = Param(
+            "Kernel Erode Height",
+            3,
+            min_v=1,
+            max_v=255)
+        self.kernel_erode_width = Param(
+            "Kernel Dilate Width",
+            3,
+            min_v=1,
+            max_v=255)
+        self.kernel_dilate_height = Param(
+            "Kernel Erode Height",
+            5,
+            min_v=1,
+            max_v=255)
+        self.kernel_dilate_width = Param(
+            "Kernel Dilate Width",
+            5,
+            min_v=1,
+            max_v=255)
         self.sections = Param("Sections", 5, min_v=1, max_v=10)
         self.min_area = Param("Minimum Area", 1000, min_v=1, max_v=65535)
         self.configure()
 
     def configure(self):
         self.kerode = cv2.getStructuringElement(
-                         cv2.MORPH_CROSS,
-                         (self.kernel_erode_width.get(),
-                          self.kernel_erode_height.get()))
+            cv2.MORPH_CROSS,
+            (self.kernel_erode_width.get(),
+             self.kernel_erode_height.get()))
         self.kdilate = cv2.getStructuringElement(
-                         cv2.MORPH_CROSS,
-                         (iself.kernel_dilate_width.get(),
-                          self.kernel_dilate_height.get()))
+            cv2.MORPH_CROSS,
+            (iself.kernel_dilate_width.get(),
+             self.kernel_dilate_height.get()))
 
     def execute(self, image):
 
@@ -57,27 +75,25 @@ class SectionFilter(Filter):
             end = (section_size) * (i + 1)
             if end > rows:
                 end = rows
-            section = image[start : end]
+            section = image[start: end]
 
             gray = cv2.split(section)[0]
             contours, _ = cv2.findContours(
-                                       gray,
-                                       cv2.RETR_TREE,
-                                       cv2.CHAIN_APPROX_SIMPLE)
+                gray,
+                cv2.RETR_TREE,
+                cv2.CHAIN_APPROX_SIMPLE)
 
             section = np.zeros(section.shape, np.uint8)
             for contour in contours:
                 area = np.abs(cv2.contourArea(contour))
                 if area > self.min_area.get():
                     cv2.drawContours(section,
-                                 [cv2.convexHull(contour)],
-                                 - 1,
-                                 (255, 255, 255),
-                                 thickness= -1)
+                                     [cv2.convexHull(contour)],
+                                     - 1,
+                                    (255, 255, 255),
+                                     thickness=-1)
             image[start: end] = section
-
 
         image = cv2.dilate(image, self.kdilate)
 
         return image
-

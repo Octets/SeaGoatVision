@@ -20,8 +20,10 @@
 Description : contain shared variable inter-widget and signal connect with interrupt
 """
 
+
 class Shared_info(object):
     _instance = None
+
     def __new__(cls):
         # Singleton
         if not cls._instance:
@@ -49,7 +51,7 @@ class Shared_info(object):
             return False
         lst_callback = self.dct_signal[key]
         if callback in lst_callback:
-            return False 
+            return False
         lst_callback.append(callback)
         # call if already contain value
         value = self.dct_variable.get(key, None)
@@ -59,7 +61,7 @@ class Shared_info(object):
 
     def get(self, key):
         return self.dct_variable.get(key, None)
-    
+
     def set(self, key, value):
         if key not in self.dct_variable:
             return False

@@ -20,7 +20,9 @@
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
+
 class ColorLevel(Filter):
+
     """Determine the value in % a color will have.
         0% = Nothing
         50% = Half the original value.

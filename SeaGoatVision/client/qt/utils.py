@@ -25,6 +25,7 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 def tree_selected_index(treeview):
     (model, iter) = treeview.get_selection().get_selected()
     if iter is None:
@@ -32,17 +33,25 @@ def tree_selected_index(treeview):
     path = model.get_path(iter)
     return path.get_indices()[0]
 
+
 def tree_row_selected(treeview):
     (model, iter) = treeview.get_selection().get_selected()
     return iter is not None
 
+
 def get_ui(widget):
     loader = QtUiTools.QUiLoader()
-    uiPath = os.path.join('SeaGoatVision', 'client', 'qt', 'uifiles', win_name(widget) + '.ui')
+    uiPath = os.path.join(
+        'SeaGoatVision',
+        'client',
+        'qt',
+        'uifiles',
+        win_name(widget) + '.ui')
     logger.info("Loading ui %s", uiPath)
     uiFile = QtCore.QFile(uiPath)
     uiFile.open(QtCore.QFile.ReadOnly)
     return loader.load(uiFile)
+
 
 def win_name(window):
     return window.__class__.__name__

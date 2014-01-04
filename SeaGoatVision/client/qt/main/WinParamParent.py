@@ -27,7 +27,9 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class WinParamParent(QtGui.QDockWidget):
+
     def __init__(self, controller):
         super(WinParamParent, self).__init__()
         self.shared_info = Shared_info()
@@ -52,13 +54,18 @@ class WinParamParent(QtGui.QDockWidget):
         self.ui.resetButton.clicked.connect(self.reset)
         self.ui.defaultButton.clicked.connect(self.default)
         self.ui.txt_search.returnPressed.connect(self._search_text_change)
-        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+        self.cb_param.currentIndexChanged.connect(
+            self.on_cb_param_item_changed)
 
     def _search_text_change(self):
         # kk = {key: value for (key, value) in d.items() if s in key}
         text = self.ui.txt_search.text()
         if text:
-            self.lst_param = [value for (key, value) in self.dct_param.items() if text in key]
+            self.lst_param = [
+                value for (
+                    key,
+                    value) in self.dct_param.items(
+            ) if text in key]
         else:
             self.lst_param = self.dct_param.values()
         self.cb_param.clear()
@@ -86,7 +93,7 @@ class WinParamParent(QtGui.QDockWidget):
         slider.setTickInterval(1)
 
         value = param.get()
-        if type(value) is tuple:
+        if isinstance(value, tuple):
             spinbox.setValue(value[0])
             fake_value = value[0]
         else:
@@ -129,7 +136,7 @@ class WinParamParent(QtGui.QDockWidget):
         slider.setTickInterval(1)
 
         value = param.get()
-        if type(value) is tuple:
+        if isinstance(value, tuple):
             spinbox.setValue(value[0])
             fake_value = value[0]
         else:

@@ -26,20 +26,26 @@ import json
 
 logger = log.get_logger(__name__)
 
+
 class WinFilter(WinParamParent):
+
     def __init__(self, controller, subscriber):
         super(WinFilter, self).__init__(controller)
         self.subscriber = subscriber
         self.shared_info.connect("filter", self.set_filter)
-        self.subscriber.subscribe(keys.get_key_filter_param(), self.update_filter_param)
+        self.subscriber.subscribe(
+            keys.get_key_filter_param(),
+            self.update_filter_param)
 
     def set_filter(self, value=None):
         # Ignore the value
         self.ui.txt_search.setText("")
         self.dct_param = {}
-        self.cb_param.currentIndexChanged.disconnect(self.on_cb_param_item_changed)
+        self.cb_param.currentIndexChanged.disconnect(
+            self.on_cb_param_item_changed)
         self.cb_param.clear()
-        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+        self.cb_param.currentIndexChanged.connect(
+            self.on_cb_param_item_changed)
 
         self.execution_name = self.shared_info.get("execution")
         self.filter_name = self.shared_info.get("filter")
@@ -48,12 +54,15 @@ class WinFilter(WinParamParent):
             self.ui.lbl_param_name.setText("Empty params")
             return
 
-        self.lst_param = self.controller.get_params_filterchain(self.execution_name, self.filter_name)
+        self.lst_param = self.controller.get_params_filterchain(
+            self.execution_name, self.filter_name)
         if self.lst_param is None:
             self.lst_param = []
 
         if not self.lst_param:
-            self.ui.lbl_param_name.setText("%s - Empty params" % self.filter_name)
+            self.ui.lbl_param_name.setText(
+                "%s - Empty params" %
+                self.filter_name)
             self.clear_widget()
             return
 
@@ -80,7 +89,9 @@ class WinFilter(WinParamParent):
                 self.actuel_widget.setText(param.get())
 
     def on_cb_param_item_changed(self, index):
-        self.ui.lbl_param_name.setText("%s - %s" % (self.execution_name, self.filter_name))
+        self.ui.lbl_param_name.setText(
+            "%s - %s" %
+            (self.execution_name, self.filter_name))
 
         self.clear_widget()
 
@@ -96,21 +107,27 @@ class WinFilter(WinParamParent):
         groupBox.setTitle(param.get_name())
 
         getWidget = {
-            int : self.getIntegerWidget,
-            float : self.getFloatWidget,
-            str : self.getStrWidget,
-            bool : self.getBoolWidget,
-            }
+            int: self.getIntegerWidget,
+            float: self.getFloatWidget,
+            str: self.getStrWidget,
+            bool: self.getBoolWidget,
+        }
 
         def create_value_change(param):
             def set(value):
                 if param.get_type() is bool:
                     value = bool(value)
-                status = self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), value)
+                status = self.controller.update_param(
+                    self.execution_name,
+                    self.filter_name,
+                    param.get_name(),
+                    value)
                 if status:
                     param.set(value)
                 else:
-                    logger.error("Change value %s of param %s." % (value, param.get_name()))
+                    logger.error(
+                        "Change value %s of param %s." %
+                        (value, param.get_name()))
             return set
 
         cb_value_change = create_value_change(param)
@@ -127,7 +144,11 @@ class WinFilter(WinParamParent):
     def reset(self):
         for param in self.lst_param:
             param.reset()
-            status = self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), param.get())
+            status = self.controller.update_param(
+                self.execution_name,
+                self.filter_name,
+                param.get_name(),
+                param.get())
         self.set_filter()
 
     def save(self):

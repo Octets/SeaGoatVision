@@ -27,6 +27,7 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 def run(ctr, subscriber, local=False, host="localhost", port=8090):
     app = QApplication(sys.argv)
     win = main.WinMain(ctr, subscriber, host=host, islocal=local)

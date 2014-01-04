@@ -19,8 +19,9 @@
 
 import cv2
 import cv2.cv as cv
-from SeaGoatVision.commons.param import  Param
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
+
 
 class Morphology(Filter):
 
@@ -35,19 +36,19 @@ class Morphology(Filter):
 
     def configure(self):
         self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT,
-                                (self.kernel_width.get(),
-                                self.kernel_height.get()),
-                                (self.anchor_x.get(),
-                                self.anchor_y.get()))
+                                                (self.kernel_width.get(),
+                                                 self.kernel_height.get()),
+                                                (self.anchor_x.get(),
+                                                 self.anchor_y.get()))
 
     def execute(self, image):
         morph = cv2.cvtColor(image, cv.CV_BGR2GRAY)
         cv2.morphologyEx(
-                morph,
-                cv2.MORPH_CLOSE,
-                self._kernel,
-                dst=morph,
-                iterations=self.iterations.get())
+            morph,
+            cv2.MORPH_CLOSE,
+            self._kernel,
+            dst=morph,
+            iterations=self.iterations.get())
         cv2.merge((morph, morph, morph), image)
 
         return image

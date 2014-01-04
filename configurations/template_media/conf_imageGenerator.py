@@ -19,7 +19,9 @@
 
 from SeaGoatVision.server.media.implementation.imageGenerator import ImageGenerator
 
+
 class Conf_imageGenerator:
+
     def __init__(self):
         self.media = ImageGenerator
         self.name = "generator"

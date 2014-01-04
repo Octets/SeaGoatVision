@@ -27,9 +27,12 @@ import os
 last_print_duplicate = ""
 last_time_print = time.time()
 spam_delay_sec = 5
-formatter = logging.Formatter("[%(asctime)s.%(msecs)d-%(levelname)s-%(name)s] %(message)s", "%H:%M:%S")
+formatter = logging.Formatter(
+    "[%(asctime)s.%(msecs)d-%(levelname)s-%(name)s] %(message)s",
+    "%H:%M:%S")
 dct_file_handler = {}
 dct_logger = {}
+
 
 def add_handler(file_path):
     global own_logger
@@ -37,8 +40,10 @@ def add_handler(file_path):
     global dct_file_handler
     global dct_logger
 
-    if type(file_path) is not str:
-        own_logger.error("The path %s is not type of string, type is %s" % (file_path, type(file_path)))
+    if not isinstance(file_path, str):
+        own_logger.error(
+            "The path %s is not type of string, type is %s" %
+            (file_path, type(file_path)))
         return
 
     if file_path in dct_file_handler.values():
@@ -56,13 +61,16 @@ def add_handler(file_path):
 
     dct_file_handler[file_path] = hdlr
 
+
 def remove_handler(file_path):
     global own_logger
     global dct_file_handler
     global dct_logger
 
-    if type(file_path) is not str:
-        own_logger.error("The path %s is not type of string, type is %s" % (file_path, type(file_path)))
+    if not isinstance(file_path, str):
+        own_logger.error(
+            "The path %s is not type of string, type is %s" %
+            (file_path, type(file_path)))
         return
 
     hdlr = dct_file_handler.get(file_path, None)
@@ -74,6 +82,7 @@ def remove_handler(file_path):
         logger.removeHandler(hdlr)
 
     del dct_file_handler[file_path]
+
 
 def get_logger(name):
     global dct_logger
@@ -106,6 +115,7 @@ def get_logger(name):
 
     return logger
 
+
 def printerror_stacktrace(logger, message, check_duplicate=False):
     global last_print_duplicate
     global last_time_print
@@ -120,13 +130,15 @@ def printerror_stacktrace(logger, message, check_duplicate=False):
     )
     if check_duplicate:
         if to_print == last_print_duplicate:
-            to_print = "(spam delay %d sec) %s" % (spam_delay_sec, origin_to_print)
+            to_print = "(spam delay %d sec) %s" % (
+                spam_delay_sec, origin_to_print)
             # each 3 seconds, print the message
             if not(time.time() - last_time_print > spam_delay_sec):
                 return
         last_time_print = time.time()
         last_print_duplicate = origin_to_print
     logger.error(to_print)
+
 
 def print_function(logger_call, message, last_stack=False):
     if last_stack:

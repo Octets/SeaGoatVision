@@ -19,7 +19,7 @@
 import os
 import sys
 import time
-#from SeaGoatVision.server.core.utils import add_filter_module
+# from SeaGoatVision.server.core.utils import add_filter_module
 from SeaGoatVision.server.cpp.create_module import *
 
 # Global variable for cpp filter
@@ -37,8 +37,8 @@ for f in os.listdir(act_dir):
     if not os.path.isdir(act_dir + "/" + f):
         continue
     filename, _ = os.path.splitext(f)
-    code = 'from %(module)s import *' % {'module' : filename}
-    exec code
+    code = 'from %(module)s import *' % {'module': filename}
+    exec(code)
 
 
 # add_filter_module(sys.modules[__name__], __file__)
@@ -48,8 +48,8 @@ for f in os.listdir(os.path.dirname(__file__)):
     if not f.endswith(".py") or f == "__init__.py":
         continue
     filename, _ = os.path.splitext(f)
-    code = 'from %(module)s import *' % {'module' : filename}
-    exec code
+    code = 'from %(module)s import *' % {'module': filename}
+    exec(code)
 
 # C++ FILTERS IMPORT
 import_all_cpp_filter(cppfiles, cpptimestamps, sys.modules[__name__], __file__)

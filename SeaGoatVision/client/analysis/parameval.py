@@ -3,7 +3,7 @@
 #    Copyright (C) 2012  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -25,8 +25,9 @@ import tempfile
 
 import linetest
 
+
 class ParameterEvaluation:
-    
+
     def __init__(self, test_folder, chain, fname, pname, minval, maxval):
         """
         Args:
@@ -45,7 +46,7 @@ class ParameterEvaluation:
         self.maxval = maxval
         self.precisions = np.zeros(maxval - minval, dtype=np.float16)
         self.noises = np.zeros(maxval - minval, dtype=np.float16)
-        
+
     def launch(self):
         test = linetest.LineTest(self.test_folder, self.chain)
         orig_val = getattr(self.filter, self.pname)
@@ -67,23 +68,22 @@ class ParameterEvaluation:
                 if f.__class__.__name__ == self.fname:
                     return f
             return None
-        
+
     def save_data(self):
         tmp = tempfile.NamedTemporaryFile()
         data = np.append(self.precisions, self.noises)
         tmp.file.write(data.tostring())
         tmp.file.flush()
         return tmp
-    
+
     def create_graphic(self):
         data_file = self.save_data()
-        proc = subprocess.Popen(('python', 'plot.py', data_file.name), 
+        proc = subprocess.Popen(('python', 'plot.py', data_file.name),
                                 stdout=subprocess.PIPE)
         image_file = proc.stdout.readline()[:-1]
         print image_file
         data_file.close()
         img = cv2.imread(image_file)
         os.remove(image_file)
-        #return img
+        # return img
         return cv2.resize(img, (600, 450))
-    
