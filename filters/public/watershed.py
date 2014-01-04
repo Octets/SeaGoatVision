@@ -14,7 +14,7 @@ def segment_on_dt(a, img):
     dt = ((dt - dt.min()) / (dt.max() - dt.min()) * 255).astype(np.uint8)
     _, dt = cv2.threshold(dt, 180, 255, cv2.THRESH_BINARY)
     lbl, ncc = label(dt)
-    lbl = lbl * (255 / ncc)
+    lbl *= (255 / ncc)
     # Completing the markers now.
     lbl[border == 255] = 255
 

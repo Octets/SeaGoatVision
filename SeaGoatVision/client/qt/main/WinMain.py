@@ -53,13 +53,13 @@ class WinMain(QtGui.QMainWindow):
         self.showMaximized()
 
         # create dockWidgets
-        self.winFilter = WinFilter(self.controller, subscriber)
-        self.winCamera = WinCamera(self.controller, subscriber)
-        self.winFilterList = WinFilterList(self.controller)
-        self.winMedia = WinMedia(self.controller)
-        self.winExecution = WinExecution(self.controller, subscriber)
-        self.winFilterChain = WinFilterChain(self.controller)
-        self.WinMainViewer = WinMainViewer()
+        self.win_filter = WinFilter(self.controller, subscriber)
+        self.win_camera = WinCamera(self.controller, subscriber)
+        self.win_filter_list = WinFilterList(self.controller)
+        self.win_media = WinMedia(self.controller)
+        self.win_execution = WinExecution(self.controller, subscriber)
+        self.win_filter_chain = WinFilterChain(self.controller)
+        self.win_main_viewer = WinMainViewer()
 
         # Add default widget
         self.show_win_filter(first_time=True)
@@ -70,28 +70,28 @@ class WinMain(QtGui.QMainWindow):
         self.show_win_camera(first_time=True)
 
         # Tabify dockwidget
-        self.tabifyDockWidget(self.winMedia.ui, self.winCamera.ui)
-        self.tabifyDockWidget(self.winFilter.ui, self.winFilterList.ui)
+        self.tabifyDockWidget(self.win_media.ui, self.win_camera.ui)
+        self.tabifyDockWidget(self.win_filter.ui, self.win_filter_list.ui)
 
         # Signal
-        self.winFilterList.onAddFilter.connect(self.winFilterChain.add_filter)
+        self.win_filter_list.onAddFilter.connect(self.win_filter_chain.add_filter)
         self.ui.btnMedia.clicked.connect(self.show_win_media)
         self.ui.btnFilterChain.clicked.connect(self.show_win_filterchain)
         self.ui.btnFilterList.clicked.connect(self.show_win_filterlist)
         self.ui.btnExecution.clicked.connect(self.show_win_execution)
         self.ui.btnCamera.clicked.connect(self.show_win_camera)
         self.ui.btnParam.clicked.connect(self.show_win_filter)
-        self.winExecution.onPreviewClick.connect(self.addPreview)
-        self.winExecution.onExecutionChanged.connect(
-            self.winFilterChain.select_filterchain)
+        self.win_execution.onPreviewClick.connect(self.add_preview)
+        self.win_execution.onExecutionChanged.connect(
+            self.win_filter_chain.select_filterchain)
 
-        self._addToolBar()
-        self._addMenuBar()
+        self._add_tool_bar()
+        self._add_menu_bar()
 
-        self.setCentralWidget(self.WinMainViewer.ui)
+        self.setCentralWidget(self.win_main_viewer.ui)
         self.subscriber.start()
 
-    def _addToolBar(self):
+    def _add_tool_bar(self):
         self.toolbar = QtGui.QToolBar()
         self.addToolBar(self.toolbar)
         for widget in self.ui.children():
@@ -100,53 +100,53 @@ class WinMain(QtGui.QMainWindow):
 
     def show_win_filterchain(self, first_time=False):
         if not first_time:
-            self.removeDockWidget(self.winFilterChain.ui)
-            self.winFilterChain.reload_ui()
+            self.removeDockWidget(self.win_filter_chain.ui)
+            self.win_filter_chain.reload_ui()
         self.addDockWidget(
             QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,
-            self.winFilterChain.ui)
+            self.win_filter_chain.ui)
 
     def show_win_execution(self, first_time=False):
         if not first_time:
-            self.removeDockWidget(self.winExecution.ui)
-            self.winExecution.reload_ui()
+            self.removeDockWidget(self.win_execution.ui)
+            self.win_execution.reload_ui()
         self.addDockWidget(
             QtCore.Qt.DockWidgetArea.LeftDockWidgetArea,
-            self.winExecution.ui)
+            self.win_execution.ui)
 
     def show_win_filterlist(self, first_time=False):
         if not first_time:
-            self.removeDockWidget(self.winFilterList.ui)
-            self.winFilterList.reload_ui()
+            self.removeDockWidget(self.win_filter_list.ui)
+            self.win_filter_list.reload_ui()
         self.addDockWidget(
             QtCore.Qt.DockWidgetArea.RightDockWidgetArea,
-            self.winFilterList.ui)
+            self.win_filter_list.ui)
 
     def show_win_filter(self, first_time=False):
         if not first_time:
-            self.removeDockWidget(self.winFilter.ui)
-            self.winFilter.reload_ui()
+            self.removeDockWidget(self.win_filter.ui)
+            self.win_filter.reload_ui()
         self.addDockWidget(
             QtCore.Qt.DockWidgetArea.RightDockWidgetArea,
-            self.winFilter.ui)
+            self.win_filter.ui)
 
     def show_win_camera(self, first_time=False):
         if not first_time:
-            self.removeDockWidget(self.winCamera.ui)
-            self.winCamera.reload_ui()
+            self.removeDockWidget(self.win_camera.ui)
+            self.win_camera.reload_ui()
         self.addDockWidget(
             QtCore.Qt.DockWidgetArea.RightDockWidgetArea,
-            self.winCamera.ui)
+            self.win_camera.ui)
 
     def show_win_media(self, first_time=False):
         if not first_time:
-            self.removeDockWidget(self.winMedia.ui)
-            self.winMedia.reload_ui()
+            self.removeDockWidget(self.win_media.ui)
+            self.win_media.reload_ui()
         self.addDockWidget(
             QtCore.Qt.DockWidgetArea.RightDockWidgetArea,
-            self.winMedia.ui)
+            self.win_media.ui)
 
-    def addPreview(self, execution_name, media_name, filterchain_name):
+    def add_preview(self, execution_name, media_name, filterchain_name):
         winviewer = WinViewer(
             self.controller,
             self.subscriber,
@@ -157,10 +157,10 @@ class WinMain(QtGui.QMainWindow):
             self.uid_iter)
         self.dct_preview[self.uid_iter] = winviewer
         self.uid_iter += 1
-        self.WinMainViewer.grid.addWidget(winviewer.ui)
-        winviewer.closePreview.connect(self.removePreview)
+        self.win_main_viewer.grid.addWidget(winviewer.ui)
+        winviewer.closePreview.connect(self.remove_preview)
 
-    def removePreview(self, uid):
+    def remove_preview(self, uid):
         viewer = self.dct_preview.get(uid, None)
         if viewer:
             viewer.closeEvent()
@@ -173,19 +173,19 @@ class WinMain(QtGui.QMainWindow):
     def quit(self):
         for viewer in self.dct_preview.values():
             viewer.closeEvent()
-        self.winMedia.stop()
+        self.win_media.stop()
         self.subscriber.stop()
 
-    def _addMenuBar(self):
-        actionReconSeaGoat = QtGui.QAction("Reconnect to server", self)
-        actionReconSeaGoat.setEnabled(False)
+    def _add_menu_bar(self):
+        action_reconnect_seagoat = QtGui.QAction("Reconnect to server", self)
+        action_reconnect_seagoat.setEnabled(False)
         # actionReloadWidget = QtGui.QAction("Reload widget", self)
         # actionReloadWidget.setEnabled(False)
-        actionQuit = QtGui.QAction("Quit", self)
-        actionQuit.triggered.connect(self.close)
-        menuFile = QtGui.QMenu("File")
-        menuFile.addAction(actionReconSeaGoat)
+        action_quit = QtGui.QAction("Quit", self)
+        action_quit.triggered.connect(self.close)
+        menu_file = QtGui.QMenu("File")
+        menu_file.addAction(action_reconnect_seagoat)
         # menuFile.addAction(actionReloadWidget)
-        menuFile.addAction(actionQuit)
-        menuBar = self.menuBar()
-        menuBar.addMenu(menuFile)
+        menu_file.addAction(action_quit)
+        menu_bar = self.menuBar()
+        menu_bar.addMenu(menu_file)

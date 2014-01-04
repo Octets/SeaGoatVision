@@ -23,7 +23,7 @@ from SeaGoatVision.commons import log
 logger = log.get_logger(__name__)
 
 
-class Thread_media(threading.Thread):
+class ThreadMedia(threading.Thread):
 
     """Media thread to process the images.
     """

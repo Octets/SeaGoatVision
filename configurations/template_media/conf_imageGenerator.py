@@ -20,7 +20,7 @@
 from SeaGoatVision.server.media.implementation.imageGenerator import ImageGenerator
 
 
-class Conf_imageGenerator:
+class ConfImageGenerator:
 
     def __init__(self):
         self.media = ImageGenerator

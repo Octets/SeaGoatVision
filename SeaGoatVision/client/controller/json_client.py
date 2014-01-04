@@ -27,7 +27,7 @@ import exceptions
 logger = log.get_logger(__name__)
 
 
-class Json_client():
+class JsonClient():
 
     def __init__(self, port, host=""):
         self.rpc = jsonrpclib.Server('http://%s:%s' % (host, port))
@@ -110,7 +110,7 @@ class Observer(threading.Thread):
         if self.observer:
             self.socket.sendto("I can see you.", self.add)
             while not self.close:
-                sData = ""
+                str_data = ""
                 try:
                     data = self.socket.recv(self.buffer)
                     if not data:
@@ -131,7 +131,7 @@ class Observer(threading.Thread):
                         # print("wrong index.")
                         continue
 
-                    sData += data[i + 1:]
+                    str_data += data[i + 1:]
                     for packet in range(1, nb_packet):
                         data, _ = self.socket.recvfrom(
                             self.buffer)  # 262144 # 8192
@@ -152,9 +152,9 @@ class Observer(threading.Thread):
                             # print("wrong index continue.")
                             continue
 
-                        sData += data[i + 1:]
+                        str_data += data[i + 1:]
 
-                    self.observer(np.loads(sData))
+                    self.observer(np.loads(str_data))
                 except Exception as e:
                     if not isinstance(e, exceptions.EOFError):
                         if not self.close:

@@ -68,11 +68,12 @@ class Resource(object):
     # Filterchain
     def get_filterchain_list(self):
         class FilterChain:
-            pass
-        lstFilterChain = []
+            def __init__(self):
+                pass
+        lst_filter_chain = []
         for fc_name in self.config.list_filterchain():
-            lstFilterChain.append({"name": fc_name, "doc": None})
-        return lstFilterChain
+            lst_filter_chain.append({"name": fc_name, "doc": None})
+        return lst_filter_chain
 
     def upload_filterchain(self, filterchain_name, s_contain):
         o_filterchain = filterchain.FilterChain(filterchain_name)
@@ -240,7 +241,7 @@ class Resource(object):
                     "Camera %s not detected" %
                     name)
         # Force media_video
-        media_video = media.media_video.Media_video(
+        media_video = media.media_video.MediaVideo(
             keys.get_media_file_video_name())
         dct_media[keys.get_media_file_video_name()] = media_video
         # TODO this is a hack to remove missing key warning about publisher

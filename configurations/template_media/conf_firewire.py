@@ -24,7 +24,7 @@ except:
 from SeaGoatVision.server.media.implementation.firewire import Firewire
 
 
-class Conf_firewire:
+class ConfFirewire:
 
     def __init__(self):
         self.media = Firewire

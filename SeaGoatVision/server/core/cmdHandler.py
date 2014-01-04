@@ -470,7 +470,7 @@ class CmdHandler:
         return True
 
     def save_params(self, execution_name):
-        "Force serialization and overwrite config"
+        """Force serialization and overwrite config"""
         self._post_command_(locals())
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:

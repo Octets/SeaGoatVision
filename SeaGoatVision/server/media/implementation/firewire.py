@@ -20,13 +20,13 @@ try:
     from thirdparty.public.pydc1394 import video1394
 except:
     pass
-from SeaGoatVision.server.media.media_streaming import Media_streaming
+from SeaGoatVision.server.media.media_streaming import MediaStreaming
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.configuration import Configuration
 import numpy as np
 from PIL import Image
 import cv2
-import cv2.cv as cv
+from cv2 import cv
 from SeaGoatVision.commons import log
 import time
 import thread
@@ -34,7 +34,7 @@ import thread
 logger = log.get_logger(__name__)
 
 
-class Firewire(Media_streaming):
+class Firewire(MediaStreaming):
 
     """Return images from a Firewire device."""
 
@@ -248,7 +248,7 @@ class Firewire(Media_streaming):
         return True
 
     def camera_init(self):
-        Media_streaming.open(self)
+        MediaStreaming.open(self)
         self.is_streaming = True
 
     def camera_observer(self, im, timestamp):
@@ -393,7 +393,7 @@ class Firewire(Media_streaming):
 
     def close(self):
         # Only the manager can call this close or the reload on media.py
-        Media_streaming.close(self)
+        MediaStreaming.close(self)
         self.call_stop = True
         self.loop_try_open_camera = False
         self.is_streaming = False

@@ -25,10 +25,10 @@ from implementation.imagefolder import ImageFolder
 from SeaGoatVision.commons import keys
 
 
-class Media_video(Media):
+class MediaVideo(Media):
 
     def __init__(self, name):
-        super(Media_video, self).__init__()
+        super(MediaVideo, self).__init__()
         self.movie = None
         self.imagefolder = None
 

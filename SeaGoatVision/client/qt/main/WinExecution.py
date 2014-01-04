@@ -19,7 +19,7 @@
 
 from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.commons import keys
-from SeaGoatVision.client.qt.shared_info import Shared_info
+from SeaGoatVision.client.qt.shared_info import SharedInfo
 
 from PySide import QtCore
 from PySide import QtGui
@@ -36,7 +36,7 @@ class WinExecution(QtCore.QObject):
         super(WinExecution, self).__init__()
         self.controller = controller
         self.subscriber = subscriber
-        self.shared_info = Shared_info()
+        self.shared_info = SharedInfo()
 
         self.mode_edit = False
         self.last_index = 0
@@ -59,7 +59,7 @@ class WinExecution(QtCore.QObject):
         self.ui.previewButton.clicked.connect(self.preview)
         self.ui.stopButton.clicked.connect(self.stop)
         self.ui.lstExecution.currentItemChanged.connect(
-            self._on_selected_lstExecution_change)
+            self._on_selected_lst_execution_change)
         self.ui.lstExecution.itemClicked.connect(self._lst_execution_clicked)
 
         self._update_execution_list()
@@ -99,8 +99,8 @@ class WinExecution(QtCore.QObject):
 
     def stop(self):
         # remove an execution
-        noLine = self.ui.lstExecution.currentRow()
-        if noLine >= 0:
+        no_line = self.ui.lstExecution.currentRow()
+        if no_line >= 0:
             execution_name = self.ui.txtExecution.text()
             self.controller.stop_filterchain_execution(execution_name)
             self._enable_stop_button(False)
@@ -110,7 +110,7 @@ class WinExecution(QtCore.QObject):
 
     def cancel(self):
         self._mode_edit(False)
-        self._on_selected_lstExecution_change()
+        self._on_selected_lst_execution_change()
 
     def get_execution_name(self):
         return self._get_selected_execution_name()
@@ -124,7 +124,7 @@ class WinExecution(QtCore.QObject):
         self.shared_info.set("execution", execution_name)
         self.onExecutionChanged.emit(filterchain_name)
 
-    def _on_selected_lstExecution_change(self):
+    def _on_selected_lst_execution_change(self):
         execution = self._get_selected_list(self.ui.lstExecution)
         if execution:
             self.ui.previewButton.setEnabled(True)
@@ -175,10 +175,10 @@ class WinExecution(QtCore.QObject):
         for execution_name in exec_list:
             self.ui.lstExecution.addItem(execution_name)
 
-    def _get_selected_list(self, uiList):
-        noLine = uiList.currentRow()
-        if noLine >= 0:
-            return uiList.item(noLine).text()
+    def _get_selected_list(self, ui_list):
+        no_line = ui_list.currentRow()
+        if no_line >= 0:
+            return ui_list.item(no_line).text()
         return None
 
     def _is_unique_execution_name(self, execution_name):
@@ -233,9 +233,9 @@ class WinExecution(QtCore.QObject):
             bool(not mode_edit and self.ui.lstExecution.count()))
 
     def _get_selected_execution_name(self):
-        noLine = self.ui.lstExecution.currentRow()
-        if noLine >= 0:
-            return self.ui.lstExecution.item(noLine).text()
+        no_line = self.ui.lstExecution.currentRow()
+        if no_line >= 0:
+            return self.ui.lstExecution.item(no_line).text()
         return None
 
     def _clear_form(self, mode_edit):

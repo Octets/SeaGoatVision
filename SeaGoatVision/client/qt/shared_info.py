@@ -21,7 +21,7 @@ Description : contain shared variable inter-widget and signal connect with inter
 """
 
 
-class Shared_info(object):
+class SharedInfo(object):
     _instance = None
 
     def __new__(cls):
@@ -43,7 +43,7 @@ class Shared_info(object):
                 cls.dct_signal[key] = []
 
             # instance class
-            cls._instance = super(Shared_info, cls).__new__(cls)
+            cls._instance = super(SharedInfo, cls).__new__(cls)
         return cls._instance
 
     def connect(self, key, callback):

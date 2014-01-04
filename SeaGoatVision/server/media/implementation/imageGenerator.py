@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.server.media.media_streaming import Media_streaming
+from SeaGoatVision.server.media.media_streaming import MediaStreaming
 from SeaGoatVision.server.core.configuration import Configuration
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import log
@@ -26,7 +26,7 @@ import numpy as np
 logger = log.get_logger(__name__)
 
 
-class ImageGenerator(Media_streaming):
+class ImageGenerator(MediaStreaming):
 
     """Return a generate image."""
 
@@ -38,7 +38,7 @@ class ImageGenerator(Media_streaming):
         self.media_name = config.name
         self.run = True
         self.image = None
-        self.isOpened = True
+        self._is_opened = True
 
         self._create_params()
 

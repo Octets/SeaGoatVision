@@ -99,18 +99,18 @@ class WinCamera(WinParamParent):
             return
 
         param = self.lst_param[index]
-        self.layout.addWidget(self.getWidget(param))
+        self.layout.addWidget(self.get_widget(param))
 
-    def getWidget(self, param):
-        groupBox = QtGui.QGroupBox()
+    def get_widget(self, param):
+        group_box = QtGui.QGroupBox()
 
-        groupBox.setTitle(param.get_name())
+        group_box.setTitle(param.get_name())
 
-        getWidget = {
-            int: self.getIntegerWidget,
-            float: self.getFloatWidget,
-            str: self.getStrWidget,
-            bool: self.getBoolWidget,
+        get_widget = {
+            int: self.get_integer_widget,
+            float: self.get_float_widget,
+            str: self.get_str_widget,
+            bool: self.get_bool_widget,
         }
 
         def create_value_change(param):
@@ -129,10 +129,10 @@ class WinCamera(WinParamParent):
 
         self.cb_value_change = create_value_change(param)
 
-        layout = getWidget[param.get_type()](param, self.cb_value_change)
-        groupBox.setLayout(layout)
+        layout = get_widget[param.get_type()](param, self.cb_value_change)
+        group_box.setLayout(layout)
 
-        return groupBox
+        return group_box
 
     def default(self):
         pass

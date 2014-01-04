@@ -34,10 +34,10 @@ class Server:
         self.handlers = []
 
     def start(self, ip, port):
-        t = Thread(target=self.innerStart, args=(ip, port,))
+        t = Thread(target=self.inner_start, args=(ip, port,))
         t.start()
 
-    def innerStart(self, ip, port):
+    def inner_start(self, ip, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # reuse the socket if already open - fix when closed without close.
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

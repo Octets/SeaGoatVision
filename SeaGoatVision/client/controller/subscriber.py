@@ -39,7 +39,7 @@ class Subscriber():
         # example : {"key":(topic, [callback1, callback2])}
         self.dct_key_topic_cb = {}
         self.port = port
-        self.server = Listen_output(self._recv_callback_topic, addr, port)
+        self.server = ListenOutput(self._recv_callback_topic, addr, port)
 
     def start(self):
         self.server.start()
@@ -98,7 +98,7 @@ class Subscriber():
                     cb(message)
 
 
-class Listen_output(threading.Thread):
+class ListenOutput(threading.Thread):
 
     def __init__(self, observer, addr, port):
         threading.Thread.__init__(self)

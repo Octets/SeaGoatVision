@@ -88,8 +88,8 @@ class Publisher():
     def stop(self):
         if not self.socket:
             return False
-            self.socket.close()
-            self.socket = None
+        self.socket.close()
+        self.socket = None
         return True
 
     def get_callback_publish(self, key):

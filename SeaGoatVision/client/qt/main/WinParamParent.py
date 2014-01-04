@@ -22,7 +22,7 @@
 from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.client.qt.utils import get_ui
-from SeaGoatVision.client.qt.shared_info import Shared_info
+from SeaGoatVision.client.qt.shared_info import SharedInfo
 from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
@@ -32,10 +32,15 @@ class WinParamParent(QtGui.QDockWidget):
 
     def __init__(self, controller):
         super(WinParamParent, self).__init__()
-        self.shared_info = Shared_info()
+        self.shared_info = SharedInfo()
 
         self.controller = controller
+        self.lst_param = None
+        self.dct_param = None
+        self.cb_value_change = None
         self.layout = None
+        self.ui = None
+        self.set_value_float = None
 
         self.reload_ui()
 
@@ -44,7 +49,7 @@ class WinParamParent(QtGui.QDockWidget):
 
         self.lst_param = []
         self.dct_param = {}
-        self.setValueFloat = None
+        self.set_value_float = None
 
         self.layout = self.ui.layout_params
         self.cb_param = self.ui.cb_filter_param
@@ -65,7 +70,7 @@ class WinParamParent(QtGui.QDockWidget):
                 value for (
                     key,
                     value) in self.dct_param.items(
-            ) if text in key]
+                    ) if text in key]
         else:
             self.lst_param = self.dct_param.values()
         self.cb_param.clear()
@@ -78,7 +83,7 @@ class WinParamParent(QtGui.QDockWidget):
         if item:
             item.widget().deleteLater()
 
-    def getIntegerWidget(self, param, cb_value_change):
+    def get_integer_widget(self, param, cb_value_change):
         spinbox = QtGui.QSpinBox()
         spinbox.setMaximumHeight(28)
         spinbox.setMaximumWidth(100)
@@ -99,7 +104,7 @@ class WinParamParent(QtGui.QDockWidget):
         else:
             spinbox.setValue(value)
             fake_value = value
-        self.setValue = spinbox.setValue
+        self.set_value = spinbox.setValue
         slider.setValue(fake_value)
 
         self.slider = slider
@@ -116,7 +121,7 @@ class WinParamParent(QtGui.QDockWidget):
         self.actuel_widget = spinbox
         return layout
 
-    def getFloatWidget(self, param, cb_value_change):
+    def get_float_widget(self, param, cb_value_change):
         spinbox = QtGui.QDoubleSpinBox()
         spinbox.setMaximumHeight(28)
         spinbox.setMaximumWidth(100)
@@ -142,7 +147,7 @@ class WinParamParent(QtGui.QDockWidget):
         else:
             spinbox.setValue(value)
             fake_value = value
-        self.setValueFloat = spinbox.setValue
+        self.set_value_float = spinbox.setValue
         slider.setValue(fake_value)
 
         slider.setTickPosition(QtGui.QSlider.TicksBothSides)
@@ -177,14 +182,14 @@ class WinParamParent(QtGui.QDockWidget):
             return newmin - new_range
 
     def _float_slider_value_change(self, value):
-        newVal = self.fit(
+        new_val = self.fit(
             value,
             self.slider_float.minimum(), self.slider_float.maximum(),
             self._new_slider_min, self._new_slider_max
         )
-        if self.setValueFloat:
-            self.setValueFloat(newVal)
-        self.cb_value_change(newVal)
+        if self.set_value_float:
+            self.set_value_float(new_val)
+        self.cb_value_change(new_val)
 
     def _float_spin_value_change(self, value):
         self.slider_float.setValue(value)
@@ -195,9 +200,9 @@ class WinParamParent(QtGui.QDockWidget):
         self.cb_value_change(value)
 
     def _slider_value_change(self, value):
-        self.setValue(value)
+        self.set_value(value)
 
-    def getStrWidget(self, param, cb_value_change):
+    def get_str_widget(self, param, cb_value_change):
         layout = QtGui.QHBoxLayout()
         lst_value = param.get_list_value()
         self.str_value_change = cb_value_change
@@ -224,7 +229,7 @@ class WinParamParent(QtGui.QDockWidget):
         value = self.line_edit.text()
         self.str_value_change(value)
 
-    def getBoolWidget(self, param, cb_value_change):
+    def get_bool_widget(self, param, cb_value_change):
         checkbox = QtGui.QCheckBox()
         checkbox.setTristate(False)
         if param.get():

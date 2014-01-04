@@ -17,13 +17,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.server.media.implementation.pygame_cam import Pygame_cam
+from SeaGoatVision.server.media.implementation.pygame_cam import PygameCam
 
 
-class Conf_pygame_cam:
+class ConfPygameCam:
 
     def __init__(self):
-        self.media = Pygame_cam
+        self.media = PygameCam
         self.name = "pygame_cam"
         self.no = "0"
         self.path = "/dev/video%s" % self.no

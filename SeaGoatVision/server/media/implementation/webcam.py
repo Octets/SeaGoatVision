@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-from SeaGoatVision.server.media.media_streaming import Media_streaming
+from SeaGoatVision.server.media.media_streaming import MediaStreaming
 from SeaGoatVision.server.core.configuration import Configuration
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import log
@@ -26,7 +26,7 @@ from SeaGoatVision.commons import log
 logger = log.get_logger(__name__)
 
 
-class Webcam(Media_streaming):
+class Webcam(MediaStreaming):
 
     """Return images from the webcam."""
 
@@ -40,7 +40,7 @@ class Webcam(Media_streaming):
         self.video = None
         video = cv2.VideoCapture(config.no)
         if video.isOpened():
-            self.isOpened = True
+            self._is_opened = True
             video.release()
 
         self._create_params()
@@ -94,6 +94,7 @@ class Webcam(Media_streaming):
                 self.dct_params.get("resolution").get()]
             fps = self.dct_fps[self.dct_params.get("fps").get()]
 
+            # TODO check argument video capture
             self.video = cv2.VideoCapture(self.own_config.no)
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, shape[0])
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, shape[1])
@@ -104,18 +105,18 @@ class Webcam(Media_streaming):
                 (self.get_name(), e))
             return False
         # call open when video is ready
-        return Media_streaming.open(self)
+        return MediaStreaming.open(self)
 
     def next(self):
         run, image = self.video.read()
-        if run == False:
+        if not run:
             raise StopIteration
         return image
 
     def close(self):
-        Media_streaming.close(self)
+        MediaStreaming.close(self)
         self.video.release()
-        self.isOpened = False
+        self._is_opened = False
         return True
 
     def get_properties_param(self):

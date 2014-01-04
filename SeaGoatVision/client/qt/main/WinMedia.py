@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
-from SeaGoatVision.client.qt.shared_info import Shared_info
+from SeaGoatVision.client.qt.shared_info import SharedInfo
 from PySide.QtGui import QIcon
 from SeaGoatVision.commons import keys
 from SeaGoatVision.client.qt import config
@@ -38,7 +38,7 @@ class WinMedia(QtCore.QObject):
         super(WinMedia, self).__init__()
         self.ressource_icon_path = "SeaGoatVision/client/ressource/img/"
         self.controller = controller
-        self.shared_info = Shared_info()
+        self.shared_info = SharedInfo()
         self.shared_info.connect("start_execution", self.set_info)
 
         self.is_recorded = False
@@ -63,7 +63,7 @@ class WinMedia(QtCore.QObject):
         self.shared_info.connect("start_execution", self._start_execution)
 
         # TODO optimize starting thread.
-        self.thread_player = player_file(
+        self.thread_player = PlayerFile(
             controller,
             self._get_actual_no_frame,
             self.set_slider_value)
@@ -273,7 +273,7 @@ class WinMedia(QtCore.QObject):
         return True
 
 
-class player_file(threading.Thread):
+class PlayerFile(threading.Thread):
 
     def __init__(self, controller, call_get_frame, call_set_frame):
         threading.Thread.__init__(self)

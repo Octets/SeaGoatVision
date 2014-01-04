@@ -61,7 +61,7 @@ class HDR(Filter):
             return self.images[show_no - 1]
         nature = self.naturalness.get()
         if nature:
-            nature = nature / 10.0
+            nature /= 10.0
         return self.get_hdr(self.images, strength=self.strength.get(), naturalness=nature)
 
     """

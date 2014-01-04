@@ -20,18 +20,18 @@
 from media import Media
 from SeaGoatVision.commons import keys
 # from recording.video_recorder import Video_recorder
-from recording.image_recorder import Image_recorder
+from recording.image_recorder import ImageRecorder
 
 
-class Media_streaming(Media):
+class MediaStreaming(Media):
 
     def __init__(self):
-        super(Media_streaming, self).__init__()
-        self.isOpened = False
+        super(MediaStreaming, self).__init__()
+        self._is_opened = False
         self.writer = None
         self.shape = None
         # self.recorder = Video_recorder(self)
-        self.recorder = Image_recorder(self)
+        self.recorder = ImageRecorder(self)
 
     def is_media_streaming(self):
         return True
@@ -40,10 +40,10 @@ class Media_streaming(Media):
         return False
 
     def is_opened(self):
-        return self.isOpened
+        return self._is_opened
 
     def get_info(self):
-        info = super(Media_streaming, self).get_info()
+        info = super(MediaStreaming, self).get_info()
         info["record_file_name"] = self.recorder.get_file_name()
         return info
 

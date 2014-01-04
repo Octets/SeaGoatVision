@@ -32,20 +32,20 @@ class Undistort(Filter):
 
     def execute(self, image):
 
-        distCoeffs = numpy.array([-0.34, 0.085, 0, 0, -0.007])
-        cameraMatrix = numpy.matrix(
+        dist_coeffs = numpy.array([-0.34, 0.085, 0, 0, -0.007])
+        camera_matrix = numpy.matrix(
             [[630.79035702238025, 0, 645.50000000000000], [0, 630.79035702238025, 366.50000000000000], [0, 0, 1]])
         size = (1292, 734)
 
         # technique 2
         newimage = numpy.matrix([])
-        optimalMat, roi = cv2.getOptimalNewCameraMatrix(
-            cameraMatrix, distCoeffs, size, 1)
+        optimal_mat, roi = cv2.getOptimalNewCameraMatrix(
+            camera_matrix, dist_coeffs, size, 1)
         newimage = cv2.undistort(
             image,
-            cameraMatrix,
-            distCoeffs,
+            camera_matrix,
+            dist_coeffs,
             newimage,
-            optimalMat)
+            optimal_mat)
 
         return newimage

@@ -27,7 +27,7 @@ try:
 except:
     pass
 
-from SeaGoatVision.server.media.media_streaming import Media_streaming
+from SeaGoatVision.server.media.media_streaming import MediaStreaming
 from SeaGoatVision.server.core.configuration import Configuration
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import log
@@ -35,7 +35,7 @@ from SeaGoatVision.commons import log
 logger = log.get_logger(__name__)
 
 
-class Pygame_cam(Media_streaming):
+class PygameCam(MediaStreaming):
 
     """Return images from the webcam."""
 
@@ -43,7 +43,7 @@ class Pygame_cam(Media_streaming):
         # Go into configuration/template_media for more information
         self.config = Configuration()
         self.own_config = config
-        super(Pygame_cam, self).__init__()
+        super(PygameCam, self).__init__()
         self.media_name = config.name
         self.run = True
         self.video = None
@@ -53,7 +53,7 @@ class Pygame_cam(Media_streaming):
         self._create_params()
         self.deserialize(self.config.read_media(self.get_name()))
         self.cam = None
-        self.isOpened = True
+        self._is_opened = True
         self.image = None
 
     def _create_params(self):
@@ -112,7 +112,7 @@ class Pygame_cam(Media_streaming):
                 (self.get_name(), e))
             return False
         # call open when video is ready
-        return Media_streaming.open(self)
+        return MediaStreaming.open(self)
 
     def update_image(self):
         while self.thread_image:
@@ -127,11 +127,11 @@ class Pygame_cam(Media_streaming):
         return self.image
 
     def close(self):
-        Media_streaming.close(self)
+        MediaStreaming.close(self)
         self.thread_image = False
         # TODO add semaphore?
         self.video.stop()
-        self.isOpened = False
+        self._is_opened = False
         return True
 
     def get_properties_param(self):

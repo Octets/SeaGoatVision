@@ -20,7 +20,7 @@
 from SeaGoatVision.server.media.implementation.webcam import Webcam
 
 
-class Conf_webcam:
+class ConfWebcam:
 
     def __init__(self):
         self.media = Webcam

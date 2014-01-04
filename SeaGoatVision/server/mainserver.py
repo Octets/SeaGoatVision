@@ -40,13 +40,13 @@ def run(p_port=None, verbose=False):
     config.set_verbose(verbose)
     # recheck if its locked because the last check is maybe a false lock
     pid = os.getpid()
-    sFileLockName = "/tmp/SeaGoat.lock"
-    if is_lock(sFileLockName):
+    file_lock_path = "/tmp/SeaGoat.lock"
+    if is_lock(file_lock_path):
         sys.exit(-1)
 
-    fileLock = open(sFileLockName, "w")
-    fileLock.write("%s" % pid)
-    fileLock.close()
+    file_lock = open(file_lock_path, "w")
+    file_lock.write("%s" % pid)
+    file_lock.close()
 
     if not p_port:
         port = config.get_tcp_output_config()
@@ -54,7 +54,7 @@ def run(p_port=None, verbose=False):
         port = p_port
 
     # Create and register the service
-    server = jsonrpc_server.Jsonrpc_server(port)
+    server = jsonrpc_server.JsonrpcServer(port)
     try:
         server.register()
     except Exception as e:
@@ -74,20 +74,20 @@ def run(p_port=None, verbose=False):
     finally:
         server.close()
         # force closing the file
-        os.remove(sFileLockName)
+        os.remove(file_lock_path)
 
 
-def is_lock(sFileLockName):
+def is_lock(file_lock_name):
     # Create lock file
     # This technique counter the concurrence
-    if os.path.isfile(sFileLockName):
-        bIsLocked = True
+    if os.path.isfile(file_lock_name):
+        is_locked = True
     else:
-        bIsLocked = False
+        is_locked = False
 
-    if bIsLocked:
-        fileLock = open(sFileLockName, "r")
-        pid = fileLock.readline()
+    if is_locked:
+        file_lock = open(file_lock_name, "r")
+        pid = file_lock.readline()
         # check if this pid really exist
         if pid.isdigit():
             pid = int(pid)
@@ -95,16 +95,16 @@ def is_lock(sFileLockName):
                 logger.info(
                     "SeaGoat already run with the pid : %s - lock file %s",
                     pid,
-                    sFileLockName)
-                fileLock.close()
+                    file_lock_name)
+                file_lock.close()
             else:
                 # its a false lock
-                bIsLocked = False
+                is_locked = False
         else:
             logger.info(
                 "SeaGoat lock is corrupted, see file : %s",
-                sFileLockName)
-    return bIsLocked
+                file_lock_name)
+    return is_locked
 
 
 def check_pid(pid):

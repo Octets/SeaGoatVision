@@ -64,18 +64,19 @@ class WinViewer(QtGui.QDockWidget):
         self.is_turn_off = False
         self.execution_stopped = False
 
-        self.actualFilter = None
+        self.ui = None
+        self.actual_filter = None
         self.size = 1
         self.thread_output = None
         self.last_output = ""
-        self.lastSecondFps = None
-        self.fpsCount = 0
+        self.last_second_fps = None
+        self.fps_count = 0
 
         self.reload_ui()
 
         self.light_observer = self._get_light_observer()
 
-        if self.controller.add_image_observer(self.updateImage, execution_name, self.actualFilter):
+        if self.controller.add_image_observer(self.update_image, execution_name, self.actual_filter):
             self.__add_output_observer()
             self.subscriber.subscribe(self.media_name, self.update_fps)
             self.subscriber.subscribe(
@@ -86,25 +87,25 @@ class WinViewer(QtGui.QDockWidget):
     def reload_ui(self):
         self.ui = get_ui(self)
         self.ui.lbl_media_name.setText(self.media_name)
-        self.newImage.connect(self.setPixmap)
-        self.ui.filterComboBox.currentIndexChanged.connect(self._changeFilter)
+        self.newImage.connect(self.set_pixmap)
+        self.ui.filterComboBox.currentIndexChanged.connect(self._change_filter)
         self.ui.closeButton.clicked.connect(self.__close)
         self.ui.sizeComboBox.currentIndexChanged[
-            str].connect(self.setImageScale)
+            str].connect(self.set_image_scale)
 
-        self._updateFilters()
-        self.actualFilter = self.ui.filterComboBox.currentText()
+        self._update_filters()
+        self.actual_filter = self.ui.filterComboBox.currentText()
         self.ui.lbl_exec.setText(self.execution_name)
 
     def closeEvent(self):
         # this is fake closeEvent, it's called by button close with signal
         if self.is_turn_off:
             return
-        if not self.execution_stopped and self.actualFilter:
+        if not self.execution_stopped and self.actual_filter:
             self.controller.remove_image_observer(
-                self.updateImage,
+                self.update_image,
                 self.execution_name,
-                self.actualFilter)
+                self.actual_filter)
             self.controller.remove_output_observer(self.execution_name)
         if self.thread_output:
             self.thread_output.stop()
@@ -123,21 +124,21 @@ class WinViewer(QtGui.QDockWidget):
         light_widget.setGeometry(0, 0, min_size, min_size)
 
         self.ui.qhboxlayout_2.addWidget(light_widget)
-        return Light_observer(light_widget)
+        return LightObserver(light_widget)
 
     def __close(self):
         self.closePreview.emit(self.uid)
 
     def __add_output_observer(self):
-        self.thread_output = Listen_output(
-            self.updateLog,
+        self.thread_output = ListenOutput(
+            self.update_log,
             self.host,
             self.port)
         self.thread_output.start()
         # TODO fait un thread de client dude
         self.controller.add_output_observer(self.execution_name)
 
-    def _updateFilters(self):
+    def _update_filters(self):
         self.ui.filterComboBox.clear()
         info = self.controller.get_filterchain_info(self.filterchain_name)
         if not info:
@@ -154,46 +155,46 @@ class WinViewer(QtGui.QDockWidget):
         self.ui.filterComboBox.setCurrentIndex(
             self.ui.filterComboBox.count() - 1)
 
-    def _changeFilter(self):
-        if self.actualFilter:
+    def _change_filter(self):
+        if self.actual_filter:
             filter_name = self.ui.filterComboBox.currentText()
             self.controller.set_image_observer(
-                self.updateImage,
+                self.update_image,
                 self.execution_name,
-                self.actualFilter,
+                self.actual_filter,
                 filter_name)
-            self.actualFilter = filter_name
+            self.actual_filter = filter_name
 
-    def updateLog(self, data):
+    def update_log(self, data):
         data = str(data).strip()
         logger.info("Qt output exec %s - %s" % (self.execution_name, data))
 
     def update_fps(self, data):
         self.ui.lbl_fps.setText("%s" % data)
 
-    def updateImage(self, image):
+    def update_image(self, image):
         self.light_observer.active_light()
         # fps
-        iActualTime = time.time()
-        if self.lastSecondFps is None:
+        actual_time = time.time()
+        if self.last_second_fps is None:
             # Initiate fps
-            self.lastSecondFps = iActualTime
-            self.fpsCount = 1
-        elif iActualTime - self.lastSecondFps > 1.0:
-            self.ui.lbl_stream_fps.setText("%d" % int(self.fpsCount))
+            self.last_second_fps = actual_time
+            self.fps_count = 1
+        elif actual_time - self.last_second_fps > 1.0:
+            self.ui.lbl_stream_fps.setText("%d" % int(self.fps_count))
             # new set
-            self.lastSecondFps = iActualTime
-            self.fpsCount = 1
+            self.last_second_fps = actual_time
+            self.fps_count = 1
         else:
-            self.fpsCount += 1
+            self.fps_count += 1
 
-        self.numpy_to_QImage(image)
+        self.numpy_to_qimage(image)
 
-    def setPixmap(self, img):
+    def set_pixmap(self, img):
         pix = QtGui.QPixmap.fromImage(img)
         self.ui.imageLabel.setPixmap(pix)
 
-    def numpy_to_QImage(self, image):
+    def numpy_to_qimage(self, image):
         img = Image.fromarray(image)
         buff = StringIO.StringIO()
         img.save(buff, 'ppm')
@@ -205,9 +206,9 @@ class WinViewer(QtGui.QDockWidget):
             qimage = qimage.scaled(shape[1] * self.size, shape[0] * self.size)
         self.newImage.emit(qimage)
 
-    def setImageScale(self, textSize):
-        textSize = textSize[:-1]
-        self.size = float(textSize) / 100
+    def set_image_scale(self, text_size):
+        text_size = text_size[:-1]
+        self.size = float(text_size) / 100
 
     def update_execution(self, data):
         # check if the execution name is removed
@@ -220,7 +221,7 @@ class WinViewer(QtGui.QDockWidget):
             self.is_turn_off = True
 
 
-class Listen_output(threading.Thread):
+class ListenOutput(threading.Thread):
 
     def __init__(self, observer, host, port):
         threading.Thread.__init__(self)
@@ -256,7 +257,7 @@ class Listen_output(threading.Thread):
         self.socket.close()
 
 
-class Light_observer(threading.Thread):
+class LightObserver(threading.Thread):
 
     def __init__(self, uiwidget):
         threading.Thread.__init__(self)
@@ -322,10 +323,10 @@ class LightWidget(QtGui.QWidget):
     def paintEvent(self, e):
         qp = QtGui.QPainter()
         qp.begin(self)
-        self.drawWidget(qp)
+        self.draw_widget(qp)
         qp.end()
 
-    def drawWidget(self, qp):
+    def draw_widget(self, qp):
         size = self.size()
         radx = size.width()
         rady = size.height()

@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from thread_media import Thread_media
+from thread_media import ThreadMedia
 import numpy as np
 from SeaGoatVision.commons import log
 
@@ -93,7 +93,7 @@ class Media(object):
         if self.thread:
             return False
         cb_publisher = self._get_cb_publisher()
-        self.thread = Thread_media(self, cb_publisher)
+        self.thread = ThreadMedia(self, cb_publisher)
         self.thread.start()
         return True
 

@@ -30,9 +30,9 @@ class BGR2HSVManual(Filter):
         h[v == b] = (240 + 60 * (r - g) / (v - min_rgb))[v == b]
 
         h[h < 0] += 360
-        h = h / 2
-        s = s * 255
-        v = v * 255
+        h /= 2
+        s *= 255
+        v *= 255
 
         image = cv2.merge((h.astype(np.uint8),
                            s.astype(np.uint8),

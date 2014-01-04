@@ -19,7 +19,7 @@
 
 # These are necessary for the executed code.
 import cv2  # @UnusedImport
-import cv2.cv as cv  # @UnusedImport
+from cv2 import cv  # @UnusedImport
 import numpy as np  # @UnusedImport
 import sys
 from SeaGoatVision.server.core.filter import Filter

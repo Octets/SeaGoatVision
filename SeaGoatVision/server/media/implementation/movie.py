@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-import cv2.cv as cv
+from cv2 import cv
 
 
 class Movie:

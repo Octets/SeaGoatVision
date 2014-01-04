@@ -25,7 +25,7 @@ from SeaGoatVision.commons import log
 logger = log.get_logger(__name__)
 
 
-class Image_recorder:
+class ImageRecorder:
 
     def __init__(self, media):
         self.writer = None

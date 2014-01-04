@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-import cv2.cv as cv
+from cv2 import cv
 import math
 import numpy as np
 
@@ -57,9 +57,9 @@ class LineOrientation(Filter):
             vx, vy, x, y = l
             point1 = (x - t * vx, y - t * vy)
             point2 = (x + t * vx, y + t * vy)
-            toSend = "LineOrientation: x1=" + str(int(point1[0][0])) + " y1=" + str(
+            to_send = "LineOrientation: x1=" + str(int(point1[0][0])) + " y1=" + str(
                 int(point1[1][0])) + " x2=" + str(int(point2[0][0])) + " y2=" + str(int(point2[1][0])) + " \n"
-            self.notify_output_observers(toSend)
+            self.notify_output_observers(to_send)
             cv2.line(image, point1, point2, (0, 0, 255), 3, -1)
             cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
 

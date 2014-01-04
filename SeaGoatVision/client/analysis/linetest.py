@@ -20,7 +20,7 @@
 from SeaGoatVision.server.imageproviders.implementation.imagefolder import ImageFolder
 
 import cv2
-import cv2.cv as cv
+from cv2 import cv
 import math
 import numpy as np
 import os
@@ -100,7 +100,7 @@ class LineTest:
         ret_image[:,:, 2] = noise | undetected 
         
         return cv2.resize(ret_image, (400, 300))
-    
+
     def find_dist_between_blob_and_line(self, cf, cnt_map):
         """Returns the minimum distance between a blob and a line.
         Args:
@@ -154,7 +154,7 @@ class LineTest:
             return 1.0
         else:
             return total_noise
-        
+
     def find_precision(self, filtered, mapping):
         """Returns the precision of the line detection
         Args:
@@ -168,7 +168,7 @@ class LineTest:
             return 0
         else:
             return (sum_map - sum_undetected) / float(sum_map)
-        
+
     def find_testable_images(self, image_folder):
         """Find all the images that have a mapping file associated with them
         Args:
@@ -204,7 +204,7 @@ class LineTest:
             filtered, mapping = self.get_test_images(file_name)
             self.precisions[file_name] = self.find_precision(filtered, mapping)
             self.noises[file_name] = self.find_noise(filtered, mapping)
-                
+
     def make_binary_array(self, filtered):
         """Convert a filtered image to binary
         pixel = 0 -> 0
@@ -213,7 +213,7 @@ class LineTest:
         binary = np.zeros(gray.shape, dtype=np.uint8)
         binary[gray > 0] = 255
         return binary
-                        
+
     def max_noise(self, cnt_map, image_size):
         """Returns the max noise value for the image.
         Args:

@@ -22,7 +22,7 @@
 from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.commons import keys
 import cv2
-import cv2.cv as cv
+from cv2 import cv
 import numpy as np
 from SeaGoatVision.commons import log
 
@@ -30,17 +30,16 @@ logger = log.get_logger(__name__)
 
 
 class FilterChain(object):
-
     """ Observable.  Contains the chain of filters to execute on an image.
 
     The observer must be a method that receive a filter and an image as param.
     The observer method is called after each execution of a filter in the filter chain.
     """
 
-    def __init__(self, filterchain_name,
-                 serialize=None, default_media_name=None):
+    def __init__(self, filterchain_name, serialize=None, default_media_name=None):
         # to limit the infini import, we import in the init
         from resource import Resource
+
         self.resource = Resource()
 
         self.filters = []
@@ -153,11 +152,13 @@ class FilterChain(object):
 
     def get_filter_list(self):
         class Filter:
-            pass
-        retValue = []
+            def __init__(self):
+                pass
+
+        ret_value = []
         for item in self.filters:
-            retValue.append(item.serialize_info())
-        return retValue
+            ret_value.append(item.serialize_info())
+        return ret_value
 
     def get_params(self, o_filter=None, filter_name=None, param_name=None):
         if filter_name:
@@ -201,7 +202,7 @@ class FilterChain(object):
                 filter_output_obs_copy = self.filter_output_observers[:]
                 for output in filter_output_obs_copy:
                     self.remove_filter_output_observer(output)
-                # recreate the instance
+                    # recreate the instance
                 # index -1 to ignore the default filter
                 o_filter.set_name("%s-%d" % (o_filter.get_name(), index - 1))
                 obj = self.filters[index]
@@ -217,35 +218,35 @@ class FilterChain(object):
         b_original = False
         if keys.get_filter_original_name() == filter_name:
             b_original = True
-            lstObserver = self.original_image_observer
+            lst_observer = self.original_image_observer
         else:
-            lstObserver = self.image_observers.get(filter_name, [])
-        if lstObserver:
-            if observer in lstObserver:
+            lst_observer = self.image_observers.get(filter_name, [])
+        if lst_observer:
+            if observer in lst_observer:
                 log.print_function(
                     logger.warning,
                     "This observer already observer the filter %s" %
                     filter_name)
                 return False
             else:
-                lstObserver.append(observer)
+                lst_observer.append(observer)
         elif not b_original:
             self.image_observers[filter_name] = [observer]
         else:
-            lstObserver.append(observer)
+            lst_observer.append(observer)
         return True
 
     def remove_image_observer(self, observer, filter_name):
         b_original = False
         if keys.get_filter_original_name() == filter_name:
             b_original = True
-            lstObserver = self.original_image_observer
+            lst_observer = self.original_image_observer
         else:
-            lstObserver = self.image_observers.get(filter_name, [])
-        if lstObserver:
-            if observer in lstObserver:
-                lstObserver.remove(observer)
-                if not lstObserver and not b_original:
+            lst_observer = self.image_observers.get(filter_name, [])
+        if lst_observer:
+            if observer in lst_observer:
+                lst_observer.remove(observer)
+                if not lst_observer and not b_original:
                     del self.image_observers[filter_name]
                 return True
 
@@ -292,7 +293,7 @@ class FilterChain(object):
     def send_image(self, image, lst_observer):
         if not isinstance(image, np.ndarray) or not image.size or image.ndim != 3:
             return
-        # copy the picture because the next filter will modify him
+            # copy the picture because the next filter will modify him
         # transform it in rgb
         image2 = np.copy(image)
         cv2.cvtColor(np.copy(image), cv.CV_BGR2RGB, image2)

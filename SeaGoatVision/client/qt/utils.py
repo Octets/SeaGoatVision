@@ -41,16 +41,16 @@ def tree_row_selected(treeview):
 
 def get_ui(widget):
     loader = QtUiTools.QUiLoader()
-    uiPath = os.path.join(
+    ui_path = os.path.join(
         'SeaGoatVision',
         'client',
         'qt',
         'uifiles',
         win_name(widget) + '.ui')
-    logger.info("Loading ui %s", uiPath)
-    uiFile = QtCore.QFile(uiPath)
-    uiFile.open(QtCore.QFile.ReadOnly)
-    return loader.load(uiFile)
+    logger.info("Loading ui %s", ui_path)
+    ui_file = QtCore.QFile(ui_path)
+    ui_file.open(QtCore.QFile.ReadOnly)
+    return loader.load(ui_file)
 
 
 def win_name(window):

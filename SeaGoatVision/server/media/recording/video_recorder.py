@@ -27,7 +27,7 @@ from SeaGoatVision.commons import log
 logger = log.get_logger(__name__)
 
 
-class Video_recorder:
+class VideoRecorder:
 
     def __init__(self, media):
         self.writer = None

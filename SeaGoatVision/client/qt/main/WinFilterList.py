@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from SeaGoatVision.client.qt.utils import get_ui
-from SeaGoatVision.client.qt.shared_info import Shared_info
+from SeaGoatVision.client.qt.shared_info import SharedInfo
 from PySide import QtCore
 
 
@@ -30,7 +30,7 @@ class WinFilterList(QtCore.QObject):
     def __init__(self, controller):
         super(WinFilterList, self).__init__()
         self.controller = controller
-        self.shared_info = Shared_info()
+        self.shared_info = SharedInfo()
         self.shared_info.connect(
             "filterchain_edit_mode",
             self._filterchain_edit_mode)
@@ -42,11 +42,11 @@ class WinFilterList(QtCore.QObject):
 
     def reload_ui(self):
         self.ui = get_ui(self)
-        self.ui.addFilterButton.clicked.connect(self._addFilter)
-        self.ui.reloadFilterButton.clicked.connect(self._reloadFilter)
-        self.ui.filterListWidget.doubleClicked.connect(self._addFilter)
+        self.ui.addFilterButton.clicked.connect(self._add_filter)
+        self.ui.reloadFilterButton.clicked.connect(self._reload_filter)
+        self.ui.filterListWidget.doubleClicked.connect(self._add_filter)
         self.ui.filterListWidget.currentItemChanged.connect(
-            self._selectedFilterChanged)
+            self._selected_filter_changed)
         self.reload_list_filter(self.controller.get_filter_list())
 
     def reload_list_filter(self, dct_filter):
@@ -55,15 +55,15 @@ class WinFilterList(QtCore.QObject):
         for name in lst_filter_sort:
             self.ui.filterListWidget.addItem(name)
 
-    def _selectedFilterChanged(self):
+    def _selected_filter_changed(self):
         filter_name = self.ui.filterListWidget.currentItem().text()
         self.ui.lbl_doc.setText(
             "Description: %s" %
             self.dct_filter[filter_name])
 
-    def _addFilter(self):
+    def _add_filter(self):
         self.onAddFilter.emit(self.ui.filterListWidget.currentItem().text())
 
-    def _reloadFilter(self):
+    def _reload_filter(self):
         self.controller.reload_filter(
             self.ui.filterListWidget.currentItem().text())

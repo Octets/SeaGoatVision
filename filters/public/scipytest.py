@@ -14,8 +14,8 @@ class ScipyExample(Filter):
 
     def __init__(self):
         Filter.__init__(self)
-        self.Circley = Param("Circley", 0, min_v=0, max_v=200)
-        self.Circlex = Param("Circlex", 0, min_v=0, max_v=200)
+        self.circley = Param("Circley", 0, min_v=0, max_v=200)
+        self.circlex = Param("Circlex", 0, min_v=0, max_v=200)
         self.colorr = Param("colorr", 0, min_v=0, max_v=255)
         self.colorg = Param("colorg", 0, min_v=0, max_v=255)
         self.colorb = Param("colorb", 255, min_v=0, max_v=255)

@@ -54,24 +54,24 @@ class VCmd(cmd.Cmd):
                 logger.info("You are disconnected.")
 
     def do_get_filter_list(self, line):
-        lstFilter = self.controller.get_filter_list()
-        if lstFilter is not None:
+        lst_filter = self.controller.get_filter_list()
+        if lst_filter is not None:
             logger.info(
                 "Nombre de ligne %s, tableau : %s" %
-                (len(lstFilter), lstFilter))
+                (len(lst_filter), lst_filter))
         else:
             logger.info("No filterlist")
 
     def do_get_filterchain_list(self, line):
-        lstFilterChain = self.controller.get_filterchain_list()
-        lst_name = [item.get("name") for item in lstFilterChain]
+        lst_filter_chain = self.controller.get_filterchain_list()
+        lst_name = [item.get("name") for item in lst_filter_chain]
         if not self.quiet:
-            if lstFilterChain is not None:
+            if lst_filter_chain is not None:
                 logger.info(
                     "Nombre de ligne %s, tableau : %s" %
-                    (len(lstFilterChain), lst_name))
+                    (len(lst_filter_chain), lst_name))
             else:
-                logger.info("No lstFilterChain")
+                logger.info("No lst_filter_chain")
         else:
             logger.info(lst_name)
 

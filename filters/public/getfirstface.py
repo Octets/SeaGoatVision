@@ -2,7 +2,7 @@
 # http://docs.opencv.org/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html
 
 import cv2
-import cv2.cv as cv
+from cv2 import cv
 import numpy as np
 
 import os
@@ -38,14 +38,14 @@ class GetFirstFace(Filter):
                  1),
                 dtype=np.uint8)
             rect = (face[0], face[1], face[0] + face[2], face[1] + face[3])
-            bgdModel = np.zeros((1, 5 * 13))
-            fgdModel = np.zeros((1, 5 * 13))
+            bgd_model = np.zeros((1, 5 * 13))
+            fgd_model = np.zeros((1, 5 * 13))
             cv2.grabCut(
                 image,
                 mask,
                 rect,
-                bgdModel,
-                fgdModel,
+                bgd_model,
+                fgd_model,
                 10,
                 mode=cv2.GC_INIT_WITH_RECT)
             b, g, r = cv2.split(image)

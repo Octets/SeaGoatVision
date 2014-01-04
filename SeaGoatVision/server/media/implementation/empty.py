@@ -17,11 +17,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.server.media.media_streaming import Media_streaming
+from SeaGoatVision.server.media.media_streaming import MediaStreaming
 import numpy as np
 
 
-class Empty(Media_streaming):
+class Empty(MediaStreaming):
 
     """Do nothing"""
 

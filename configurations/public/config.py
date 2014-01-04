@@ -22,8 +22,8 @@
 
 # Uncomment the other camera module when you need it.
 # import datetime
-from configurations.template_media.conf_webcam import Conf_webcam
-from configurations.template_media.conf_imageGenerator import Conf_imageGenerator
+from configurations.template_media.conf_webcam import ConfWebcam
+from configurations.template_media.conf_imageGenerator import ConfImageGenerator
 # from configurations.template_media.conf_firewire import Conf_firewire
 # from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
 
@@ -49,12 +49,12 @@ path_save_record = ""  # empty string will record on root of seagoat project
 lst_media = []
 
 # add camera webcam with default value
-cam = Conf_webcam()
+cam = ConfWebcam()
 # cam.name = "Webcam" # already use the default name
 lst_media.append(cam)
 
 # add image generator
-cam = Conf_imageGenerator()
+cam = ConfImageGenerator()
 lst_media.append(cam)
 
 # example of firewire
@@ -79,6 +79,6 @@ show_public_filter = True
 # Other
 
 
-def cmd_on_start(cmdHandler):
+def cmd_on_start(cmd_handler):
     # you can add command directly with the cmdHandler when the server is ready
     pass

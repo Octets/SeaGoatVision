@@ -17,6 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# TODO obsolete file
 from SeaGoatVision.client.qt.utils import *
 import cv2
 import numpy as np
@@ -181,24 +182,24 @@ class WinMapper:
                 self.load_folder(folder)
         dialog.destroy()
 
-    def on_btnFirst_clicked(self, widget):
+    def on_btn_first_clicked(self, widget):
         self.lstImages.set_cursor(0)
 
-    def on_btnPrevious_clicked(self, widget):
+    def on_btn_previous_clicked(self, widget):
         position = tree_selected_index(self.lstImages) - 1
         if position >= 0:
             self.lstImages.set_cursor(position)
 
-    def on_btnNext_clicked(self, widget):
+    def on_btn_next_clicked(self, widget):
         position = tree_selected_index(self.lstImages) + 1
         if position < len(self.imageListStore):
             self.lstImages.set_cursor(position)
 
-    def on_btnLast_clicked(self, widget):
+    def on_btn_last_clicked(self, widget):
         position = len(self.imageListStore) - 1
         self.lstImages.set_cursor(position)
 
-    def on_btnClear_clicked(self, widget):
+    def on_btn_clear_clicked(self, widget):
         if self.msg_confirm_clear() == Gtk.ResponseType.YES:
             self.matrices.append(np.zeros(
                                  (self.pixbuf_image.get_height(),
@@ -206,7 +207,7 @@ class WinMapper:
             self.configure_surface()
             self.drwImage.queue_draw()
 
-    def on_btnUndo_clicked(self, widget):
+    def on_btn_undo_clicked(self, widget):
         if len(self.matrices) == 1:
             return
         matrix = self.matrices[-1]
