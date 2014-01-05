@@ -80,6 +80,9 @@ if __name__ == '__main__':
 
     subscriber = Subscriber(ctr, 5031, addr=args.host)
 
+    if not args.local:
+        ctr.set_subscriber(subscriber)
+
     sInterface = args.interface.lower()
     if sInterface == "qt":
         sys.exit(

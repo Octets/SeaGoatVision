@@ -42,6 +42,8 @@ class JsonClient():
         # close all socket
         for observer in self.observer:
             observer.stop()
+    def set_subscriber(self, subscriber):
+        self.subscriber = subscriber
 
     def add_image_observer(self, observer, execution_name, filter_name):
         """

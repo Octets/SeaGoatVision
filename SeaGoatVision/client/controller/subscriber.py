@@ -87,11 +87,9 @@ class Subscriber():
         return True
 
     def _recv_callback_topic(self, data):
-        # substract the topic
-        pos_first_space = data.find(" ")
         # find all callback of this topic
-        topic = int(data[:pos_first_space])
-        message = data[pos_first_space + 1:]
+        topic = data[0]
+        message = data[1]
         for lst_topic in self.dct_key_topic_cb.values():
             if lst_topic[0] == topic:
                 for cb in lst_topic[1]:
@@ -113,13 +111,16 @@ class ListenOutput(threading.Thread):
 
     def run(self):
         self.socket.connect("tcp://%s:%s" % (self.addr, self.port))
+        # TODO bug, it's not normal to subscribe for all topic
+        self.socket.setsockopt(zmq.SUBSCRIBE,'')
         while not self.is_stopped:
             try:
-                data = self.socket.recv()
+                data = self.socket.recv_pyobj()
                 if data:
                     self.observer(data)
             except zmq.error.ZMQError:
                 # ignore it, it's the timeout
+                # TODO can we do something with ZMQError?
                 pass
             except Exception as e:
                 log.printerror_stacktrace(logger, e)
