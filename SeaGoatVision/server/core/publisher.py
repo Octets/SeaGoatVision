@@ -58,7 +58,7 @@ class Publisher():
         del self.dct_key_topic[key]
 
     def subscribe(self, key):
-        # just inform the client if the key is registed
+        # just inform the client if the key is registered
         topic = self.dct_key_topic.get(key, None)
         if not topic:
             logger.warning("Cannot subscribe, key not exist : %s" % key)

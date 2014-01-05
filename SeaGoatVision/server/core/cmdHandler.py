@@ -336,7 +336,7 @@ class CmdHandler:
         return filterchain.add_image_observer(observer, filter_name)
 
     def set_image_observer(
-            self, observer, execution_name, filter_name_old, filter_name_new):
+            self, observer, execution_name, filter_name_old, filter_name_new, new_observer=None):
         """
             Inform the server what filter we want to change observer
             Param :
@@ -345,6 +345,8 @@ class CmdHandler:
                 - string, filter_name_old , filter to replace
                 - string, filter_name_new , filter to use
         """
+        if new_observer is None:
+            new_observer = observer
         self._post_command_(locals())
         if filter_name_old == filter_name_new:
             log.print_function(
@@ -356,7 +358,7 @@ class CmdHandler:
         if not filterchain:
             return False
         filterchain.remove_image_observer(observer, filter_name_old)
-        return filterchain.add_image_observer(observer, filter_name_new)
+        return filterchain.add_image_observer(new_observer, filter_name_new)
 
     def remove_image_observer(self, observer, execution_name, filter_name):
         """

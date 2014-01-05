@@ -32,6 +32,8 @@ class JsonClient():
         self.rpc = jsonrpclib.Server('http://%s:%s' % (host, port))
         self._lst_port = []
         self._hostname = host
+        # link observer viewer with deserialize observer
+        self.dct_link_obs_des_obs = {}
 
     def __getattr__(self, name):
         return getattr(self.rpc, name)
@@ -54,7 +56,9 @@ class JsonClient():
         status = self.rpc.add_image_observer(execution_name, filter_name)
         if status:
             key = keys.create_unique_exec_filter_name(execution_name, filter_name)
-            status = self.subscriber.subscribe(key, self._deserialize_image(observer))
+            des_observer = self._deserialize_image(observer)
+            self.dct_link_obs_des_obs[observer] = des_observer
+            status = self.subscriber.subscribe(key, des_observer)
         return status
 
     def set_image_observer(
@@ -63,14 +67,17 @@ class JsonClient():
         if status:
             new_key = keys.create_unique_exec_filter_name(execution_name, filter_name_new)
             old_key = keys.create_unique_exec_filter_name(execution_name, filter_name_old)
-            self.subscriber.desubscribe(old_key, observer)
-            status = self.subscriber.subscribe(new_key, observer)
+            des_observer = self.dct_link_obs_des_obs[observer]
+            self.subscriber.desubscribe(old_key, des_observer)
+            status = self.subscriber.subscribe(new_key, des_observer)
         return status
 
     def remove_image_observer(self, observer, execution_name, filter_name):
         status = self.rpc.remove_image_observer(execution_name, filter_name)
         key = keys.create_unique_exec_filter_name(execution_name, filter_name)
-        self.subscriber.desubscribe(key, observer)
+        des_observer = self.dct_link_obs_des_obs[observer]
+        self.subscriber.desubscribe(key, des_observer)
+        del self.dct_link_obs_des_obs[observer]
         return status
 
     def get_params_filterchain(self, execution_name, filter_name):

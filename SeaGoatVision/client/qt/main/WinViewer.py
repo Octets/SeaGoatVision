@@ -188,7 +188,10 @@ class WinViewer(QtGui.QDockWidget):
         else:
             self.fps_count += 1
 
-        self.numpy_to_qimage(image)
+        try:
+            self.numpy_to_qimage(image)
+        except Exception as e:
+            log.printerror_stacktrace(logger, e, check_duplicate=True)
 
     def set_pixmap(self, img):
         pix = QtGui.QPixmap.fromImage(img)

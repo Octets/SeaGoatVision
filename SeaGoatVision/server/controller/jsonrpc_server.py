@@ -175,7 +175,6 @@ class JsonrpcServer():
         key = keys.create_unique_exec_filter_name(execution_name, filter_name)
         observer = self._cb_send_image(key)
         if self.cmd_handler.add_image_observer(observer, execution_name, filter_name):
-            self.publisher.register(key)
             if key not in self.dct_observer:
                 self.dct_observer[key] = observer
             return True
@@ -186,19 +185,20 @@ class JsonrpcServer():
         old_key = keys.create_unique_exec_filter_name(execution_name, filter_name_old)
         new_key = keys.create_unique_exec_filter_name(execution_name, filter_name_new)
         observer = self.dct_observer[old_key]
+        new_observer = self._cb_send_image(new_key)
         if self.cmd_handler.set_image_observer(observer, execution_name, filter_name_old,
-                                                            filter_name_new):
-            self.dct_observer[new_key] = observer
+                                                            filter_name_new, new_observer=new_observer):
+            del self.dct_observer[old_key]
+            self.dct_observer[new_key] = new_observer
             return True
         return False
 
     def remove_image_observer(self, execution_name, filter_name):
         key = keys.create_unique_exec_filter_name(execution_name, filter_name)
-        observer = self.dct_observer[key]
-        if self.cmd_handler.remove_image_observer(observer, execution_name, filter_name):
-            self.publisher.deregister(key)
-            return True
-        return False
+        observer = self.dct_observer.get(key, None)
+        if observer is None:
+            logger.warning("Missing image observer : %s" % key)
+        return self.cmd_handler.remove_image_observer(observer, execution_name, filter_name)
 
     def _compress_cvmat(self, image):
         compress_img = cv2.imencode(".jpeg", image, (cv.CV_IMWRITE_JPEG_QUALITY, 95))
