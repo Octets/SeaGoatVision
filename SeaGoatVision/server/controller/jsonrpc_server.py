@@ -24,9 +24,10 @@ Description : JsonRPC server implementation
 # Import required RPC modules
 from jsonrpclib.SimpleJSONRPCServer import SimpleJSONRPCServer
 from SeaGoatVision.server.core.cmdHandler import CmdHandler
-import socket
-import threading
 from SeaGoatVision.commons import log
+from SeaGoatVision.commons import keys
+import cv2
+from cv2 import cv
 
 logger = log.get_logger(__name__)
 
@@ -37,6 +38,7 @@ class JsonrpcServer():
         self.server = SimpleJSONRPCServer(('', port), logRequests=False)
         self.cmd_handler = CmdHandler()
         self.dct_observer = {}
+        self.publisher = self.cmd_handler.get_publisher()
 
     def register(self):
         # register all rpc callback
@@ -139,8 +141,6 @@ class JsonrpcServer():
 
     def close(self):
         logger.info("Close jsonrpc server.")
-        for observer in self.dct_observer.values():
-            observer.close()
         self.cmd_handler.close()
         self.server.shutdown()
 
@@ -171,91 +171,41 @@ class JsonrpcServer():
     #
     # OBSERVATOR ################################
     #
-    def add_image_observer(self, port, execution_name, filter_name):
-        observer = Observer(port)
-        self.dct_observer[execution_name] = observer
-        if self.cmd_handler.add_image_observer(observer.observer, execution_name, filter_name):
-            observer.start()
+    def add_image_observer(self, execution_name, filter_name):
+        key = keys.create_unique_exec_filter_name(execution_name, filter_name)
+        observer = self._cb_send_image(key)
+        if self.cmd_handler.add_image_observer(observer, execution_name, filter_name):
+            self.publisher.register(key)
+            if key not in self.dct_observer:
+                self.dct_observer[key] = observer
             return True
-        else:
-            self._remove_image_observer(execution_name)
         return False
 
     def set_image_observer(
             self, execution_name, filter_name_old, filter_name_new):
-        observer = self.dct_observer.get(execution_name, None)
-        if observer and self.cmd_handler.set_image_observer(observer.observer, execution_name, filter_name_old,
+        old_key = keys.create_unique_exec_filter_name(execution_name, filter_name_old)
+        new_key = keys.create_unique_exec_filter_name(execution_name, filter_name_new)
+        observer = self.dct_observer[old_key]
+        if self.cmd_handler.set_image_observer(observer, execution_name, filter_name_old,
                                                             filter_name_new):
+            self.dct_observer[new_key] = observer
             return True
         return False
 
     def remove_image_observer(self, execution_name, filter_name):
-        observer = self.dct_observer.get(execution_name, None)
-        status = False
-        if observer and self.cmd_handler.remove_image_observer(observer.observer, execution_name, filter_name):
-            status = True
-        self._remove_image_observer(execution_name)
-        return status
+        key = keys.create_unique_exec_filter_name(execution_name, filter_name)
+        observer = self.dct_observer[key]
+        if self.cmd_handler.remove_image_observer(observer, execution_name, filter_name):
+            self.publisher.deregister(key)
+            return True
+        return False
 
-    def _remove_image_observer(self, execution_name):
-        # close the socket
-        observer = self.dct_observer.get(execution_name, None)
-        if observer:
-            observer.close()
-            del self.dct_observer[execution_name]
+    def _compress_cvmat(self, image):
+        compress_img = cv2.imencode(".jpeg", image, (cv.CV_IMWRITE_JPEG_QUALITY, 95))
+        return compress_img[1].dumps()
 
-
-class Observer(threading.Thread):
-
-    def __init__(self, port):
-        threading.Thread.__init__(self)
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind(("", port))
-        # self.add = (add, port)
-        # self.socket.connect(self.add)
-        self.__stop = False
-        self.address = None
-
-    def run(self):
-        # waiting answer from client
-        _, address = self.socket.recvfrom(1024)
-        print address
-        self.address = address
-        self.buffer = 65507
-
-    def observer(self, image):
-        if self.address:
-            data = image.dumps()
-            nb_packet = int(len(data) / self.buffer) + 1
-            # TODO missing count for index byte
-            nb_char = 0
-            for i in range(nb_packet):
-                if not i:
-                    str_index = "b%d_" % nb_packet
-                    begin_index = 0
-                else:
-                    str_index = "c%d_" % i
-                    begin_index += nb_char
-
-                nb_char = self.buffer - len(str_index)
-                str_data = "%s%s" % (
-                    str_index,
-                    data[begin_index:begin_index + nb_char])
-                try:
-                    if not self.__stop:
-                        self.socket.sendto(str_data, self.address)
-                    else:
-                        break
-                except Exception as e:
-                    # Don't print error if we suppose to stop the socket
-                    if not self.__stop:
-                        logger.warning("Exception from image observer : %s", e)
-
-    def close(self):
-        self.__stop = True
-        try:
-            self.socket.shutdown(socket.SHUT_RDWR)
-        except:
-            pass
-        self.socket.close()
-        self.socket = None
+    def _cb_send_image(self, key):
+        def _publish_image(image):
+            compress_cvmat = self._compress_cvmat(image)
+            self.publisher.publish(key, compress_cvmat)
+        return _publish_image

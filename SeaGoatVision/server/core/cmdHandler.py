@@ -67,6 +67,9 @@ class CmdHandler:
         self.publisher.register(keys.get_key_filter_param())
         self.publisher.register(keys.get_key_media_param())
 
+    def get_publisher(self):
+        return self.publisher
+
     def close(self):
         logger.info("Close cmdHandler and close server.")
         for execution in self.dct_exec.values():
@@ -144,6 +147,10 @@ class CmdHandler:
             keys.get_key_execution_list(), "+%s" %
             execution_name)
 
+        for filter_name in filterchain.get_filter_name():
+            key = keys.create_unique_exec_filter_name(execution_name, filter_name)
+            self.publisher.register(key)
+
         return True
 
     def stop_filterchain_execution(self, execution_name):
@@ -172,11 +179,19 @@ class CmdHandler:
             return False
 
         observer.remove_observer(filterchain.execute)
+
+        # deregiste key
+        for filter_name in filterchain.get_filter_name():
+            key = keys.create_unique_exec_filter_name(execution_name, filter_name)
+            self.publisher.deregister(key)
+
         filterchain.destroy()
         del self.dct_exec[execution_name]
+        # publish removing filterchain
         self.publisher.publish(
             keys.get_key_execution_list(), "-%s" %
             execution_name)
+
         return True
 
     def get_execution_list(self):

@@ -61,6 +61,11 @@ def get_key_media_loop():
 def set_key_media_frame():
     return "frame_media"
 
+# generator
+
+def create_unique_exec_filter_name(execution_name, filter_name):
+    return "%s_%s" % (execution_name, filter_name)
+
 # used by ZeroMQ
 
 
