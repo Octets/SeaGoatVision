@@ -175,15 +175,21 @@ class FilterChain(object):
         return self.filters[index]
 
     def get_filter(self, index=None, name=None):
+        return_data = None
         if index is not None:
             # TODO not better return self[index] ??
-            return self.filters[index]
+            return_data = self.filters[index]
         elif name is not None:
             lst_filter = [
                 o_filter for o_filter in self.filters if o_filter.get_name() == name]
             if lst_filter:
-                return lst_filter[0]
-        return None
+                return_data = lst_filter[0]
+        else:
+            return_data = self.filters
+        return return_data
+
+    def get_filter_name(self):
+        return [o_filter.get_name() for o_filter in self.filters]
 
     def add_filter(self, o_filter):
         self.filters.append(o_filter)
