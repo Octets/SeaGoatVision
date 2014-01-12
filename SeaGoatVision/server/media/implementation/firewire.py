@@ -358,9 +358,9 @@ class Firewire(MediaStreaming):
             if not self.buffer_last_timestamp:
                 self.buffer_last_timestamp = True
                 return None
-                #log.print_function(
-                #logger.warning, "No image receive from %s" %
-                #(self.get_name()))
+                log.print_function(
+                logger.warning, "No image receive from %s" %
+                (self.get_name()))
             self.count_no_image += 1
             if self.count_no_image > self.max_no_image:
                 self.count_no_image = 0
@@ -381,9 +381,9 @@ class Firewire(MediaStreaming):
                 self.buffer_last_timestamp = True
                 return self.actual_image
             else:
-                logger.warning(
-                    "Receive no more image from %s, timestamp %d" %
-                    (self.get_name(), self.actual_timestamp))
+                #logger.warning(
+                #    "Receive no more image from %s, timestamp %d" %
+                #    (self.get_name(), self.actual_timestamp))
                 return None
         # reinitilize all protection
         self.buffer_last_timestamp = False
