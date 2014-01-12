@@ -45,7 +45,7 @@ Credits
 Thanks club Capra and club Sonia to support us.
 
  - http://capra.etsmtl.ca
- - https://sonia.etsmtl.ca
+ - http://sonia.etsmtl.ca
 
 Changelog
 ----------------
