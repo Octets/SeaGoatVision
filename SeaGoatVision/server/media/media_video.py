@@ -75,7 +75,7 @@ class MediaVideo(Media):
             return False
         elif action == keys.get_key_media_loop():
             self.set_loop_enable(not self.active_loop)
-        elif action == keys.set_key_media_frame():
+        elif action == keys.get_key_media_frame():
             self.change_frame(value)
         else:
             return False

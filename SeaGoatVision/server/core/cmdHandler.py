@@ -224,7 +224,9 @@ class CmdHandler:
                 for name in self.resource.get_media_name_list()}
 
     def cmd_to_media(self, media_name, cmd, value=None):
-        self._post_command_(locals())
+        # don't print when it's command frame_media, because it's spam
+        if cmd != keys.get_key_media_frame():
+            self._post_command_(locals())
         media = self._get_media(media_name=media_name)
         if not media:
             return False

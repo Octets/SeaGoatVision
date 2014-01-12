@@ -199,7 +199,7 @@ class WinMedia(QtCore.QObject):
             return
         self.controller.cmd_to_media(
             media_name,
-            keys.set_key_media_frame(),
+            keys.get_key_media_frame(),
             value=value - 1)
 
     def set_info(self, value=None):
