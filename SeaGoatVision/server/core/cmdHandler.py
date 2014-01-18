@@ -245,8 +245,12 @@ class CmdHandler:
             return {}
         return media.get_info()
 
-    def start_record(self, media_name, path):
+    def start_record(self, media_name, path, options):
         self._post_command_(locals())
+        """
+        options can be like this
+            {"compress": 0, "format": "avi"}
+        """
         media = self._get_media(media_name=media_name)
         if not media:
             return False
@@ -256,7 +260,7 @@ class CmdHandler:
                 "Cannot start record to a media media %s." %
                 media_name)
             return False
-        return media.start_record(path=path)
+        return media.start_record(path=path, options=options)
 
     def stop_record(self, media_name):
         self._post_command_(locals())

@@ -172,7 +172,10 @@ class WinMedia(QtCore.QObject):
             path = self.ui.txt_name_record.text()
             if not path:
                 path = None
-            if not self.controller.start_record(self.ui.cbMedia.currentText(), path):
+            format_rec = keys.get_key_format_avi() if self.ui.rbn_avi.isChecked() else keys.get_key_format_png()
+            options = {"compress": self.ui.sb_compress.value(),
+                       "format": format_rec}
+            if not self.controller.start_record(self.ui.cbMedia.currentText(), path, options):
                 # TODO improve error message
                 logger.error("Trying start record...")
             else:
@@ -248,12 +251,14 @@ class WinMedia(QtCore.QObject):
             self.ui.btnplay.setIcon(self.pause_icon)
 
     def _set_record_icon(self):
+        self.ui.sb_compress.setEnabled(not self.is_recorded)
+        self.ui.rbn_avi.setEnabled(not self.is_recorded)
+        self.ui.rbn_png.setEnabled(not self.is_recorded)
+        self.ui.txt_name_record.setReadOnly(self.is_recorded)
         if not self.is_recorded:
             self.ui.recordButton.setIcon(self.record_icon)
-            self.ui.txt_name_record.setReadOnly(False)
         else:
             self.ui.recordButton.setIcon(self.save_record_icon)
-            self.ui.txt_name_record.setReadOnly(True)
 
     def get_file_path(self):
         item_cbmedia = self.ui.cbMedia.currentText()

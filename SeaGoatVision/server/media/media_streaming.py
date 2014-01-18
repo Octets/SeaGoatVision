@@ -19,8 +19,11 @@
 
 from media import Media
 from SeaGoatVision.commons import keys
-# from recording.video_recorder import Video_recorder
+from recording.video_recorder import VideoRecorder
 from recording.image_recorder import ImageRecorder
+from SeaGoatVision.commons import log
+
+logger = log.get_logger(__name__)
 
 
 class MediaStreaming(Media):
@@ -30,8 +33,9 @@ class MediaStreaming(Media):
         self._is_opened = False
         self.writer = None
         self.shape = None
-        # self.recorder = Video_recorder(self)
-        self.recorder = ImageRecorder(self)
+        self.recorder_video = VideoRecorder(self)
+        self.recorder_image = ImageRecorder(self)
+        self.recorder = None
 
     def is_media_streaming(self):
         return True
@@ -44,14 +48,26 @@ class MediaStreaming(Media):
 
     def get_info(self):
         info = super(MediaStreaming, self).get_info()
-        info["record_file_name"] = self.recorder.get_file_name()
+        if self.recorder:
+            info["record_file_name"] = self.recorder.get_file_name()
         return info
 
     def get_type_media(self):
         return keys.get_media_type_streaming_name()
 
-    def start_record(self, path=None):
-        return self.recorder.start(self.shape, path=path)
+    def start_record(self, path=None, options={}):
+        if type(options) != dict:
+            options = {}
+            logger.error("Wrong argument when start_record, receive options: %s" % options)
+
+        if options.get("format", keys.get_key_format_avi()) == keys.get_key_format_png():
+            self.recorder = self.recorder_image
+        else:
+            self.recorder = self.recorder_video
+        compress = options.get("compress", 0)
+        return self.recorder.start(self.shape, path=path, compress=compress)
 
     def stop_record(self):
-        return self.recorder.stop()
+        status = self.recorder.stop()
+        self.recorder = None
+        return status

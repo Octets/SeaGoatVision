@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>440</width>
-    <height>556</height>
+    <width>530</width>
+    <height>627</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -78,12 +78,55 @@
           </property>
          </widget>
         </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QRadioButton" name="rbn_png">
+              <property name="text">
+               <string>PNG</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="rbn_avi">
+              <property name="text">
+               <string>AVI</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Compression</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="sb_compress">
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
        </layout>
       </item>
      </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3"/>
     </item>
     <item>
      <widget class="QFrame" name="frame_video">
@@ -139,7 +182,7 @@
          <x>0</x>
          <y>0</y>
          <width>421</width>
-         <height>98</height>
+         <height>109</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -364,7 +407,7 @@
          <x>0</x>
          <y>0</y>
          <width>421</width>
-         <height>64</height>
+         <height>74</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
