@@ -23,6 +23,7 @@ from PIL import Image
 import cv2
 from cv2 import cv
 import numpy as np
+from threading import Semaphore
 from SeaGoatVision.server.core.configuration import Configuration
 from SeaGoatVision.commons import log
 from subprocess import Popen, PIPE
@@ -38,6 +39,8 @@ class VideoRecorder:
         self.config = Configuration()
         self.file_name = None
         self.process = None
+        # create a semaphore to protect when closing ffmpeg
+        self.sem = Semaphore(1)
 
     def start(self, shape, path=None, fps=30, compress=0):
         # TODO manage multiple record
@@ -78,6 +81,12 @@ class VideoRecorder:
         return True
 
     def add_image(self, image):
+        # take sem with blocking
+        self.sem.acquire(True)
+        # check if process is active after the sem
+        if self.process is None:
+            self.sem.release()
+            return
         # convert image to rgb in image2
         image2 = np.asarray(image, dtype="uint8")
         cv2.cvtColor(image, cv.CV_BGR2RGB, image2)
@@ -85,6 +94,7 @@ class VideoRecorder:
         img = Image.fromarray(image2, 'RGB')
         # Save it in ffmpeg process
         img.save(self.process.stdin, 'JPEG')
+        self.sem.release()
 
     def get_file_name(self):
         if not self.file_name:
@@ -97,7 +107,9 @@ class VideoRecorder:
         if not self.process:
             return False
         self.media.remove_observer(self.add_image)
+        self.sem.acquire(True)
         self.process.stdin.close()
         self.process.wait()
         self.process = None
+        self.sem.release()
         return True
