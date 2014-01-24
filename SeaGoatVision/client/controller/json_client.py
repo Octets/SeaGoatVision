@@ -90,7 +90,9 @@ class JsonClient():
         return self._deserialize_param(lst_param_ser)
 
     def _deserialize_param(self, lst_param_ser):
-        return [Param("temp", None, serialize=param_ser) for param_ser in lst_param_ser]
+        if lst_param_ser:
+            return [Param("temp", None, serialize=param_ser) for param_ser in lst_param_ser]
+        return []
 
     def _deserialize_image(self, cb):
         def deserialize_image(data):

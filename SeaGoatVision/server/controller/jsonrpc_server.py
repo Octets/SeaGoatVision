@@ -26,6 +26,7 @@ from jsonrpclib.SimpleJSONRPCServer import SimpleJSONRPCServer
 from SeaGoatVision.server.core.cmdHandler import CmdHandler
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons import keys
+from SeaGoatVision.commons.param import Param
 import cv2
 from cv2 import cv
 
@@ -165,8 +166,10 @@ class JsonrpcServer():
     def _serialize_param(self, param_obj):
         if isinstance(param_obj, list):
             return [param.serialize() for param in param_obj]
-        else:
+        elif isinstance(param_obj, Param):
             return param_obj.serialize()
+        else:
+            return None
 
     #
     # OBSERVATOR ################################
