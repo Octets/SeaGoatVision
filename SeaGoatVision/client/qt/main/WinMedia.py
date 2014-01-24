@@ -175,7 +175,7 @@ class WinMedia(QtCore.QObject):
             format_rec = keys.get_key_format_avi() if self.ui.rbn_avi.isChecked() else keys.get_key_format_png()
             options = {"compress": self.ui.sb_compress.value(),
                        "format": format_rec}
-            if not self.controller.start_record(self.ui.cbMedia.currentText(), path, options):
+            if not self.controller.start_record(self.ui.cbMedia.currentText(), path, None):
                 # TODO improve error message
                 logger.error("Trying start record...")
             else:
@@ -200,10 +200,7 @@ class WinMedia(QtCore.QObject):
         media_name = self.shared_info.get("media")
         if not media_name:
             return
-        self.controller.cmd_to_media(
-            media_name,
-            keys.get_key_media_frame(),
-            value=value - 1)
+        self.controller.cmd_to_media(media_name,keys.get_key_media_frame(),value - 1)
 
     def set_info(self, value=None):
         # Ignore the value
@@ -242,7 +239,7 @@ class WinMedia(QtCore.QObject):
 
     def active_loop(self):
         media_name = self.ui.cbMedia.currentText()
-        self.controller.cmd_to_media(media_name, keys.get_key_media_loop())
+        self.controller.cmd_to_media(media_name, keys.get_key_media_loop(), None)
 
     def _set_play_icon(self):
         if not self.is_play:
