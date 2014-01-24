@@ -35,7 +35,7 @@ Installation
 #### Arch Linux :
 Don't forget to active the "community" repositorie. See https://wiki.archlinux.org/index.php/Pacman
 
-	pacman -S python2 python2-numpy python2-scipy opencv python2-pyside python2-pyqt python2-imaging python2-pip ffmpeg
+	yaourt -S python2 python2-numpy python2-scipy opencv python2-pyside python2-pyqt python2-imaging python2-pip ffmpeg
 	sudo pip2 install jsonrpclib-pelix pyzmq
 
 #### Windows :
