@@ -136,17 +136,17 @@ class Firewire(MediaStreaming):
     def deserialize(self, data):
         if not data:
             return False
-        for uno_data in data:
-            if not uno_data:
-                continue
-            try:
+        try:
+            for uno_data in data:
+                if not uno_data:
+                    continue
                 param = Param(None, None, serialize=uno_data)
                 own_param = self.dct_params.get(param.get_name(), None)
                 if own_param:
                     own_param.merge(param)
-            except Exception as e:
-                log.printerror_stacktrace(logger, e)
-                return False
+        except Exception as e:
+            log.printerror_stacktrace(logger, e)
+            return False
         return True
 
     def initialize(self):

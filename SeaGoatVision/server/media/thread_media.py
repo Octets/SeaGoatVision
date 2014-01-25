@@ -46,6 +46,7 @@ class ThreadMedia(threading.Thread):
         nb_fps = 0
 
         while self.running:
+            # TODO try to remove this try catch for better performance
             try:
                 image = self.media.next()
                 nb_fps += 1

@@ -237,8 +237,8 @@ class ListenOutput(threading.Thread):
 
     def run(self):
         self.socket.connect((self.host, self.port))
-        while not self.is_stopped:
-            try:
+        try:
+            while not self.is_stopped:
                 txt = self.socket.recv(2048)
                 if not txt:
                     self.count_empty_message += 1
@@ -248,8 +248,8 @@ class ListenOutput(threading.Thread):
                     continue
 
                 self.observer(txt)
-            except:
-                self.is_stopped = True
+        except:
+            self.is_stopped = True
 
     def stop(self):
         self.is_stopped = True

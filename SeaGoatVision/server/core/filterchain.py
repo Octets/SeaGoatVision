@@ -282,18 +282,17 @@ class FilterChain(object):
         if self.original_image_observer:
             self.send_image(original_image, self.original_image_observer)
 
-        for f in self.filters:
-            f.set_original_image(original_image)
-            try:
+        try:
+            for f in self.filters:
+                f.set_original_image(original_image)
                 image = f.execute(image)
-            except Exception as e:
-                msg = "(Exec exception Filter %s) %s" % (f.get_name(), e)
-                log.printerror_stacktrace(logger, msg, check_duplicate=True)
-                break
 
-            lst_observer = self.image_observers.get(f.get_name(), [])
-            if lst_observer:
-                self.send_image(image, lst_observer)
+                lst_observer = self.image_observers.get(f.get_name(), [])
+                if lst_observer:
+                    self.send_image(image, lst_observer)
+        except Exception as e:
+            msg = "(Exec exception Filter %s) %s" % (f.get_name(), e)
+            log.printerror_stacktrace(logger, msg, check_duplicate=True)
         return image
 
     def send_image(self, image, lst_observer):
