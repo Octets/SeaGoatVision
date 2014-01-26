@@ -67,6 +67,7 @@ class Param(object):
         self.thres_h = None
         self.force_type = None
         self.last_serialize_value = None
+        self.description = None
 
         if serialize:
             status = self.deserialize(serialize)
@@ -300,3 +301,10 @@ class Param(object):
 
     def get_type(self):
         return self.force_type
+
+    def set_description(self, description):
+        self.description = description
+
+    def get_description(self):
+        return self.description
+

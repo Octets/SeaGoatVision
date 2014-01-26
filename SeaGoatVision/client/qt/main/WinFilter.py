@@ -32,6 +32,7 @@ class WinFilter(WinParamParent):
     def __init__(self, controller, subscriber):
         super(WinFilter, self).__init__(controller)
         self.subscriber = subscriber
+	self.dct_filter = self.controller.get_filter_list()
         self.shared_info.connect("filter", self.set_filter)
         self.subscriber.subscribe(
             keys.get_key_filter_param(),
@@ -39,6 +40,7 @@ class WinFilter(WinParamParent):
 
     def set_filter(self, value=None):
         # Ignore the value
+
         self.ui.txt_search.setText("")
         self.dct_param = {}
         self.cb_param.currentIndexChanged.disconnect(
@@ -54,7 +56,13 @@ class WinFilter(WinParamParent):
             self.ui.lbl_param_name.setText("Empty params")
             return
 
-        self.lst_param = self.controller.get_params_filterchain(
+	new_key = self.filter_name
+	new_key = new_key[:new_key.rfind("-")]
+	self.ui.lbl_doc.setText(
+            "Filter description: %s" %
+            self.dct_filter[new_key])
+
+	self.lst_param = self.controller.get_params_filterchain(
             self.execution_name, self.filter_name)
         if self.lst_param is None:
             self.lst_param = []
@@ -88,6 +96,7 @@ class WinFilter(WinParamParent):
             elif type is str:
                 self.actuel_widget.setText(param.get())
 
+
     def on_cb_param_item_changed(self, index):
         self.ui.lbl_param_name.setText(
             "%s - %s" %
@@ -100,6 +109,9 @@ class WinFilter(WinParamParent):
 
         param = self.lst_param[index]
         self.layout.addWidget(self.get_widget(param))
+
+        self.ui.lbl_desc_param.setText(
+            "Parameter description: %s" % (param.get_description()))
 
     def get_widget(self, param):
         group_box = QtGui.QGroupBox()

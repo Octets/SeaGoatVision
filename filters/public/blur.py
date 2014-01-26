@@ -30,6 +30,8 @@ class Blur(Filter):
         Filter.__init__(self)
         self.kernel_width = Param("width", 3, min_v=1, max_v=10)
         self.kernel_height = Param("height", 3, min_v=1, max_v=10)
+        self.kernel_height.set_description("kernel's height")
+        self.kernel_width.set_description("kernel's width")
 
     def execute(self, image):
         cv2.blur(image, (self.kernel_width.get(),
