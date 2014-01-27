@@ -175,7 +175,7 @@ class WinMedia(QtCore.QObject):
             format_rec = keys.get_key_format_avi() if self.ui.rbn_avi.isChecked() else keys.get_key_format_png()
             options = {"compress": self.ui.sb_compress.value(),
                        "format": format_rec}
-            if not self.controller.start_record(self.ui.cbMedia.currentText(), path, None):
+            if not self.controller.start_record(self.ui.cbMedia.currentText(), path, options):
                 # TODO improve error message
                 logger.error("Trying start record...")
             else:

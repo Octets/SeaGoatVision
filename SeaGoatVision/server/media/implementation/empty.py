@@ -17,11 +17,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.server.media.media_streaming import MediaStreaming
+from SeaGoatVision.server.media.media import Media
+from SeaGoatVision.commons import keys
 import numpy as np
 
 
-class Empty(MediaStreaming):
+class Empty(Media):
 
     """Do nothing"""
 
@@ -29,7 +30,11 @@ class Empty(MediaStreaming):
         # Go into configuration/template_media for more information
         super(Empty, self).__init__()
         self.media_name = name
+        print(name)
         self.image = np.zeros((1, 1), np.float32)
+
+    def get_type_media(self):
+        return keys.get_media_empty_name()
 
     def next(self):
         return self.image
