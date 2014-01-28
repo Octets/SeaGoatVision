@@ -485,6 +485,7 @@ class CmdHandler:
             return False
 
         param.set(value)
+        # TODO update when filter is not running
         o_filter.configure()
         # send from publisher
         data = {"execution_name": execution_name, "param": param.serialize()}

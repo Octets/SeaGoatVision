@@ -32,7 +32,7 @@ class WinFilter(WinParamParent):
     def __init__(self, controller, subscriber):
         super(WinFilter, self).__init__(controller)
         self.subscriber = subscriber
-	self.dct_filter = self.controller.get_filter_list()
+        self.dct_filter = self.controller.get_filter_list()
         self.shared_info.connect("filter", self.set_filter)
         self.subscriber.subscribe(
             keys.get_key_filter_param(),
@@ -56,13 +56,13 @@ class WinFilter(WinParamParent):
             self.ui.lbl_param_name.setText("Empty params")
             return
 
-	new_key = self.filter_name
-	new_key = new_key[:new_key.rfind("-")]
-	self.ui.lbl_doc.setText(
+        new_key = self.filter_name
+        new_key = new_key[:new_key.rfind("-")]
+        self.ui.lbl_doc.setText(
             "Filter description: %s" %
             self.dct_filter[new_key])
 
-	self.lst_param = self.controller.get_params_filterchain(
+        self.lst_param = self.controller.get_params_filterchain(
             self.execution_name, self.filter_name)
         if self.lst_param is None:
             self.lst_param = []
