@@ -21,6 +21,7 @@ Description : launch vision client. Can choose multiple client
 """
 
 import sys
+from SeaGoatVision.commons import global_env
 import argparse
 from SeaGoatVision.commons import log
 from SeaGoatVision.client.controller.subscriber import Subscriber
@@ -65,6 +66,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.local:
+        global_env.set_is_local(True)
         from SeaGoatVision.server.core.cmdHandler import CmdHandler
         # Directly connected to the vision server
         ctr = CmdHandler()
