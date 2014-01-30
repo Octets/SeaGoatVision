@@ -21,12 +21,12 @@ http://opencv.willowgarage.com/wiki/InstallGuide
 Installation
 ------------
 ### A. Download the project
-    git clone git://github.com/Octets/SeaGoatVision.git
+	git clone git://github.com/Octets/SeaGoatVision.git
 
 ###B. Install dependencies
 #### Ubuntu :
-    sudo apt-get install python python-numpy python-scipy python-opencv python-pyside python-qt4 python-imaging libopencv-dev python-pip ffmpeg
-    sudo pip install jsonrpclib-pelix pyzmq
+	sudo apt-get install python python-numpy python-scipy python-opencv python-pyside python-qt4 python-imaging libopencv-dev python-pip ffmpeg
+	sudo pip install jsonrpclib-pelix pyzmq
 
 #### Fedora :
 	sudo yum install python numpy scipy opencv-python python-pyside PyQT4 python-imaging opencv-devel python-pip ffmpeg
@@ -51,7 +51,7 @@ Install the following dependencies:
  - pip:		https://github.com/simpleservices/app_report-python/wiki/How-to-install-pip-on-Windows
  - ffmpeg:	http://ffmpeg.zeranoe.com/builds/	# Install the static version
 
-  pip install jsonrpclib-pelix pyzmq
+	pip install jsonrpclib-pelix pyzmq
 
 #### Mac OSX :
 Start by installing Xcode command-line tools. On 10.9 Mavericks, this is as straightforward as entering this line in a terminal:
@@ -72,15 +72,15 @@ Then, from the terminal:
 Finally, you will need to compile OpenCV with python bindings from source. Please refer to the FAQ for this.
 
 ### C. Third-party
-Note: The third-party pydc1394 is dependant of cython 0.19. Be sure you have it, else install it with easy_install from his website. You don't need Pydc1394 if you haven't Firewire camera.
+Note: The third-party pydc1394 is dependant of cython 0.19 and early version. Be sure you have it, else install it with easy_install from his website. You don't need Pydc1394 if you haven't Firewire camera.
 
 On the root of the project:
 
-    git submodule init
-    git submodule update
+	git submodule init
+	git submodule update
 
 ### D. Compile
 To compile the filters in Cpp and the third-party, do on the root of the project:
 
-    make
+	make
 
