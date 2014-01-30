@@ -9,14 +9,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>293</width>
+    <width>319</width>
     <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>293</width>
-    <height>180</height>
+    <width>319</width>
+    <height>238</height>
    </size>
   </property>
   <property name="features">
@@ -89,6 +89,20 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="lbl_doc">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="lbl_desc_param">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </item>
     <item>
      <layout class="QVBoxLayout" name="layout_params"/>
