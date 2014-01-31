@@ -40,8 +40,8 @@ class WinParamParent(QtGui.QDockWidget):
         self.cb_value_change = None
         self.layout = None
         self.ui = None
-        self._set_value_float = None
-        self.dct_widget_param = {}
+        self._dct_widget_param = {}
+        self.actual_dynamic_widget = None
 
         self.reload_ui()
 
@@ -50,9 +50,9 @@ class WinParamParent(QtGui.QDockWidget):
 
         self.lst_param = []
         self.dct_param = {}
-        self._set_value_float = None
+        self.actual_dynamic_widget = None
 
-        self.layout = self.ui.layout_params
+        self.parent_layout = self.ui.layout_params
         self.cb_param = self.ui.cb_filter_param
         self.actuel_widget = None
 
@@ -64,15 +64,11 @@ class WinParamParent(QtGui.QDockWidget):
             self.on_cb_param_item_changed)
 
     def update_server_param(self, param):
-        if self.actuel_widget:
-            param_type = param.get_type()
-            if param_type is int or param_type is float:
-                self.label.setText(str(param.get()))
-            elif param_type is str:
-                self.actuel_widget.setText(param.get())
+        if self.actual_dynamic_widget:
+            self.actual_dynamic_widget.set_param_server(param)
 
     def update_param(self, param):
-        self.layout.addWidget(self._get_widget(param))
+        self._set_widget(param)
 
         self.ui.lbl_desc_param.setText(
             "Parameter description: %s" % (param.get_description()))
@@ -93,19 +89,64 @@ class WinParamParent(QtGui.QDockWidget):
             name = param.get_name()
             self.cb_param.addItem(name)
 
-    def _get_widget(self, param):
-        group_box = QtGui.QGroupBox()
+    def _set_widget(self, param):
+        param_type = param.get_type()
+        dynamic_widget = self._dct_widget_param.get(param_type, None)
+        if not dynamic_widget:
+            dynamic_widget = self._DynamicWidget(param, self.parent_layout)
+            self._dct_widget_param[param_type] = dynamic_widget
+        if self.actual_dynamic_widget != dynamic_widget:
+            # hide all widget
+            for item in self._dct_widget_param.values():
+                item.set_visible(False)
+            dynamic_widget.set_visible(True)
+        dynamic_widget.set_param(param)
 
-        group_box.setTitle(param.get_name())
 
-        get_widget = {
-            int: self._get_integer_widget,
-            float: self._get_float_widget,
-            str: self._get_str_widget,
-            bool: self._get_bool_widget,
-        }
+    class _DynamicWidget():
+        def __init__(self, controller, param, parent_layout):
+            self.param_type = param.get_type()
+            self.layout = None
+            self.parent_layout = parent_layout
+            layout = self._create_widget(param)
+            self.parent_layout.addWidget(layout)
+            self.controller = controller
 
-        def _create_value_change(param):
+        def get_layout(self):
+            return self.layout
+
+        def set_visible(self, is_visible):
+            pass
+
+        def set_param(self, param):
+            print(param)
+
+        def set_param_server(self, param):
+            self.label.setText(str(param.get()))
+
+        def _create_widget(self, param):
+            group_box = QtGui.QGroupBox()
+
+            group_box.setTitle(param.get_name())
+
+            cb_value_change = self._create_value_change(param)
+            self.cb_value_change = cb_value_change
+
+            param_type = param.get_type()
+            if param_type is int:
+                layout = self._create_integer_widget(param, cb_value_change)
+            elif param_type is float:
+                layout = self._create_float_widget(param, cb_value_change)
+            elif param_type is str:
+                layout = self._create_str_widget(param, cb_value_change)
+            elif param_type is bool:
+                layout = self._create_bool_widget(param, cb_value_change)
+
+            group_box.setLayout(layout)
+
+            return group_box
+
+        def _create_value_change(self, param):
             def _set_value(value):
                 if param.get_type() is bool:
                     value = bool(value)
@@ -122,168 +163,163 @@ class WinParamParent(QtGui.QDockWidget):
                         (value, param.get_name()))
             return _set_value
 
-        cb_value_change = _create_value_change(param)
-        self.cb_value_change = cb_value_change
+        def _create_integer_widget(self, param, cb_value_change):
+            spinbox = QtGui.QSpinBox()
+            spinbox.setMaximumHeight(28)
+            spinbox.setMaximumWidth(100)
 
-        layout = get_widget[param.get_type()](param, cb_value_change)
-        group_box.setLayout(layout)
+            slider = QtGui.QSlider()
+            if param.get_min() is not None:
+                slider.setMinimum(param.get_min())
+                spinbox.setMinimum(param.get_min())
+            if param.get_max() is not None:
+                slider.setMaximum(param.get_max())
+                spinbox.setMaximum(param.get_max())
+            slider.setTickInterval(1)
 
-        return group_box
+            self.label = label = QtGui.QLabel()
+            label.setText("allo")
 
-    def _get_integer_widget(self, param, cb_value_change):
-        spinbox = QtGui.QSpinBox()
-        spinbox.setMaximumHeight(28)
-        spinbox.setMaximumWidth(100)
+            value = param.get()
+            if isinstance(value, tuple):
+                spinbox.setValue(value[0])
+                fake_value = value[0]
+            else:
+                spinbox.setValue(value)
+                fake_value = value
+            self._set_value = spinbox.setValue
+            slider.setValue(fake_value)
 
-        slider = QtGui.QSlider()
-        if param.get_min() is not None:
-            slider.setMinimum(param.get_min())
-            spinbox.setMinimum(param.get_min())
-        if param.get_max() is not None:
-            slider.setMaximum(param.get_max())
-            spinbox.setMaximum(param.get_max())
-        slider.setTickInterval(1)
+            self.slider = slider
+            slider.setTickPosition(QtGui.QSlider.TicksBothSides)
+            slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
 
-        value = param.get()
-        if isinstance(value, tuple):
-            spinbox.setValue(value[0])
-            fake_value = value[0]
-        else:
-            spinbox.setValue(value)
-            fake_value = value
-        self._set_value = spinbox.setValue
-        slider.setValue(fake_value)
+            spinbox.valueChanged.connect(self._spin_value_change)
+            slider.valueChanged.connect(self._slider_value_change)
 
-        self.slider = slider
-        slider.setTickPosition(QtGui.QSlider.TicksBothSides)
-        slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
+            layout = QtGui.QHBoxLayout()
+            layout.addWidget(slider)
+            layout.addWidget(spinbox)
+            layout.addWidget(label)
 
-        spinbox.valueChanged.connect(self._spin_value_change)
-        slider.valueChanged.connect(self._slider_value_change)
+            self.actuel_widget = spinbox
+            return layout
 
-        layout = QtGui.QHBoxLayout()
-        layout.addWidget(slider)
-        layout.addWidget(spinbox)
-        layout.addWidget(label)
+        def _create_float_widget(self, param, cb_value_change):
+            spinbox = QtGui.QDoubleSpinBox()
+            spinbox.setMaximumHeight(28)
+            spinbox.setMaximumWidth(100)
+            spinbox.valueChanged.connect(self._float_spin_value_change)
 
-        self.actuel_widget = spinbox
-        return layout
+            slider = QtGui.QSlider()
+            slider.valueChanged.connect(self._float_slider_value_change)
+            self.slider_float = slider
+            if param.get_min() is not None:
+                slider.setMinimum(param.get_min())
+                self._new_slider_min = param.get_min()
+                spinbox.setMinimum(param.get_min())
+            if param.get_max() is not None:
+                slider.setMaximum(param.get_max())
+                self._new_slider_max = param.get_max()
+                spinbox.setMaximum(param.get_max())
+            slider.setTickInterval(1)
 
-    def _get_float_widget(self, param, cb_value_change):
-        spinbox = QtGui.QDoubleSpinBox()
-        spinbox.setMaximumHeight(28)
-        spinbox.setMaximumWidth(100)
-        spinbox.valueChanged.connect(self._float_spin_value_change)
+            value = param.get()
+            if isinstance(value, tuple):
+                spinbox.setValue(value[0])
+                fake_value = value[0]
+            else:
+                spinbox.setValue(value)
+                fake_value = value
+            self._set_value_float = spinbox.setValue
+            slider.setValue(fake_value)
 
-        slider = QtGui.QSlider()
-        slider.valueChanged.connect(self._float_slider_value_change)
-        self.slider_float = slider
-        if param.get_min() is not None:
-            slider.setMinimum(param.get_min())
-            self._new_slider_min = param.get_min()
-            spinbox.setMinimum(param.get_min())
-        if param.get_max() is not None:
-            slider.setMaximum(param.get_max())
-            self._new_slider_max = param.get_max()
-            spinbox.setMaximum(param.get_max())
-        slider.setTickInterval(1)
+            slider.setTickPosition(QtGui.QSlider.TicksBothSides)
+            slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
 
-        value = param.get()
-        if isinstance(value, tuple):
-            spinbox.setValue(value[0])
-            fake_value = value[0]
-        else:
-            spinbox.setValue(value)
-            fake_value = value
-        self._set_value_float = spinbox.setValue
-        slider.setValue(fake_value)
+            layout = QtGui.QHBoxLayout()
+            layout.addWidget(slider)
+            layout.addWidget(spinbox)
+            return layout
 
-        slider.setTickPosition(QtGui.QSlider.TicksBothSides)
-        slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
+        def _fit(self, v, oldmin, oldmax, newmin=0.0, newmax=1.0):
+            """
+            Just a standard math fit/remap function
 
-        layout = QtGui.QHBoxLayout()
-        layout.addWidget(slider)
-        layout.addWidget(spinbox)
-        return layout
+                number v         - initial value from old range
+                number oldmin     - old range min value
+                number oldmax     - old range max value
+                number newmin     - new range min value
+                number newmax     - new range max value
 
-    def _fit(self, v, oldmin, oldmax, newmin=0.0, newmax=1.0):
-        """
-        Just a standard math fit/remap function
+            Example:
 
-            number v         - initial value from old range
-            number oldmin     - old range min value
-            number oldmax     - old range max value
-            number newmin     - new range min value
-            number newmax     - new range max value
+                _fit(50, 0, 100, 0.0, 1.0)
+                # 0.5
 
-        Example:
+            """
+            scale = (float(v) - oldmin) / (oldmax - oldmin)
+            new_range = scale * (newmax - newmin)
+            if newmin < newmax:
+                return newmin + new_range
+            else:
+                return newmin - new_range
 
-            _fit(50, 0, 100, 0.0, 1.0)
-            # 0.5
+        def _float_slider_value_change(self, value):
+            new_val = self._fit(
+                value,
+                self.slider_float.minimum(), self.slider_float.maximum(),
+                self._new_slider_min, self._new_slider_max
+            )
+            if self._set_value_float:
+                self._set_value_float(new_val)
+            self.cb_value_change(new_val)
 
-        """
-        scale = (float(v) - oldmin) / (oldmax - oldmin)
-        new_range = scale * (newmax - newmin)
-        if newmin < newmax:
-            return newmin + new_range
-        else:
-            return newmin - new_range
+        def _float_spin_value_change(self, value):
+            self.slider_float.setValue(value)
+            self.cb_value_change(value)
 
-    def _float_slider_value_change(self, value):
-        new_val = self._fit(
-            value,
-            self.slider_float.minimum(), self.slider_float.maximum(),
-            self._new_slider_min, self._new_slider_max
-        )
-        if self._set_value_float:
-            self._set_value_float(new_val)
-        self.cb_value_change(new_val)
+        def _spin_value_change(self, value):
+            self.slider.setValue(value)
+            self.cb_value_change(value)
 
-    def _float_spin_value_change(self, value):
-        self.slider_float.setValue(value)
-        self.cb_value_change(value)
+        def _slider_value_change(self, value):
+            self._set_value(value)
 
-    def _spin_value_change(self, value):
-        self.slider.setValue(value)
-        self.cb_value_change(value)
+        def _create_str_widget(self, param, cb_value_change):
+            layout = QtGui.QHBoxLayout()
+            lst_value = param.get_list_value()
+            self.str_value_change = cb_value_change
+            if not lst_value:
+                self.line_edit = QtGui.QLineEdit()
+                self.line_edit.setText(param.get())
+                self.line_edit.returnPressed.connect(self._signal_edit_line)
+                layout.addWidget(self.line_edit)
+                self.actuel_widget = self.line_edit
+            else:
+                self.combo = QtGui.QComboBox()
+                self.combo.addItems([str(v) for v in lst_value])
+                layout.addWidget(self.combo)
+                self.combo.setCurrentIndex(lst_value.index(param.get()))
+                self.combo.currentIndexChanged.connect(self._signal_combo_change)
 
-    def _slider_value_change(self, value):
-        self._set_value(value)
+            return layout
 
-    def _get_str_widget(self, param, cb_value_change):
-        layout = QtGui.QHBoxLayout()
-        lst_value = param.get_list_value()
-        self.str_value_change = cb_value_change
-        if not lst_value:
-            self.line_edit = QtGui.QLineEdit()
-            self.line_edit.setText(param.get())
-            self.line_edit.returnPressed.connect(self._signal_edit_line)
-            layout.addWidget(self.line_edit)
-            self.actuel_widget = self.line_edit
-        else:
-            self.combo = QtGui.QComboBox()
-            self.combo.addItems([str(v) for v in lst_value])
-            layout.addWidget(self.combo)
-            self.combo.setCurrentIndex(lst_value.index(param.get()))
-            self.combo.currentIndexChanged.connect(self._signal_combo_change)
+        def _signal_combo_change(self, index):
+            value = self.combo.currentText()
+            self.str_value_change(value)
 
-        return layout
+        def _signal_edit_line(self):
+            value = self.line_edit.text()
+            self.str_value_change(value)
 
-    def _signal_combo_change(self, index):
-        value = self.combo.currentText()
-        self.str_value_change(value)
+        def _create_bool_widget(self, param, cb_value_change):
+            checkbox = QtGui.QCheckBox()
+            checkbox.setTristate(False)
+            if param.get():
+                checkbox.setCheckState(QtCore.Qt.Checked)
+            checkbox.stateChanged.connect(cb_value_change)
 
-    def _signal_edit_line(self):
-        value = self.line_edit.text()
-        self.str_value_change(value)
-
-    def _get_bool_widget(self, param, cb_value_change):
-        checkbox = QtGui.QCheckBox()
-        checkbox.setTristate(False)
-        if param.get():
-            checkbox.setCheckState(QtCore.Qt.Checked)
-        checkbox.stateChanged.connect(cb_value_change)
-
-        layout = QtGui.QHBoxLayout()
-        layout.addWidget(checkbox)
-        return layout
+            layout = QtGui.QHBoxLayout()
+            layout.addWidget(checkbox)
+            return layout
