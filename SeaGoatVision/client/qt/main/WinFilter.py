@@ -17,7 +17,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PySide import QtGui
 from WinParamParent import WinParamParent
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons.param import Param
@@ -28,31 +27,30 @@ logger = log.get_logger(__name__)
 
 
 class WinFilter(WinParamParent):
-
     def __init__(self, controller, subscriber):
-        super(WinFilter, self).__init__(controller)
+        super(WinFilter, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
         self.dct_filter = self.controller.get_filter_list()
         self.shared_info.connect("filter", self.set_filter)
+        # TODO Fill the exec name and filter name with cb shared info
+        self.execution_name = None
+        self.filter_name = None
+        self.cb_param.currentIndexChanged.connect(
+            self.on_cb_param_item_changed)
         self.subscriber.subscribe(
             keys.get_key_filter_param(),
             self.update_filter_param)
 
     def set_filter(self, value=None):
         # Ignore the value
+        self.clear_widget()
 
         self.ui.txt_search.setText("")
         self.dct_param = {}
-        self.cb_param.currentIndexChanged.disconnect(
-            self.on_cb_param_item_changed)
-        self.cb_param.clear()
-        self.cb_param.currentIndexChanged.connect(
-            self.on_cb_param_item_changed)
 
         self.execution_name = self.shared_info.get("execution")
         self.filter_name = self.shared_info.get("filter")
         if not self.filter_name:
-            self.clear_widget()
             self.ui.lbl_param_name.setText("Empty params")
             return
 
@@ -71,7 +69,6 @@ class WinFilter(WinParamParent):
             self.ui.lbl_param_name.setText(
                 "%s - Empty params" %
                 self.filter_name)
-            self.clear_widget()
             return
 
         for param in self.lst_param:
@@ -89,66 +86,36 @@ class WinFilter(WinParamParent):
         if not execution_name and execution_name != self.execution_name:
             return
         param = Param("temp", None, serialize=param_ser)
-        if self.actuel_widget:
-            type = param.get_type()
-            if type is int or type is float:
-                self.actuel_widget.setValue(param.get())
-            elif type is str:
-                self.actuel_widget.setText(param.get())
-
+        self.update_server_param(param)
 
     def on_cb_param_item_changed(self, index):
         self.ui.lbl_param_name.setText(
             "%s - %s" %
             (self.execution_name, self.filter_name))
 
-        self.clear_widget()
-
         if index == -1:
             return
+        self.update_param(self.lst_param[index])
 
-        param = self.lst_param[index]
-        self.layout.addWidget(self.get_widget(param))
-
-        self.ui.lbl_desc_param.setText(
-            "Parameter description: %s" % (param.get_description()))
-
-    def get_widget(self, param):
-        group_box = QtGui.QGroupBox()
-
-        group_box.setTitle(param.get_name())
-
-        get_widget = {
-            int: self.get_integer_widget,
-            float: self.get_float_widget,
-            str: self.get_str_widget,
-            bool: self.get_bool_widget,
-        }
-
-        def create_value_change(param):
-            def set(value):
-                if param.get_type() is bool:
-                    value = bool(value)
-                status = self.controller.update_param(
-                    self.execution_name,
-                    self.filter_name,
-                    param.get_name(),
-                    value)
-                if status:
-                    param.set(value)
-                else:
-                    logger.error(
-                        "Change value %s of param %s." %
-                        (value, param.get_name()))
-            return set
-
-        cb_value_change = create_value_change(param)
-        self.cb_value_change = cb_value_change
-
-        layout = get_widget[param.get_type()](param, cb_value_change)
-        group_box.setLayout(layout)
-
-        return group_box
+    def set_value(self, value, param):
+        # update the server value
+        if param is None:
+            return
+        param_name = param.get_name()
+        param_type = param.get_type()
+        if param_type is bool:
+            value = bool(value)
+        status = self.controller.update_param(
+            self.execution_name,
+            self.filter_name,
+            param_name,
+            value)
+        if status:
+            param.set(value)
+        else:
+            logger.error(
+                "Change value %s of param %s." %
+                (value, param_name))
 
     def default(self):
         pass
@@ -156,7 +123,7 @@ class WinFilter(WinParamParent):
     def reset(self):
         for param in self.lst_param:
             param.reset()
-            status = self.controller.update_param(
+            self.controller.update_param(
                 self.execution_name,
                 self.filter_name,
                 param.get_name(),

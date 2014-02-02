@@ -17,7 +17,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PySide import QtGui
 from WinParamParent import WinParamParent
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons.param import Param
@@ -28,12 +27,13 @@ logger = log.get_logger(__name__)
 
 
 class WinCamera(WinParamParent):
-
     def __init__(self, controller, subscriber):
-        super(WinCamera, self).__init__(controller)
+        super(WinCamera, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
         self.media_name = None
         self.shared_info.connect("media", self.set_camera)
+        self.cb_param.currentIndexChanged.connect(
+            self.on_cb_param_item_changed)
         self.subscriber.subscribe(
             keys.get_key_media_param(),
             self.update_media_param)
@@ -46,11 +46,6 @@ class WinCamera(WinParamParent):
         # Ignore the value
         self.ui.txt_search.setText("")
         self.dct_param = {}
-        self.cb_param.currentIndexChanged.disconnect(
-            self.on_cb_param_item_changed)
-        self.cb_param.clear()
-        self.cb_param.currentIndexChanged.connect(
-            self.on_cb_param_item_changed)
 
         self.media_name = self.shared_info.get("media")
         self.clear_widget()
@@ -74,6 +69,7 @@ class WinCamera(WinParamParent):
             self.cb_param.addItem(name)
             self.dct_param[name] = param
 
+        # Select first item
         self.on_cb_param_item_changed(0)
 
     def update_media_param(self, json_data):
@@ -83,56 +79,29 @@ class WinCamera(WinParamParent):
         if not media and media != self.media_name:
             return
         param = Param("temp", None, serialize=param_ser)
-        if self.actuel_widget:
-            type = param.get_type()
-            if type is int or type is float:
-                self.actuel_widget.setValue(param.get())
-            elif type is str:
-                self.actuel_widget.setText(param.get())
+        self.update_server_param(param)
 
     def on_cb_param_item_changed(self, index):
-        self.ui.lbl_param_name.setText("%s" % (self.media_name))
-
-        self.clear_widget()
+        self.ui.lbl_param_name.setText("%s" % self.media_name)
 
         if index == -1:
             return
 
-        param = self.lst_param[index]
-        self.layout.addWidget(self.get_widget(param))
+        self.update_param(self.lst_param[index])
 
-    def get_widget(self, param):
-        group_box = QtGui.QGroupBox()
-
-        group_box.setTitle(param.get_name())
-
-        get_widget = {
-            int: self.get_integer_widget,
-            float: self.get_float_widget,
-            str: self.get_str_widget,
-            bool: self.get_bool_widget,
-        }
-
-        def create_value_change(param):
-            def set(value):
-                if param.get_type() is bool:
-                    value = bool(value)
-                status = self.controller.update_param_media(
-                    self.media_name, param.get_name(), value)
-                if status:
-                    param.set(value)
-                else:
-                    logger.error(
-                        "Change value %s of param %s." %
-                        (value, param.get_name()))
-            return set
-
-        self.cb_value_change = create_value_change(param)
-
-        layout = get_widget[param.get_type()](param, self.cb_value_change)
-        group_box.setLayout(layout)
-
-        return group_box
+    def set_value(self, value, param):
+        # update the server value
+        if param is None:
+            return
+        param_name = param.get_name()
+        param_type = param.get_type()
+        if param_type is bool:
+            value = bool(value)
+        status = self.controller.update_param_media(self.media_name, param_name, value)
+        if status:
+            param.set(value)
+        else:
+            logger.error("Change value %s of param %s." % (value, param_name))
 
     def default(self):
         pass
