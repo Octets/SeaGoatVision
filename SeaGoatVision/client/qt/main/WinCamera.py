@@ -27,9 +27,8 @@ logger = log.get_logger(__name__)
 
 
 class WinCamera(WinParamParent):
-
     def __init__(self, controller, subscriber):
-        super(WinCamera, self).__init__(controller)
+        super(WinCamera, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
         self.media_name = None
         self.shared_info.connect("media", self.set_camera)
@@ -49,7 +48,7 @@ class WinCamera(WinParamParent):
         self.dct_param = {}
 
         self.media_name = self.shared_info.get("media")
-        #self.clear_widget()
+        self.clear_widget()
         if not self.media_name:
             self.ui.lbl_param_name.setText("Empty params")
             return
@@ -62,7 +61,7 @@ class WinCamera(WinParamParent):
             self.ui.lbl_param_name.setText(
                 "%s - Empty params" %
                 self.media_name)
-            #self.clear_widget()
+            self.clear_widget()
             return
 
         for param in self.lst_param:
@@ -80,15 +79,29 @@ class WinCamera(WinParamParent):
         if not media and media != self.media_name:
             return
         param = Param("temp", None, serialize=param_ser)
-        self.update_server_value(param)
+        self.update_server_param(param)
 
     def on_cb_param_item_changed(self, index):
-        self.ui.lbl_param_name.setText("%s" % (self.media_name))
+        self.ui.lbl_param_name.setText("%s" % self.media_name)
 
         if index == -1:
             return
 
         self.update_param(self.lst_param[index])
+
+    def set_value(self, value, param):
+        # update the server value
+        if param is None:
+            return
+        param_name = param.get_name()
+        param_type = param.get_type()
+        if param_type is bool:
+            value = bool(value)
+        status = self.controller.update_param_media(self.media_name, param_name, value)
+        if status:
+            param.set(value)
+        else:
+            logger.error("Change value %s of param %s." % (value, param_name))
 
     def default(self):
         pass

@@ -27,12 +27,14 @@ logger = log.get_logger(__name__)
 
 
 class WinFilter(WinParamParent):
-
     def __init__(self, controller, subscriber):
-        super(WinFilter, self).__init__(controller)
+        super(WinFilter, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
         self.dct_filter = self.controller.get_filter_list()
         self.shared_info.connect("filter", self.set_filter)
+        # TODO Fill the exec name and filter name with cb shared info
+        self.execution_name = None
+        self.filter_name = None
         self.cb_param.currentIndexChanged.connect(
             self.on_cb_param_item_changed)
         self.subscriber.subscribe(
@@ -41,6 +43,7 @@ class WinFilter(WinParamParent):
 
     def set_filter(self, value=None):
         # Ignore the value
+        self.clear_widget()
 
         self.ui.txt_search.setText("")
         self.dct_param = {}
@@ -48,7 +51,6 @@ class WinFilter(WinParamParent):
         self.execution_name = self.shared_info.get("execution")
         self.filter_name = self.shared_info.get("filter")
         if not self.filter_name:
-            #self.clear_widget()
             self.ui.lbl_param_name.setText("Empty params")
             return
 
@@ -67,7 +69,6 @@ class WinFilter(WinParamParent):
             self.ui.lbl_param_name.setText(
                 "%s - Empty params" %
                 self.filter_name)
-            #self.clear_widget()
             return
 
         for param in self.lst_param:
@@ -85,7 +86,7 @@ class WinFilter(WinParamParent):
         if not execution_name and execution_name != self.execution_name:
             return
         param = Param("temp", None, serialize=param_ser)
-        self.update_server_value(param)
+        self.update_server_param(param)
 
     def on_cb_param_item_changed(self, index):
         self.ui.lbl_param_name.setText(
@@ -95,6 +96,26 @@ class WinFilter(WinParamParent):
         if index == -1:
             return
         self.update_param(self.lst_param[index])
+
+    def set_value(self, value, param):
+        # update the server value
+        if param is None:
+            return
+        param_name = param.get_name()
+        param_type = param.get_type()
+        if param_type is bool:
+            value = bool(value)
+        status = self.controller.update_param(
+            self.execution_name,
+            self.filter_name,
+            param_name,
+            value)
+        if status:
+            param.set(value)
+        else:
+            logger.error(
+                "Change value %s of param %s." %
+                (value, param_name))
 
     def default(self):
         pass
