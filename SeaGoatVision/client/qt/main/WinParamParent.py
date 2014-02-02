@@ -375,8 +375,9 @@ class StrWidget(ParentWidget):
         self.lbl_server_value.setText(str(value))
 
     def _signal_combo_change(self, index):
-        value = self.combo_box.currentText()
-        self._set_value(value)
+        if index >= 0:
+            value = self.combo_box.currentText()
+            self._set_value(value)
 
     def _signal_edit_line(self):
         value = self.line_edit.text()

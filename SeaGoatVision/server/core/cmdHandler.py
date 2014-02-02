@@ -38,7 +38,6 @@ KEY_FILTERCHAIN = "filterchain"
 
 
 class CmdHandler:
-
     def __init__(self):
         """
             Structure of dct_execution
@@ -107,7 +106,7 @@ class CmdHandler:
         if execution:
             log.print_function(
                 logger.error, "The execution %s is already created." %
-                (execution_name))
+                              (execution_name))
             return False
 
         filterchain = self.resource.get_filterchain(
@@ -116,7 +115,7 @@ class CmdHandler:
         if not filterchain:
             log.print_function(
                 logger.error, "Filterchain %s not exist or contain error." %
-                (filterchain_name))
+                              (filterchain_name))
             return False
 
         # Exception, if not media_name, we take the default media_name from the
@@ -128,7 +127,7 @@ class CmdHandler:
         if not media:
             log.print_function(
                 logger.error, "Media %s not exist or you didn't set the default media on filterchain." %
-                (media_name))
+                              (media_name))
             return False
 
         if media.is_media_video() and file_name:
@@ -145,7 +144,7 @@ class CmdHandler:
 
         self.publisher.publish(
             keys.get_key_execution_list(), "+%s" %
-            execution_name)
+                                           execution_name)
 
         for filter_name in filterchain.get_filter_name():
             key = keys.create_unique_exec_filter_name(execution_name, filter_name)
@@ -190,7 +189,7 @@ class CmdHandler:
         # publish removing filterchain
         self.publisher.publish(
             keys.get_key_execution_list(), "-%s" %
-            execution_name)
+                                           execution_name)
 
         return True
 
@@ -308,13 +307,13 @@ class CmdHandler:
             if not param:
                 log.print_function(
                     logger.error, "Missing param %s in media %s." %
-                    (param_name, media_name))
+                                  (param_name, media_name))
                 return False
             data = {"media": media_name, "param": param.serialize()}
             json_data = json.dumps(data)
             self.publisher.publish(
                 keys.get_key_media_param(), "%s" %
-                json_data)
+                                            json_data)
         return status
 
     def save_params_media(self, media_name):
@@ -469,19 +468,19 @@ class CmdHandler:
     def update_param(self, execution_name, filter_name, param_name, value):
         self._post_command_(locals())
         filterchain = self._get_filterchain(execution_name)
-        if not filterchain:
+        if not filterchain and not filter_name:
             return False
         o_filter = filterchain.get_filter(name=filter_name)
         if not o_filter:
             log.print_function(
                 logger.error, "Don't find filter %s on filterchain %s" %
-                (filter_name, filterchain.get_name()))
+                              (filter_name, filterchain.get_name()))
             return False
         param = o_filter.get_params(param_name=param_name)
         if not param:
             log.print_function(
                 logger.error, "Don't find param %s on filter %s" %
-                (param_name, filter_name))
+                              (param_name, filter_name))
             return False
 
         param.set(value)
@@ -516,7 +515,8 @@ class CmdHandler:
     def modify_filterchain(self, old_filterchain_name,
                            new_filterchain_name, lst_str_filters, default_media):
         self._post_command_(locals())
-        return self.resource.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters, default_media)
+        return self.resource.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters,
+                                                default_media)
 
     #
     # FILTER  ##################################

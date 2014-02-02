@@ -33,7 +33,7 @@ TIPS :
  - In this example, we can't access to -1 because of min.
     p = Param("f", 2, min_v=1, max_v=19, lst_value=[-1,2,4,6,10])
  - We can use a threshold value. In this situation, we have two value.
-  The value is always the low value and the threshold_hight is the hight value.
+  The value is always the low value and the threshold_high is the high value.
     p = Param("f", 2, min_v=1, max_v=8, thres_h=5)
 """
 import numpy as np
@@ -43,28 +43,27 @@ logger = log.get_logger(__name__)
 
 
 class Param(object):
-
     """Param autodetect basic type
     force_type need to be a <type>
     If you want specific type, cast it to basic type and use force_type
     Param manager type : bool, str, int and float
     """
 
-    def __init__(self, name, value, min_v=None, max_v=None, lst_value=None,
-                 force_type=None, thres_h=None, serialize=None):
-        # contant float
+    def __init__(self, name, value, min_v=None, max_v=None, lst_value=None, force_type=None, thres_h=None,
+                 serialize=None):
+        # constant float
         self.delta_float = 0.0001
         # Exception, can serialize
         self.lst_notify = []
         self.lst_notify_reset = []
         self.name = name
-        self.lst_value = lst_value
+        self.lst_value = None
         self.min_v = None
         self.max_v = None
         self.value = None
         self.default_value = None
         self.type_t = None
-        self.thres_h = None
+        self.threshold = None
         self.force_type = None
         self.last_serialize_value = None
         self.description = None
@@ -72,11 +71,8 @@ class Param(object):
         if serialize:
             status = self.deserialize(serialize)
             if not status:
-                raise Exception(
-                    "Wrong deserialize parameter, can't know the name.")
-            logger.debug(
-                "Param %s deserialization complete, value %s" %
-                (self.name, self.value))
+                raise Exception("Wrong deserialize parameter, can't know the name.")
+            logger.debug("Param %s deserialization complete, value %s" % (self.name, self.value))
             return
 
         if not isinstance(name, str) and not isinstance(name, unicode):
@@ -84,8 +80,8 @@ class Param(object):
 
         self._init_param(value, min_v, max_v, lst_value, force_type, thres_h)
 
-    def _init_param(self, value, min_v, max_v, lst_value, force_type, thres_h):
-        self._valid_param(value, min_v, max_v, lst_value, thres_h)
+    def _init_param(self, value, min_v, max_v, lst_value, force_type, threshold):
+        self._valid_param(value, min_v, max_v, lst_value, threshold)
         self.set(value)
         self.default_value = self.last_serialize_value = self.value
         if force_type:
@@ -93,15 +89,15 @@ class Param(object):
         else:
             self.force_type = self.type_t
 
-    def _valid_param(self, value, min_v, max_v, lst_value, thres_h):
+    def _valid_param(self, value, min_v, max_v, lst_value, threshold):
         type_t = type(value)
-        if not(type_t is int or type_t is bool or type_t is float or type_t is str or type_t is np.ndarray or type_t is long or type_t is unicode):
+        if not (type_t is int or type_t is bool or type_t is float or type_t is str or type_t is np.ndarray
+                or type_t is long or type_t is unicode):
             raise Exception("Param don't manage type %s" % type_t)
         if type_t is unicode:
             type_t = str
         if type_t is long:
-            type_t = type_t = int
-            value = int(value)
+            type_t = int
             if min_v is not None:
                 min_v = int(min_v)
             if max_v is not None:
@@ -111,35 +107,27 @@ class Param(object):
             if min_v is not None:
                 type_min = type(min_v)
                 if not (type_min is float or type_min is int or type_min is long):
-                    raise Exception(
-                        "min_v must be float or int, type is %s." %
-                        type_min)
+                    raise Exception("min_v must be float or int, type is %s." % type_min)
             if max_v is not None:
                 type_max = type(max_v)
-                if not(type_max is float or type_max is int or type_max is long):
-                    raise Exception(
-                        "max_v must be float or int, type is %s." %
-                        type(max_v))
-            if lst_value is not None and \
-                    not(isinstance(lst_value, tuple) or isinstance(lst_value, list)):
-                raise Exception(
-                    "lst_value must be list or tuple, type is %s." %
-                    type(lst_value))
+                if not (type_max is float or type_max is int or type_max is long):
+                    raise Exception("max_v must be float or int, type is %s." % type(max_v))
             if type_t is float:
                 min_v = None if min_v is None else float(min_v)
                 max_v = None if max_v is None else float(max_v)
-                lst_value = None if lst_value is None else \
-                    [float(value) for value in lst_value]
+                lst_value = None if lst_value is None else [float(value) for value in lst_value]
             if type_t is int:
                 min_v = None if min_v is None else int(min_v)
                 max_v = None if max_v is None else int(max_v)
-                lst_value = None if lst_value is None else \
-                    [int(value) for value in lst_value]
+                lst_value = None if lst_value is None else [int(value) for value in lst_value]
+        if lst_value is not None and \
+                not (isinstance(lst_value, tuple) or isinstance(lst_value, list)):
+            raise Exception("lst_value must be list or tuple, type is %s." % type(lst_value))
         self.min_v = min_v
         self.max_v = max_v
         self.lst_value = lst_value
         self.type_t = type_t
-        self.thres_h = thres_h
+        self.threshold = threshold
 
     def serialize(self):
         self.last_serialize_value = self.value
@@ -150,7 +138,7 @@ class Param(object):
                 "max_v": self.max_v,
                 "lst_value": self.lst_value,
                 #"force_type":self.force_type,
-                "thres_h": self.thres_h}
+                "threshold": self.threshold}
 
     def deserialize(self, value):
         if not isinstance(value, dict):
@@ -187,7 +175,7 @@ class Param(object):
         self.min_v = param.min_v
         self.max_v = param.max_v
         self.lst_value = param.lst_value
-        self.thres_h = param.thres_h
+        self.threshold = param.thres_h
 
     def get_name(self):
         return self.name
@@ -214,8 +202,7 @@ class Param(object):
     def remove_notify(self, callback):
         if callback not in self.lst_notify:
             logger.warning(
-                "The callback wasn't in the list of notify %s" %
-                self.get_name())
+                "The callback wasn't in the list of notify %s" % self.get_name())
             return
         self.lst_notify.remove(callback)
 
@@ -230,8 +217,7 @@ class Param(object):
     def remove_notify_reset(self, callback):
         if callback not in self.lst_notify_reset:
             logger.warning(
-                "The callback wasn't in the list of notify reset %s" %
-                self.get_name())
+                "The callback wasn't in the list of notify reset %s" % self.get_name())
             return
         self.lst_notify_reset.remove(callback)
 
@@ -240,8 +226,8 @@ class Param(object):
         # this can create bug in your filter if you pass wrong type
         if self.force_type is np.ndarray:
             return self.value
-        if self.thres_h is not None:
-            return (self.force_type(self.value), self.force_type(self.thres_h))
+        if self.threshold is not None:
+            return self.force_type(self.value), self.force_type(self.threshold)
         return self.force_type(self.value)
 
     def get_pos_list(self):
@@ -249,7 +235,7 @@ class Param(object):
             return -1
         return self.lst_value.index(self.get())
 
-    def set(self, value, thres_h=None):
+    def set(self, value, threshold=None):
         if isinstance(value, unicode):
             value = str(value)
         if self.type_t is bool:
@@ -260,40 +246,36 @@ class Param(object):
         if self.type_t is float and isinstance(value, int):
             value = float(value)
         if not isinstance(value, self.type_t):
-            raise Exception("value is wrong type. Expected %s and receive %s"
-                            % (self.type_t, type(value)))
+            raise Exception("value is wrong type. Expected %s and receive %s" % (self.type_t, type(value)))
         if self.type_t is int or self.type_t is float:
             if self.min_v is not None and value < self.min_v - self.delta_float:
-                raise Exception("Value %s is lower then min %s" %
-                               (value, self.min_v))
+                raise Exception("Value %s is lower then min %s" % (value, self.min_v))
             if self.max_v is not None and value > self.max_v + self.delta_float:
-                raise Exception("Value %s is upper then max %s" %
-                               (value, self.max_v))
+                raise Exception("Value %s is upper then max %s" % (value, self.max_v))
             if self.lst_value is not None and value not in self.lst_value:
-                raise Exception("value %s is not in lst of value" % (value))
-        if self.thres_h is not None:
-            if thres_h is None:
-                if value > self.thres_h:
-                    msg = "Threshold bot %s is upper then threshold top %s." \
-                        % (value, self.thres_h)
+                raise Exception("value %s is not in lst of value" % value)
+        if self.threshold is not None:
+            if threshold is None:
+                if value > self.threshold:
+                    msg = "Threshold bot %s is upper then threshold top %s." % (value, self.threshold)
                     raise Exception(msg)
             else:
-                if self.type_t is int and isinstance(thres_h, float):
-                    thres_h = int(thres_h)
-                if self.type_t is float and isinstance(thres_h, int):
-                    thres_h = float(thres_h)
-                if not isinstance(thres_h, self.type_t):
-                    msg = "value is wrong type. Expected %s and receive %s" \
-                        % (self.type_t, type(thres_h))
+                if self.type_t is int and isinstance(threshold, float):
+                    threshold = int(threshold)
+                if self.type_t is float and isinstance(threshold, int):
+                    threshold = float(threshold)
+                if not isinstance(threshold, self.type_t):
+                    msg = "value is wrong type. Expected %s and receive %s" % (self.type_t, type(threshold))
                     raise Exception(msg)
-                elif value > thres_h:
-                    msg = "Threshold low %s is upper then threshold hight %s." \
-                        % (value, thres_h)
+                elif value > threshold:
+                    msg = "Threshold low %s is upper then threshold high %s." % (value, threshold)
                     raise Exception(msg)
-                if thres_h > self.max_v:
-                    raise Exception("Threshold hight %s is upper then max %s."
-                                    % (thres_h, self.max_v))
-                self.thres_h = thres_h
+                if threshold > self.max_v:
+                    raise Exception("Threshold high %s is upper then max %s." % (threshold, self.max_v))
+                self.threshold = threshold
+                # check if item is in list
+        if self.lst_value and value not in self.lst_value:
+            raise Exception("Threshold high %s is upper then max %s." % (threshold, self.max_v))
         self.value = value
         # send the value on all notify callback
         for notify in self.lst_notify:
@@ -307,4 +289,3 @@ class Param(object):
 
     def get_description(self):
         return self.description
-
