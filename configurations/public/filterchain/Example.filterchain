@@ -1,0 +1,37 @@
+{
+    "lst_filter": [
+        {
+            "lst_param": [
+                {
+                    "thres_h": null, 
+                    "name": "color_rectangle", 
+                    "lst_value": [
+                        "blue", 
+                        "green", 
+                        "red"
+                    ], 
+                    "min_v": null, 
+                    "value": "blue", 
+                    "max_v": null
+                }, 
+                {
+                    "thres_h": null, 
+                    "name": "enable_output", 
+                    "lst_value": null, 
+                    "min_v": null, 
+                    "value": false, 
+                    "max_v": null
+                }, 
+                {
+                    "thres_h": null, 
+                    "name": "show_rectangle", 
+                    "lst_value": null, 
+                    "min_v": null, 
+                    "value": true, 
+                    "max_v": null
+                }
+            ], 
+            "filter_name": "Example"
+        }
+    ]
+}
