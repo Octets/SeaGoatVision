@@ -48,6 +48,8 @@ class Example(Filter):
         self.text_face.set_description("The text to write on the rectangle.")
         self.text_size = Param("text_size", self.i_text_size, min_v=0.1, max_v=4.9)
         self.text_size.set_description("Change the text size.")
+        self.border_rec_size = Param("border_rec_size", 3, min_v=1, max_v=9)
+        self.border_rec_size.set_description("Change the border size of the rectangle.")
 
         self.nb_face = 1
         self.eye_detect_name = os.path.join('data', 'facedetect', 'haarcascade_eye_tree_eyeglasses.xml')
@@ -90,7 +92,7 @@ class Example(Filter):
             max_x = image.shape[1]
 
         if self.show_rectangle.get():
-            cv2.rectangle(image, (min_x, min_y), (max_x, max_y), color, 3)
+            cv2.rectangle(image, (min_x, min_y), (max_x, max_y), color, thickness=self.border_rec_size.get())
         if self.show_text.get():
             text = "%s.%s" % (self.nb_face, self.text_face.get())
             cv2.putText(image, text, (min_x, min_face_y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, txt_size, color)
