@@ -60,6 +60,8 @@ class FilterChain(object):
             # add default filter
             self.add_filter(Filter(keys.get_empty_filter_name()))
 
+        self.do_configure()
+
     def destroy(self):
         # clean everything!
         for obs in self.filter_output_observers:
@@ -275,6 +277,10 @@ class FilterChain(object):
             if isinstance(f, Filter):
                 f.remove_output_observer(output)
         return True
+
+    def do_configure(self):
+        for f in self.filters:
+            f.configure()
 
     def execute(self, image):
         original_image = np.copy(image)
