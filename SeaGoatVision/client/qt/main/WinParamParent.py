@@ -61,26 +61,21 @@ class WinParamParent(QtGui.QDockWidget):
         self.ui.resetButton.clicked.connect(self.reset)
         self.ui.defaultButton.clicked.connect(self.default)
         self.ui.txt_search.returnPressed.connect(self._search_text_change)
-        self.cb_param.currentIndexChanged.connect(
-            self.on_cb_param_item_changed)
+        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
 
     def update_server_param(self, param):
-        if self.actual_dynamic_widget:
+        if self.actual_dynamic_widget and self.actual_dynamic_widget.get_name() == param.get_name():
             self.actual_dynamic_widget.set_param_server(param)
 
     def update_param(self, param):
         self._set_widget(param)
-        self.ui.lbl_desc_param.setText(
-            "Parameter description: %s" % (param.get_description()))
+        self.ui.lbl_desc_param.setText("Parameter description: %s" % (param.get_description()))
 
     def _search_text_change(self):
         # kk = {key: value for (key, value) in d.items() if s in key}
         text = self.ui.txt_search.text()
         if text:
-            self.lst_param = [
-                value for (
-                    key,
-                    value) in self.dct_param.items() if text in key]
+            self.lst_param = [value for (key, value) in self.dct_param.items() if text in key]
         else:
             self.lst_param = self.dct_param.values()
         self.cb_param.clear()
@@ -92,6 +87,7 @@ class WinParamParent(QtGui.QDockWidget):
         for item in self._dct_widget_param.values():
             item.set_visible(False)
         self.ui.cb_filter_param.clear()
+        self.actual_dynamic_widget = None
 
     def _set_widget(self, param):
         # TODO optimize double call set_widget
@@ -115,6 +111,7 @@ class WinParamParent(QtGui.QDockWidget):
                 item.set_visible(False)
             dynamic_widget.set_visible(True)
         dynamic_widget.set_param(param)
+        self.actual_dynamic_widget = dynamic_widget
 
 
 class ParentWidget(object):
@@ -136,6 +133,9 @@ class ParentWidget(object):
         else:
             raise Exception("Group_box of param widget is empty.")
 
+    def get_name(self):
+        return self.param.get_name()
+
     def _set_value(self, value):
         self.set_value(value, self.param)
 
@@ -144,11 +144,12 @@ class ParentWidget(object):
 
     def set_param(self, param):
         # update param
+        param_name = param.get_name()
         if param.get_type() is not self.param_type:
-            logger.error("Wrong type receiving: %s" % param.get_type())
+            logger.error("Wrong param type receiving: %s" % param.get_type())
             return
         self.param = param
-        self.group_box.setTitle(param.get_name())
+        self.group_box.setTitle(param_name)
         self._set_widget()
 
     def set_param_server(self, param):
@@ -170,19 +171,24 @@ class IntWidget(ParentWidget):
         self.spinbox = None
         self.lbl_server_value = None
         self.checkbox = None
+        self.is_used_slider = False
+        self._server_param = None
         super(self.__class__, self).__init__(controller, shared_info, param, parent_layout, set_value)
 
     def _create_widget(self):
         self.spinbox = spinbox = QtGui.QSpinBox()
         spinbox.setMaximumHeight(28)
         spinbox.setMaximumWidth(100)
-        spinbox.valueChanged.connect(self._spin_value_change)
+        # TODO do we need to implement signal move up and down?
+        spinbox.editingFinished.connect(self._spin_value_change)
 
         self.slider = slider = QtGui.QSlider()
         slider.setTickInterval(1)
         slider.setTickPosition(QtGui.QSlider.TicksBothSides)
         slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        slider.valueChanged.connect(self._slider_value_change)
+        slider.sliderMoved.connect(self._slider_value_change)
+        slider.sliderPressed.connect(self._slider_press)
+        slider.sliderReleased.connect(self._slider_release)
 
         self.lbl_server_value = lbl_server = QtGui.QLabel()
 
@@ -209,13 +215,33 @@ class IntWidget(ParentWidget):
             fake_value = value
         spinbox.setValue(fake_value)
         slider.setValue(fake_value)
+        self.lbl_server_value.setText(str(fake_value))
+
+    def _slider_press(self):
+        self.is_used_slider = True
+
+    def _slider_release(self):
+        self.is_used_slider = False
+        if self._server_param:
+            self._update_param_from_server(self._server_param)
+            self._server_param = None
 
     def _set_server_widget(self, param):
         value = param.get()
-        print(param)
         self.lbl_server_value.setText(str(value))
+        if not self.is_used_slider:
+            self._update_param_from_server(param)
+        else:
+            self._server_param = param
 
-    def _spin_value_change(self, value):
+    def _update_param_from_server(self, param):
+        self.param = param
+        value = param.get()
+        self.slider.setValue(value)
+        self.spinbox.setValue(value)
+
+    def _spin_value_change(self):
+        value = self.spinbox.value()
         self.slider.setValue(value)
         self._set_value(value)
 
@@ -230,6 +256,8 @@ class FloatWidget(ParentWidget):
         self.spinbox = None
         self.lbl_server_value = None
         self.checkbox = None
+        self.is_used_slider = False
+        self._server_param = None
         self._new_slider_min = 0.0
         self._new_slider_max = 1.0
         super(self.__class__, self).__init__(controller, shared_info, param, parent_layout, set_value)
@@ -238,13 +266,15 @@ class FloatWidget(ParentWidget):
         self.spinbox = spinbox = QtGui.QDoubleSpinBox()
         spinbox.setMaximumHeight(28)
         spinbox.setMaximumWidth(100)
-        spinbox.valueChanged.connect(self._spin_value_change)
+        spinbox.editingFinished.connect(self._spin_value_change)
 
         self.slider = slider = QtGui.QSlider()
         slider.setTickInterval(1)
         slider.setTickPosition(QtGui.QSlider.TicksBothSides)
         slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        slider.valueChanged.connect(self._slider_value_change)
+        slider.sliderMoved.connect(self._slider_value_change)
+        slider.sliderPressed.connect(self._slider_press)
+        slider.sliderReleased.connect(self._slider_release)
 
         self.lbl_server_value = lbl_server = QtGui.QLabel()
 
@@ -275,12 +305,33 @@ class FloatWidget(ParentWidget):
             fake_value = value
         spinbox.setValue(fake_value)
         slider.setValue(fake_value)
+        self.lbl_server_value.setText(str(fake_value))
+
+    def _slider_press(self):
+        self.is_used_slider = True
+
+    def _slider_release(self):
+        self.is_used_slider = False
+        if self._server_param:
+            self._update_param_from_server(self._server_param)
+            self._server_param = None
 
     def _set_server_widget(self, param):
         value = param.get()
         self.lbl_server_value.setText(str(value))
+        if not self.is_used_slider:
+            self._update_param_from_server(param)
+        else:
+            self._server_param = param
 
-    def _spin_value_change(self, value):
+    def _update_param_from_server(self, param):
+        self.param = param
+        value = param.get()
+        self.slider.setValue(value)
+        self.spinbox.setValue(value)
+
+    def _spin_value_change(self):
+        value = self.spinbox.value()
         self.slider.setValue(value)
         self._set_value(value)
 
@@ -342,7 +393,7 @@ class StrWidget(ParentWidget):
         if not lst_value:
             combo.setVisible(False)
             line_edit.setVisible(True)
-            line_edit.setText(param.get())
+            line_edit.setText(str(param.get()))
         else:
             combo.setVisible(True)
             line_edit.setVisible(False)
@@ -351,8 +402,19 @@ class StrWidget(ParentWidget):
             combo.setCurrentIndex(lst_value.index(param.get()))
 
     def _set_server_widget(self, param):
-        value = param.get()
-        self.lbl_server_value.setText(str(value))
+        self.param = param
+        lst_value = param.get_list_value()
+        combo = self.combo_box
+        line_edit = self.line_edit
+
+        if not lst_value:
+            combo.setVisible(False)
+            line_edit.setVisible(True)
+            line_edit.setText(str(param.get()))
+        else:
+            combo.setVisible(True)
+            line_edit.setVisible(False)
+            combo.setCurrentIndex(lst_value.index(param.get()))
 
     def _signal_combo_change(self, index):
         if index >= 0:
@@ -385,5 +447,6 @@ class BoolWidget(ParentWidget):
         else:
             self.checkbox.setCheckState(QtCore.Qt.Unchecked)
 
-    def _set_server_widget(self):
-        self._set_bool_widget()
+    def _set_server_widget(self, param):
+        self.param = param
+        self._set_widget()

@@ -87,6 +87,13 @@ class WinCamera(WinParamParent):
         if index == -1:
             return
 
+        # TODO Is it safe to request param value, or we suppose the notification always work?
+        """
+        actual_param = self.lst_param[index]
+        param = self.controller.get_param_media(self.media_name, actual_param.get_name())
+        self.lst_param[index] = param
+        self.update_param(param)
+        """
         self.update_param(self.lst_param[index])
 
     def set_value(self, value, param):

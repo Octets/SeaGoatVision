@@ -487,7 +487,7 @@ class CmdHandler:
         # TODO update when filter is not running
         o_filter.configure()
         # send from publisher
-        data = {"execution_name": execution_name, "param": param.serialize()}
+        data = {"execution": execution_name, "filter": filter_name, "param": param.serialize()}
         json_data = json.dumps(data)
         self.publisher.publish(keys.get_key_filter_param(), "%s" % json_data)
         return True

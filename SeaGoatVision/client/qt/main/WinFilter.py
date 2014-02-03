@@ -35,11 +35,8 @@ class WinFilter(WinParamParent):
         # TODO Fill the exec name and filter name with cb shared info
         self.execution_name = None
         self.filter_name = None
-        self.cb_param.currentIndexChanged.connect(
-            self.on_cb_param_item_changed)
-        self.subscriber.subscribe(
-            keys.get_key_filter_param(),
-            self.update_filter_param)
+        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+        self.subscriber.subscribe(keys.get_key_filter_param(), self.update_filter_param)
 
     def set_filter(self, value=None):
         # Ignore the value
@@ -56,19 +53,14 @@ class WinFilter(WinParamParent):
 
         new_key = self.filter_name
         new_key = new_key[:new_key.rfind("-")]
-        self.ui.lbl_doc.setText(
-            "Filter description: %s" %
-            self.dct_filter[new_key])
+        self.ui.lbl_doc.setText("Filter description: %s" % self.dct_filter[new_key])
 
-        self.lst_param = self.controller.get_params_filterchain(
-            self.execution_name, self.filter_name)
+        self.lst_param = self.controller.get_params_filterchain(self.execution_name, self.filter_name)
         if self.lst_param is None:
             self.lst_param = []
 
         if not self.lst_param:
-            self.ui.lbl_param_name.setText(
-                "%s - Empty params" %
-                self.filter_name)
+            self.ui.lbl_param_name.setText("%s - Empty params" % self.filter_name)
             return
 
         for param in self.lst_param:
@@ -81,21 +73,28 @@ class WinFilter(WinParamParent):
 
     def update_filter_param(self, json_data):
         data = json.loads(json_data)
-        execution_name = data.get("execution_name", None)
-        param_ser = data.get("param", None)
+        execution_name = data.get("execution", None)
         if not execution_name and execution_name != self.execution_name:
+            return
+        filter_name = data.get("filter", None)
+        if not filter_name and filter_name != self.filter_name:
+            return
+        param_ser = data.get("param", None)
+        if not param_ser:
             return
         param = Param("temp", None, serialize=param_ser)
         self.update_server_param(param)
 
     def on_cb_param_item_changed(self, index):
-        self.ui.lbl_param_name.setText(
-            "%s - %s" %
-            (self.execution_name, self.filter_name))
+        self.ui.lbl_param_name.setText("%s - %s" % (self.execution_name, self.filter_name))
 
         if index == -1:
             return
-        self.update_param(self.lst_param[index])
+        # TODO Is it safe to request param value, or we suppose the notification always work?
+        actual_param = self.lst_param[index]
+        param = self.controller.get_param_filterchain(self.execution_name, self.filter_name, actual_param.get_name())
+        self.lst_param[index] = param
+        self.update_param(param)
 
     def set_value(self, value, param):
         # update the server value
@@ -105,17 +104,11 @@ class WinFilter(WinParamParent):
         param_type = param.get_type()
         if param_type is bool:
             value = bool(value)
-        status = self.controller.update_param(
-            self.execution_name,
-            self.filter_name,
-            param_name,
-            value)
+        status = self.controller.update_param(self.execution_name, self.filter_name, param_name, value)
         if status:
             param.set(value)
         else:
-            logger.error(
-                "Change value %s of param %s." %
-                (value, param_name))
+            logger.error("Change value %s of param %s." % (value, param_name))
 
     def default(self):
         pass
@@ -123,11 +116,7 @@ class WinFilter(WinParamParent):
     def reset(self):
         for param in self.lst_param:
             param.reset()
-            self.controller.update_param(
-                self.execution_name,
-                self.filter_name,
-                param.get_name(),
-                param.get())
+            self.controller.update_param(self.execution_name, self.filter_name, param.get_name(), param.get())
         self.set_filter()
 
     def save(self):
