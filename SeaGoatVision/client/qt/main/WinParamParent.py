@@ -140,10 +140,7 @@ class ParentWidget(object):
         self.set_value(value, self.param)
 
     def set_visible(self, is_visible):
-        if is_visible:
-            self.group_box.setTitle(self.param.get_name())
-        else:
-            self.group_box.setTitle("")
+        self.group_box.setVisible(is_visible)
 
     def set_param(self, param):
         # update param
@@ -174,12 +171,6 @@ class IntWidget(ParentWidget):
         self.lbl_server_value = None
         self.checkbox = None
         super(self.__class__, self).__init__(controller, shared_info, param, parent_layout, set_value)
-
-    def set_visible(self, is_visible):
-        super(IntWidget, self).set_visible(is_visible)
-        self.slider.setVisible(is_visible)
-        self.spinbox.setVisible(is_visible)
-        self.lbl_server_value.setVisible(is_visible)
 
     def _create_widget(self):
         self.spinbox = spinbox = QtGui.QSpinBox()
@@ -242,12 +233,6 @@ class FloatWidget(ParentWidget):
         self._new_slider_min = 0.0
         self._new_slider_max = 1.0
         super(self.__class__, self).__init__(controller, shared_info, param, parent_layout, set_value)
-
-    def set_visible(self, is_visible):
-        super(self.__class__, self).set_visible(is_visible)
-        self.slider.setVisible(is_visible)
-        self.spinbox.setVisible(is_visible)
-        self.lbl_server_value.setVisible(is_visible)
 
     def _create_widget(self):
         self.spinbox = spinbox = QtGui.QDoubleSpinBox()
@@ -336,11 +321,6 @@ class StrWidget(ParentWidget):
         self.combo_box = None
         super(self.__class__, self).__init__(controller, shared_info, param, parent_layout, set_value)
 
-    def set_visible(self, is_visible):
-        super(self.__class__, self).set_visible(is_visible)
-        self.line_edit.setVisible(is_visible)
-        self.combo_box.setVisible(is_visible)
-
     def _create_widget(self):
         layout = QtGui.QHBoxLayout()
         self.combo_box = combo = QtGui.QComboBox()
@@ -388,10 +368,6 @@ class BoolWidget(ParentWidget):
     def __init__(self, controller, shared_info, param, parent_layout, set_value):
         self.checkbox = None
         super(self.__class__, self).__init__(controller, shared_info, param, parent_layout, set_value)
-
-    def set_visible(self, is_visible):
-        super(self.__class__, self).set_visible(is_visible)
-        self.checkbox.setVisible(is_visible)
 
     def _create_widget(self):
         self.checkbox = checkbox = QtGui.QCheckBox()
