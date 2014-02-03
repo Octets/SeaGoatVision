@@ -71,7 +71,7 @@ class Param(object):
         if serialize:
             status = self.deserialize(serialize)
             if not status:
-                raise Exception("Wrong deserialize parameter, can't know the name.")
+                raise Exception("Wrong deserialize parameter, can't know the name - %s." % serialize)
             logger.debug("Param %s deserialization complete, value %s" % (self.name, self.value))
             return
 
@@ -275,7 +275,7 @@ class Param(object):
                 self.threshold = threshold
                 # check if item is in list
         if self.lst_value and value not in self.lst_value:
-            raise Exception("Threshold high %s is upper then max %s." % (threshold, self.max_v))
+            raise Exception("The value %s is not in lst_value %s." % (value, self.lst_value))
         self.value = value
         # send the value on all notify callback
         for notify in self.lst_notify:
