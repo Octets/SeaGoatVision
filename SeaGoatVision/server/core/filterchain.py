@@ -77,10 +77,11 @@ class FilterChain(object):
         for o_filter in self.filters:
             o_filter.destroy()
 
-    def serialize(self):
+    def serialize(self, is_config=False):
         # Keep list of filter with param
-        dct = {"lst_filter": [o_filter.serialize()
-                              for o_filter in self.filters if o_filter.name != keys.get_empty_filter_name()]}
+        dct = {"lst_filter": [o_filter.serialize(is_config=is_config)
+                              for o_filter in self.filters if
+                              o_filter.name != keys.get_empty_filter_name()]}
         if self.default_media_name:
             dct["default_media_name"] = self.default_media_name
         return dct
@@ -159,7 +160,7 @@ class FilterChain(object):
 
         ret_value = []
         for item in self.filters:
-            ret_value.append(item.serialize_info())
+            ret_value.append(item.serialize(is_info=True))
         return ret_value
 
     def get_params(self, o_filter=None, filter_name=None, param_name=None):

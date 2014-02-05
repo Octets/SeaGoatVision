@@ -36,6 +36,7 @@ class Configuration(object):
         # Singleton
         if not cls._instance:
             from configurations.public import config as public_config
+
             try:
                 from configurations.private import config as private_config
             except Exception as e:
@@ -168,7 +169,8 @@ class Configuration(object):
     def list_filterchain(self):
         if not os.path.isdir(self.dir_filterchain):
             return []
-        return [files[:-len(self.ext_filterchain)] for files in os.listdir(self.dir_filterchain) if files.endswith(self.ext_filterchain)]
+        return [files[:-len(self.ext_filterchain)] for files in os.listdir(self.dir_filterchain) if
+                files.endswith(self.ext_filterchain)]
 
     def read_filterchain(self, filterchain_name):
         file_name = self._get_filterchain_filename(filterchain_name)
@@ -185,7 +187,7 @@ class Configuration(object):
         if not f:
             log.print_function(
                 logger.error, "Can't open %s %s." %
-                (file_name, type_name))
+                              (file_name, type_name))
             return None
         str_value = f.readlines()
         try:
@@ -210,7 +212,7 @@ class Configuration(object):
         f = open(file_name, "w")
         if not f:
             return False
-        str_value = json.dumps(obj.serialize(), indent=4)
+        str_value = json.dumps(obj.serialize(is_config=True), indent=4)
         f.write(str_value)
         f.close()
         return True
@@ -228,7 +230,7 @@ class Configuration(object):
             if not ignore_not_exist:
                 log.print_function(
                     logger.error, "The %s config %s not exist." %
-                    (file_name, type_name))
+                                  (file_name, type_name))
             return False
         return True
 

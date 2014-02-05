@@ -30,7 +30,6 @@ class Empty(Media):
         # Go into configuration/template_media for more information
         super(Empty, self).__init__()
         self.media_name = name
-        print(name)
         self.image = np.zeros((1, 1), np.float32)
 
     def get_type_media(self):

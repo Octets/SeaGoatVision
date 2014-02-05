@@ -3,7 +3,14 @@
         {
             "lst_param": [
                 {
-                    "thres_h": null, 
+                    "name": "border_rec_size", 
+                    "lst_value": null, 
+                    "min_v": 1, 
+                    "value": 3, 
+                    "max_v": 9, 
+                    "threshold": null
+                }, 
+                {
                     "name": "color_rectangle", 
                     "lst_value": [
                         "blue", 
@@ -12,23 +19,48 @@
                     ], 
                     "min_v": null, 
                     "value": "blue", 
-                    "max_v": null
+                    "max_v": null, 
+                    "threshold": null
                 }, 
                 {
-                    "thres_h": null, 
                     "name": "enable_output", 
                     "lst_value": null, 
                     "min_v": null, 
                     "value": false, 
-                    "max_v": null
+                    "max_v": null, 
+                    "threshold": null
                 }, 
                 {
-                    "thres_h": null, 
                     "name": "show_rectangle", 
                     "lst_value": null, 
                     "min_v": null, 
                     "value": true, 
-                    "max_v": null
+                    "max_v": null, 
+                    "threshold": null
+                }, 
+                {
+                    "name": "enable_text", 
+                    "lst_value": null, 
+                    "min_v": null, 
+                    "value": true, 
+                    "max_v": null, 
+                    "threshold": null
+                }, 
+                {
+                    "name": "text_face", 
+                    "lst_value": null, 
+                    "min_v": null, 
+                    "value": "", 
+                    "max_v": null, 
+                    "threshold": null
+                }, 
+                {
+                    "name": "text_size", 
+                    "lst_value": null, 
+                    "min_v": 0.1, 
+                    "value": 1.0, 
+                    "max_v": 4.9, 
+                    "threshold": null
                 }
             ], 
             "filter_name": "Example"

@@ -34,7 +34,7 @@ TIPS :
     p = Param("f", 2, min_v=1, max_v=19, lst_value=[-1,2,4,6,10])
  - We can use a threshold value. In this situation, we have two value.
   The value is always the low value and the threshold_high is the high value.
-    p = Param("f", 2, min_v=1, max_v=8, thres_h=5)
+    p = Param("f", 2, min_v=1, max_v=8, threshold=5)
 """
 import numpy as np
 from SeaGoatVision.commons import log
@@ -49,8 +49,8 @@ class Param(object):
     Param manager type : bool, str, int and float
     """
 
-    def __init__(self, name, value, min_v=None, max_v=None, lst_value=None, force_type=None, thres_h=None,
-                 serialize=None):
+    def __init__(self, name, value, min_v=None, max_v=None, lst_value=None, force_type=None,
+                 thres_h=None, serialize=None):
         # constant float
         self.delta_float = 0.0001
         # Exception, can serialize
@@ -67,11 +67,13 @@ class Param(object):
         self.force_type = None
         self.last_serialize_value = None
         self.description = None
+        self.lst_group = set()
 
         if serialize:
             status = self.deserialize(serialize)
             if not status:
-                raise Exception("Wrong deserialize parameter, can't know the name - %s." % serialize)
+                raise Exception(
+                    "Wrong deserialize parameter, can't know the name - %s." % serialize)
             logger.debug("Param %s deserialization complete, value %s" % (self.name, self.value))
             return
 
@@ -91,8 +93,8 @@ class Param(object):
 
     def _valid_param(self, value, min_v, max_v, lst_value, threshold):
         type_t = type(value)
-        if not (type_t is int or type_t is bool or type_t is float or type_t is str or type_t is np.ndarray
-                or type_t is long or type_t is unicode):
+        if not (type_t is int or type_t is bool or type_t is float or type_t is str) and \
+                not (type_t is np.ndarray or type_t is long or type_t is unicode):
             raise Exception("Param don't manage type %s" % type_t)
         if type_t is unicode:
             type_t = str
@@ -129,16 +131,18 @@ class Param(object):
         self.type_t = type_t
         self.threshold = threshold
 
-    def serialize(self):
+    def serialize(self, is_config=False):
         self.last_serialize_value = self.value
         # Force_type is not supported
-        return {"name": self.name,
-                "value": self.value,
-                "min_v": self.min_v,
-                "max_v": self.max_v,
-                "lst_value": self.lst_value,
-                #"force_type":self.force_type,
-                "threshold": self.threshold}
+        ser = {"name": self.name,
+               "value": self.value,
+               "min_v": self.min_v,
+               "max_v": self.max_v,
+               "lst_value": self.lst_value,
+               "threshold": self.threshold}
+        if not is_config:
+            ser["description"] = self.description
+        return ser
 
     def deserialize(self, value):
         if not isinstance(value, dict):
@@ -153,6 +157,9 @@ class Param(object):
                          value.get("lst_value", None),
                          value.get("force_type", None),
                          value.get("thres_h", None))
+        description = value.get("description", None)
+        if description:
+            self.description = description
         return True
 
     def reset(self):
@@ -246,7 +253,8 @@ class Param(object):
         if self.type_t is float and isinstance(value, int):
             value = float(value)
         if not isinstance(value, self.type_t):
-            raise Exception("value is wrong type. Expected %s and receive %s" % (self.type_t, type(value)))
+            raise Exception(
+                "value is wrong type. Expected %s and receive %s" % (self.type_t, type(value)))
         if self.type_t is int or self.type_t is float:
             if self.min_v is not None and value < self.min_v - self.delta_float:
                 raise Exception("Value %s is lower then min %s" % (value, self.min_v))
@@ -257,7 +265,8 @@ class Param(object):
         if self.threshold is not None:
             if threshold is None:
                 if value > self.threshold:
-                    msg = "Threshold bot %s is upper then threshold top %s." % (value, self.threshold)
+                    msg = "Threshold bot %s is upper then threshold top %s." % (
+                        value, self.threshold)
                     raise Exception(msg)
             else:
                 if self.type_t is int and isinstance(threshold, float):
@@ -265,13 +274,15 @@ class Param(object):
                 if self.type_t is float and isinstance(threshold, int):
                     threshold = float(threshold)
                 if not isinstance(threshold, self.type_t):
-                    msg = "value is wrong type. Expected %s and receive %s" % (self.type_t, type(threshold))
+                    msg = "value is wrong type. Expected %s and receive %s" % (
+                        self.type_t, type(threshold))
                     raise Exception(msg)
                 elif value > threshold:
                     msg = "Threshold low %s is upper then threshold high %s." % (value, threshold)
                     raise Exception(msg)
                 if threshold > self.max_v:
-                    raise Exception("Threshold high %s is upper then max %s." % (threshold, self.max_v))
+                    raise Exception(
+                        "Threshold high %s is upper then max %s." % (threshold, self.max_v))
                 self.threshold = threshold
                 # check if item is in list
         if self.lst_value and value not in self.lst_value:
@@ -285,6 +296,7 @@ class Param(object):
         return self.force_type
 
     def set_description(self, description):
+        # description provide in the code
         self.description = description
 
     def get_description(self):

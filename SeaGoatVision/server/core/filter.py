@@ -24,7 +24,6 @@ logger = log.get_logger(__name__)
 
 
 class Filter(object):
-
     def __init__(self, name=None):
         self._output_observers = list()
         self.original_image = None
@@ -32,11 +31,13 @@ class Filter(object):
         self.dct_global_param = {}
         self.dct_media_param = {}
 
-    def serialize(self):
-        return {"filter_name": self.__class__.__name__, "lst_param": [param.serialize() for param in self.get_params()]}
-
-    def serialize_info(self):
-        return {"name": self.name, "doc": self.__doc__}
+    def serialize(self, is_config=False, is_info=False):
+        if is_info:
+            return {"name": self.name, "doc": self.__doc__}
+        else:
+            return {"filter_name": self.__class__.__name__,
+                    "lst_param": [param.serialize(is_config=is_config) for param in
+                                  self.get_params()]}
 
     def deserialize(self, value):
         status = True
@@ -143,5 +144,6 @@ class Filter(object):
 
     def get_media(self, name):
         from resource import Resource
+
         resource = Resource()
         return resource.get_media(name)
