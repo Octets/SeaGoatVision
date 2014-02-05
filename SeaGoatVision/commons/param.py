@@ -156,7 +156,7 @@ class Param(object):
                          value.get("max_v", None),
                          value.get("lst_value", None),
                          value.get("force_type", None),
-                         value.get("thres_h", None))
+                         value.get("threshold", None))
         description = value.get("description", None)
         if description:
             self.description = description
@@ -182,7 +182,7 @@ class Param(object):
         self.min_v = param.min_v
         self.max_v = param.max_v
         self.lst_value = param.lst_value
-        self.threshold = param.thres_h
+        self.threshold = param.threshold
 
     def get_name(self):
         return self.name
