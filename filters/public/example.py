@@ -36,24 +36,39 @@ class Example(Filter):
         self.color_rect = self.dct_color_choose["red"]
         self.i_text_size = 1.0
         # add params
-        self.color_rectangle = Param("color_rectangle", "red", lst_value=self.dct_color_choose.keys())
-        self.color_rectangle.set_description("Change the RGB color of the rectangle.")
-        self.show_rectangle = Param("show_rectangle", True)
-        self.show_rectangle.set_description("Colorize a rectangle around the face.")
         self.show_output = Param("enable_output", True)
         self.show_output.set_description("Enable to show rectangle.")
-        self.show_text = Param("enable_text", True)
-        self.show_text.set_description("Show text upper the rectangle.")
-        self.text_face = Param("text_face", "")
-        self.text_face.set_description("The text to write on the rectangle.")
-        self.text_size = Param("text_size", self.i_text_size, min_v=0.1, max_v=4.9)
-        self.text_size.set_description("Change the text size.")
+
+        self.color_rectangle = Param("color_rectangle", "red",
+                                     lst_value=self.dct_color_choose.keys())
+        self.color_rectangle.set_description("Change the RGB color of the rectangle.")
+        self.color_rectangle.add_group("rectangle")
+
+        self.show_rectangle = Param("show_rectangle", True)
+        self.show_rectangle.set_description("Colorize a rectangle around the face.")
+        self.show_rectangle.add_group("rectangle")
+
         self.border_rec_size = Param("border_rec_size", 3, min_v=1, max_v=9)
         self.border_rec_size.set_description("Change the border size of the rectangle.")
+        self.border_rec_size.add_group("rectangle")
+
+        self.show_text = Param("enable_text", True)
+        self.show_text.set_description("Show text upper the rectangle.")
+        self.show_text.add_group("message")
+
+        self.text_face = Param("text_face", "")
+        self.text_face.set_description("The text to write on the rectangle.")
+        self.text_face.add_group("message")
+
+        self.text_size = Param("text_size", self.i_text_size, min_v=0.1, max_v=4.9)
+        self.text_size.set_description("Change the text size.")
+        self.text_size.add_group("message")
 
         self.nb_face = 1
-        self.eye_detect_name = os.path.join('data', 'facedetect', 'haarcascade_eye_tree_eyeglasses.xml')
-        self.face_detect_name = os.path.join('data', 'facedetect', 'haarcascade_frontalface_alt.xml')
+        self.eye_detect_name = os.path.join('data', 'facedetect',
+                                            'haarcascade_eye_tree_eyeglasses.xml')
+        self.face_detect_name = os.path.join('data', 'facedetect',
+                                             'haarcascade_frontalface_alt.xml')
         self.eye_cascade = cv2.CascadeClassifier()
         self.face_cascade = cv2.CascadeClassifier()
         self.eye_cascade.load(self.eye_detect_name)
@@ -66,7 +81,8 @@ class Example(Filter):
     def execute(self, image):
         gray = cv2.cvtColor(image, cv.CV_BGR2GRAY)
         cv2.equalizeHist(gray, gray)
-        faces = self.face_cascade.detectMultiScale(gray, 1.1, 2, 0 | cv.CV_HAAR_SCALE_IMAGE, (30, 30))
+        faces = self.face_cascade.detectMultiScale(gray, 1.1, 2, 0 | cv.CV_HAAR_SCALE_IMAGE,
+                                                   (30, 30))
         for face in faces:
             self.draw_rectangle(image, face, self.color_rect, self.i_text_size)
             self.nb_face = 1
@@ -92,13 +108,16 @@ class Example(Filter):
             max_x = image.shape[1]
 
         if self.show_rectangle.get():
-            cv2.rectangle(image, (min_x, min_y), (max_x, max_y), color, thickness=self.border_rec_size.get())
+            cv2.rectangle(image, (min_x, min_y), (max_x, max_y), color,
+                          thickness=self.border_rec_size.get())
         if self.show_text.get():
             text = "%s.%s" % (self.nb_face, self.text_face.get())
-            cv2.putText(image, text, (min_x, min_face_y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, txt_size, color)
+            cv2.putText(image, text, (min_x, min_face_y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, txt_size,
+                        color)
 
         c_x = (max_x - min_x) / 2 + min_x
         c_y = (max_y - min_y) / 2 + min_y
         if self.show_output.get():
-            self.notify_output_observers("face detect no %d : x=%d, y=%d" % (self.nb_face, c_x, c_y))
+            self.notify_output_observers(
+                "face detect no %d : x=%d, y=%d" % (self.nb_face, c_x, c_y))
         self.nb_face += 1

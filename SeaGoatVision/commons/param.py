@@ -142,6 +142,7 @@ class Param(object):
                "threshold": self.threshold}
         if not is_config:
             ser["description"] = self.description
+            ser["lst_group"] = list(self.lst_group)
         return ser
 
     def deserialize(self, value):
@@ -157,9 +158,13 @@ class Param(object):
                          value.get("lst_value", None),
                          value.get("force_type", None),
                          value.get("threshold", None))
+
         description = value.get("description", None)
         if description:
             self.description = description
+        lst_group = value.get("lst_group", None)
+        if lst_group:
+            self.lst_group = lst_group
         return True
 
     def reset(self):
@@ -301,3 +306,10 @@ class Param(object):
 
     def get_description(self):
         return self.description
+
+    def add_group(self, group_name):
+        # group is configured from filter
+        self.lst_group.add(group_name)
+
+    def get_groups(self):
+        return list(self.lst_group)
