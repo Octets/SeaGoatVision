@@ -16,7 +16,7 @@
   <property name="minimumSize">
    <size>
     <width>319</width>
-    <height>238</height>
+    <height>240</height>
    </size>
   </property>
   <property name="features">
@@ -92,13 +92,6 @@
     </item>
     <item>
      <widget class="QLabel" name="lbl_doc">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="lbl_desc_param">
       <property name="text">
        <string/>
       </property>

@@ -119,13 +119,6 @@
      <layout class="QVBoxLayout" name="layout_params"/>
     </item>
     <item>
-     <widget class="QLabel" name="lbl_desc_param">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <widget class="QPushButton" name="saveButton">

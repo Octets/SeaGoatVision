@@ -73,7 +73,6 @@ class WinParamParent(QtGui.QDockWidget):
 
     def update_param(self, param):
         self._set_widget(param)
-        self.ui.lbl_desc_param.setText("Parameter description: %s" % (param.get_description()))
 
     def _search_text_change(self):
         # kk = {key: value for (key, value) in d.items() if s in key}
@@ -152,14 +151,9 @@ class ParentWidget(object):
         self.shared_info = shared_info
         self.set_value = set_value
         self.is_visible = False
-        # add layout on his parent
-        layout = self._create_widget()
-        self.group_box = QtGui.QGroupBox()
-        self.group_box.setLayout(layout)
-        if self.group_box:
-            self.parent_layout.addWidget(self.group_box)
-        else:
-            raise Exception("Group_box of param widget is empty.")
+        self.lbl_desc = None
+        self.group_box = None
+        self._add_group_box()
         self.set_visible(False)
 
     def get_type(self):
@@ -175,6 +169,23 @@ class ParentWidget(object):
         self.group_box.setVisible(is_visible)
         self.is_visible = is_visible
 
+    def _add_group_box(self):
+        # call this just one time
+        vertical_layout = QtGui.QVBoxLayout()
+        # add layout on his parent
+        layout = self._create_widget()
+        # add description label
+        self.lbl_desc = QtGui.QLabel()
+        vertical_layout.addLayout(layout)
+        vertical_layout.addWidget(self.lbl_desc)
+        # create group_box
+        self.group_box = QtGui.QGroupBox()
+        self.group_box.setLayout(vertical_layout)
+        if self.group_box:
+            self.parent_layout.addWidget(self.group_box)
+        else:
+            raise Exception("Group_box of param widget is empty.")
+
     def set_param(self, param):
         # update param
         param_name = param.get_name()
@@ -183,6 +194,7 @@ class ParentWidget(object):
                 "Wrong param type receiving %s and expect %s" % (param.get_type(), self.param_type))
             return
         self.param = param
+        self.lbl_desc.setText(param.get_description())
         self.group_box.setTitle(param_name)
         self._set_widget()
 
