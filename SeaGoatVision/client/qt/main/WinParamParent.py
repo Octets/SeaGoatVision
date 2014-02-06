@@ -23,6 +23,7 @@ from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.client.qt.shared_info import SharedInfo
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
@@ -39,8 +40,8 @@ class WinParamParent(QtGui.QDockWidget):
         self._set_value = None
         self.layout = None
         self.ui = None
-        self._dct_widget_param = {}
-        self.actual_dynamic_widget = None
+        self.lst_active_widget = []
+        self.lst_inactive_widget = []
         self.parent_layout = None
         self.cb_param = None
         self.set_value = set_value
@@ -52,7 +53,7 @@ class WinParamParent(QtGui.QDockWidget):
 
         self.lst_param = []
         self.dct_param = {}
-        self.actual_dynamic_widget = None
+        self.clear_widget()
 
         self.parent_layout = self.ui.layout_params
         self.cb_param = self.ui.cb_filter_param
@@ -64,8 +65,11 @@ class WinParamParent(QtGui.QDockWidget):
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
 
     def update_server_param(self, param):
-        if self.actual_dynamic_widget and self.actual_dynamic_widget.get_name() == param.get_name():
-            self.actual_dynamic_widget.set_param_server(param)
+        param_name = param.get_name()
+        # find if widget exist
+        for widget in self.lst_active_widget:
+            if widget.get_name() == param_name:
+                widget.set_param(param)
 
     def update_param(self, param):
         self._set_widget(param)
@@ -84,34 +88,57 @@ class WinParamParent(QtGui.QDockWidget):
             self.cb_param.addItem(name)
 
     def clear_widget(self):
-        for item in self._dct_widget_param.values():
-            item.set_visible(False)
+        self._hide_all_widget()
         self.ui.cb_filter_param.clear()
-        self.actual_dynamic_widget = None
 
-    def _set_widget(self, param):
-        # TODO optimize double call set_widget
+    def _set_widget(self, lst_param):
+        self._hide_all_widget()
+        if type(lst_param) is list:
+            for param in lst_param:
+                self._add_widget(param)
+        elif isinstance(lst_param, Param):
+            self._add_widget(lst_param)
+
+    def _hide_all_widget(self):
+        for i in reversed(range(len(self.lst_active_widget))):
+            widget = self.lst_active_widget[i]
+            widget.set_visible(False)
+            self.lst_inactive_widget.append(widget)
+            self.lst_active_widget.remove(widget)
+
+    def _add_widget(self, param):
+        # don't need to check for duplicate, it hide all widget each time
+        # check in inactive list
         param_type = param.get_type()
-        dynamic_widget = self._dct_widget_param.get(param_type, None)
-        if not dynamic_widget:
+        for widget in self.lst_inactive_widget:
+            if widget.get_type() is param_type:
+                self.lst_active_widget.append(widget)
+                self.lst_inactive_widget.remove(widget)
+                break
+        else:
+            widget = None
+        # it's not exist, create a new one
+        if not widget:
             if param_type is int:
-                dynamic_widget = IntWidget(self.controller, self.shared_info, param, self.parent_layout, self.set_value)
+                widget = IntWidget(self.controller, self.shared_info, param, self.parent_layout,
+                                   self.set_value)
             elif param_type is float:
-                dynamic_widget = FloatWidget(self.controller, self.shared_info, param, self.parent_layout,
-                                             self.set_value)
+                widget = FloatWidget(self.controller, self.shared_info, param, self.parent_layout,
+                                     self.set_value)
             elif param_type is str:
-                dynamic_widget = StrWidget(self.controller, self.shared_info, param, self.parent_layout, self.set_value)
+                widget = StrWidget(self.controller, self.shared_info, param, self.parent_layout,
+                                   self.set_value)
             elif param_type is bool:
-                dynamic_widget = BoolWidget(self.controller, self.shared_info, param, self.parent_layout,
-                                            self.set_value)
-            self._dct_widget_param[param_type] = dynamic_widget
-        if self.actual_dynamic_widget != dynamic_widget:
-            # hide all widget
-            for item in self._dct_widget_param.values():
-                item.set_visible(False)
-            dynamic_widget.set_visible(True)
-        dynamic_widget.set_param(param)
-        self.actual_dynamic_widget = dynamic_widget
+                widget = BoolWidget(self.controller, self.shared_info, param, self.parent_layout,
+                                    self.set_value)
+            else:
+                logger.error("The type %s is not supported in WinParamParent widget." % param_type)
+                return
+            self.lst_active_widget.append(widget)
+
+        widget.set_param(param)
+        widget.set_visible(True)
+        return widget
 
 
 class ParentWidget(object):
@@ -124,6 +151,7 @@ class ParentWidget(object):
         self.controller = controller
         self.shared_info = shared_info
         self.set_value = set_value
+        self.is_visible = False
         # add layout on his parent
         layout = self._create_widget()
         self.group_box = QtGui.QGroupBox()
@@ -132,6 +160,10 @@ class ParentWidget(object):
             self.parent_layout.addWidget(self.group_box)
         else:
             raise Exception("Group_box of param widget is empty.")
+        self.set_visible(False)
+
+    def get_type(self):
+        return self.param_type
 
     def get_name(self):
         return self.param.get_name()
@@ -141,12 +173,14 @@ class ParentWidget(object):
 
     def set_visible(self, is_visible):
         self.group_box.setVisible(is_visible)
+        self.is_visible = is_visible
 
     def set_param(self, param):
         # update param
         param_name = param.get_name()
         if param.get_type() is not self.param_type:
-            logger.error("Wrong param type receiving: %s" % param.get_type())
+            logger.error(
+                "Wrong param type receiving %s and expect %s" % (param.get_type(), self.param_type))
             return
         self.param = param
         self.group_box.setTitle(param_name)
@@ -173,7 +207,8 @@ class IntWidget(ParentWidget):
         self.checkbox = None
         self.is_used_slider = False
         self._server_param = None
-        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout, set_value)
+        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout,
+                                             set_value)
 
     def _create_widget(self):
         self.spinbox = spinbox = QtGui.QSpinBox()
@@ -241,13 +276,15 @@ class IntWidget(ParentWidget):
         self.spinbox.setValue(value)
 
     def _spin_value_change(self):
-        value = self.spinbox.value()
-        self.slider.setValue(value)
-        self._set_value(value)
+        if self.is_visible:
+            value = self.spinbox.value()
+            self.slider.setValue(value)
+            self._set_value(value)
 
     def _slider_value_change(self, value):
-        self.spinbox.setValue(value)
-        self._set_value(value)
+        if self.is_visible:
+            self.spinbox.setValue(value)
+            self._set_value(value)
 
 
 class FloatWidget(ParentWidget):
@@ -260,7 +297,8 @@ class FloatWidget(ParentWidget):
         self._server_param = None
         self._new_slider_min = 0.0
         self._new_slider_max = 1.0
-        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout, set_value)
+        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout,
+                                             set_value)
 
     def _create_widget(self):
         self.spinbox = spinbox = QtGui.QDoubleSpinBox()
@@ -331,18 +369,20 @@ class FloatWidget(ParentWidget):
         self.spinbox.setValue(value)
 
     def _spin_value_change(self):
-        value = self.spinbox.value()
-        self.slider.setValue(value)
-        self._set_value(value)
+        if self.is_visible:
+            value = self.spinbox.value()
+            self.slider.setValue(value)
+            self._set_value(value)
 
     def _slider_value_change(self, value):
-        new_val = self._fit(
-            value,
-            self.slider.minimum(), self.slider.maximum(),
-            self._new_slider_min, self._new_slider_max
-        )
-        self.spinbox.setValue(new_val)
-        self._set_value(new_val)
+        if self.is_visible:
+            new_val = self._fit(
+                value,
+                self.slider.minimum(), self.slider.maximum(),
+                self._new_slider_min, self._new_slider_max
+            )
+            self.spinbox.setValue(new_val)
+            self._set_value(new_val)
 
     @staticmethod
     def _fit(v, oldmin, oldmax, newmin=0.0, newmax=1.0):
@@ -370,7 +410,8 @@ class StrWidget(ParentWidget):
         # common widget
         self.line_edit = None
         self.combo_box = None
-        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout, set_value)
+        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout,
+                                             set_value)
 
     def _create_widget(self):
         layout = QtGui.QHBoxLayout()
@@ -393,10 +434,14 @@ class StrWidget(ParentWidget):
         if not lst_value:
             combo.setVisible(False)
             line_edit.setVisible(True)
+            if line_edit.text() == param.get():
+                return
             line_edit.setText(str(param.get()))
         else:
             combo.setVisible(True)
             line_edit.setVisible(False)
+            if combo.currentText() == param.get():
+                return
             combo.clear()
             combo.addItems([str(v) for v in lst_value])
             combo.setCurrentIndex(lst_value.index(param.get()))
@@ -417,24 +462,26 @@ class StrWidget(ParentWidget):
             combo.setCurrentIndex(lst_value.index(param.get()))
 
     def _signal_combo_change(self, index):
-        if index >= 0:
+        if self.is_visible and index >= 0:
             value = self.combo_box.currentText()
             self._set_value(value)
 
     def _signal_edit_line(self):
-        value = self.line_edit.text()
-        self._set_value(value)
+        if self.is_visible:
+            value = self.line_edit.text()
+            self._set_value(value)
 
 
 class BoolWidget(ParentWidget):
     def __init__(self, controller, shared_info, param, parent_layout, set_value):
         self.checkbox = None
-        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout, set_value)
+        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout,
+                                             set_value)
 
     def _create_widget(self):
         self.checkbox = checkbox = QtGui.QCheckBox()
         checkbox.setTristate(False)
-        checkbox.stateChanged.connect(self._set_value)
+        checkbox.stateChanged.connect(self._signal_check_state)
 
         layout = QtGui.QHBoxLayout()
         layout.addWidget(checkbox)
@@ -450,3 +497,7 @@ class BoolWidget(ParentWidget):
     def _set_server_widget(self, param):
         self.param = param
         self._set_widget()
+
+    def _signal_check_state(self, value):
+        if self.is_visible:
+            self._set_value(value)
