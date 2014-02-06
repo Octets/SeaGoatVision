@@ -69,6 +69,7 @@ def set_global_params_code():
         global_param = dct_global_param;
     """
 
+
 def params_code():
     """
     Support code to declare parameters in the C++ filters
@@ -164,6 +165,17 @@ def params_code():
             py::tuple args(1);
             args[0] = description;
             obj_param.mcall("set_description", args);
+        }
+
+        void param_add_group(std::string name, std::string group) {
+            if(!params.has_key(name)) {
+                printf("ERROR from cpp_code param_add_group: key %s not exist.\\n", name.c_str());
+                return;
+            }
+            py::object obj_param = params.get(name);
+            py::tuple args(1);
+            args[0] = group;
+            obj_param.mcall("add_group", args);
         }
 
         double param_double(std::string name, double value, double min, double max) {
