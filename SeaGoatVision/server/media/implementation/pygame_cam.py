@@ -20,6 +20,7 @@
 import cv2
 import thread
 import numpy as np
+
 try:
     # import pygame
     import pygame.camera
@@ -36,7 +37,6 @@ logger = log.get_logger(__name__)
 
 
 class PygameCam(MediaStreaming):
-
     """Return images from the webcam."""
 
     def __init__(self, config):
@@ -78,8 +78,9 @@ class PygameCam(MediaStreaming):
         param.add_notify_reset(self.reset_property_param)
         self.dct_params["fps"] = param
 
-    def serialize(self):
-        return {"resolution": self.dct_params.get("resolution").get(), "fps": self.dct_params.get("fps").get()}
+    def serialize(self, is_config=False):
+        return {"resolution": self.dct_params.get("resolution").get(),
+                "fps": self.dct_params.get("fps").get()}
 
     def deserialize(self, data):
         if not data:
@@ -87,7 +88,7 @@ class PygameCam(MediaStreaming):
         if not isinstance(data, dict):
             log.print_function(
                 logger.error, "Wrong format data, suppose to be dict into camera %s" %
-                self.get_name())
+                              self.get_name())
             return False
         res = data.get("resolution", None)
         if res:
@@ -109,7 +110,7 @@ class PygameCam(MediaStreaming):
         except Exception as e:
             log.printerror_stacktrace(
                 logger, "Open camera %s: %s" %
-                (self.get_name(), e))
+                        (self.get_name(), e))
             return False
         # call open when video is ready
         return MediaStreaming.open(self)

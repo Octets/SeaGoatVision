@@ -127,7 +127,7 @@ class Firewire(MediaStreaming):
                     logger, "%s - name: %s, value: %s" %
                     (e, name, value))
 
-    def serialize(self):
+    def serialize(self, is_config=False):
         return [param.serialize() for param in self.get_properties_param()]
 
     def is_opened(self):

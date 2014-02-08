@@ -73,7 +73,7 @@ class Media(object):
         fps = int(1 / self.sleep_time) if self.thread else -1
         return {"fps": fps, "nb_frame": self.get_total_frames()}
 
-    def serialize(self):
+    def serialize(self, is_config=False):
         pass
 
     def deserialize(self, data):

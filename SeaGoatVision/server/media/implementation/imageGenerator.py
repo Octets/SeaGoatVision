@@ -59,8 +59,9 @@ class ImageGenerator(MediaStreaming):
         param = Param("fps", default_fps, min_v=1, max_v=100)
         self.dct_params["fps"] = param
 
-    def serialize(self):
         return {"width": self.dct_params.get("width").get(), "height": self.dct_params.get("height"), "fps": self.dct_params.get("fps").get()}
+    def serialize(self, is_config=True):
+    def serialize(self, is_config=False):
 
     def deserialize(self, data):
         if not data:
