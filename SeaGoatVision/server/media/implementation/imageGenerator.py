@@ -27,7 +27,6 @@ logger = log.get_logger(__name__)
 
 
 class ImageGenerator(MediaStreaming):
-
     """Return a generate image."""
 
     def __init__(self, config):
@@ -37,9 +36,9 @@ class ImageGenerator(MediaStreaming):
         super(ImageGenerator, self).__init__()
         self.media_name = config.name
         self.run = True
-        self.image = None
         self._is_opened = True
 
+        self.dct_params = {}
         self._create_params()
 
         self.deserialize(self.config.read_media(self.get_name()))
@@ -49,19 +48,45 @@ class ImageGenerator(MediaStreaming):
 
         default_width = 800
         param = Param("width", default_width, min_v=1, max_v=1200)
+        param.add_group("Resolution")
+        param.set_description("Change width resolution.")
         self.dct_params["width"] = param
 
         default_height = 600
         param = Param("height", default_height, min_v=1, max_v=1200)
+        param.add_group("Resolution")
+        param.set_description("Change height resolution.")
         self.dct_params["height"] = param
 
         default_fps = 30
         param = Param("fps", default_fps, min_v=1, max_v=100)
+        param.set_description("Change frame per second.")
         self.dct_params["fps"] = param
 
-        return {"width": self.dct_params.get("width").get(), "height": self.dct_params.get("height"), "fps": self.dct_params.get("fps").get()}
-    def serialize(self, is_config=True):
+        param = Param("color_r", 0, min_v=0, max_v=255)
+        param.add_group("Color")
+        param.set_description("Change red color.")
+        self.dct_params["color_r"] = param
+
+        param = Param("color_g", 0, min_v=0, max_v=255)
+        param.add_group("Color")
+        param.set_description("Change green color.")
+        self.dct_params["color_g"] = param
+
+        param = Param("color_b", 0, min_v=0, max_v=255)
+        param.add_group("Color")
+        param.set_description("Change blue color.")
+        self.dct_params["color_b"] = param
+
     def serialize(self, is_config=False):
+        return {
+            "width": self.dct_params.get("width").get(),
+            "height": self.dct_params.get("height").get(),
+            "fps": self.dct_params.get("fps").get(),
+            "color_r": self.dct_params.get("color_r").get(),
+            "color_g": self.dct_params.get("color_g").get(),
+            "color_b": self.dct_params.get("color_b").get(),
+        }
 
     def deserialize(self, data):
         if not data:
@@ -69,24 +94,41 @@ class ImageGenerator(MediaStreaming):
         if not isinstance(data, dict):
             log.print_function(
                 logger.error, "Wrong format data, suppose to be dict into camera %s" %
-                self.get_name())
+                              self.get_name())
             return False
         res = data.get("width", None)
-        if res:
+        if res is not None:
             self.dct_params.get("width").set(res)
         res = data.get("height", None)
-        if res:
+        if res is not None:
             self.dct_params.get("height").set(res)
         res = data.get("fps", None)
-        if res:
+        if res is not None:
             self.dct_params.get("fps").set(res)
+        res = data.get("color_r", None)
+        if res is not None:
+            self.dct_params.get("color_r").set(res)
+        res = data.get("color_g", None)
+        if res is not None:
+            self.dct_params.get("color_g").set(res)
+        res = data.get("color_b", None)
+        if res is not None:
+            self.dct_params.get("color_b").set(res)
         return True
 
     def next(self):
         width = self.dct_params.get("width").get()
         height = self.dct_params.get("height").get()
-        self.image = np.zeros((height, width, 3), dtype=np.uint8)
-        return self.image
+        color_r = self.dct_params.get("color_r").get()
+        color_g = self.dct_params.get("color_g").get()
+        color_b = self.dct_params.get("color_b").get()
+
+        image = np.zeros((height, width, 3), dtype=np.uint8)
+
+        image[:, :, 0] += color_b
+        image[:, :, 1] += color_g
+        image[:, :, 2] += color_r
+        return image
 
     def get_properties_param(self):
         return self.dct_params.values()
