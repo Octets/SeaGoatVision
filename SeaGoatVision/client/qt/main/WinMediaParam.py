@@ -26,9 +26,9 @@ import json
 logger = log.get_logger(__name__)
 
 
-class WinCamera(WinParamParent):
+class WinMediaParam(WinParamParent):
     def __init__(self, controller, subscriber):
-        super(WinCamera, self).__init__(controller, self.set_value)
+        super(WinMediaParam, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
         self.media_name = None
         self.shared_info.connect("media", self.set_camera)
@@ -39,11 +39,14 @@ class WinCamera(WinParamParent):
             self.update_media_param)
 
     def reload_ui(self):
-        super(WinCamera, self).reload_ui()
+        super(WinMediaParam, self).reload_ui()
         self.set_camera()
+        self.ui.setWindowTitle('Media param')
 
     def set_camera(self, value=None):
-        # Ignore the value
+        # Ignore the not used param value
+        self.clear_widget()
+
         self.ui.txt_search.setText("")
         self.dct_param = {}
 
@@ -56,6 +59,8 @@ class WinCamera(WinParamParent):
         self.lst_param = self.controller.get_params_media(self.media_name)
         if self.lst_param is None:
             self.lst_param = []
+
+        self.fill_group()
 
         if not self.lst_param:
             self.ui.lbl_param_name.setText(
@@ -82,6 +87,7 @@ class WinCamera(WinParamParent):
         self.update_server_param(param)
 
     def on_cb_param_item_changed(self, index):
+        # TODO merge it in WinParamParent.py
         self.ui.lbl_param_name.setText("%s" % self.media_name)
 
         if index == -1:
@@ -115,6 +121,7 @@ class WinCamera(WinParamParent):
 
     def reset(self):
         for param in self.lst_param:
+            # TODO show status of the command
             param.reset()
             status = self.controller.update_param_media(
                 self.media_name,

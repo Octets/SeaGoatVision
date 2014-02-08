@@ -26,19 +26,22 @@ import json
 logger = log.get_logger(__name__)
 
 
-class WinFilter(WinParamParent):
+class WinFilterParam(WinParamParent):
     def __init__(self, controller, subscriber):
-        super(WinFilter, self).__init__(controller, self.set_value)
+        super(WinFilterParam, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
         self.dct_filter = self.controller.get_filter_list()
         self.shared_info.connect("filter", self.set_filter)
-        self.cb_group = self.ui.cb_group
         # TODO Fill the exec name and filter name with cb shared info
         self.execution_name = None
         self.filter_name = None
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
-        self.ui.cb_group.currentIndexChanged.connect(self.on_cb_group_item_changed)
         self.subscriber.subscribe(keys.get_key_filter_param(), self.update_filter_param)
+
+    def reload_ui(self):
+        super(WinFilterParam, self).reload_ui()
+        self.set_filter()
+        self.ui.setWindowTitle('Filter param')
 
     def set_filter(self, value=None):
         # Ignore the not used param value
@@ -116,38 +119,6 @@ class WinFilter(WinParamParent):
             param.set(value)
         else:
             logger.error("Change value %s of param %s." % (value, param_name))
-
-    def fill_group(self):
-        self.cb_group.clear()
-        # get unique list of group
-        lst_group = set([group for param in self.lst_param for group in param.get_groups()])
-        if lst_group:
-            self.cb_group.addItem("")
-            for group in lst_group:
-                self.cb_group.addItem(group)
-
-    def on_cb_group_item_changed(self, index):
-        # the first item or when it's None, we enable params combobox
-        if index < 1:
-            self.cb_param.setDisabled(False)
-            param_name = self.cb_param.currentText()
-            for param in self.lst_param:
-                if param.get_name() == param_name:
-                    self._set_widget(param)
-                    break
-            else:
-                self.clear_widget()
-            return
-        lst_param = self.get_lst_param_grouped(self.cb_group.currentText())
-        self._set_widget(lst_param)
-        self.cb_param.setDisabled(True)
-
-    def get_lst_param_grouped(self, group):
-        lst_param = []
-        for param in self.lst_param:
-            if group in param.get_groups():
-                lst_param.append(param)
-        return lst_param
 
     def default(self):
         pass

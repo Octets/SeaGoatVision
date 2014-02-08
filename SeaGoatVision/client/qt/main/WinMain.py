@@ -26,8 +26,8 @@ from WinViewer import WinViewer
 from WinFilterChain import WinFilterChain
 from WinExecution import WinExecution
 from WinMainViewer import WinMainViewer
-from WinFilter import WinFilter
-from WinCamera import WinCamera
+from WinFilterParam import WinFilterParam
+from WinMediaParam import WinMediaParam
 from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.commons import log
@@ -36,7 +36,6 @@ logger = log.get_logger(__name__)
 
 
 class WinMain(QtGui.QMainWindow):
-
     def __init__(self, controller, subscriber,
                  host="localhost", islocal=False):
         super(WinMain, self).__init__()
@@ -53,8 +52,8 @@ class WinMain(QtGui.QMainWindow):
         self.showMaximized()
 
         # create dockWidgets
-        self.win_filter = WinFilter(self.controller, subscriber)
-        self.win_camera = WinCamera(self.controller, subscriber)
+        self.win_filter_param = WinFilterParam(self.controller, subscriber)
+        self.win_media_camera = WinMediaParam(self.controller, subscriber)
         self.win_filter_list = WinFilterList(self.controller)
         self.win_media = WinMedia(self.controller)
         self.win_execution = WinExecution(self.controller, subscriber)
@@ -70,8 +69,8 @@ class WinMain(QtGui.QMainWindow):
         self.show_win_camera(first_time=True)
 
         # Tabify dockwidget
-        self.tabifyDockWidget(self.win_media.ui, self.win_camera.ui)
-        self.tabifyDockWidget(self.win_filter.ui, self.win_filter_list.ui)
+        self.tabifyDockWidget(self.win_media.ui, self.win_media_camera.ui)
+        self.tabifyDockWidget(self.win_filter_param.ui, self.win_filter_list.ui)
 
         # Signal
         self.win_filter_list.onAddFilter.connect(self.win_filter_chain.add_filter)
@@ -124,19 +123,19 @@ class WinMain(QtGui.QMainWindow):
 
     def show_win_filter(self, first_time=False):
         if not first_time:
-            self.removeDockWidget(self.win_filter.ui)
-            self.win_filter.reload_ui()
+            self.removeDockWidget(self.win_filter_param.ui)
+            self.win_filter_param.reload_ui()
         self.addDockWidget(
             QtCore.Qt.DockWidgetArea.RightDockWidgetArea,
-            self.win_filter.ui)
+            self.win_filter_param.ui)
 
     def show_win_camera(self, first_time=False):
         if not first_time:
-            self.removeDockWidget(self.win_camera.ui)
-            self.win_camera.reload_ui()
+            self.removeDockWidget(self.win_media_camera.ui)
+            self.win_media_camera.reload_ui()
         self.addDockWidget(
             QtCore.Qt.DockWidgetArea.RightDockWidgetArea,
-            self.win_camera.ui)
+            self.win_media_camera.ui)
 
     def show_win_media(self, first_time=False):
         if not first_time:
