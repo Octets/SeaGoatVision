@@ -60,7 +60,7 @@ class CmdHandler:
         self.publisher.start()
 
         # launch command on start
-        thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
+        thread.start_new_thread(self.config.get_dct_cmd_rn_start(), (self,))
 
         self.publisher.register(keys.get_key_execution_list())
         self.publisher.register(keys.get_key_filter_param())
@@ -126,8 +126,9 @@ class CmdHandler:
         media = self.resource.get_media(media_name)
         if not media:
             log.print_function(
-                logger.error, "Media %s not exist or you didn't set the default media on filterchain." %
-                              (media_name))
+                logger.error,
+                "Media %s not exist or you didn't set the default media on filterchain." %
+                (media_name))
             return False
 
         if media.is_media_video() and file_name:
@@ -205,7 +206,8 @@ class CmdHandler:
                 logger.error,
                 "Cannot get execution info, it's empty.")
             return None
-        return {KEY_MEDIA: exec_info[KEY_MEDIA].get_name(), KEY_FILTERCHAIN: exec_info[KEY_FILTERCHAIN].get_name()}
+        return {KEY_MEDIA: exec_info[KEY_MEDIA].get_name(),
+                KEY_FILTERCHAIN: exec_info[KEY_FILTERCHAIN].get_name()}
 
     def get_fps_execution(self, execution_name):
         # self._post_command_(locals())
@@ -468,7 +470,7 @@ class CmdHandler:
     def update_param(self, execution_name, filter_name, param_name, value):
         self._post_command_(locals())
         filterchain = self._get_filterchain(execution_name)
-        if not filterchain and not filter_name:
+        if not filterchain or not filter_name:
             return False
         o_filter = filterchain.get_filter(name=filter_name)
         if not o_filter:
@@ -515,7 +517,8 @@ class CmdHandler:
     def modify_filterchain(self, old_filterchain_name,
                            new_filterchain_name, lst_str_filters, default_media):
         self._post_command_(locals())
-        return self.resource.modify_filterchain(old_filterchain_name, new_filterchain_name, lst_str_filters,
+        return self.resource.modify_filterchain(old_filterchain_name, new_filterchain_name,
+                                                lst_str_filters,
                                                 default_media)
 
     #
