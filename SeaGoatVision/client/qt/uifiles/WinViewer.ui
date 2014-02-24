@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>508</width>
+    <width>711</width>
     <height>429</height>
    </rect>
   </property>
@@ -77,6 +77,13 @@
          <widget class="QLabel" name="lbl_media_name">
           <property name="text">
            <string>-media-</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="closeButton">
+          <property name="text">
+           <string>Close</string>
           </property>
          </widget>
         </item>
@@ -218,13 +225,6 @@
             <string>1000%</string>
            </property>
           </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="closeButton">
-          <property name="text">
-           <string>Close</string>
-          </property>
          </widget>
         </item>
        </layout>
