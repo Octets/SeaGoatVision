@@ -82,11 +82,50 @@ class WinParamParent(QtGui.QDockWidget):
             if widget.get_name() == param_name:
                 widget.set_param(param)
 
+    def on_cb_param_item_changed(self, index, module_name, param):
+        self.ui.lbl_param_name.setText(module_name)
+        if index == -1:
+            return
+        self.lst_param[index] = param
+        self.update_param(param)
+
+    def update_module(self, is_empty, name, module_name, dct_description):
+        # Ignore the not used param value
+        self.clear_widget()
+
+        self.ui.txt_search.setText("")
+        self.dct_param = {}
+
+        self.clear_widget()
+        if is_empty:
+            self.ui.lbl_param_name.setText("Empty params")
+            return
+
+        if not self.lst_param:
+            self.ui.lbl_param_name.setText("%s - Empty params" % name)
+            self.clear_widget()
+            return
+
+        if dct_description:
+            pos_key = name.rfind("-")
+            key_name = name
+            if pos_key > -1:
+                key_name = key_name[:pos_key]
+            self.ui.lbl_doc.setText("%s description: %s" % (module_name, dct_description[key_name]))
+        self.fill_group()
+
+        for param in self.lst_param:
+            name = param.get_name()
+            self.cb_param.addItem(name)
+            self.dct_param[name] = param
+
+        # Select first item
+        self.on_cb_param_item_changed(0)
+
     def update_param(self, param):
         self._set_widget(param)
 
     def _search_text_change(self):
-        # kk = {key: value for (key, value) in d.items() if s in key}
         text = self.ui.txt_search.text()
         if text:
             self.lst_param = [value for (key, value) in self.dct_param.items() if text in key]

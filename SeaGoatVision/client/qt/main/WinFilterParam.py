@@ -28,9 +28,10 @@ logger = log.get_logger(__name__)
 
 class WinFilterParam(WinParamParent):
     def __init__(self, controller, subscriber):
+        self.controller = controller
+        self.dct_filter = self.controller.get_filter_list()
         super(WinFilterParam, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
-        self.dct_filter = self.controller.get_filter_list()
         self.shared_info.connect("filter", self.set_filter)
         # TODO Fill the exec name and filter name with cb shared info
         self.execution_name = None
@@ -44,40 +45,17 @@ class WinFilterParam(WinParamParent):
         self.ui.setWindowTitle('Filter param')
 
     def set_filter(self, value=None):
-        # Ignore the not used param value
-        self.clear_widget()
-
-        self.ui.txt_search.setText("")
-        self.dct_param = {}
-
-        self.execution_name = self.shared_info.get("execution")
         self.filter_name = self.shared_info.get("filter")
-        if not self.filter_name:
-            self.ui.lbl_param_name.setText("Empty params")
-            return
+        self.execution_name = self.shared_info.get("execution")
+        is_empty = not self.filter_name
 
-        new_key = self.filter_name
-        new_key = new_key[:new_key.rfind("-")]
-        self.ui.lbl_doc.setText("Filter description: %s" % self.dct_filter[new_key])
+        if not is_empty:
+            self.lst_param = self.controller.get_params_filterchain(self.execution_name,
+                                                                    self.filter_name)
+            if self.lst_param is None:
+                self.lst_param = []
 
-        self.lst_param = self.controller.get_params_filterchain(self.execution_name,
-                                                                self.filter_name)
-        if self.lst_param is None:
-            self.lst_param = []
-
-        self.fill_group()
-
-        if not self.lst_param:
-            self.ui.lbl_param_name.setText("%s - Empty params" % self.filter_name)
-            return
-
-        for param in self.lst_param:
-            name = param.get_name()
-            self.cb_param.addItem(name)
-            self.dct_param[name] = param
-
-        # Select first item
-        self.on_cb_param_item_changed(0)
+        self.update_module(is_empty, self.filter_name, "Filter", self.dct_filter)
 
     def update_filter_param(self, json_data):
         data = json.loads(json_data)
@@ -94,16 +72,12 @@ class WinFilterParam(WinParamParent):
         self.update_server_param(param)
 
     def on_cb_param_item_changed(self, index):
-        self.ui.lbl_param_name.setText("%s - %s" % (self.execution_name, self.filter_name))
-
-        if index == -1:
-            return
-        # TODO Is it safe to request param value, or we suppose the notification always work?
+        module_name = "%s - %s" % (self.execution_name, self.filter_name)
         actual_param = self.lst_param[index]
-        param = self.controller.get_param_filterchain(self.execution_name, self.filter_name,
+        param = self.controller.get_param_filterchain(self.execution_name,
+                                                      self.filter_name,
                                                       actual_param.get_name())
-        self.lst_param[index] = param
-        self.update_param(param)
+        super(WinFilterParam, self).on_cb_param_item_changed(index, module_name, param)
 
     def set_value(self, value, param):
         # update the server value

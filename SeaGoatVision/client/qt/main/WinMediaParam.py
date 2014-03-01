@@ -32,11 +32,8 @@ class WinMediaParam(WinParamParent):
         self.subscriber = subscriber
         self.media_name = None
         self.shared_info.connect("media", self.set_camera)
-        self.cb_param.currentIndexChanged.connect(
-            self.on_cb_param_item_changed)
-        self.subscriber.subscribe(
-            keys.get_key_media_param(),
-            self.update_media_param)
+        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
+        self.subscriber.subscribe(keys.get_key_media_param(), self.update_media_param)
 
     def reload_ui(self):
         super(WinMediaParam, self).reload_ui()
@@ -44,38 +41,16 @@ class WinMediaParam(WinParamParent):
         self.ui.setWindowTitle('Media param')
 
     def set_camera(self, value=None):
-        # Ignore the not used param value
-        self.clear_widget()
-
-        self.ui.txt_search.setText("")
-        self.dct_param = {}
-
         self.media_name = self.shared_info.get("media")
-        self.clear_widget()
-        if not self.media_name:
-            self.ui.lbl_param_name.setText("Empty params")
-            return
+        is_empty = not self.media_name
 
-        self.lst_param = self.controller.get_params_media(self.media_name)
-        if self.lst_param is None:
-            self.lst_param = []
+        if not is_empty:
+            self.lst_param = self.controller.get_params_media(self.media_name)
+            if self.lst_param is None:
+                self.lst_param = []
 
-        self.fill_group()
-
-        if not self.lst_param:
-            self.ui.lbl_param_name.setText(
-                "%s - Empty params" %
-                self.media_name)
-            self.clear_widget()
-            return
-
-        for param in self.lst_param:
-            name = param.get_name()
-            self.cb_param.addItem(name)
-            self.dct_param[name] = param
-
-        # Select first item
-        self.on_cb_param_item_changed(0)
+        #TODO implement description of params
+        self.update_module(is_empty, self.media_name, "Media", None)
 
     def update_media_param(self, json_data):
         data = json.loads(json_data)
@@ -87,20 +62,10 @@ class WinMediaParam(WinParamParent):
         self.update_server_param(param)
 
     def on_cb_param_item_changed(self, index):
-        # TODO merge it in WinParamParent.py
-        self.ui.lbl_param_name.setText("%s" % self.media_name)
-
-        if index == -1:
-            return
-
-        # TODO Is it safe to request param value, or we suppose the notification always work?
-        """
+        module_name = "%s" % self.media_name
         actual_param = self.lst_param[index]
         param = self.controller.get_param_media(self.media_name, actual_param.get_name())
-        self.lst_param[index] = param
-        self.update_param(param)
-        """
-        self.update_param(self.lst_param[index])
+        super(WinMediaParam, self).on_cb_param_item_changed(index, module_name, param)
 
     def set_value(self, value, param):
         # update the server value
