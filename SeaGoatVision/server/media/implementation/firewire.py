@@ -55,6 +55,8 @@ class Firewire(MediaStreaming):
         # the id is guid or no, writing into open_camera
         self.id = ""
         self.key_auto_param = "-auto"
+        self.group_name_color = "Color"
+        self.group_name_shutter = "Shutter"
 
         fps = 15
         self.sleep_time = 1 / 15.0
@@ -95,6 +97,7 @@ class Firewire(MediaStreaming):
                 if name == "White Balance":
                     param = Param("%s%s" % (name, self.key_auto_param), False)
                     param.add_notify_reset(self.update_property_param)
+                    param.add_group(self.group_name_color)
                     self.dct_params[param.get_name()] = param
                     param = Param(
                         "%s-red" % name,
@@ -102,19 +105,18 @@ class Firewire(MediaStreaming):
                         min_v=value["min"],
                         max_v=value["max"])
                     param.add_notify_reset(self.update_property_param)
+                    param.add_group(self.group_name_color)
                     self.dct_params[param.get_name()] = param
+
                     param = Param(
                         "%s-blue" % name,
                         value["BU_value"],
                         min_v=value["min"],
                         max_v=value["max"])
                     param.add_notify_reset(self.update_property_param)
+                    param.add_group(self.group_name_color)
                     self.dct_params[param.get_name()] = param
                     continue
-                elif name == "Shutter" or name == "Gain":
-                    param = Param("%s%s" % (name, self.key_auto_param), False)
-                    param.add_notify_reset(self.update_property_param)
-                    self.dct_params[param.get_name()] = param
                 param = Param(
                     name,
                     value["value"],
@@ -122,6 +124,13 @@ class Firewire(MediaStreaming):
                     max_v=value["max"])
                 param.add_notify_reset(self.update_property_param)
                 self.dct_params[param.get_name()] = param
+
+                if name == "Shutter" or name == "Gain":
+                    param.add_group(self.group_name_shutter)
+                    param = Param("%s%s" % (name, self.key_auto_param), False)
+                    param.add_notify_reset(self.update_property_param)
+                    param.add_group(self.group_name_shutter)
+                    self.dct_params[param.get_name()] = param
             except Exception as e:
                 log.printerror_stacktrace(
                     logger, "%s - name: %s, value: %s" %
