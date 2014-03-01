@@ -32,7 +32,6 @@ logger = log.get_logger(__name__)
 
 
 class Subscriber():
-
     def __init__(self, controller, port, addr="localhost"):
         self.controller = controller
         # list of key associated with topic number
@@ -97,7 +96,6 @@ class Subscriber():
 
 
 class ListenOutput(threading.Thread):
-
     def __init__(self, observer, addr, port):
         threading.Thread.__init__(self)
         # Ignore the zmq.PUB error in Eclipse.
@@ -112,7 +110,7 @@ class ListenOutput(threading.Thread):
     def run(self):
         self.socket.connect("tcp://%s:%s" % (self.addr, self.port))
         # TODO bug, it's not normal to subscribe for all topic
-        self.socket.setsockopt(zmq.SUBSCRIBE,'')
+        self.socket.setsockopt(zmq.SUBSCRIBE, '')
         while not self.is_stopped:
             try:
                 data = self.socket.recv_pyobj()

@@ -76,7 +76,8 @@ class WinViewer(QtGui.QDockWidget):
 
         self.light_observer = self._get_light_observer()
 
-        if self.controller.add_image_observer(self.update_image, execution_name, self.actual_filter):
+        if self.controller.add_image_observer(self.update_image, execution_name,
+                                              self.actual_filter):
             self.__add_output_observer()
             self.subscriber.subscribe(self.media_name, self.update_fps)
             self.subscriber.subscribe(
