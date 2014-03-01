@@ -1,6 +1,9 @@
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
-from PIL import Image
+try:
+	from PIL import Image
+except ImportError:
+	import Image
 from copy import copy
 import numpy as np
 

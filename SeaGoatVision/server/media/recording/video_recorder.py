@@ -19,7 +19,10 @@
 
 import os
 import time
-from PIL import Image
+try:
+	from PIL import Image
+except ImportError:
+	import Image
 import cv2
 from cv2 import cv
 import numpy as np

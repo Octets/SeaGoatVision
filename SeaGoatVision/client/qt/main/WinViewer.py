@@ -25,7 +25,10 @@ import time
 
 from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.commons import keys
-from PIL import Image
+try:
+	from PIL import Image
+except ImportError:
+	import Image
 from PySide import QtCore
 from PySide import QtGui
 from PySide.QtGui import QColor
