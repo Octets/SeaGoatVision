@@ -30,8 +30,14 @@ logger = log.get_logger(__name__)
 
 
 class WinParamParent(QtGui.QDockWidget):
+    # Use signal to update information from sub/pub
+    # this fix crash with Qt threading.
+    signal_update_param = QtCore.Signal(str)
+
     def __init__(self, controller, set_value):
         super(WinParamParent, self).__init__()
+        self.signal_update_param.connect(self.update_param_from_signal)
+
         self.shared_info = SharedInfo()
 
         self.controller = controller
@@ -75,6 +81,10 @@ class WinParamParent(QtGui.QDockWidget):
         self.ui.txt_search.returnPressed.connect(self._search_text_change)
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
 
+    @QtCore.Slot(str)
+    def update_param_from_signal(self, json_data):
+        self.update_param.emit(json_data)
+
     def update_server_param(self, param):
         param_name = param.get_name()
         # find if widget exist
@@ -87,7 +97,7 @@ class WinParamParent(QtGui.QDockWidget):
         if index == -1:
             return
         self.lst_param[index] = param
-        self.update_param(param)
+        self._set_widget(param)
 
     def update_module(self, is_empty, name, module_name, dct_description):
         # Ignore the not used param value
@@ -121,9 +131,6 @@ class WinParamParent(QtGui.QDockWidget):
 
         # Select first item
         self.on_cb_param_item_changed(0)
-
-    def update_param(self, param):
-        self._set_widget(param)
 
     def _search_text_change(self):
         text = self.ui.txt_search.text()

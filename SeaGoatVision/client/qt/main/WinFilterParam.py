@@ -37,7 +37,7 @@ class WinFilterParam(WinParamParent):
         self.execution_name = None
         self.filter_name = None
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
-        self.subscriber.subscribe(keys.get_key_filter_param(), self.update_filter_param)
+        self.subscriber.subscribe(keys.get_key_filter_param(), self.signal_update_param)
 
     def reload_ui(self):
         super(WinFilterParam, self).reload_ui()
@@ -57,7 +57,7 @@ class WinFilterParam(WinParamParent):
 
         self.update_module(is_empty, self.filter_name, "Filter", self.dct_filter)
 
-    def update_filter_param(self, json_data):
+    def update_param(self, json_data):
         data = json.loads(json_data)
         execution_name = data.get("execution", None)
         if not execution_name and execution_name != self.execution_name:
