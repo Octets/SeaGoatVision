@@ -37,7 +37,7 @@ class WinFilterParam(WinParamParent):
         self.execution_name = None
         self.filter_name = None
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
-        self.subscriber.subscribe(keys.get_key_filter_param(), self.signal_update_param)
+        self.subscriber.subscribe(keys.get_key_filter_param(), self.call_signal_param)
 
     def reload_ui(self):
         super(WinFilterParam, self).reload_ui()

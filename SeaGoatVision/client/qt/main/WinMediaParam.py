@@ -33,7 +33,7 @@ class WinMediaParam(WinParamParent):
         self.media_name = None
         self.shared_info.connect("media", self.set_camera)
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
-        self.subscriber.subscribe(keys.get_key_media_param(), self.signal_update_param)
+        self.subscriber.subscribe(keys.get_key_media_param(), self.call_signal_param)
 
     def reload_ui(self):
         super(WinMediaParam, self).reload_ui()

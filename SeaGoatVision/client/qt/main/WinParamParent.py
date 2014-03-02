@@ -36,7 +36,7 @@ class WinParamParent(QtGui.QDockWidget):
 
     def __init__(self, controller, set_value):
         super(WinParamParent, self).__init__()
-        self.signal_update_param.connect(self.update_param_from_signal)
+        self.signal_update_param.connect(self.update_param)
 
         self.shared_info = SharedInfo()
 
@@ -81,16 +81,18 @@ class WinParamParent(QtGui.QDockWidget):
         self.ui.txt_search.returnPressed.connect(self._search_text_change)
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
 
-    @QtCore.Slot(str)
-    def update_param_from_signal(self, json_data):
-        self.update_param.emit(json_data)
+    def call_signal_param(self, json_data):
+        self.signal_update_param.emit(json_data)
+
+    def update_param(self, json_data):
+        raise Exception("Need to implement update_param.")
 
     def update_server_param(self, param):
         param_name = param.get_name()
         # find if widget exist
         for widget in self.lst_active_widget:
             if widget.get_name() == param_name:
-                widget.set_param(param)
+                widget.set_param_server(param)
 
     def on_cb_param_item_changed(self, index, module_name, param):
         self.ui.lbl_param_name.setText(module_name)

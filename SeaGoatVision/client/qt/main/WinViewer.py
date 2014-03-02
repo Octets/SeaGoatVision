@@ -112,7 +112,7 @@ class WinViewer(QtGui.QDockWidget):
             self.thread_output.stop()
         self.subscriber.desubscribe(self.media_name, self.update_fps)
         self.light_observer.stop()
-        logger.info("WinViewer %s quit." % (self.execution_name))
+        logger.info("WinViewer %s quit." % self.execution_name)
 
     #
     # PRIVATE FUNCTION  ############################
