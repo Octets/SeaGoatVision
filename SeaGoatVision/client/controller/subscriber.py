@@ -80,9 +80,7 @@ class Subscriber():
         if callback not in lst_cb:
             lst_cb.append(callback)
         else:
-            logger.warning(
-                "Callback already added on key %s : %s" %
-                (key, callback))
+            logger.warning("Callback already added on key %s : %s" % (key, callback))
         return True
 
     def _recv_callback_topic(self, data):
@@ -101,28 +99,38 @@ class ListenOutput(threading.Thread):
         # Ignore the zmq.PUB error in Eclipse.
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.SUB)
-        self.socket.setsockopt(zmq.RCVTIMEO, 1000)
+        self.socket.setsockopt(zmq.RCVTIMEO, 0)
         self.is_stopped = False
         self.observer = observer
         self.addr = addr
         self.port = port
 
     def run(self):
+        max_error = 100
+        nb_error = 0
         self.socket.connect("tcp://%s:%s" % (self.addr, self.port))
         # TODO bug, it's not normal to subscribe for all topic
         self.socket.setsockopt(zmq.SUBSCRIBE, '')
-        while not self.is_stopped:
+        # Don't exit at first error receiving
+        while nb_error < max_error and not self.is_stopped:
             try:
-                data = self.socket.recv_pyobj()
-                if data:
-                    self.observer(data)
-            except zmq.error.ZMQError:
-                # ignore it, it's the timeout
-                # TODO can we do something with ZMQError?
-                pass
+                while not self.is_stopped:
+                    #try:
+                    data = self.socket.recv_pyobj()
+                    if data:
+                        self.observer(data)
+                        #except zmq.error.ZMQError:
+                        # ignore it, it's the timeout
+                        # TODO can we do something with ZMQError?
+                        #    pass
+            except zmq.error.ZMQError as e:
+                # errno 11 is Resource temporarily unavailable
+                if e.errno == 11:
+                    continue
+                log.printerror_stacktrace(logger, e)
             except Exception as e:
                 log.printerror_stacktrace(logger, e)
-                self.is_stopped = True
+                nb_error += 1
         self.socket.close()
 
     def add_subscriber(self, no):
@@ -133,3 +141,4 @@ class ListenOutput(threading.Thread):
 
     def stop(self):
         self.is_stopped = True
+        self.context.term()
