@@ -70,7 +70,7 @@ def run(p_port=None, verbose=False):
     except (KeyboardInterrupt, SystemExit):
         logger.info("Close SeaGoat. See you later!")
     except Exception:
-        raise(Exception)
+        raise
     finally:
         server.close()
         # force closing the file

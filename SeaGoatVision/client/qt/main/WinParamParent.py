@@ -85,7 +85,7 @@ class WinParamParent(QtGui.QDockWidget):
         self.signal_update_param.emit(json_data)
 
     def update_param(self, json_data):
-        raise Exception("Need to implement update_param.")
+        raise NotImplementedError("Need to implement update_param.")
 
     def update_server_param(self, param):
         param_name = param.get_name()
@@ -268,10 +268,7 @@ class ParentWidget(object):
         # create group_box
         self.group_box = QtGui.QGroupBox()
         self.group_box.setLayout(vertical_layout)
-        if self.group_box:
-            self.parent_layout.addWidget(self.group_box)
-        else:
-            raise Exception("Group_box of param widget is empty.")
+        self.parent_layout.addWidget(self.group_box)
 
     def set_param(self, param):
         # update param
@@ -289,13 +286,13 @@ class ParentWidget(object):
         self._set_server_widget(param)
 
     def _create_widget(self):
-        raise Exception("Need to implement _create_widget.")
+        raise NotImplementedError("Need to implement _create_widget.")
 
     def _set_widget(self):
-        raise Exception("Need to implement _set_widget.")
+        raise NotImplementedError("Need to implement _set_widget.")
 
     def _set_server_widget(self):
-        raise Exception("Need to implement _set_server_widget.")
+        raise NotImplementedError("Need to implement _set_server_widget.")
 
 
 class IntWidget(ParentWidget):

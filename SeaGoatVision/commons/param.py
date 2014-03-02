@@ -72,13 +72,13 @@ class Param(object):
         if serialize:
             status = self.deserialize(serialize)
             if not status:
-                raise Exception(
+                raise ValueError(
                     "Wrong deserialize parameter, can't know the name - %s." % serialize)
             logger.debug("Param %s deserialization complete, value %s" % (self.name, self.value))
             return
 
         if not isinstance(name, str) and not isinstance(name, unicode):
-            raise Exception("Name must be string value.")
+            raise ValueError("Name must be string value.")
 
         self._init_param(value, min_v, max_v, lst_value, force_type, thres_h)
 
@@ -95,7 +95,7 @@ class Param(object):
         type_t = type(value)
         if not (type_t is int or type_t is bool or type_t is float or type_t is str) and \
                 not (type_t is np.ndarray or type_t is long or type_t is unicode):
-            raise Exception("Param don't manage type %s" % type_t)
+            raise ValueError("Param don't manage type %s" % type_t)
         if type_t is unicode:
             type_t = str
         if type_t is long:
@@ -109,11 +109,11 @@ class Param(object):
             if min_v is not None:
                 type_min = type(min_v)
                 if not (type_min is float or type_min is int or type_min is long):
-                    raise Exception("min_v must be float or int, type is %s." % type_min)
+                    raise ValueError("min_v must be float or int, type is %s." % type_min)
             if max_v is not None:
                 type_max = type(max_v)
                 if not (type_max is float or type_max is int or type_max is long):
-                    raise Exception("max_v must be float or int, type is %s." % type(max_v))
+                    raise ValueError("max_v must be float or int, type is %s." % type(max_v))
             if type_t is float:
                 min_v = None if min_v is None else float(min_v)
                 max_v = None if max_v is None else float(max_v)
@@ -124,7 +124,7 @@ class Param(object):
                 lst_value = None if lst_value is None else [int(value) for value in lst_value]
         if lst_value is not None and \
                 not (isinstance(lst_value, tuple) or isinstance(lst_value, list)):
-            raise Exception("lst_value must be list or tuple, type is %s." % type(lst_value))
+            raise ValueError("lst_value must be list or tuple, type is %s." % type(lst_value))
         self.min_v = min_v
         self.max_v = max_v
         self.lst_value = lst_value
@@ -258,21 +258,21 @@ class Param(object):
         if self.type_t is float and isinstance(value, int):
             value = float(value)
         if not isinstance(value, self.type_t):
-            raise Exception(
+            raise ValueError(
                 "value is wrong type. Expected %s and receive %s" % (self.type_t, type(value)))
         if self.type_t is int or self.type_t is float:
             if self.min_v is not None and value < self.min_v - self.delta_float:
-                raise Exception("Value %s is lower then min %s" % (value, self.min_v))
+                raise ValueError("Value %s is lower then min %s" % (value, self.min_v))
             if self.max_v is not None and value > self.max_v + self.delta_float:
-                raise Exception("Value %s is upper then max %s" % (value, self.max_v))
+                raise ValueError("Value %s is upper then max %s" % (value, self.max_v))
             if self.lst_value is not None and value not in self.lst_value:
-                raise Exception("value %s is not in lst of value" % value)
+                raise ValueError("value %s is not in lst of value" % value)
         if self.threshold is not None:
             if threshold is None:
                 if value > self.threshold:
                     msg = "Threshold bot %s is upper then threshold top %s." % (
                         value, self.threshold)
-                    raise Exception(msg)
+                    raise ValueError(msg)
             else:
                 if self.type_t is int and isinstance(threshold, float):
                     threshold = int(threshold)
@@ -281,17 +281,17 @@ class Param(object):
                 if not isinstance(threshold, self.type_t):
                     msg = "value is wrong type. Expected %s and receive %s" % (
                         self.type_t, type(threshold))
-                    raise Exception(msg)
+                    raise ValueError(msg)
                 elif value > threshold:
                     msg = "Threshold low %s is upper then threshold high %s." % (value, threshold)
-                    raise Exception(msg)
+                    raise ValueError(msg)
                 if threshold > self.max_v:
-                    raise Exception(
+                    raise ValueError(
                         "Threshold high %s is upper then max %s." % (threshold, self.max_v))
                 self.threshold = threshold
                 # check if item is in list
         if self.lst_value and value not in self.lst_value:
-            raise Exception("The value %s is not in lst_value %s." % (value, self.lst_value))
+            raise ValueError("The value %s is not in lst_value %s." % (value, self.lst_value))
         self.value = value
         # send the value on all notify callback
         for notify in self.lst_notify:
