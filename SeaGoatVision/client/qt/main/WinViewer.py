@@ -91,8 +91,7 @@ class WinViewer(QtGui.QDockWidget):
         self.newImage.connect(self.set_pixmap)
         self.ui.filterComboBox.currentIndexChanged.connect(self._change_filter)
         self.ui.closeButton.clicked.connect(self.__close)
-        self.ui.sizeComboBox.currentIndexChanged[
-            str].connect(self.set_image_scale)
+        self.ui.sizeComboBox.currentIndexChanged[str].connect(self.set_image_scale)
 
         self._update_filters()
         self.actual_filter = self.ui.filterComboBox.currentText()
@@ -153,8 +152,7 @@ class WinViewer(QtGui.QDockWidget):
             return
         for sFilter in lst_filter:
             self.ui.filterComboBox.addItem(sFilter.get("name", ""))
-        self.ui.filterComboBox.setCurrentIndex(
-            self.ui.filterComboBox.count() - 1)
+        self.ui.filterComboBox.setCurrentIndex(self.ui.filterComboBox.count() - 1)
 
     def _change_filter(self):
         if self.actual_filter:
@@ -249,14 +247,14 @@ class ListenOutput(threading.Thread):
                     continue
 
                 self.observer(txt)
-        except:
+        except Exception:
             self.is_stopped = True
 
     def stop(self):
         self.is_stopped = True
         try:
             self.socket.shutdown(socket.SHUT_RDWR)
-        except:
+        except Exception:
             pass
         self.socket.close()
 

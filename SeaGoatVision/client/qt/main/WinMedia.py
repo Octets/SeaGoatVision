@@ -36,6 +36,7 @@ class WinMedia(QtCore.QObject):
     def __init__(self, controller):
         super(WinMedia, self).__init__()
         self.ressource_icon_path = "SeaGoatVision/client/ressource/img/"
+        self.ui = None
         self.controller = controller
         self.shared_info = SharedInfo()
         self.shared_info.connect("start_execution", self.set_info)
@@ -163,9 +164,11 @@ class WinMedia(QtCore.QObject):
             path = self.ui.txt_name_record.text()
             if not path:
                 path = None
-            format_rec = keys.get_key_format_avi() if self.ui.rbn_avi.isChecked() else keys.get_key_format_png()
-            options = {"compress": self.ui.sb_compress.value(),
-                       "format": format_rec}
+            if self.ui.rbn_avi.isChecked():
+                format_rec = keys.get_key_format_avi()
+            else:
+                format_rec = keys.get_key_format_png()
+            options = {"compress": self.ui.sb_compress.value(), "format": format_rec}
             if not self.controller.start_record(self.ui.cbMedia.currentText(), path, options):
                 # TODO improve error message
                 logger.error("Trying start record...")
@@ -278,6 +281,8 @@ class PlayerFile(threading.Thread):
         self.pause = True
         self.loop = True
         self.max_frame = 0
+        self.fps = 0
+        self.time_wait = 1
 
     def get_fps(self):
         return self.fps

@@ -29,7 +29,6 @@ logger = log.get_logger(__name__)
 
 
 class WinFilterChain(QtCore.QObject):
-
     """Main window
     Allow the user to create, edit and test filter chains
     """
@@ -40,13 +39,16 @@ class WinFilterChain(QtCore.QObject):
         self.controller = controller
         self.last_row_filter_chain_selected = 0
         self.shared_info = SharedInfo()
+        self.ui = None
+        self.lock_preview = False
+        self.edit_mode = False
+        self.mode_new = False
 
         self.reload_ui()
 
     def reload_ui(self):
         self.ui = get_ui(self)
-        self.ui.filterListWidget.currentItemChanged.connect(
-            self.on_selected_filter_changed)
+        self.ui.filterListWidget.currentItemChanged.connect(self.on_selected_filter_changed)
         self.ui.filterchainListWidget.currentItemChanged.connect(
             self.on_selected_filter_chain_changed)
         self.ui.uploadButton.clicked.connect(self.upload)
@@ -89,18 +91,14 @@ class WinFilterChain(QtCore.QObject):
             self.ui.filterListWidget.addItem(filter_name)
 
     def remove_filter(self):
-        self.ui.filterListWidget.takeItem(
-            self.ui.filterListWidget.currentRow())
+        self.ui.filterListWidget.takeItem(self.ui.filterListWidget.currentRow())
 
     def upload(self):
         # open a file, copy the contain to the controller
         str_ext = ".filterchain"
-        filename = QtGui.QFileDialog(
-        ).getOpenFileName(filter="*%s" %
-                          str_ext)[0]
+        filename = QtGui.QFileDialog().getOpenFileName(filter="*%s" % str_ext)[0]
         if filename:
-            filterchain_name = filename[
-                filename.rfind("/") + 1:-len(str_ext)]
+            filterchain_name = filename[filename.rfind("/") + 1:-len(str_ext)]
             if self._is_unique_filterchain_name(filterchain_name):
                 f = open(filename, 'r')
                 if f:
@@ -109,22 +107,18 @@ class WinFilterChain(QtCore.QObject):
                     if self.controller.upload_filterchain(filterchain_name, s_contain):
                         self.ui.filterchainListWidget.addItem(filterchain_name)
                 else:
-                    logger.error("Can't open the file : %s" % (filename))
+                    logger.error("Can't open the file : %s" % filename)
             else:
-                logger.error(
-                    "This filtername already exist : %s" %
-                    filterchain_name)
+                logger.error("This filtername already exist : %s" % filterchain_name)
 
     def edit(self):
-        self.last_row_filter_chain_selected = self.ui.filterchainListWidget.currentRow(
-        )
+        self.last_row_filter_chain_selected = self.ui.filterchainListWidget.currentRow()
         self._mode_edit(True)
 
     def cancel(self):
         self.update_filter_chain_list()
         self._list_filterchain_is_selected(False)
-        self.ui.filterchainListWidget.setCurrentRow(
-            self.last_row_filter_chain_selected)
+        self.ui.filterchainListWidget.setCurrentRow(self.last_row_filter_chain_selected)
         self._mode_edit(False)
         logger.info("Cancel changement.")
 
@@ -158,13 +152,15 @@ class WinFilterChain(QtCore.QObject):
         self._mode_edit(True)
         no_line = self.ui.filterchainListWidget.currentRow()
         if no_line >= 0:
-            filterchain_name = self.ui.filterchainListWidget.item(
-                no_line).text()
+            filterchain_name = self.ui.filterchainListWidget.item(no_line).text()
             # security ask
-            response = QtGui.QMessageBox.question(self.ui.centralwidget,
-                                                  "Delete filterchain",
-                                                  "Do you want to delete filterchain \"%s\"" % filterchain_name,
-                                                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, QtGui.QMessageBox.No)
+            response = QtGui.QMessageBox.question(
+                self.ui.centralwidget,
+                "Delete filterchain",
+                "Do you want to delete filterchain \"%s\"" % filterchain_name,
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
             if response == QtGui.QMessageBox.Yes:
                 # delete the filterchain
                 self.controller.delete_filterchain(filterchain_name)
@@ -181,8 +177,7 @@ class WinFilterChain(QtCore.QObject):
 
         # we copy the selected filterchain
         no_row = self.ui.filterchainListWidget.currentRow()
-        filterchain_name_temp = self.ui.filterchainListWidget.item(
-            no_row).text() + " - copy"
+        filterchain_name_temp = self.ui.filterchainListWidget.item(no_row).text() + " - copy"
 
         # find name of copy filterchain
         i = 1
@@ -213,8 +208,7 @@ class WinFilterChain(QtCore.QObject):
 
         # add new line
         self.ui.filterchainListWidget.addItem(filterchain_name)
-        self.ui.filterchainListWidget.setCurrentRow(
-            self.ui.filterchainListWidget.count() - 1)
+        self.ui.filterchainListWidget.setCurrentRow(self.ui.filterchainListWidget.count() - 1)
         self.ui.filterchainEdit.setText(filterchain_name)
 
         self.ui.filterListWidget.clear()
@@ -248,8 +242,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.filterchainEdit.clear()
         for filterlist in self.controller.get_filterchain_list():
             self.ui.filterchainListWidget.addItem(filterlist.get("name"))
-        self.ui.filterchainListWidget.addItem(
-            keys.get_empty_filterchain_name())
+        self.ui.filterchainListWidget.addItem(keys.get_empty_filterchain_name())
 
     def move_up_selected_filter(self):
         self._move_current_item_on_qtlist(self.ui.filterListWidget, -1)
@@ -278,10 +271,8 @@ class WinFilterChain(QtCore.QObject):
             filterchain_name = self._get_selected_filterchain_name()
 
             # Exception, don't edit or delete special empty filterchain
-            self.ui.deleteButton.setEnabled(
-                filterchain_name != keys.get_empty_filterchain_name())
-            self.ui.editButton.setEnabled(
-                filterchain_name != keys.get_empty_filterchain_name())
+            self.ui.deleteButton.setEnabled(filterchain_name != keys.get_empty_filterchain_name())
+            self.ui.editButton.setEnabled(filterchain_name != keys.get_empty_filterchain_name())
             self.shared_info.set("filterchain", filterchain_name)
         else:
             self._list_filterchain_is_selected(False)
@@ -314,7 +305,8 @@ class WinFilterChain(QtCore.QObject):
     def _get_selected_filter_name(self):
         return self._get_selected_list(self.ui.filterListWidget)
 
-    def _get_selected_list(self, ui_list):
+    @staticmethod
+    def _get_selected_list(ui_list):
         no_line = ui_list.currentRow()
         if no_line >= 0:
             return ui_list.item(no_line).text()
@@ -339,10 +331,12 @@ class WinFilterChain(QtCore.QObject):
         self.ui.copyButton.setEnabled(is_selected)
         self.ui.deleteButton.setEnabled(is_selected)
 
-    def _get_list_string_qlist(self, ui):
+    @staticmethod
+    def _get_list_string_qlist(ui):
         return [ui.item(no).text() for no in range(ui.count())]
 
-    def _move_current_item_on_qtlist(self, ui, nb_line):
+    @staticmethod
+    def _move_current_item_on_qtlist(ui, nb_line):
         # take the action if nbLine is different of 0 and the limit is correct
         if nb_line:
             no_row = ui.currentRow()

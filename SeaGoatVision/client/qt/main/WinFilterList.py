@@ -23,7 +23,6 @@ from PySide import QtCore
 
 
 class WinFilterList(QtCore.QObject):
-
     """Allow the user to select a filter to add to the filterchain"""
     onAddFilter = QtCore.Signal(object)
 
@@ -31,9 +30,9 @@ class WinFilterList(QtCore.QObject):
         super(WinFilterList, self).__init__()
         self.controller = controller
         self.shared_info = SharedInfo()
-        self.shared_info.connect(
-            "filterchain_edit_mode",
-            self._filterchain_edit_mode)
+        self.shared_info.connect("filterchain_edit_mode", self._filterchain_edit_mode)
+        self.ui = None
+        self.dct_filter = None
         self.reload_ui()
 
     def _filterchain_edit_mode(self, value):
@@ -45,8 +44,7 @@ class WinFilterList(QtCore.QObject):
         self.ui.addFilterButton.clicked.connect(self._add_filter)
         self.ui.reloadFilterButton.clicked.connect(self._reload_filter)
         self.ui.filterListWidget.doubleClicked.connect(self._add_filter)
-        self.ui.filterListWidget.currentItemChanged.connect(
-            self._selected_filter_changed)
+        self.ui.filterListWidget.currentItemChanged.connect(self._selected_filter_changed)
         self.reload_list_filter(self.controller.get_filter_list())
 
     def reload_list_filter(self, dct_filter):
@@ -57,13 +55,10 @@ class WinFilterList(QtCore.QObject):
 
     def _selected_filter_changed(self):
         filter_name = self.ui.filterListWidget.currentItem().text()
-        self.ui.lbl_doc.setText(
-            "Description: %s" %
-            self.dct_filter[filter_name])
+        self.ui.lbl_doc.setText("Description: %s" % self.dct_filter[filter_name])
 
     def _add_filter(self):
         self.onAddFilter.emit(self.ui.filterListWidget.currentItem().text())
 
     def _reload_filter(self):
-        self.controller.reload_filter(
-            self.ui.filterListWidget.currentItem().text())
+        self.controller.reload_filter(self.ui.filterListWidget.currentItem().text())

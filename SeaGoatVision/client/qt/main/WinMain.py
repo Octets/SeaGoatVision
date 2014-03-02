@@ -47,6 +47,7 @@ class WinMain(QtGui.QMainWindow):
         self.ui = get_ui(self)
         self.uid_iter = 0
         self.id = -1
+        self.toolbar = None
 
         # default maximize Qt
         self.showMaximized()
