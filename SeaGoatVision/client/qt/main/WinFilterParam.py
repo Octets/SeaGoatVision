@@ -72,6 +72,8 @@ class WinFilterParam(WinParamParent):
         self.update_server_param(param)
 
     def on_cb_param_item_changed(self, index):
+        if index == -1:
+            return
         module_name = "%s - %s" % (self.execution_name, self.filter_name)
         actual_param = self.lst_param[index]
         param = self.controller.get_param_filterchain(self.execution_name,
