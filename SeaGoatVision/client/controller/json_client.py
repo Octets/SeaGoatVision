@@ -90,13 +90,13 @@ class JsonClient():
             execution_name, filter_name, param_name)
         return Param("temp", None, serialize=param_ser)
 
-    def get_param_media(self, media_name, param_name):
-        param_ser = self.rpc.get_params_media(media_name, param_name)
-        return Param("temp", None, serialize=param_ser)
-
     def get_params_media(self, media_name):
         lst_param_ser = self.rpc.get_params_media(media_name)
         return self._deserialize_param(lst_param_ser)
+
+    def get_param_media(self, media_name, param_name):
+        param_ser = self.rpc.get_param_media(media_name, param_name)
+        return Param("temp", None, serialize=param_ser)
 
     def _deserialize_param(self, lst_param_ser):
         if lst_param_ser:
