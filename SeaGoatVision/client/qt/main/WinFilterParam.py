@@ -46,7 +46,8 @@ class WinFilterParam(WinParamParent):
 
     def set_filter(self, value=None):
         self.filter_name = self.shared_info.get("filter")
-        self.execution_name = self.shared_info.get("execution")
+        exec_info = self.shared_info.get("execution")
+        self.execution_name = None if not exec_info else exec_info[0]
         is_empty = not self.filter_name
 
         if not is_empty:

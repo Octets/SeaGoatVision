@@ -35,7 +35,7 @@ logger = log.get_logger(__name__)
 class WinMedia(QtCore.QObject):
     def __init__(self, controller):
         super(WinMedia, self).__init__()
-        self.ressource_icon_path = "SeaGoatVision/client/ressource/img/"
+        self.resource_icon_path = "SeaGoatVision/client/ressource/img/"
         self.ui = None
         self.controller = controller
         self.shared_info = SharedInfo()
@@ -43,8 +43,8 @@ class WinMedia(QtCore.QObject):
 
         self.is_recorded = False
         self.is_play = False
-        self.record_icon = QIcon(self.ressource_icon_path + "RecordVideoAction.png")
-        self.save_record_icon = QIcon(self.ressource_icon_path + "SaveServerImageAction.png")
+        self.record_icon = QIcon(self.resource_icon_path + "RecordVideoAction.png")
+        self.save_record_icon = QIcon(self.resource_icon_path + "SaveServerImageAction.png")
         self.play_icon = QIcon("/usr/share/icons/gnome/24x24/actions/player_play.png")
         self.pause_icon = QIcon("/usr/share/icons/gnome/24x24/actions/player_pause.png")
 
@@ -55,6 +55,7 @@ class WinMedia(QtCore.QObject):
         self.max_frame = 0
 
         self.shared_info.connect("start_execution", self._start_execution)
+        self.shared_info.connect("execution", self.change_execution)
 
         # TODO optimize starting thread.
         self.thread_player = PlayerFile(controller, self._get_actual_no_frame,
@@ -89,7 +90,8 @@ class WinMedia(QtCore.QObject):
     def _update_media(self):
         self.ui.cbMedia.currentIndexChanged.disconnect(self._change_media)
         self.dct_media = self.controller.get_media_list()
-        for media in self.dct_media.keys():
+        lst_media = sorted(self.dct_media.keys(), key=lambda x: x.lower())
+        for media in lst_media:
             self.ui.cbMedia.addItem(media)
         self._change_media(after_update=True)
         self.ui.cbMedia.currentIndexChanged.connect(self._change_media)
@@ -134,7 +136,7 @@ class WinMedia(QtCore.QObject):
         str_value = self.ui.txtframe.text()
         try:
             value = int(str_value)
-        except:
+        except Exception:
             self.ui.txtframe.setText(str(self.last_value_frame))
             return
         if value < 1 or value > self.max_frame:
@@ -257,6 +259,10 @@ class WinMedia(QtCore.QObject):
         if media_type != keys.get_media_type_video_name():
             return None
         return self.ui.movieLineEdit.text()
+
+    def change_execution(self, exec_info):
+        media_name = exec_info[2]
+        self.select_media(media_name)
 
     def select_media(self, media_name):
         # find index

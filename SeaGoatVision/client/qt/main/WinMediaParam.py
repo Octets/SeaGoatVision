@@ -62,6 +62,8 @@ class WinMediaParam(WinParamParent):
         self.update_server_param(param)
 
     def on_cb_param_item_changed(self, index):
+        if index == -1:
+            return
         module_name = "%s" % self.media_name
         actual_param = self.lst_param[index]
         param = self.controller.get_param_media(self.media_name, actual_param.get_name())

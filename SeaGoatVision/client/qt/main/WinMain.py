@@ -82,8 +82,6 @@ class WinMain(QtGui.QMainWindow):
         self.ui.btnCamera.clicked.connect(self.show_win_camera)
         self.ui.btnParam.clicked.connect(self.show_win_filter)
         self.win_execution.onPreviewClick.connect(self.add_preview)
-        self.win_execution.onExecutionChanged.connect(
-            self.win_filter_chain.select_filterchain)
 
         self._add_tool_bar()
         self._add_menu_bar()

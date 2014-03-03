@@ -31,8 +31,10 @@ class WinFilterList(QtCore.QObject):
         self.controller = controller
         self.shared_info = SharedInfo()
         self.shared_info.connect("filterchain_edit_mode", self._filterchain_edit_mode)
+        self.shared_info.connect("filter", self.change_filter)
         self.ui = None
         self.dct_filter = None
+        self.lst_filter_sort = []
         self.reload_ui()
 
     def _filterchain_edit_mode(self, value):
@@ -49,9 +51,20 @@ class WinFilterList(QtCore.QObject):
 
     def reload_list_filter(self, dct_filter):
         self.dct_filter = dct_filter
-        lst_filter_sort = sorted(dct_filter.keys()[:])
-        for name in lst_filter_sort:
+        self.lst_filter_sort = sorted(dct_filter.keys())
+        for name in self.lst_filter_sort:
             self.ui.filterListWidget.addItem(name)
+
+    def change_filter(self, filter_name):
+        # Need to remove junk info in filter_name
+        if not filter_name:
+            return
+        pos = filter_name.rfind("-")
+        if pos:
+            filter_name = filter_name[:pos]
+        index = self.lst_filter_sort.index(filter_name)
+        if index >= 0:
+            self.ui.filterListWidget.setCurrentRow(index)
 
     def _selected_filter_changed(self):
         filter_name = self.ui.filterListWidget.currentItem().text()

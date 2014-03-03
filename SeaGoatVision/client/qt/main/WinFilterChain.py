@@ -72,6 +72,7 @@ class WinFilterChain(QtCore.QObject):
         self._list_filterchain_is_selected(False)
 
         self.shared_info.connect("media", self._update_media_default_edit)
+        self.shared_info.connect("execution", self.select_filterchain)
 
     #
     # SIGNAL  ###############################
@@ -240,8 +241,10 @@ class WinFilterChain(QtCore.QObject):
         self.ui.filterchainListWidget.clear()
         self.ui.filterListWidget.clear()
         self.ui.filterchainEdit.clear()
-        for filterlist in self.controller.get_filterchain_list():
-            self.ui.filterchainListWidget.addItem(filterlist.get("name"))
+        lst_filterchain = sorted(self.controller.get_filterchain_list(),
+                            key=lambda x: x.get("name").lower())
+        for filterchain in lst_filterchain:
+            self.ui.filterchainListWidget.addItem(filterchain.get("name"))
         self.ui.filterchainListWidget.addItem(keys.get_empty_filterchain_name())
 
     def move_up_selected_filter(self):
@@ -281,9 +284,9 @@ class WinFilterChain(QtCore.QObject):
     def get_filter_list(self):
         return self._get_list_string_qlist(self.ui.filterListWidget)
 
-    def select_filterchain(self, filterchain_name):
-        items = self.ui.filterchainListWidget.findItems(
-            filterchain_name, QtCore.Qt.MatchExactly)
+    def select_filterchain(self, exec_info):
+        filterchain_name = exec_info[1]
+        items = self.ui.filterchainListWidget.findItems(filterchain_name, QtCore.Qt.MatchExactly)
         if not items:
             return
         self.ui.filterchainListWidget.setCurrentItem(items[0])

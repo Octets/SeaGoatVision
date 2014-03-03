@@ -30,7 +30,6 @@ logger = log.get_logger(__name__)
 
 class WinExecution(QtCore.QObject):
     onPreviewClick = QtCore.Signal(object, object, object)
-    onExecutionChanged = QtCore.Signal(object)
 
     def __init__(self, controller, subscriber):
         super(WinExecution, self).__init__()
@@ -119,8 +118,8 @@ class WinExecution(QtCore.QObject):
     def _lst_execution_clicked(self):
         execution_name = self.ui.txtExecution.text()
         filterchain_name = self.ui.txtFilterchain.text()
-        self.shared_info.set("execution", execution_name)
-        self.onExecutionChanged.emit(filterchain_name)
+        media_name = self.ui.txtMedia.text()
+        self.shared_info.set("execution", (execution_name, filterchain_name, media_name))
 
     def _on_selected_lst_execution_change(self):
         execution = self._get_selected_list(self.ui.lstExecution)
