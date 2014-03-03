@@ -99,7 +99,7 @@ class ListenOutput(threading.Thread):
         # Ignore the zmq.PUB error in Eclipse.
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.SUB)
-        self.socket.setsockopt(zmq.RCVTIMEO, 0)
+        self.socket.setsockopt(zmq.RCVTIMEO, 5000)
         self.is_stopped = False
         self.observer = observer
         self.addr = addr
