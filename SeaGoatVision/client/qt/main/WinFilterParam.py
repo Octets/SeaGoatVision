@@ -33,7 +33,7 @@ class WinFilterParam(WinParamParent):
         super(WinFilterParam, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
         self.shared_info.connect("filter", self.set_filter)
-        # TODO Fill the exec name and filter name with cb shared info
+        self.shared_info.connect("close_exec", self.close_exec)
         self.execution_name = None
         self.filter_name = None
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
@@ -57,6 +57,11 @@ class WinFilterParam(WinParamParent):
                 self.lst_param = []
 
         self.update_module(is_empty, self.filter_name, "Filter", self.dct_filter)
+
+    def close_exec(self, exec_name):
+        if self.execution_name != exec_name:
+            return
+        self.clear_widget()
 
     def update_param(self, json_data):
         data = json.loads(json_data)

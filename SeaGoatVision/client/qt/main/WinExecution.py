@@ -147,6 +147,7 @@ class WinExecution(QtCore.QObject):
             self.ui.lstExecution.addItem(execution_name)
             self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
         elif operator == "-":
+            self.shared_info.set("close_exec", execution_name)
             # more easy to update all, like that, the client is protected by
             # modification
             for row in range(self.ui.lstExecution.count()):
@@ -206,6 +207,7 @@ class WinExecution(QtCore.QObject):
                      "filterchain_name": filterchain_name,
                      "file_name": file_name}
         self.shared_info.set("start_execution", exec_info)
+        self._lst_execution_clicked()
         return True
 
     def _mode_edit(self, mode_edit):
@@ -221,7 +223,7 @@ class WinExecution(QtCore.QObject):
             if filterchain_name:
                 self.ui.txtFilterchain.setText(filterchain_name)
             self.last_index += 1
-            self.ui.txtExecution.setText("Execution-%d" % (self.last_index))
+            self.ui.txtExecution.setText("Execution-%d" % self.last_index)
             media_name = self.shared_info.get("media")
             if media_name:
                 self.ui.txtMedia.setText(media_name)

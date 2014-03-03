@@ -61,11 +61,14 @@ def get_key_media_loop():
 def get_key_media_frame():
     return "frame_media"
 
+
 def get_key_format_avi():
     return "avi"
 
+
 def get_key_format_png():
     return "png"
+
 
 # generator
 

@@ -290,7 +290,10 @@ class WinFilterChain(QtCore.QObject):
         if not items:
             return
         self.ui.filterchainListWidget.setCurrentItem(items[0])
-        self.ui.filterListWidget.setCurrentRow(0)
+        if not self.ui.filterListWidget.currentRow():
+            self.on_selected_filter_changed()
+        else:
+            self.ui.filterListWidget.setCurrentRow(0)
 
     #
     # PRIVATE FUNCTION  ############################

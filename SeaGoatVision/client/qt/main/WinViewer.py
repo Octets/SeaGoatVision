@@ -35,12 +35,12 @@ import socket
 import threading
 import StringIO
 from SeaGoatVision.commons import log
+from SeaGoatVision.client.qt.shared_info import SharedInfo
 
 logger = log.get_logger(__name__)
 
 
 class WinViewer(QtGui.QDockWidget):
-
     """Show the media after being processed by the filter chain.
     The window receives a filter in its constructor.
     This is the last executed filter on the media.
@@ -49,11 +49,12 @@ class WinViewer(QtGui.QDockWidget):
     newImage = QtCore.Signal(QtGui.QImage)
     closePreview = QtCore.Signal(object)
 
-    def __init__(self, controller, subscriber,
-                 execution_name, media_name, filterchain_name, host, uid):
+    def __init__(self, controller, subscriber, execution_name, media_name, filterchain_name, host,
+                 uid):
         super(WinViewer, self).__init__()
         self.host = host
         self.port = 5030
+        self.shared_info = SharedInfo()
 
         self.controller = controller
         self.subscriber = subscriber
@@ -72,6 +73,8 @@ class WinViewer(QtGui.QDockWidget):
         self.last_second_fps = None
         self.fps_count = 0
 
+        self.shared_info.connect("close_exec", self.update_execution)
+
         self.reload_ui()
 
         self.light_observer = self._get_light_observer()
@@ -80,9 +83,6 @@ class WinViewer(QtGui.QDockWidget):
                                               self.actual_filter):
             self.__add_output_observer()
             self.subscriber.subscribe(self.media_name, self.update_fps)
-            self.subscriber.subscribe(
-                keys.get_key_execution_list(),
-                self.update_execution)
         self.light_observer.start()
 
     def reload_ui(self):
@@ -212,11 +212,8 @@ class WinViewer(QtGui.QDockWidget):
         text_size = text_size[:-1]
         self.size = float(text_size) / 100
 
-    def update_execution(self, data):
-        # check if the execution name is removed
-        operator = data[0]
-        execution_name = data[1:]
-        if operator == "-" and execution_name == self.execution_name:
+    def update_execution(self, execution_name):
+        if execution_name == self.execution_name:
             self.execution_stopped = True
             self.light_observer.turn_off()
             self.closeEvent()
@@ -224,7 +221,6 @@ class WinViewer(QtGui.QDockWidget):
 
 
 class ListenOutput(threading.Thread):
-
     def __init__(self, observer, host, port):
         threading.Thread.__init__(self)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -260,7 +256,6 @@ class ListenOutput(threading.Thread):
 
 
 class LightObserver(threading.Thread):
-
     def __init__(self, uiwidget):
         threading.Thread.__init__(self)
         self.uiwidget = uiwidget
@@ -288,7 +283,6 @@ class LightObserver(threading.Thread):
 
 
 class LightWidget(QtGui.QWidget):
-
     def __init__(self):
         super(LightWidget, self).__init__()
         self.color = QColor()
