@@ -119,6 +119,7 @@ class WinParamParent(QtGui.QDockWidget):
             return
 
         if dct_description:
+            # TODO add the real name and the fake name in filter to remove this check ("-")
             pos_key = name.rfind("-")
             key_name = name
             if pos_key > -1:
@@ -200,6 +201,8 @@ class WinParamParent(QtGui.QDockWidget):
         # check if call from combobox
         if index is None:
             index = self.cb_group.currentIndex()
+        elif index >= self.cb_group.count():
+            index = 0
         # apply filter
         text = self.ui.txt_search.text()
         if text:

@@ -21,6 +21,7 @@ from WinParamParent import WinParamParent
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import keys
+from PySide import QtCore
 import json
 
 logger = log.get_logger(__name__)
@@ -34,6 +35,7 @@ class WinFilterParam(WinParamParent):
         self.subscriber = subscriber
         self.shared_info.connect("filter", self.set_filter)
         self.shared_info.connect("close_exec", self.close_exec)
+        self.shared_info.connect("reload_filter", self.reload_filter)
         self.execution_name = None
         self.filter_name = None
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
@@ -43,6 +45,33 @@ class WinFilterParam(WinParamParent):
         super(WinFilterParam, self).reload_ui()
         self.set_filter()
         self.ui.setWindowTitle('Filter param')
+
+    def reload_filter(self, filter_name):
+        actual_filter_name = self.shared_info.get("filter")
+        pos_key = actual_filter_name.rfind("-")
+        key_name = actual_filter_name
+        if pos_key > -1:
+            key_name = key_name[:pos_key]
+        if key_name == filter_name:
+            # save last param name to refocus it
+            text_group = self.cb_group.currentText()
+            text_param = self.cb_param.currentText()
+            search_txt = self.ui.txt_search.text()
+            self.set_filter()
+
+            self.ui.txt_search.setText(search_txt)
+            if text_group:
+                # search index of group
+                index_group = self.cb_group.findText(text_group, flags=QtCore.Qt.MatchExactly)
+                if index_group == -1:
+                    index_group = 0
+                self.cb_group.setCurrentIndex(index_group)
+            if text_param:
+                # select only the param
+                index_param = self.cb_param.findText(text_param, flags=QtCore.Qt.MatchExactly)
+                if index_param == -1:
+                    index_param = 0
+                self.cb_param.setCurrentIndex(index_param)
 
     def set_filter(self, value=None):
         self.filter_name = self.shared_info.get("filter")

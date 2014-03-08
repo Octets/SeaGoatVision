@@ -74,4 +74,6 @@ class WinFilterList(QtCore.QObject):
         self.onAddFilter.emit(self.ui.filterListWidget.currentItem().text())
 
     def _reload_filter(self):
-        self.controller.reload_filter(self.ui.filterListWidget.currentItem().text())
+        filter_name = self.ui.filterListWidget.currentItem().text()
+        self.controller.reload_filter(filter_name)
+        self.shared_info.set("reload_filter", filter_name)

@@ -34,10 +34,12 @@ class SharedInfo(object):
             cls.dct_variable["filterchain"] = None
             cls.dct_variable["filter"] = None
             cls.dct_variable["execution"] = None
+
             cls.dct_variable["close_exec"] = None
             cls.dct_variable["filterchain_edit_mode"] = None
             cls.dct_variable["path_media"] = None
             cls.dct_variable["start_execution"] = None
+            cls.dct_variable["reload_filter"] = None
 
             cls.dct_signal = {}
             for key in cls.dct_variable.keys():
