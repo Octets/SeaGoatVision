@@ -145,6 +145,9 @@ class WinFilterChain(QtCore.QObject):
             logger.info("Editing success on filterchain %s" % new_name)
             self._mode_edit(False)
             self.update_filter_list()
+            self.on_selected_filter_changed()
+            # update actual filterchain
+            self.shared_info.set("filterchain", new_name)
         else:
             logger.error("Saving edit on filterchain %s." % new_name)
             self.cancel()
