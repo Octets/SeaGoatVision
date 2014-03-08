@@ -281,7 +281,6 @@ class PlayerFile(threading.Thread):
         self.controller = controller
         self.call_get_frame = call_get_frame
         self.call_set_frame = call_set_frame
-        self.set_fps(15)
         self.stop = False
         self.sleep_time = 1
         self.pause = True
@@ -289,6 +288,8 @@ class PlayerFile(threading.Thread):
         self.max_frame = 0
         self.fps = 0
         self.time_wait = 1
+
+        self.set_fps(15)
 
     def get_fps(self):
         return self.fps
