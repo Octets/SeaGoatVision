@@ -118,14 +118,6 @@ class WinParamParent(QtGui.QDockWidget):
             self.clear_widget()
             return
 
-        if dct_description:
-            # TODO add the real name and the fake name in filter to remove this check ("-")
-            pos_key = name.rfind("-")
-            key_name = name
-            if pos_key > -1:
-                key_name = key_name[:pos_key]
-            self.ui.lbl_doc.setText("%s description: %s" % (module_name, dct_description[key_name]))
-
         self.fill_group()
         self.on_cb_group_item_changed()
 

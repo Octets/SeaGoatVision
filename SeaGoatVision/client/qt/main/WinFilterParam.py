@@ -51,6 +51,7 @@ class WinFilterParam(WinParamParent):
         actual_filter_name = self.shared_info.get(SharedInfo.GLOBAL_FILTER)
         if not actual_filter_name:
             return
+        # TODO add the real name and the fake name in filter to remove this check ("-")
         pos_key = actual_filter_name.rfind("-")
         key_name = actual_filter_name
         if pos_key > -1:
