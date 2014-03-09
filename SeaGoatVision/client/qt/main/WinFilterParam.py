@@ -49,6 +49,8 @@ class WinFilterParam(WinParamParent):
 
     def reload_filter(self, filter_name):
         actual_filter_name = self.shared_info.get(SharedInfo.GLOBAL_FILTER)
+        if not actual_filter_name:
+            return
         pos_key = actual_filter_name.rfind("-")
         key_name = actual_filter_name
         if pos_key > -1:
