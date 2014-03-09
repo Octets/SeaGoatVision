@@ -30,7 +30,7 @@ class WinFilterList(QtCore.QObject):
         super(WinFilterList, self).__init__()
         self.controller = controller
         self.shared_info = SharedInfo()
-        self.shared_info.connect(SharedInfo.GLOBAL_FILTER_CHAIN_EDIT_MODE,
+        self.shared_info.connect(SharedInfo.GLOBAL_FILTERCHAIN_EDIT_MODE,
                                  self._filterchain_edit_mode)
         self.shared_info.connect(SharedInfo.GLOBAL_FILTER, self.change_filter)
         self.ui = None

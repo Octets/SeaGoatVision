@@ -44,7 +44,7 @@ class WinExecution(QtCore.QObject):
         self.reload_ui()
 
         self.shared_info.connect(SharedInfo.GLOBAL_MEDIA, self._change_media)
-        self.shared_info.connect(SharedInfo.GLOBAL_FILTER_CHAIN, self._change_filterchain)
+        self.shared_info.connect(SharedInfo.GLOBAL_FILTERCHAIN, self._change_filterchain)
 
         self.subscriber.subscribe(keys.get_key_execution_list(), self.update_execution_list)
 
@@ -219,7 +219,7 @@ class WinExecution(QtCore.QObject):
         self._enable_stop_button(mode_edit)
         self.ui.lstExecution.setEnabled(not mode_edit)
         if mode_edit:
-            filterchain_name = self.shared_info.get(SharedInfo.GLOBAL_FILTER_CHAIN)
+            filterchain_name = self.shared_info.get(SharedInfo.GLOBAL_FILTERCHAIN)
             if filterchain_name:
                 self.ui.txtFilterchain.setText(filterchain_name)
             self.last_index += 1
@@ -253,6 +253,6 @@ class WinExecution(QtCore.QObject):
     def _change_filterchain(self, value=None):
         # Ignore the value
         if self.mode_edit:
-            filterchain_name = self.shared_info.get(SharedInfo.GLOBAL_FILTER_CHAIN)
+            filterchain_name = self.shared_info.get(SharedInfo.GLOBAL_FILTERCHAIN)
             if filterchain_name:
                 self.ui.txtFilterchain.setText(filterchain_name)

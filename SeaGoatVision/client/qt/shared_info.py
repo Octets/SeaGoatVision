@@ -25,11 +25,11 @@ class SharedInfo(object):
     _instance = None
 
     GLOBAL_MEDIA = "media"
-    GLOBAL_FILTER_CHAIN = "filter_chain"
+    GLOBAL_FILTERCHAIN = "filter_chain"
     GLOBAL_FILTER = "filter"
     GLOBAL_EXEC = "exec"
     GLOBAL_CLOSE_EXEC = "close_exec"
-    GLOBAL_FILTER_CHAIN_EDIT_MODE = "filter_chain_edit_mode"
+    GLOBAL_FILTERCHAIN_EDIT_MODE = "filter_chain_edit_mode"
     GLOBAL_PATH_MEDIA = "path_media"
     GLOBAL_START_EXEC = "start_exec"
     GLOBAL_RELOAD_FILTER = "reload_filter"
@@ -41,11 +41,11 @@ class SharedInfo(object):
             # list of shared variable
             cls.dct_variable = {}
             cls.dct_variable[cls.GLOBAL_MEDIA] = None
-            cls.dct_variable[cls.GLOBAL_FILTER_CHAIN] = None
+            cls.dct_variable[cls.GLOBAL_FILTERCHAIN] = None
             cls.dct_variable[cls.GLOBAL_FILTER] = None
             cls.dct_variable[cls.GLOBAL_EXEC] = None
             cls.dct_variable[cls.GLOBAL_CLOSE_EXEC] = None
-            cls.dct_variable[cls.GLOBAL_FILTER_CHAIN_EDIT_MODE] = None
+            cls.dct_variable[cls.GLOBAL_FILTERCHAIN_EDIT_MODE] = None
             cls.dct_variable[cls.GLOBAL_PATH_MEDIA] = None
             cls.dct_variable[cls.GLOBAL_START_EXEC] = None
             cls.dct_variable[cls.GLOBAL_RELOAD_FILTER] = None

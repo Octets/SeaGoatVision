@@ -49,7 +49,7 @@ class Configuration(object):
                     cls.private_config = private_config
                 else:
                     cls.private_config = None
-            except:
+            except Exception:
                 cls.private_config = None
             cls.print_configuration = False
             cls.verbose = False
@@ -88,7 +88,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.verbose
-            except:
+            except Exception:
                 pass
         return response
 
@@ -97,7 +97,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.port_tcp_output
-            except:
+            except Exception:
                 pass
         return response
 
@@ -106,7 +106,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.lst_media
-            except:
+            except Exception:
                 pass
         return response
 
@@ -115,7 +115,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.show_public_filterchain
-            except:
+            except Exception:
                 pass
         return response
 
@@ -124,7 +124,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.show_public_filter
-            except:
+            except Exception:
                 pass
         return response
 
@@ -133,7 +133,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.active_configuration
-            except:
+            except Exception:
                 pass
         return response
 
@@ -142,7 +142,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.path_save_record
-            except:
+            except Exception:
                 pass
         return response
 
@@ -151,7 +151,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.log_path
-            except:
+            except Exception:
                 pass
         return response
 
@@ -160,7 +160,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.cmd_on_start
-            except:
+            except Exception:
                 pass
         return response
 
@@ -185,17 +185,13 @@ class Configuration(object):
         f = open(file_name, "r")
         if not f:
             log.print_function(
-                logger.error, "Can't open %s %s." %
-                              (file_name, type_name))
+                logger.error, "Can't open %s %s." % (file_name, type_name))
             return None
         str_value = f.readlines()
         try:
             value = json.loads("".join(str_value))
-        except:
-            log.print_function(
-                logger.error,
-                "The file %s not contain json data." %
-                file_name)
+        except Exception:
+            log.print_function(logger.error, "The file %s not contain json data." % file_name)
             value = None
         f.close()
         return value
@@ -227,9 +223,8 @@ class Configuration(object):
     def _is_config_exist(self, file_name, type_name, ignore_not_exist):
         if not os.path.isfile(file_name):
             if not ignore_not_exist:
-                log.print_function(
-                    logger.error, "The %s config %s not exist." %
-                                  (file_name, type_name))
+                log.print_function(logger.error,
+                                   "The %s config %s not exist." % (file_name, type_name))
             return False
         return True
 

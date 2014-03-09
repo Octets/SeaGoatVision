@@ -46,6 +46,7 @@ class Resource(object):
 
             # {"filter_name" : class_filter}
             cls.dct_filterchain = {}
+            cls.dct_filter = {}
 
             # instance class
             cls._instance = super(Resource, cls).__new__(cls)
@@ -70,6 +71,7 @@ class Resource(object):
         class FilterChain:
             def __init__(self):
                 pass
+
         lst_filter_chain = []
         for fc_name in self.config.list_filterchain():
             lst_filter_chain.append({"name": fc_name, "doc": None})
@@ -122,7 +124,7 @@ class Resource(object):
         else:
             active_old_filterchain = None
         if self.create_filterchain(
-            new_filterchain_name, lst_str_filters, default_media=default_media,
+                new_filterchain_name, lst_str_filters, default_media=default_media,
                 old_configuration=active_old_filterchain):
             # delete old filterchain
             if old_filterchain_name != new_filterchain_name:
@@ -156,7 +158,7 @@ class Resource(object):
                 if not chain.deserialize_update(filterchain_name, old_chain_data):
                     logger.warning(
                         "Cannot deserialize old configuration of filterchain %s." %
-                        (filterchain_name))
+                        filterchain_name)
             else:
                 logger.warning(
                     "The filterchain %s is supposed to be in memory if old exist." %
@@ -181,6 +183,7 @@ class Resource(object):
         # TODO "class" key is important?
         # update list of filter
         import filters
+
         self.dct_filter = {name: filtre
                            for name, filtre in vars(filters).items()
                            if inspect.isclass(filtre)
@@ -228,18 +231,12 @@ class Resource(object):
             o_media = conf_media.media(conf_media)
             if o_media.is_opened():
                 if name in dct_media.keys():
-                    log.print_function(
-                        logger.error,
-                        "Media %s already exist." %
-                        name)
+                    log.print_function(logger.error, "Media %s already exist." % name)
                     continue
                 dct_media[name] = o_media
                 logger.info("Media %s detected." % name)
             else:
-                log.print_function(
-                    logger.error,
-                    "Camera %s not detected" %
-                    name)
+                log.print_function(logger.error, "Camera %s not detected" % name)
         # Force media_video
         media_video = media.media_video.MediaVideo(
             keys.get_media_file_video_name())
@@ -249,8 +246,8 @@ class Resource(object):
         # media_video._get_cb_publisher()
         # Force create empty media
         from SeaGoatVision.server.media.implementation.empty import Empty
-        dct_media[keys.get_media_empty_name()] = Empty(
-            keys.get_media_empty_name())
+
+        dct_media[keys.get_media_empty_name()] = Empty(keys.get_media_empty_name())
 
         self.dct_media = dct_media
 
