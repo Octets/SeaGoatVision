@@ -24,22 +24,31 @@ Description : contain shared variable inter-widget and signal connect with inter
 class SharedInfo(object):
     _instance = None
 
+    GLOBAL_MEDIA = "media"
+    GLOBAL_FILTER_CHAIN = "filter_chain"
+    GLOBAL_FILTER = "filter"
+    GLOBAL_EXEC = "exec"
+    GLOBAL_CLOSE_EXEC = "close_exec"
+    GLOBAL_FILTER_CHAIN_EDIT_MODE = "filter_chain_edit_mode"
+    GLOBAL_PATH_MEDIA = "path_media"
+    GLOBAL_START_EXEC = "start_exec"
+    GLOBAL_RELOAD_FILTER = "reload_filter"
+
     def __new__(cls):
         # Singleton
         if not cls._instance:
             # first instance
             # list of shared variable
             cls.dct_variable = {}
-            cls.dct_variable["media"] = None
-            cls.dct_variable["filterchain"] = None
-            cls.dct_variable["filter"] = None
-            cls.dct_variable["execution"] = None
-
-            cls.dct_variable["close_exec"] = None
-            cls.dct_variable["filterchain_edit_mode"] = None
-            cls.dct_variable["path_media"] = None
-            cls.dct_variable["start_execution"] = None
-            cls.dct_variable["reload_filter"] = None
+            cls.dct_variable[cls.GLOBAL_MEDIA] = None
+            cls.dct_variable[cls.GLOBAL_FILTER_CHAIN] = None
+            cls.dct_variable[cls.GLOBAL_FILTER] = None
+            cls.dct_variable[cls.GLOBAL_EXEC] = None
+            cls.dct_variable[cls.GLOBAL_CLOSE_EXEC] = None
+            cls.dct_variable[cls.GLOBAL_FILTER_CHAIN_EDIT_MODE] = None
+            cls.dct_variable[cls.GLOBAL_PATH_MEDIA] = None
+            cls.dct_variable[cls.GLOBAL_START_EXEC] = None
+            cls.dct_variable[cls.GLOBAL_RELOAD_FILTER] = None
 
             cls.dct_signal = {}
             for key in cls.dct_variable.keys():

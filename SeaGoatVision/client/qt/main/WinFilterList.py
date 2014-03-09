@@ -30,8 +30,9 @@ class WinFilterList(QtCore.QObject):
         super(WinFilterList, self).__init__()
         self.controller = controller
         self.shared_info = SharedInfo()
-        self.shared_info.connect("filterchain_edit_mode", self._filterchain_edit_mode)
-        self.shared_info.connect("filter", self.change_filter)
+        self.shared_info.connect(SharedInfo.GLOBAL_FILTER_CHAIN_EDIT_MODE,
+                                 self._filterchain_edit_mode)
+        self.shared_info.connect(SharedInfo.GLOBAL_FILTER, self.change_filter)
         self.ui = None
         self.dct_filter = None
         self.lst_filter_sort = []
@@ -76,4 +77,4 @@ class WinFilterList(QtCore.QObject):
     def _reload_filter(self):
         filter_name = self.ui.filterListWidget.currentItem().text()
         self.controller.reload_filter(filter_name)
-        self.shared_info.set("reload_filter", filter_name)
+        self.shared_info.set(SharedInfo.GLOBAL_RELOAD_FILTER, filter_name)

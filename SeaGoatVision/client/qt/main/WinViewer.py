@@ -73,7 +73,7 @@ class WinViewer(QtGui.QDockWidget):
         self.last_second_fps = None
         self.fps_count = 0
 
-        self.shared_info.connect("close_exec", self.update_execution)
+        self.shared_info.connect(SharedInfo.GLOBAL_CLOSE_EXEC, self.update_execution)
 
         self.reload_ui()
 

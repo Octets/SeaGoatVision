@@ -39,7 +39,7 @@ class WinMedia(QtCore.QObject):
         self.ui = None
         self.controller = controller
         self.shared_info = SharedInfo()
-        self.shared_info.connect("start_execution", self.set_info)
+        self.shared_info.connect(SharedInfo.GLOBAL_START_EXEC, self.set_info)
 
         self.is_recorded = False
         self.is_play = False
@@ -54,8 +54,8 @@ class WinMedia(QtCore.QObject):
         self.last_value_frame = 0
         self.max_frame = 0
 
-        self.shared_info.connect("start_execution", self._start_execution)
-        self.shared_info.connect("execution", self.change_execution)
+        self.shared_info.connect(SharedInfo.GLOBAL_START_EXEC, self._start_execution)
+        self.shared_info.connect(SharedInfo.GLOBAL_EXEC, self.change_execution)
 
         # TODO optimize starting thread.
         self.thread_player = PlayerFile(controller, self._get_actual_no_frame,
@@ -105,20 +105,20 @@ class WinMedia(QtCore.QObject):
 
         media_type = self.dct_media.get(media_name, None)
         if not media_type:
-            self.shared_info.set("media", None)
+            self.shared_info.set(SharedInfo.GLOBAL_MEDIA, None)
             return
         if media_type == keys.get_media_type_video_name():
             frame_video.setVisible(True)
         elif media_type == keys.get_media_type_streaming_name():
             frame_webcam.setVisible(True)
-            self.shared_info.set("path_media", None)
-        self.shared_info.set("media", media_name)
+            self.shared_info.set(SharedInfo.GLOBAL_PATH_MEDIA, None)
+        self.shared_info.set(SharedInfo.GLOBAL_MEDIA, media_name)
         self.set_info()
         if not after_update:
             self.last_selected_media = media_name
 
     def _movie_changed(self):
-        self.shared_info.set("path_media", self.ui.movieLineEdit.text())
+        self.shared_info.set(SharedInfo.GLOBAL_PATH_MEDIA, self.ui.movieLineEdit.text())
 
     def set_slider_value(self, value, force_value=False):
         last_value = self.ui.slider_frame.value()
@@ -193,14 +193,14 @@ class WinMedia(QtCore.QObject):
             self.ui.movieLineEdit.setText(filename)
 
     def set_frame_video(self, value):
-        media_name = self.shared_info.get("media")
+        media_name = self.shared_info.get(SharedInfo.GLOBAL_MEDIA)
         if not media_name:
             return
         self.controller.cmd_to_media(media_name, keys.get_key_media_frame(), value - 1)
 
     def set_info(self, value=None):
         # Ignore the value
-        media_name = self.shared_info.get("media")
+        media_name = self.shared_info.get(SharedInfo.GLOBAL_MEDIA)
         if not media_name:
             return
         info = self.controller.get_info_media(media_name)

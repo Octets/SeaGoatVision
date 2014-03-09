@@ -43,8 +43,8 @@ class WinExecution(QtCore.QObject):
         self.ui = None
         self.reload_ui()
 
-        self.shared_info.connect("media", self._change_media)
-        self.shared_info.connect("filterchain", self._change_filterchain)
+        self.shared_info.connect(SharedInfo.GLOBAL_MEDIA, self._change_media)
+        self.shared_info.connect(SharedInfo.GLOBAL_FILTER_CHAIN, self._change_filterchain)
 
         self.subscriber.subscribe(keys.get_key_execution_list(), self.update_execution_list)
 
@@ -119,7 +119,7 @@ class WinExecution(QtCore.QObject):
         execution_name = self.ui.txtExecution.text()
         filterchain_name = self.ui.txtFilterchain.text()
         media_name = self.ui.txtMedia.text()
-        self.shared_info.set("execution", (execution_name, filterchain_name, media_name))
+        self.shared_info.set(SharedInfo.GLOBAL_EXEC, (execution_name, filterchain_name, media_name))
 
     def _on_selected_lst_execution_change(self):
         execution = self._get_selected_list(self.ui.lstExecution)
@@ -138,7 +138,7 @@ class WinExecution(QtCore.QObject):
             logger.error("WinExecution Internal sync error with execution info :(")
             return
         self.ui.txtFilterchain.setText(exec_info.get("filterchain"))
-        self.ui.txtMedia.setText(exec_info.get("media"))
+        self.ui.txtMedia.setText(exec_info.get(SharedInfo.GLOBAL_MEDIA))
 
     def update_execution_list(self, data):
         operator = data[0]
@@ -147,7 +147,7 @@ class WinExecution(QtCore.QObject):
             self.ui.lstExecution.addItem(execution_name)
             self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
         elif operator == "-":
-            self.shared_info.set("close_exec", execution_name)
+            self.shared_info.set(SharedInfo.GLOBAL_CLOSE_EXEC, execution_name)
             # more easy to update all, like that, the client is protected by
             # modification
             for row in range(self.ui.lstExecution.count()):
@@ -189,7 +189,7 @@ class WinExecution(QtCore.QObject):
                                       "The execution name \"%s\" already exist." % execution_name,
                                       QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
             return False
-        file_name = self.shared_info.get("path_media")
+        file_name = self.shared_info.get(SharedInfo.GLOBAL_PATH_MEDIA)
         is_client_manager = media_name == keys.get_media_file_video_name()
         status = self.controller.start_filterchain_execution(
             execution_name,
@@ -206,7 +206,7 @@ class WinExecution(QtCore.QObject):
                      "execution_name": execution_name,
                      "filterchain_name": filterchain_name,
                      "file_name": file_name}
-        self.shared_info.set("start_execution", exec_info)
+        self.shared_info.set(SharedInfo.GLOBAL_START_EXEC, exec_info)
         self._lst_execution_clicked()
         return True
 
@@ -219,12 +219,12 @@ class WinExecution(QtCore.QObject):
         self._enable_stop_button(mode_edit)
         self.ui.lstExecution.setEnabled(not mode_edit)
         if mode_edit:
-            filterchain_name = self.shared_info.get("filterchain")
+            filterchain_name = self.shared_info.get(SharedInfo.GLOBAL_FILTER_CHAIN)
             if filterchain_name:
                 self.ui.txtFilterchain.setText(filterchain_name)
             self.last_index += 1
             self.ui.txtExecution.setText("Execution-%d" % self.last_index)
-            media_name = self.shared_info.get("media")
+            media_name = self.shared_info.get(SharedInfo.GLOBAL_MEDIA)
             if media_name:
                 self.ui.txtMedia.setText(media_name)
 
@@ -246,13 +246,13 @@ class WinExecution(QtCore.QObject):
     def _change_media(self, value=None):
         # Ignore the value
         if self.mode_edit:
-            media_name = self.shared_info.get("media")
+            media_name = self.shared_info.get(SharedInfo.GLOBAL_MEDIA)
             if media_name:
                 self.ui.txtMedia.setText(media_name)
 
     def _change_filterchain(self, value=None):
         # Ignore the value
         if self.mode_edit:
-            filterchain_name = self.shared_info.get("filterchain")
+            filterchain_name = self.shared_info.get(SharedInfo.GLOBAL_FILTER_CHAIN)
             if filterchain_name:
                 self.ui.txtFilterchain.setText(filterchain_name)

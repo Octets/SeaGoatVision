@@ -21,6 +21,7 @@ from WinParamParent import WinParamParent
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import keys
+from SeaGoatVision.client.qt.shared_info import SharedInfo
 from PySide import QtCore
 import json
 
@@ -33,9 +34,9 @@ class WinFilterParam(WinParamParent):
         self.dct_filter = self.controller.get_filter_list()
         super(WinFilterParam, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
-        self.shared_info.connect("filter", self.set_filter)
-        self.shared_info.connect("close_exec", self.close_exec)
-        self.shared_info.connect("reload_filter", self.reload_filter)
+        self.shared_info.connect(SharedInfo.GLOBAL_FILTER, self.set_filter)
+        self.shared_info.connect(SharedInfo.GLOBAL_CLOSE_EXEC, self.close_exec)
+        self.shared_info.connect(SharedInfo.GLOBAL_RELOAD_FILTER, self.reload_filter)
         self.execution_name = None
         self.filter_name = None
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
@@ -47,7 +48,7 @@ class WinFilterParam(WinParamParent):
         self.ui.setWindowTitle('Filter param')
 
     def reload_filter(self, filter_name):
-        actual_filter_name = self.shared_info.get("filter")
+        actual_filter_name = self.shared_info.get(SharedInfo.GLOBAL_FILTER)
         pos_key = actual_filter_name.rfind("-")
         key_name = actual_filter_name
         if pos_key > -1:
@@ -74,8 +75,8 @@ class WinFilterParam(WinParamParent):
                 self.cb_param.setCurrentIndex(index_param)
 
     def set_filter(self, value=None):
-        self.filter_name = self.shared_info.get("filter")
-        exec_info = self.shared_info.get("execution")
+        self.filter_name = self.shared_info.get(SharedInfo.GLOBAL_FILTER)
+        exec_info = self.shared_info.get(SharedInfo.GLOBAL_EXEC)
         self.execution_name = None if not exec_info else exec_info[0]
         is_empty = not self.filter_name
 

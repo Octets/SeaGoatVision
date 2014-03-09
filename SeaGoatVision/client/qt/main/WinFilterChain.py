@@ -71,8 +71,8 @@ class WinFilterChain(QtCore.QObject):
         self._mode_edit(False)
         self._list_filterchain_is_selected(False)
 
-        self.shared_info.connect("media", self._update_media_default_edit)
-        self.shared_info.connect("execution", self.select_filterchain)
+        self.shared_info.connect(SharedInfo.GLOBAL_MEDIA, self._update_media_default_edit)
+        self.shared_info.connect(SharedInfo.GLOBAL_EXEC, self.select_filterchain)
 
     #
     # SIGNAL  ###############################
@@ -147,7 +147,7 @@ class WinFilterChain(QtCore.QObject):
             self.update_filter_list()
             self.on_selected_filter_changed()
             # update actual filterchain
-            self.shared_info.set("filterchain", new_name)
+            self.shared_info.set(SharedInfo.GLOBAL_FILTER_CHAIN, new_name)
         else:
             logger.error("Saving edit on filterchain %s." % new_name)
             self.cancel()
@@ -260,9 +260,9 @@ class WinFilterChain(QtCore.QObject):
         filter_name = self._get_selected_filter_name()
         self.ui.frame_filter_edit.setEnabled(filter_name is not None)
         if filter_name:
-            self.shared_info.set("filter", filter_name)
+            self.shared_info.set(SharedInfo.GLOBAL_FILTER, filter_name)
         else:
-            self.shared_info.set("filter", None)
+            self.shared_info.set(SharedInfo.GLOBAL_FILTER, None)
 
     def on_selected_filter_chain_changed(self):
         if self.edit_mode:
@@ -279,10 +279,10 @@ class WinFilterChain(QtCore.QObject):
             # Exception, don't edit or delete special empty filterchain
             self.ui.deleteButton.setEnabled(filterchain_name != keys.get_empty_filterchain_name())
             self.ui.editButton.setEnabled(filterchain_name != keys.get_empty_filterchain_name())
-            self.shared_info.set("filterchain", filterchain_name)
+            self.shared_info.set(SharedInfo.GLOBAL_FILTER_CHAIN, filterchain_name)
         else:
             self._list_filterchain_is_selected(False)
-            self.shared_info.set("filterchain", None)
+            self.shared_info.set(SharedInfo.GLOBAL_FILTER_CHAIN, None)
 
     def get_filter_list(self):
         return self._get_list_string_qlist(self.ui.filterListWidget)
@@ -329,7 +329,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.frame_edit.setEnabled(not status)
         self.ui.filterchainEdit.setReadOnly(not status)
         self.ui.filterchainListWidget.setEnabled(not status)
-        self.shared_info.set("filterchain_edit_mode", status)
+        self.shared_info.set(SharedInfo.GLOBAL_FILTER_CHAIN_EDIT_MODE, status)
         if status:
             self.ui.filterchainEdit.setFocus()
         else:

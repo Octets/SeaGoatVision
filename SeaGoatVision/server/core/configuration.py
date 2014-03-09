@@ -41,8 +41,7 @@ class Configuration(object):
                 from configurations.private import config as private_config
             except Exception as e:
                 logger.info(
-                    "Ignore missing private configuration because: %s" %
-                    e)
+                    "Ignore missing private configuration because: %s" % e)
             # first instance
             cls.public_config = public_config
             try:

@@ -21,6 +21,7 @@ from WinParamParent import WinParamParent
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import keys
+from SeaGoatVision.client.qt.shared_info import SharedInfo
 import json
 
 logger = log.get_logger(__name__)
@@ -31,7 +32,7 @@ class WinMediaParam(WinParamParent):
         super(WinMediaParam, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
         self.media_name = None
-        self.shared_info.connect("media", self.set_camera)
+        self.shared_info.connect(SharedInfo.GLOBAL_MEDIA, self.set_camera)
         self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
         self.subscriber.subscribe(keys.get_key_media_param(), self.call_signal_param)
 
@@ -41,7 +42,7 @@ class WinMediaParam(WinParamParent):
         self.ui.setWindowTitle('Media param')
 
     def set_camera(self, value=None):
-        self.media_name = self.shared_info.get("media")
+        self.media_name = self.shared_info.get(SharedInfo.GLOBAL_MEDIA)
         is_empty = not self.media_name
 
         if not is_empty:
