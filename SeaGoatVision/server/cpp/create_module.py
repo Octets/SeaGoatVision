@@ -82,7 +82,7 @@ def import_all_cpp_filter(
 
         _create_python_code(mod, filename, cppcode)
 
-        _create_module(cpptimestamps, module, filename, mod)
+        _create_module(cpptimestamps, module, filename, mod, reload_mod=modname)
 
 
 def _create_build(cppfiles):
@@ -95,7 +95,7 @@ def _create_build(cppfiles):
             os.remove(os.path.join(RELOAD_DIR, f))
 
 
-def _create_module(cpptimestamps, module, modname, mod):
+def _create_module(cpptimestamps, module, modname, mod, reload_mod=None):
     try:
         logger.info("Begin compile %s.", modname)
         no_verbose = 3 if config.get_verbose() else 0
@@ -105,7 +105,10 @@ def _create_module(cpptimestamps, module, modname, mod):
         else:
             mod.compile(BUILD_DIR, verbose=no_verbose)
 
-        cppmodule = __import__(modname)
+        if reload_mod:
+            cppmodule = __import__(reload_mod)
+        else:
+            cppmodule = __import__(modname)
         params = {}
         dct_fct = {
             '__init__':
