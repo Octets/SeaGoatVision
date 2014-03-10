@@ -33,7 +33,6 @@ class WinMediaParam(WinParamParent):
         self.subscriber = subscriber
         self.media_name = None
         self.shared_info.connect(SharedInfo.GLOBAL_MEDIA, self.set_camera)
-        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
         self.subscriber.subscribe(keys.get_key_media_param(), self.call_signal_param)
 
     def reload_ui(self):
@@ -61,14 +60,6 @@ class WinMediaParam(WinParamParent):
             return
         param = Param("temp", None, serialize=param_ser)
         self.update_server_param(param)
-
-    def on_cb_param_item_changed(self, index):
-        if index == -1:
-            return
-        module_name = "%s" % self.media_name
-        actual_param = self.lst_param[index]
-        param = self.controller.get_param_media(self.media_name, actual_param.get_name())
-        super(WinMediaParam, self).on_cb_param_item_changed(index, module_name, param)
 
     def set_value(self, value, param):
         # update the server value

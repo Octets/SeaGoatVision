@@ -39,7 +39,6 @@ class WinFilterParam(WinParamParent):
         self.shared_info.connect(SharedInfo.GLOBAL_RELOAD_FILTER, self.reload_filter)
         self.execution_name = None
         self.filter_name = None
-        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
         self.subscriber.subscribe(keys.get_key_filter_param(), self.call_signal_param)
 
     def reload_ui(self):
@@ -59,7 +58,6 @@ class WinFilterParam(WinParamParent):
         if key_name == filter_name:
             # save last param name to refocus it
             text_group = self.cb_group.currentText()
-            text_param = self.cb_param.currentText()
             search_txt = self.ui.txt_search.text()
             self.set_filter()
 
@@ -70,12 +68,6 @@ class WinFilterParam(WinParamParent):
                 if index_group == -1:
                     index_group = 0
                 self.cb_group.setCurrentIndex(index_group)
-            if text_param:
-                # select only the param
-                index_param = self.cb_param.findText(text_param, flags=QtCore.Qt.MatchExactly)
-                if index_param == -1:
-                    index_param = 0
-                self.cb_param.setCurrentIndex(index_param)
 
     def set_filter(self, value=None):
         self.filter_name = self.shared_info.get(SharedInfo.GLOBAL_FILTER)
@@ -109,16 +101,6 @@ class WinFilterParam(WinParamParent):
             return
         param = Param("temp", None, serialize=param_ser)
         self.update_server_param(param)
-
-    def on_cb_param_item_changed(self, index):
-        if index == -1:
-            return
-        module_name = "%s - %s" % (self.execution_name, self.filter_name)
-        actual_param = self.lst_param[index]
-        param = self.controller.get_param_filterchain(self.execution_name,
-                                                      self.filter_name,
-                                                      actual_param.get_name())
-        super(WinFilterParam, self).on_cb_param_item_changed(index, module_name, param)
 
     def set_value(self, value, param):
         # update the server value

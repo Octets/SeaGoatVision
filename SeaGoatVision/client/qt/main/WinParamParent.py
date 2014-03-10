@@ -42,14 +42,12 @@ class WinParamParent(QtGui.QDockWidget):
 
         self.controller = controller
         self.lst_param = None
-        self.lst_param_copy = None
         self._set_value = None
         self.layout = None
         self.ui = None
         self.lst_active_widget = []
         self.lst_inactive_widget = []
         self.parent_layout = None
-        self.cb_param = None
         self.cb_group = None
         self.set_value = set_value
 
@@ -59,27 +57,16 @@ class WinParamParent(QtGui.QDockWidget):
         self.ui = get_ui(self, force_name="WinParam")
 
         self.lst_param = []
-        self.lst_param_copy = []
         self.clear_widget()
 
         self.cb_group = self.ui.cb_group
         self.parent_layout = self.ui.layout_params
-        self.cb_param = self.ui.cb_filter_param
-
-        """
-        # add scrollbar
-        scroll = QtGui.QScrollArea()
-        scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        scroll.setWidget(self)
-        """
 
         self.ui.saveButton.clicked.connect(self.save)
         self.ui.resetButton.clicked.connect(self.reset)
         self.ui.defaultButton.clicked.connect(self.default)
         self.ui.txt_search.returnPressed.connect(self.on_cb_group_item_changed)
         self.cb_group.currentIndexChanged.connect(self.on_cb_group_item_changed)
-        self.cb_param.currentIndexChanged.connect(self.on_cb_param_item_changed)
 
     def call_signal_param(self, json_data):
         self.signal_update_param.emit(json_data)
@@ -94,20 +81,8 @@ class WinParamParent(QtGui.QDockWidget):
             if widget.get_name() == param_name:
                 widget.set_param_server(param)
 
-    def on_cb_param_item_changed(self, index, module_name, param):
-        self.ui.lbl_param_name.setText(module_name)
-        if index == -1:
-            return
-        self.lst_param[index] = param
-        self._set_widget(param)
-
     def update_module(self, is_empty, name, module_name, dct_description):
         # Ignore the not used param value
-        self.clear_widget()
-
-        self.ui.txt_search.setText("")
-        self.lst_param_copy = self.lst_param[:]
-
         self.clear_widget()
         if is_empty:
             self.ui.lbl_param_name.setText("Empty params")
@@ -115,18 +90,15 @@ class WinParamParent(QtGui.QDockWidget):
 
         if not self.lst_param:
             self.ui.lbl_param_name.setText("%s - Empty params" % name)
-            self.clear_widget()
             return
 
         self.fill_group()
         self.on_cb_group_item_changed()
 
-        # Select first item
-        self.on_cb_param_item_changed(0)
-
     def clear_widget(self):
+        self.ui.txt_search.setText("")
+        self.ui.cb_group.clear()
         self._hide_all_widget()
-        self.ui.cb_filter_param.clear()
 
     def _set_widget(self, lst_param):
         self._hide_all_widget()
@@ -189,37 +161,25 @@ class WinParamParent(QtGui.QDockWidget):
                 self.cb_group.addItem(group)
 
     def on_cb_group_item_changed(self, index=None):
-        self.cb_param.clear()
-        # check if call from combobox
-        if index is None:
-            index = self.cb_group.currentIndex()
-        elif index >= self.cb_group.count():
-            index = 0
         # apply filter
         text = self.ui.txt_search.text()
         if text:
-            self.lst_param = [value for value in self.lst_param_copy if text in value.get_name()]
+            lst_param = [value for value in self.lst_param if text in value.get_name()]
         else:
-            self.lst_param = self.lst_param_copy[:]
-        self.lst_param.sort(key=lambda x: x.get_name().lower())
-        # the first item or when it's None, we enable params combobox
-        if index < 1:
-            # add all param and remove grouped mode
-            self.cb_param.setDisabled(False)
-            for param in self.lst_param:
-                self.cb_param.addItem(param.get_name())
-        else:
-            # set grouped mode
-            self.cb_param.setDisabled(True)
-            lst_param = self.get_lst_param_grouped(self.cb_group.currentText())
-            self._set_widget(lst_param)
+            lst_param = self.lst_param[:]
+        # the first item of the group is empty
+        group_name = self.cb_group.currentText()
+        lst_param = self.get_lst_param_grouped(lst_param, group_name)
+        self._set_widget(lst_param)
 
-    def get_lst_param_grouped(self, group):
-        lst_param = []
-        for param in self.lst_param:
-            if group in param.get_groups():
-                lst_param.append(param)
-        return lst_param
+    @staticmethod
+    def get_lst_param_grouped(lst_param, group):
+        lst_param_sorted = sorted(lst_param, key=lambda x: x.get_name().lower())
+        lst_param_grouped = []
+        for param in lst_param_sorted:
+            if not group or group in param.get_groups():
+                lst_param_grouped.append(param)
+        return lst_param_grouped
 
 
 class ParentWidget(object):
