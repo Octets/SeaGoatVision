@@ -228,9 +228,7 @@ class WinFilterChain(QtCore.QObject):
         info = self.controller.get_filterchain_info(filterchain_name)
         lst_filter = info.get("filters", None)
         if not lst_filter:
-            logger.warning(
-                "Recieve empty filter list from filterchain %s" %
-                filterchain_name)
+            logger.warning("Recieve empty filter list from filterchain %s" % filterchain_name)
             return
         for o_filter in lst_filter:
             name = o_filter.get("name", "")
@@ -245,7 +243,7 @@ class WinFilterChain(QtCore.QObject):
         self.ui.filterListWidget.clear()
         self.ui.filterchainEdit.clear()
         lst_filterchain = sorted(self.controller.get_filterchain_list(),
-                            key=lambda x: x.get("name").lower())
+                                 key=lambda x: x.get("name").lower())
         for filterchain in lst_filterchain:
             self.ui.filterchainListWidget.addItem(filterchain.get("name"))
         self.ui.filterchainListWidget.addItem(keys.get_empty_filterchain_name())
@@ -280,6 +278,8 @@ class WinFilterChain(QtCore.QObject):
             self.ui.deleteButton.setEnabled(filterchain_name != keys.get_empty_filterchain_name())
             self.ui.editButton.setEnabled(filterchain_name != keys.get_empty_filterchain_name())
             self.shared_info.set(SharedInfo.GLOBAL_FILTERCHAIN, filterchain_name)
+
+            self.ui.filterListWidget.setCurrentRow(0)
         else:
             self._list_filterchain_is_selected(False)
             self.shared_info.set(SharedInfo.GLOBAL_FILTERCHAIN, None)

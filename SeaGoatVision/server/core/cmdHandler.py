@@ -475,14 +475,13 @@ class CmdHandler:
         o_filter = filterchain.get_filter(name=filter_name)
         if not o_filter:
             log.print_function(
-                logger.error, "Don't find filter %s on filterchain %s" %
-                              (filter_name, filterchain.get_name()))
+                logger.error,
+                "Don't find filter %s on filterchain %s" % (filter_name, filterchain.get_name()))
             return False
         param = o_filter.get_params(param_name=param_name)
         if not param:
             log.print_function(
-                logger.error, "Don't find param %s on filter %s" %
-                              (param_name, filter_name))
+                logger.error, "Don't find param %s on filter %s" % (param_name, filter_name))
             return False
 
         param.set(value)

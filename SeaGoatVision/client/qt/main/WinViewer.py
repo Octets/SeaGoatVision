@@ -72,11 +72,12 @@ class WinViewer(QtGui.QDockWidget):
         self.last_output = ""
         self.last_second_fps = None
         self.fps_count = 0
+        self.light_observer = None
 
         self.shared_info.connect(SharedInfo.GLOBAL_CLOSE_EXEC, self.update_execution)
 
         self.reload_ui()
-
+        self.qhlayout_light = self.ui.qhboxlayout_2
         self.light_observer = self._get_light_observer()
 
         if self.controller.add_image_observer(self.update_image, execution_name,
@@ -110,7 +111,8 @@ class WinViewer(QtGui.QDockWidget):
         if self.thread_output:
             self.thread_output.stop()
         self.subscriber.desubscribe(self.media_name, self.update_fps)
-        self.light_observer.stop()
+        if self.light_observer:
+            self.light_observer.stop()
         logger.info("WinViewer %s quit." % self.execution_name)
 
     #
@@ -119,7 +121,7 @@ class WinViewer(QtGui.QDockWidget):
     def _get_light_observer(self):
         # call me just one time
         light_widget = LightWidget()
-        size = self.ui.qhboxlayout_2.minimumSize()
+        size = self.qhlayout_light.minimumSize()
         min_size = min(size.width(), size.height())
         light_widget.setGeometry(0, 0, min_size, min_size)
 
@@ -215,7 +217,8 @@ class WinViewer(QtGui.QDockWidget):
     def update_execution(self, execution_name):
         if execution_name == self.execution_name:
             self.execution_stopped = True
-            self.light_observer.turn_off()
+            if self.light_observer:
+                self.light_observer.turn_off()
             self.closeEvent()
             self.is_turn_off = True
 

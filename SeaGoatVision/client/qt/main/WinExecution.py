@@ -72,6 +72,8 @@ class WinExecution(QtCore.QObject):
                 # first and restart
                 self.ui.lstExecution.setCurrentRow(0)
                 self.preview()
+                # and select the associated filterchain
+                self._lst_execution_clicked()
                 return
         else:
             execution_name = self.ui.txtExecution.text()
@@ -138,7 +140,7 @@ class WinExecution(QtCore.QObject):
             logger.error("WinExecution Internal sync error with execution info :(")
             return
         self.ui.txtFilterchain.setText(exec_info.get("filterchain"))
-        self.ui.txtMedia.setText(exec_info.get(SharedInfo.GLOBAL_MEDIA))
+        self.ui.txtMedia.setText(exec_info.get("media"))
 
     def update_execution_list(self, data):
         operator = data[0]
