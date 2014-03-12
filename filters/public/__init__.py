@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-# Copyright (C) 2012 Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014 Octets - octets.etsmtl.ca
 #
 # This filename is part of SeaGoatVision.
 #
@@ -20,6 +20,7 @@ import os
 import sys
 import time
 from example import *
+from convert_color import *
 # from SeaGoatVision.server.core.utils import add_filter_module
 from SeaGoatVision.server.cpp.create_module import *
 
