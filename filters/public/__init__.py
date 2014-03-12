@@ -19,6 +19,7 @@
 import os
 import sys
 import time
+from example import *
 # from SeaGoatVision.server.core.utils import add_filter_module
 from SeaGoatVision.server.cpp.create_module import *
 

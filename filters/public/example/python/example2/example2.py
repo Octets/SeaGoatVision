@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -24,8 +24,9 @@ from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
 
-class Example(Filter):
+class ExePy2(Filter):
     """
+    Python Example Test #2
     Example filter to test params.
     Show rectangle on each detected face.
     """
@@ -79,7 +80,7 @@ class Example(Filter):
         self.i_text_size = self.text_size.get()
 
     def execute(self, image):
-        gray = cv2.cvtColor(image, cv.CV_BGR2GRAY)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         cv2.equalizeHist(gray, gray)
         faces = self.face_cascade.detectMultiScale(gray, 1.1, 2, 0 | cv.CV_HAAR_SCALE_IMAGE,
                                                    (30, 30))
@@ -115,8 +116,9 @@ class Example(Filter):
             cv2.putText(image, text, (min_x, min_face_y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, txt_size,
                         color)
 
-        c_x = (max_x - min_x) / 2 + min_x
-        c_y = (max_y - min_y) / 2 + min_y
+        # note: >> 2 == / 2
+        c_x = (max_x - min_x) >> 2 + min_x
+        c_y = (max_y - min_y) >> 2 + min_y
         if self.show_output.get():
             self.notify_output_observers(
                 "face detect no %d : x=%d, y=%d" % (self.nb_face, c_x, c_y))
