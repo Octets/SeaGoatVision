@@ -1,5 +1,5 @@
 #! /usr/bin/env python2.7
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
