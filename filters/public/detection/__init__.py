@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -16,21 +16,12 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import os
 
-import cv2
-from cv2 import cv
-from SeaGoatVision.server.core.filter import Filter
-
-
-class ConvexHull(Filter):
-
-    def __init__(self):
-        Filter.__init__(self)
-
-    def execute(self, image):
-        gray = cv2.cvtColor(image, cv.CV_BGR2GRAY)
-        cnt, _ = cv2.findContours(gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        for c in cnt:
-            hull = cv2.convexHull(c)
-            cv2.drawContours(image, [hull], -1, (255, 255, 255), -1)
-        return image
+# PYTHON FILTERS IMPORT
+for f in os.listdir(os.path.dirname(__file__)):
+    if not f.endswith(".py") or f == "__init__.py":
+        continue
+    filename, _ = os.path.splitext(f)
+    code = 'from %(module)s import *' % {'module': filename}
+    exec(code)
