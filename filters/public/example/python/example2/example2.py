@@ -66,13 +66,10 @@ class ExePy2(Filter):
         self.text_size.add_group("message")
 
         self.nb_face = 1
-        self.eye_detect_name = os.path.join('data', 'facedetect',
-                                            'haarcascade_eye_tree_eyeglasses.xml')
-        self.face_detect_name = os.path.join('data', 'facedetect',
-                                             'haarcascade_frontalface_alt.xml')
-        self.eye_cascade = cv2.CascadeClassifier()
+        # linux path
+        path_frontal_face = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml"
+        self.face_detect_name = os.path.join('data', 'facedetect', path_frontal_face)
         self.face_cascade = cv2.CascadeClassifier()
-        self.eye_cascade.load(self.eye_detect_name)
         self.face_cascade.load(self.face_detect_name)
 
     def configure(self):

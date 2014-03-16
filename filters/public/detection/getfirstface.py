@@ -15,9 +15,10 @@ class GetFirstFace(Filter):
 
     def __init__(self):
         Filter.__init__(self)
+        path_frontal_face = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml"
         self.face_detect_name = os.path.join('data',
                                              'facedetect',
-                                             'haarcascade_frontalface_alt.xml')
+                                             path_frontal_face)
         self.face_cascade = cv2.CascadeClassifier()
         assert self.face_cascade.load(self.face_detect_name)
 
