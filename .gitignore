@@ -8,6 +8,8 @@ build
 filters/private
 thirdparty/private
 configurations/private
+*.so
+*.o
 
 # text editor
 *.swp
