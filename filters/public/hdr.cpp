@@ -19,6 +19,7 @@
  */
 
 #include "opencv2/opencv.hpp"
+#include <iostream>
 #include <vector>
 
 #define DOCSTRING "HDR - in C++ using weighted Gaussian distribution"
@@ -48,6 +49,7 @@ const double MAX_LUMINANCE = 100.0;
 //DEBUG PARAMS
 
 const char* SHOW_HDR_LUMINANCE = "Show HDR luminance";
+const char* SHOW_VALUE_CHANNEL = "Show HDR channel";
 
 using namespace cv;
 using namespace std;
@@ -88,10 +90,11 @@ void init()
     param_set_desc(EXPOSURE_3, EXPOSURE_3_DESC);
     
     param_bool(SHOW_HDR_LUMINANCE, 0);
+    param_bool(SHOW_VALUE_CHANNEL, 0);
     
     param_double(HDR_CONFIDENCE, HDR_CONFIDENCE_DEFAULT, 0.0, MAX_LUMINANCE);
     param_set_desc(HDR_CONFIDENCE, HDR_CONFIDENCE_DESC);
-
+    
     param_double(HDR_DARE, HDR_DARE_DEFAULT, 0.0, 100.0);
     param_set_desc(HDR_DARE, HDR_DARE_DESC);
     
@@ -106,11 +109,12 @@ cv::Mat execute(cv::Mat image)
     exposures.push_back(param_get_int(EXPOSURE_1));
     exposures.push_back(param_get_int(EXPOSURE_2));
     exposures.push_back(param_get_int(EXPOSURE_3));
-
+    
     double dare = param_get_double(HDR_DARE) / 100.0;
     double confidence = param_get_double(HDR_CONFIDENCE) / 100.0;
     
     bool debug_show_hdr_luminance = param_get_bool(SHOW_HDR_LUMINANCE);
+    bool debug_show_value_channel = param_get_bool(SHOW_VALUE_CHANNEL);
     
     if(images_buffer.size() < 4){
         Mat hsv_image;
@@ -122,6 +126,16 @@ cv::Mat execute(cv::Mat image)
         images.insert(images.begin(), images_buffer.begin(), images_buffer.end());
         images_buffer.clear();
     }
+    
+    if(debug_show_value_channel){
+        Mat hsv_channels[3];
+        split(image, hsv_channels);
+        hsv_channels[0]=hsv_channels[2];
+        hsv_channels[1]=hsv_channels[2];
+        merge(hsv_channels,3,image);
+        return image;
+    }
+    
     if(images.size() >= 4){
         Mat hdr_luminance;
         for(int i=0; i<4; i++){
@@ -129,11 +143,15 @@ cv::Mat execute(cv::Mat image)
 //            double b = 127.0;
             Mat hsv_channels[3];
             split(images[i], hsv_channels);
-            cv::add(hdr_luminance, weighted(hsv_channels[2], b, confidence), hdr_luminance);
+            Mat value_channel = hsv_channels[2];
+            value_channel.convertTo(value_channel, CV_32F);
+            cv::add(hdr_luminance, weighted(value_channel, b, confidence), hdr_luminance);
         }
-        hdr_luminance /= 4;
+        hdr_luminance /= 4.0;
         
-        if(debug_show_hdr_luminance != 0){
+        hdr_luminance.convertTo(hdr_luminance, CV_8U);
+        
+        if(debug_show_hdr_luminance){
             Mat c[3];
             c[0] = hdr_luminance;
             c[1] = hdr_luminance;
@@ -141,16 +159,16 @@ cv::Mat execute(cv::Mat image)
             merge(c,3,image);
             return image;
         }
-    
+        
         Mat channels[3];
         split(image, channels);
         channels[2] = hdr_luminance;
         merge(channels,3,image);
         cv::cvtColor(image, image, CV_HSV2BGR);
-        last_rendering = image;
+        //        last_rendering = image;
     }else{
-//        image = last_rendering;
+        //        image = last_rendering;
     }
-
+    
     return image;
 }
