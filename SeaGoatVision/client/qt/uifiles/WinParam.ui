@@ -9,14 +9,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>319</width>
-    <height>310</height>
+    <width>300</width>
+    <height>250</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>319</width>
-    <height>310</height>
+    <width>300</width>
+    <height>250</height>
    </size>
   </property>
   <property name="features">
@@ -40,6 +40,9 @@
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
+      </property>
+      <property name="lineWidth">
+       <number>0</number>
       </property>
       <layout class="QGridLayout" name="gridLayout">
        <item row="2" column="0">
@@ -121,8 +124,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>301</width>
-         <height>108</height>
+         <width>282</width>
+         <height>73</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
