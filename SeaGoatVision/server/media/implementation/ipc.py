@@ -20,6 +20,8 @@ from SeaGoatVision.server.media.media_streaming import MediaStreaming
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.configuration import Configuration
 from SeaGoatVision.commons import log
+import cv2
+import thread
 import zmq
 import numpy as np
 
@@ -36,14 +38,21 @@ class IPC(MediaStreaming):
     def __init__(self, config):
         # Go into configuration/template_media for more information
         super(IPC, self).__init__()
+        self.dct_params = {}
         self.config = Configuration()
         self.own_config = config
         self.media_name = config.name
+        if config.device:
+            self.device_name = config.device
+        else:
+            self.device_name = "/tmp/seagoatvision_media.ipc"
+        self._is_opened = True
         self.run = True
         self.video = None
 
         self.context = zmq.Context()
         self.subscriber = None
+        self.message = None
 
         self._create_params()
         self.deserialize(self.config.read_media(self.get_name()))
@@ -51,8 +60,8 @@ class IPC(MediaStreaming):
     def _create_params(self):
         self.dct_params = {}
 
-        ipc_name = "ipc:///tmp/seagoatvision_media.ipc"
-        param = Param(self.key_ipc_name, ipc_name)
+        default_ipc_name = "ipc://%s" % self.device_name
+        param = Param(self.key_ipc_name, default_ipc_name)
         param.add_notify_reset(self.open)
         self.dct_params[self.key_ipc_name] = param
 
@@ -75,19 +84,24 @@ class IPC(MediaStreaming):
     def open(self):
         self.subscriber = self.context.socket(zmq.SUB)
         self.subscriber.setsockopt(zmq.SUBSCRIBE, b'')
-        self.subscriber.connect(self.dct_params.get(self.key_ipc_name).get())
+        device_name = self.dct_params.get(self.key_ipc_name).get()
+        logger.info("Open media device %s" % device_name)
+        self.subscriber.connect(device_name)
+        thread.start_new_thread(self.fill_message, tuple())
         # call open when video is ready
         return MediaStreaming.open(self)
 
     def next(self):
-        if not self.subscriber:
+        if not self.subscriber or not self.message:
             return None
         image = None
-        message = self.subscriber.recv()
+        message = self.message[:]
+        self.message = None
         lst_pixel = list(bytearray(message))
+        # the first 2 bytes is width of image
         len_message = len(lst_pixel) - 2
         if len_message:
-            width = (lst_pixel[0] << 4) + lst_pixel[1]
+            width = (lst_pixel[0] << 8) + lst_pixel[1]
             if not width:
                 return None
             image = np.array(lst_pixel[2:])
@@ -96,11 +110,20 @@ class IPC(MediaStreaming):
             if diff:
                 image += [0] * (width - diff)
             image = image.reshape((-1, width))
+        shape = image.shape
+        if len(shape) < 3 or 3 > shape[2]:
+            # convert in 3 depth, bgr picture
+            image_float = np.array(image, dtype=np.float32)
+            vis2 = cv2.cvtColor(image_float, cv2.COLOR_GRAY2BGR)
+            image = np.array(vis2, dtype=np.uint8)
         return image
 
     def close(self):
         MediaStreaming.close(self)
-        self.context.term()
+        # TODO need to debug, closing socket create errors and context.term freeze
+        #self.subscriber.close()
+        #self.context.term()
+        self.subscriber = None
         return True
 
     def get_properties_param(self):
@@ -120,3 +143,12 @@ class IPC(MediaStreaming):
     def reset_property_param(self, param_name, value):
         self.reload()
         return True
+
+    def fill_message(self):
+        try:
+            while self.subscriber:
+                self.message = self.subscriber.recv()
+        except zmq.ContextTerminated:
+            pass
+        finally:
+            self.message = None
