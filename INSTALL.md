@@ -71,21 +71,24 @@ Then, from the terminal:
 
 Finally, you will need to compile OpenCV with python bindings from source. Please refer to the FAQ for this.
 
-### C. Third-party
-Note: The third-party pydc1394 is dependant of cython 0.19 and early version. Be sure you have it, else install it with easy_install from his website. You don't need Pydc1394 if you haven't Firewire camera.
+### C. Third-party Libs
+
+#### PyDC1394
+
+Note: pydc1394 is dependant on cython. Make sure it is installed, using easy_install:
 
 	easy_install cython
-
-cd to the root of the SeaGoatVision project and setup git submodule for pydc1394:
+	
+Go to the root of the SeaGoatVision project and setup git submodule for pydc1394:
 
 	git submodule init
 	git submodule update
 	
-In the case it doesn't work, you can always clone the subrepo manually. From SGV root:
+In the case subrepo update doesn't work, you can always clone the subrepo manually. From the root of the project:
 
 	cd thirdparty/public
-	rm -rf pydc 1394
-	git glone https://github.com/mathben/PyDC1394.git pydc1394
+	rm -rf pydc1394
+	git clone https://github.com/mathben/PyDC1394.git pydc1394
 
 ### D. Compile
 To compile the filters in Cpp and the third-party, do on the root of the project:
