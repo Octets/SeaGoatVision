@@ -84,7 +84,7 @@ Go to the root of the SeaGoatVision project and setup git submodule for pydc1394
 	git submodule init
 	git submodule update
 	
-In the case subrepo update doesn't work, you can always clone the subrepo manually. From the root of the project:
+In the case submodule update doesn't work, you can always clone the repo manually. From the root of the project:
 
 	cd thirdparty/public
 	rm -rf pydc1394
