@@ -15,23 +15,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# This Makefile manage filter in cpp situate in folder filters.
-# Build is done into directory build
-.PHONY : filter third_party clean_python clean_third_party clean
+all:
+	-make -C public
+	if [ -a private/Makefile ]; then make -C private; fi;
 
-all: third_party filter
-
-filter:
-	./filters/build_cpp_filter.py
-
-third_party:
-	-make -C thirdparty
-
-clean_python:
-	find . -type f -name '*.pyc' -exec rm {} \;
-
-clean_third_party:
-	-make -C thirdparty clean
-
-clean: clean_python clean_third_party
-	-rm -Rf ./build
+clean:
+	-make -C public clean
+	if [ -a private/Makefile ]; then make -C private clean; fi;
