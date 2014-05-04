@@ -44,6 +44,8 @@ class ThreadMedia(threading.Thread):
         no_reset = 0
         first_fps_time = time.time()
         nb_fps = 0
+        image = None
+        msg_error = "Max reset - close media %s" % self.media.get_name()
 
         while self.running:
             # TODO try to remove this try catch for better performance
@@ -57,9 +59,7 @@ class ThreadMedia(threading.Thread):
                     no_reset += 1
                     if no_reset >= protection_max_reset:
                         self.running = False
-                        log.print_function(
-                            logger.error, "Max reset - close media %s" %
-                            self.media.get_name())
+                        log.print_function(logger.error, msg_error)
                     continue
                 else:
                     while not self.media.active_loop:

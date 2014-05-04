@@ -64,10 +64,10 @@ class ParameterEvaluation:
             self.filter.configure()
 
     def filter_to_use(self):
-            for f in self.chain.filters:
-                if f.__class__.__name__ == self.fname:
-                    return f
-            return None
+        for f in self.chain.filters:
+            if f.__class__.__name__ == self.fname:
+                return f
+        return None
 
     def save_data(self):
         tmp = tempfile.NamedTemporaryFile()

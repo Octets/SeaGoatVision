@@ -57,7 +57,7 @@ def run(p_port=None, verbose=False):
     server = jsonrpc_server.JsonrpcServer(port)
     try:
         server.register()
-    except Exception as e:
+    except BaseException as e:
         log.printerror_stacktrace(logger, e)
         server.close()
         sys.exit(1)
@@ -69,7 +69,7 @@ def run(p_port=None, verbose=False):
         server.run()
     except (KeyboardInterrupt, SystemExit):
         logger.info("Close SeaGoat. See you later!")
-    except Exception:
+    except BaseException:
         raise
     finally:
         server.close()

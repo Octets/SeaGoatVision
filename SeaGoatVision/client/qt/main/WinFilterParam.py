@@ -29,6 +29,7 @@ logger = log.get_logger(__name__)
 
 
 class WinFilterParam(WinParamParent):
+
     def __init__(self, controller, subscriber):
         self.controller = controller
         self.dct_filter = self.controller.get_filter_list()
@@ -36,10 +37,12 @@ class WinFilterParam(WinParamParent):
         self.subscriber = subscriber
         self.shared_info.connect(SharedInfo.GLOBAL_FILTER, self.set_filter)
         self.shared_info.connect(SharedInfo.GLOBAL_CLOSE_EXEC, self.close_exec)
-        self.shared_info.connect(SharedInfo.GLOBAL_RELOAD_FILTER, self.reload_filter)
+        self.shared_info.connect(SharedInfo.GLOBAL_RELOAD_FILTER,
+                                 self.reload_filter)
         self.execution_name = None
         self.filter_name = None
-        self.subscriber.subscribe(keys.get_key_filter_param(), self.call_signal_param)
+        self.subscriber.subscribe(keys.get_key_filter_param(),
+                                  self.call_signal_param)
 
     def reload_ui(self):
         super(WinFilterParam, self).reload_ui()
@@ -50,7 +53,8 @@ class WinFilterParam(WinParamParent):
         actual_filter_name = self.shared_info.get(SharedInfo.GLOBAL_FILTER)
         if not actual_filter_name:
             return
-        # TODO add the real name and the fake name in filter to remove this check ("-")
+        # TODO add the real name and the fake name in filter to remove
+        # this check ("-")
         pos_key = actual_filter_name.rfind("-")
         key_name = actual_filter_name
         if pos_key > -1:
@@ -62,9 +66,10 @@ class WinFilterParam(WinParamParent):
             self.set_filter()
 
             self.ui.txt_search.setText(search_txt)
+            flag = QtCore.Qt.MatchExactly
             if text_group:
                 # search index of group
-                index_group = self.cb_group.findText(text_group, flags=QtCore.Qt.MatchExactly)
+                index_group = self.cb_group.findText(text_group, flags=flag)
                 if index_group == -1:
                     index_group = 0
                 self.cb_group.setCurrentIndex(index_group)
@@ -76,12 +81,14 @@ class WinFilterParam(WinParamParent):
         is_empty = not self.filter_name
 
         if not is_empty:
-            self.lst_param = self.controller.get_params_filterchain(self.execution_name,
-                                                                    self.filter_name)
+            self.lst_param = self.controller.get_params_filterchain(
+                self.execution_name,
+                self.filter_name)
             if self.lst_param is None:
                 self.lst_param = []
 
-        self.update_module(is_empty, self.filter_name, "Filter", self.dct_filter)
+        self.update_module(is_empty, self.filter_name, "Filter",
+                           self.dct_filter)
 
     def close_exec(self, exec_name):
         if self.execution_name != exec_name:
@@ -110,7 +117,8 @@ class WinFilterParam(WinParamParent):
         param_type = param.get_type()
         if param_type is bool:
             value = bool(value)
-        status = self.controller.update_param(self.execution_name, self.filter_name, param_name,
+        status = self.controller.update_param(self.execution_name,
+                                              self.filter_name, param_name,
                                               value)
         if status:
             param.set(value)
@@ -123,7 +131,8 @@ class WinFilterParam(WinParamParent):
     def reset(self):
         for param in self.lst_param:
             param.reset()
-            self.controller.update_param(self.execution_name, self.filter_name, param.get_name(),
+            self.controller.update_param(self.execution_name, self.filter_name,
+                                         param.get_name(),
                                          param.get())
         self.set_filter()
 

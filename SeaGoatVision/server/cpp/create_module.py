@@ -40,7 +40,8 @@ config = Configuration()
 
 
 def import_all_cpp_filter(
-        cppfiles, cpptimestamps, module, file, extra_link_arg=[], extra_compile_arg=[]):
+        cppfiles, cpptimestamps, module, file, extra_link_arg=[],
+        extra_compile_arg=[]):
     """
     This method finds and compile every c++ filters
     If a c++ file changed, the file must be recompiled in a new .so file
@@ -62,7 +63,7 @@ def import_all_cpp_filter(
             code += "image)"
             log.print_function(
                 logger.error, "Missing execute function into %s like \"%s\"" %
-                (filename, code))
+                              (filename, code))
             continue
 
         # Verify if there are changes in the c++ code file.  If there are
@@ -82,7 +83,8 @@ def import_all_cpp_filter(
 
         _create_python_code(mod, filename, cppcode)
 
-        _create_module(cpptimestamps, module, filename, mod, reload_mod=modname)
+        _create_module(
+            cpptimestamps, module, filename, mod, reload_mod=modname)
 
 
 def _create_build(cppfiles):
@@ -110,11 +112,11 @@ def _create_module(cpptimestamps, module, modname, mod, reload_mod=None):
         else:
             cppmodule = __import__(modname)
         params = {}
+        init_attr = getattr(cppmodule, 'init_' + modname)
+        exec_attr = getattr(cppmodule, 'exec_' + modname)
         dct_fct = {
-            '__init__':
-            create_init(getattr(cppmodule, 'init_' + modname), params),
-            'execute':
-            create_execute(getattr(cppmodule, 'exec_' + modname)),
+            '__init__': create_init(init_attr, params),
+            'execute': create_execute(exec_attr),
             'py_init_param': py_init_param,
             'py_init_global_param': py_init_global_param,
             'set_original_image': create_set_original_image(
@@ -136,7 +138,7 @@ def _create_module(cpptimestamps, module, modname, mod, reload_mod=None):
         clazz.__module_init__ = module
         setattr(module, modname, clazz)
         del clazz
-    except Exception as e:
+    except BaseException as e:
         log.printerror_stacktrace(logger, e)
 
 

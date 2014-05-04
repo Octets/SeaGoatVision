@@ -34,7 +34,7 @@ def run(ctr, subscriber, local=False, host="localhost", port=8090):
     win.show()
     try:
         rint = app.exec_()
-    except Exception as e:
+    except BaseException as e:
         logger.critical("Exit error : %s" % e)
     # close the server
     win.quit()

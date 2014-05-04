@@ -35,7 +35,6 @@ logger = log.get_logger(__name__)
 
 
 class Firewire(MediaStreaming):
-
     """Return images from a Firewire device."""
 
     def __init__(self, config):
@@ -131,10 +130,10 @@ class Firewire(MediaStreaming):
                     param.add_notify_reset(self.update_property_param)
                     param.add_group(self.group_name_shutter)
                     self.dct_params[param.get_name()] = param
-            except Exception as e:
+            except BaseException as e:
                 log.printerror_stacktrace(
                     logger, "%s - name: %s, value: %s" %
-                    (e, name, value))
+                            (e, name, value))
 
     def serialize(self, is_config=False):
         return [param.serialize() for param in self.get_properties_param()]
@@ -153,7 +152,7 @@ class Firewire(MediaStreaming):
                 own_param = self.dct_params.get(param.get_name(), None)
                 if own_param:
                     own_param.merge(param)
-        except Exception as e:
+        except BaseException as e:
             log.printerror_stacktrace(logger, e)
             return False
         return True
@@ -163,12 +162,12 @@ class Firewire(MediaStreaming):
         if not self.camera:
             return False
         try:
-            self.camera.initialize(reset_bus=True,
-                                   mode=self.own_config.mode,
-                                   framerate=self.own_config.framerate,
-                                   iso_speed=self.own_config.iso_speed,
-                                   operation_mode=self.own_config.operation_mode
-                                   )
+            init = self.camera.initialize
+            init(reset_bus=True,
+                 mode=self.own_config.mode,
+                 framerate=self.own_config.framerate,
+                 iso_speed=self.own_config.iso_speed,
+                 operation_mode=self.own_config.operation_mode)
         except:
             return False
         return True
@@ -176,8 +175,10 @@ class Firewire(MediaStreaming):
     def try_open_camera(
             self, open_streaming=False, repeat_loop=-1, sleep_time=1):
         # param :
-        # int repeat_loop - if -1, it's an infinite loop, else it's the number loop
-        # bool open_streaming - if true, try to start the streaming of seagoat and the firewire
+        # int repeat_loop - if -1, it's an infinite loop, \
+        # else it's the number loop
+        # bool open_streaming - if true, try to start the streaming \
+        # of seagoat and the firewire
         # can be use in threading or in init
 
         self.loop_try_open_camera = True
@@ -208,7 +209,7 @@ class Firewire(MediaStreaming):
                 repeat_loop -= 1
             log.print_function(
                 logger.error, "Cannot open the camera %s" %
-                self.get_name())
+                              self.get_name())
 
     def open_camera(self):
         logger.debug("open camera %s" % self.get_name())
@@ -240,7 +241,8 @@ class Firewire(MediaStreaming):
         if not self.camera:
             # try to open the camera
             # caution, can cause an infinite loop
-            return self.try_open_camera(repeat_loop=3, open_streaming=True, sleep_time=1)
+            return self.try_open_camera(repeat_loop=3, open_streaming=True,
+                                        sleep_time=1)
 
         self.camera.initEvent.addObserver(self.camera_init)
         self.camera.grabEvent.addObserver(self.camera_observer)
@@ -253,7 +255,8 @@ class Firewire(MediaStreaming):
             self.camera.stop()
             self.lst_garbage_camera.append(self.camera)
             # something crash, restart the camera
-            return self.try_open_camera(repeat_loop=1, open_streaming=True, sleep_time=1)
+            return self.try_open_camera(repeat_loop=1, open_streaming=True,
+                                        sleep_time=1)
         return True
 
     def camera_init(self):
@@ -277,8 +280,7 @@ class Firewire(MediaStreaming):
             return
         # anormal close, do something!
         logger.error(
-            "Receive events camera close %s, retry to reopen it." %
-            (self.id))
+            "Receive events camera close %s, retry to reopen it." % self.id)
         # clean camera
         self.camera.grabEvent.removeObserver(self.camera_observer)
         self.camera.stopEvent.removeObserver(self.camera_close)
@@ -301,7 +303,8 @@ class Firewire(MediaStreaming):
                     for value in self.dct_params.keys()
                     if self.key_auto_param in value]
         lst_active_auto = [value for value in lst_auto
-                           if self.dct_params["%s%s" % (value, self.key_auto_param)].get()]
+                           if self.dct_params["%s\
+                           %s" % (value, self.key_auto_param)].get()]
 
         for key, value in self.dct_params.items():
             contain_auto_variable = False
@@ -368,8 +371,8 @@ class Firewire(MediaStreaming):
                 self.buffer_last_timestamp = True
                 return None
                 log.print_function(
-                logger.warning, "No image receive from %s" %
-                (self.get_name()))
+                    logger.warning,
+                    "No image receive from %s" % self.get_name())
             self.count_no_image += 1
             if self.count_no_image > self.max_no_image:
                 self.count_no_image = 0
@@ -390,7 +393,7 @@ class Firewire(MediaStreaming):
                 self.buffer_last_timestamp = True
                 return self.actual_image
             else:
-                #logger.warning(
+                # logger.warning(
                 #    "Receive no more image from %s, timestamp %d" %
                 #    (self.get_name(), self.actual_timestamp))
                 return None

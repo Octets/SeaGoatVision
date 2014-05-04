@@ -32,7 +32,6 @@ logger = log.get_logger(__name__)
 
 
 class VideoRecorder:
-
     def __init__(self, media):
         self.writer = None
         self.media = media
@@ -76,7 +75,11 @@ class VideoRecorder:
 
         # 1 is best quality, 36 is worse
         qscale = compress * 0.35 + 1
-        self.process = Popen(['ffmpeg', '-y', '-f', 'image2pipe', '-vcodec', 'mjpeg', '-r', '24', '-i', '-', '-vcodec', 'mpeg4', '-qscale', "%s" % qscale, '-r', '24', name], stdin=PIPE)
+        self.process = Popen(
+            ['ffmpeg', '-y', '-f', 'image2pipe', '-vcodec', 'mjpeg', '-r',
+             '24',
+             '-i', '-', '-vcodec', 'mpeg4', '-qscale', "%s" % qscale, '-r',
+             '24', name], stdin=PIPE)
         self.media.add_observer(self.add_image)
         return True
 

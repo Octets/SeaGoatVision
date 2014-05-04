@@ -36,6 +36,7 @@ logger = log.get_logger(__name__)
 
 
 class WinMain(QtGui.QMainWindow):
+
     def __init__(self, controller, subscriber,
                  host="localhost", islocal=False):
         super(WinMain, self).__init__()
@@ -71,10 +72,12 @@ class WinMain(QtGui.QMainWindow):
 
         # Tabify dockwidget
         self.tabifyDockWidget(self.win_media.ui, self.win_media_camera.ui)
-        self.tabifyDockWidget(self.win_filter_param.ui, self.win_filter_list.ui)
+        self.tabifyDockWidget(
+            self.win_filter_param.ui, self.win_filter_list.ui)
 
         # Signal
-        self.win_filter_list.onAddFilter.connect(self.win_filter_chain.add_filter)
+        self.win_filter_list.onAddFilter.connect(
+            self.win_filter_chain.add_filter)
         self.ui.btnMedia.clicked.connect(self.show_win_media)
         self.ui.btnFilterChain.clicked.connect(self.show_win_filterchain)
         self.ui.btnFilterList.clicked.connect(self.show_win_filterlist)

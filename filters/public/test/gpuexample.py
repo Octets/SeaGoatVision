@@ -30,7 +30,6 @@ from SeaGoatVision.server.core.filter import Filter
 
 
 class GPUExample(Filter):
-
     """Example on how to use scipy.weave to access the GPU with OpenCV.
         http://opencv.willowgarage.com/wiki/OpenCV_GPU"""
 
@@ -52,7 +51,8 @@ class GPUExample(Filter):
         cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
 
         // The matrix must be uploaded to the gpu before processing
-        // This is essential to avoid too much data transfer between cpu and gpu
+        // This is essential to avoid too much data transfer between cpu \
+        and gpu
         cv::gpu::GpuMat gpuimg;
         gpuimg.upload(mat);
 

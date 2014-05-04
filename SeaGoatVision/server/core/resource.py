@@ -96,7 +96,8 @@ class Resource(object):
             if o_filterchain:
                 return o_filterchain
 
-        if filterchain_name and filterchain_name != keys.get_empty_filterchain_name():
+        name = keys.get_empty_filterchain_name()
+        if filterchain_name and filterchain_name != name:
             data = self.config.read_filterchain(filterchain_name)
             if not data:
                 return None
@@ -117,15 +118,17 @@ class Resource(object):
                 "default_media": o_filterchain.get_default_media_name()}
 
     def modify_filterchain(self, old_filterchain_name,
-                           new_filterchain_name, lst_str_filters, default_media):
+                           new_filterchain_name, lst_str_filters,
+                           default_media):
         # create new filterchain
         if self.config.is_filterchain_exist(old_filterchain_name):
             active_old_filterchain = old_filterchain_name
         else:
             active_old_filterchain = None
-        if self.create_filterchain(
-                new_filterchain_name, lst_str_filters, default_media=default_media,
-                old_configuration=active_old_filterchain):
+        if self.create_filterchain(new_filterchain_name,
+                                   lst_str_filters,
+                                   default_media=default_media,
+                                   old_configuration=active_old_filterchain):
             # delete old filterchain
             if old_filterchain_name != new_filterchain_name:
                 return self.delete_filterchain(old_filterchain_name)
@@ -134,7 +137,8 @@ class Resource(object):
         return False
 
     def create_filterchain(
-            self, filterchain_name, lst_str_filters, default_media=None, old_configuration=None):
+            self, filterchain_name, lst_str_filters, default_media=None,
+            old_configuration=None):
         chain = filterchain.FilterChain(filterchain_name)
         index = 0
         for s_filter in lst_str_filters:
@@ -155,14 +159,13 @@ class Resource(object):
         if old_configuration:
             old_chain_data = self.config.read_filterchain(old_configuration)
             if old_chain_data:
-                if not chain.deserialize_update(filterchain_name, old_chain_data):
-                    logger.warning(
-                        "Cannot deserialize old configuration of filterchain %s." %
-                        filterchain_name)
+                if not chain.deserialize_update(filterchain_name,
+                                                old_chain_data):
+                    logger.warning("Cannot deserialize old configuration of \
+                    filterchain %s." % filterchain_name)
             else:
-                logger.warning(
-                    "The filterchain %s is supposed to be in memory if old exist." %
-                    filterchain_name)
+                logger.warning("The filterchain %s is supposed to be in \
+                memory if old exist." % filterchain_name)
 
         self.config.write_filterchain(chain)
         self.dct_filterchain[filterchain_name] = chain
@@ -231,12 +234,14 @@ class Resource(object):
             o_media = conf_media.media(conf_media)
             if o_media.is_opened():
                 if name in dct_media.keys():
-                    log.print_function(logger.error, "Media %s already exist." % name)
+                    log.print_function(
+                        logger.error, "Media %s already exist." % name)
                     continue
                 dct_media[name] = o_media
                 logger.info("Media %s detected." % name)
             else:
-                log.print_function(logger.error, "Camera %s not detected" % name)
+                log.print_function(
+                    logger.error, "Camera %s not detected" % name)
         # Force media_video
         media_video = media.media_video.MediaVideo(
             keys.get_media_file_video_name())
@@ -247,7 +252,8 @@ class Resource(object):
         # Force create empty media
         from SeaGoatVision.server.media.implementation.empty import Empty
 
-        dct_media[keys.get_media_empty_name()] = Empty(keys.get_media_empty_name())
+        dct_media[keys.get_media_empty_name()] = Empty(
+            keys.get_media_empty_name())
 
         self.dct_media = dct_media
 

@@ -25,6 +25,7 @@ from SeaGoatVision.server.core.filter import Filter
 
 
 class ExePy2(Filter):
+
     """
     Python Example Test #2
     Example filter to test params.
@@ -33,7 +34,8 @@ class ExePy2(Filter):
 
     def __init__(self):
         Filter.__init__(self)
-        self.dct_color_choose = {"red": (0, 0, 255), "green": (0, 255, 0), "blue": (255, 0, 0)}
+        self.dct_color_choose = {"red": (0, 0, 255), "green": (0, 255, 0),
+                                 "blue": (255, 0, 0)}
         self.color_rect = self.dct_color_choose["red"]
         self.i_text_size = 1.0
         # add params
@@ -42,15 +44,18 @@ class ExePy2(Filter):
 
         self.color_rectangle = Param("color_rectangle", "red",
                                      lst_value=self.dct_color_choose.keys())
-        self.color_rectangle.set_description("Change the RGB color of the rectangle.")
+        self.color_rectangle.set_description(
+            "Change the RGB color of the rectangle.")
         self.color_rectangle.add_group("rectangle")
 
         self.show_rectangle = Param("show_rectangle", True)
-        self.show_rectangle.set_description("Colorize a rectangle around the face.")
+        self.show_rectangle.set_description(
+            "Colorize a rectangle around the face.")
         self.show_rectangle.add_group("rectangle")
 
         self.border_rec_size = Param("border_rec_size", 3, min_v=1, max_v=9)
-        self.border_rec_size.set_description("Change the border size of the rectangle.")
+        self.border_rec_size.set_description(
+            "Change the border size of the rectangle.")
         self.border_rec_size.add_group("rectangle")
 
         self.show_text = Param("enable_text", True)
@@ -61,14 +66,17 @@ class ExePy2(Filter):
         self.text_face.set_description("The text to write on the rectangle.")
         self.text_face.add_group("message")
 
-        self.text_size = Param("text_size", self.i_text_size, min_v=0.1, max_v=4.9)
+        self.text_size = Param("text_size", self.i_text_size, min_v=0.1,
+                               max_v=4.9)
         self.text_size.set_description("Change the text size.")
         self.text_size.add_group("message")
 
         self.nb_face = 1
         # linux path
-        path_frontal_face = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml"
-        self.face_detect_name = os.path.join('data', 'facedetect', path_frontal_face)
+        path_frontal_face = "/usr/share/opencv/haarcascades/\
+        haarcascade_frontalface_alt.xml"
+        self.face_detect_name = os.path.join('data', 'facedetect',
+                                             path_frontal_face)
         self.face_cascade = cv2.CascadeClassifier()
         self.face_cascade.load(self.face_detect_name)
 
@@ -79,7 +87,8 @@ class ExePy2(Filter):
     def execute(self, image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         cv2.equalizeHist(gray, gray)
-        faces = self.face_cascade.detectMultiScale(gray, 1.1, 2, 0 | cv.CV_HAAR_SCALE_IMAGE,
+        faces = self.face_cascade.detectMultiScale(gray, 1.1, 2,
+                                                   0 | cv.CV_HAAR_SCALE_IMAGE,
                                                    (30, 30))
         for face in faces:
             self.draw_rectangle(image, face, self.color_rect, self.i_text_size)
@@ -110,7 +119,8 @@ class ExePy2(Filter):
                           thickness=self.border_rec_size.get())
         if self.show_text.get():
             text = "%s.%s" % (self.nb_face, self.text_face.get())
-            cv2.putText(image, text, (min_x, min_face_y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, txt_size,
+            cv2.putText(image, text, (min_x, min_face_y),
+                        cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, txt_size,
                         color)
 
         # note: >> 2 == / 2

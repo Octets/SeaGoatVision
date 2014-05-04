@@ -26,8 +26,6 @@ from SeaGoatVision.server.core.filter import Filter
 
 class SectionFilter(Filter):
 
-    """"""
-
     def __init__(self):
         Filter.__init__(self)
         self.kernel_erode_height = Param(
@@ -90,7 +88,7 @@ class SectionFilter(Filter):
                     cv2.drawContours(section,
                                      [cv2.convexHull(contour)],
                                      - 1,
-                                    (255, 255, 255),
+                                     (255, 255, 255),
                                      thickness=-1)
             image[start: end] = section
 

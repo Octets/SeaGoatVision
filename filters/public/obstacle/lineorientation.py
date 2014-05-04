@@ -27,7 +27,6 @@ from SeaGoatVision.server.core.filter import Filter
 
 
 class LineOrientation(Filter):
-
     """Port of the old line detection code"""
 
     def __init__(self):
@@ -53,12 +52,15 @@ class LineOrientation(Filter):
         return image
 
     def draw_lines(self, lines, image):
+        msg = "LineOrientation: x1=%s x2=%s y1=%s y2=%s \n"
         for l, t in lines:
             vx, vy, x, y = l
             point1 = (x - t * vx, y - t * vy)
             point2 = (x + t * vx, y + t * vy)
-            to_send = "LineOrientation: x1=" + str(int(point1[0][0])) + " y1=" + str(
-                int(point1[1][0])) + " x2=" + str(int(point2[0][0])) + " y2=" + str(int(point2[1][0])) + " \n"
+            to_send = msg % (int(point1[0][0]),
+                             int(point1[1][0]),
+                             int(point2[0][0]),
+                             int(point2[1][0]))
             self.notify_output_observers(to_send)
             cv2.line(image, point1, point2, (0, 0, 255), 3, -1)
             cv2.circle(image, (x, y), 5, (0, 255, 0), -1)

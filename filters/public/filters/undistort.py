@@ -24,17 +24,16 @@ from SeaGoatVision.server.core.filter import Filter
 
 
 class Undistort(Filter):
-
     """Do nothing"""
 
     def __init__(self):
         Filter.__init__(self)
 
     def execute(self, image):
-
         dist_coeffs = numpy.array([-0.34, 0.085, 0, 0, -0.007])
         camera_matrix = numpy.matrix(
-            [[630.79035702238025, 0, 645.50000000000000], [0, 630.79035702238025, 366.50000000000000], [0, 0, 1]])
+            [[630.79035702238025, 0, 645.50000000000000],
+             [0, 630.79035702238025, 366.50000000000000], [0, 0, 1]])
         size = (1292, 734)
 
         # technique 2

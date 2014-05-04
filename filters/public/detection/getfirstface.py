@@ -1,5 +1,5 @@
-
-# http://docs.opencv.org/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html
+# http://docs.opencv.org/doc/tutorials/objdetect/cascade_classifier/\
+# cascade_classifier.html
 
 import cv2
 from cv2 import cv
@@ -10,12 +10,12 @@ from SeaGoatVision.server.core.filter import Filter
 
 
 class GetFirstFace(Filter):
-
     """Get first face detected in the image"""
 
     def __init__(self):
         Filter.__init__(self)
-        path_frontal_face = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml"
+        path_frontal_face = "/usr/share/opencv/haarcascades/\
+        haarcascade_frontalface_alt.xml"
         self.face_detect_name = os.path.join('data',
                                              'facedetect',
                                              path_frontal_face)
@@ -29,8 +29,7 @@ class GetFirstFace(Filter):
                                                    1.1,
                                                    2,
                                                    0 | cv.CV_HAAR_SCALE_IMAGE,
-                                                   (30, 30)
-                                                   )
+                                                   (30, 30))
         for face in faces:
             faceimg = self.get_face(image, face)
             mask = np.zeros(

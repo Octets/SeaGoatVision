@@ -27,7 +27,6 @@ logger = log.get_logger(__name__)
 
 
 class MediaStreaming(Media):
-
     def __init__(self):
         super(MediaStreaming, self).__init__()
         self._is_opened = False
@@ -58,9 +57,11 @@ class MediaStreaming(Media):
     def start_record(self, path=None, options={}):
         if type(options) != dict:
             options = {}
-            logger.error("Wrong argument when start_record, receive options: %s" % options)
+            logger.error("Wrong argument when start_record, receive \
+                options: %s" % options)
 
-        if options.get("format", keys.get_key_format_avi()) == keys.get_key_format_png():
+        if options.get("format",
+                       keys.get_key_format_avi()) == keys.get_key_format_png():
             self.recorder = self.recorder_image
         else:
             self.recorder = self.recorder_video

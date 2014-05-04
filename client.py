@@ -31,18 +31,23 @@ logger = log.get_logger(__name__)
 
 def run_qt(ctr, subscriber, local=False, host="localhost", port=8090):
     from SeaGoatVision.client.qt.mainqt import run
+
     return run(ctr, subscriber, local=local, host=host, port=port)
 
 
-def run_cli(ctr, subscriber, local=False, host="localhost", port=8090, quiet=False):
+def run_cli(ctr, subscriber, local=False, host="localhost", port=8090,
+            quiet=False):
     from SeaGoatVision.client.cli.cli import run
+
     return run(ctr, subscriber, local=local, host=host, port=port, quiet=quiet)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Open client for vision server.')
     parser.add_argument(
-        'interface', metavar='interface name', nargs='?', type=str, default="qt",
+        'interface', metavar='interface name', nargs='?', type=str,
+        default="qt",
         help='cli, gtk or qt is supported.')
     parser.add_argument(
         '--local',
@@ -73,6 +78,7 @@ if __name__ == '__main__':
     else:
         # Connect on remote with jsonrpc
         from SeaGoatVision.client.controller.json_client import JsonClient
+
         ctr = JsonClient(args.port, host=args.host)
 
     if not ctr.is_connected():
@@ -88,9 +94,11 @@ if __name__ == '__main__':
     sInterface = args.interface.lower()
     if sInterface == "qt":
         sys.exit(
-            run_qt(ctr, subscriber, local=args.local, host=args.host, port=args.port))
+            run_qt(ctr, subscriber, local=args.local, host=args.host,
+                   port=args.port))
     elif sInterface == "cli":
         sys.exit(
-            run_cli(ctr, subscriber, local=args.local, host=args.host, port=args.port, quiet=args.quiet))
+            run_cli(ctr, subscriber, local=args.local, host=args.host,
+                    port=args.port, quiet=args.quiet))
     else:
         logger.error("Interface not supported : %s", sInterface)

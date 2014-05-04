@@ -18,7 +18,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Description : Run the command line interface to communicate with the SeaGoatVision Server
+Description : Run the command line interface to communicate with the \
+SeaGoatVision Server
 """
 import fileinput
 

@@ -36,10 +36,10 @@ class Morphology(Filter):
 
     def configure(self):
         self._kernel = cv2.getStructuringElement(cv2.MORPH_RECT,
-                                                (self.kernel_width.get(),
-                                                 self.kernel_height.get()),
-                                                (self.anchor_x.get(),
-                                                 self.anchor_y.get()))
+                                                 (self.kernel_width.get(),
+                                                  self.kernel_height.get()),
+                                                 (self.anchor_x.get(),
+                                                  self.anchor_y.get()))
 
     def execute(self, image):
         morph = cv2.cvtColor(image, cv.CV_BGR2GRAY)

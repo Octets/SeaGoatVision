@@ -21,8 +21,10 @@
 _dct_env = {}
 _dct_env["is_local"] = False
 
+
 def get_is_local():
     return _dct_env["is_local"]
+
 
 def set_is_local(is_local):
     _dct_env["is_local"] = is_local

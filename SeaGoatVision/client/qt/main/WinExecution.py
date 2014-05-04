@@ -44,9 +44,11 @@ class WinExecution(QtCore.QObject):
         self.reload_ui()
 
         self.shared_info.connect(SharedInfo.GLOBAL_MEDIA, self._change_media)
-        self.shared_info.connect(SharedInfo.GLOBAL_FILTERCHAIN, self._change_filterchain)
+        self.shared_info.connect(
+            SharedInfo.GLOBAL_FILTERCHAIN, self._change_filterchain)
 
-        self.subscriber.subscribe(keys.get_key_execution_list(), self.update_execution_list)
+        self.subscriber.subscribe(
+            keys.get_key_execution_list(), self.update_execution_list)
 
     def reload_ui(self):
         self.ui = get_ui(self)
@@ -56,7 +58,8 @@ class WinExecution(QtCore.QObject):
         self.ui.executeButton.clicked.connect(self.execute)
         self.ui.previewButton.clicked.connect(self.preview)
         self.ui.stopButton.clicked.connect(self.stop)
-        self.ui.lstExecution.currentItemChanged.connect(self._on_selected_lst_execution_change)
+        self.ui.lstExecution.currentItemChanged.connect(
+            self._on_selected_lst_execution_change)
         self.ui.lstExecution.itemClicked.connect(self._lst_execution_clicked)
 
         self._update_execution_list()
@@ -121,7 +124,8 @@ class WinExecution(QtCore.QObject):
         execution_name = self.ui.txtExecution.text()
         filterchain_name = self.ui.txtFilterchain.text()
         media_name = self.ui.txtMedia.text()
-        self.shared_info.set(SharedInfo.GLOBAL_EXEC, (execution_name, filterchain_name, media_name))
+        self.shared_info.set(SharedInfo.GLOBAL_EXEC,
+                             (execution_name, filterchain_name, media_name))
 
     def _on_selected_lst_execution_change(self):
         execution = self._get_selected_list(self.ui.lstExecution)
@@ -137,7 +141,8 @@ class WinExecution(QtCore.QObject):
         self.ui.txtExecution.setText(execution)
         exec_info = self.controller.get_execution_info(execution)
         if not exec_info:
-            logger.error("WinExecution Internal sync error with execution info :(")
+            logger.error(
+                "WinExecution Internal sync error with execution info :(")
             return
         self.ui.txtFilterchain.setText(exec_info.get("filterchain"))
         self.ui.txtMedia.setText(exec_info.get("media"))
@@ -147,7 +152,8 @@ class WinExecution(QtCore.QObject):
         execution_name = data[1:]
         if operator == "+":
             self.ui.lstExecution.addItem(execution_name)
-            self.ui.lstExecution.setCurrentRow(self.ui.lstExecution.count() - 1)
+            self.ui.lstExecution.setCurrentRow(
+                self.ui.lstExecution.count() - 1)
         elif operator == "-":
             self.shared_info.set(SharedInfo.GLOBAL_CLOSE_EXEC, execution_name)
             # more easy to update all, like that, the client is protected by
@@ -159,7 +165,8 @@ class WinExecution(QtCore.QObject):
                     break
             self._clear_form(True)
         else:
-            logger.warning("Error in update_execution_list, wrong operator : %s" % operator)
+            logger.warning("Error in update_execution_list, wrong operator : \
+            %s" % operator)
 
     def _update_execution_list(self):
         self.mode_edit = False
@@ -188,8 +195,10 @@ class WinExecution(QtCore.QObject):
         if not self._is_unique_execution_name(execution_name):
             QtGui.QMessageBox.warning(self.ui.centralwidget,
                                       "Wrong name",
-                                      "The execution name \"%s\" already exist." % execution_name,
-                                      QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
+                                      "The execution name \"%s\" already \
+                                      exist." % execution_name,
+                                      QtGui.QMessageBox.Ok,
+                                      QtGui.QMessageBox.Ok)
             return False
         file_name = self.shared_info.get(SharedInfo.GLOBAL_PATH_MEDIA)
         is_client_manager = media_name == keys.get_media_file_video_name()
@@ -221,7 +230,8 @@ class WinExecution(QtCore.QObject):
         self._enable_stop_button(mode_edit)
         self.ui.lstExecution.setEnabled(not mode_edit)
         if mode_edit:
-            filterchain_name = self.shared_info.get(SharedInfo.GLOBAL_FILTERCHAIN)
+            filterchain_name = self.shared_info.get(
+                SharedInfo.GLOBAL_FILTERCHAIN)
             if filterchain_name:
                 self.ui.txtFilterchain.setText(filterchain_name)
             self.last_index += 1
@@ -231,7 +241,8 @@ class WinExecution(QtCore.QObject):
                 self.ui.txtMedia.setText(media_name)
 
     def _enable_stop_button(self, mode_edit):
-        self.ui.stopButton.setEnabled(bool(not mode_edit and self.ui.lstExecution.count()))
+        self.ui.stopButton.setEnabled(
+            bool(not mode_edit and self.ui.lstExecution.count()))
 
     def _get_selected_execution_name(self):
         no_line = self.ui.lstExecution.currentRow()
@@ -255,6 +266,7 @@ class WinExecution(QtCore.QObject):
     def _change_filterchain(self, value=None):
         # Ignore the value
         if self.mode_edit:
-            filterchain_name = self.shared_info.get(SharedInfo.GLOBAL_FILTERCHAIN)
+            filterchain_name = self.shared_info.get(
+                SharedInfo.GLOBAL_FILTERCHAIN)
             if filterchain_name:
                 self.ui.txtFilterchain.setText(filterchain_name)

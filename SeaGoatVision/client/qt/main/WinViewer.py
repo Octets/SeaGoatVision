@@ -24,7 +24,6 @@ Description : Windows to "view" a filterchain execution
 import time
 
 from SeaGoatVision.client.qt.utils import get_ui
-from SeaGoatVision.commons import keys
 from PIL import Image
 from PySide import QtCore
 from PySide import QtGui
@@ -49,8 +48,8 @@ class WinViewer(QtGui.QDockWidget):
     newImage = QtCore.Signal(QtGui.QImage)
     closePreview = QtCore.Signal(object)
 
-    def __init__(self, controller, subscriber, execution_name, media_name, filterchain_name, host,
-                 uid):
+    def __init__(self, controller, subscriber, execution_name, media_name,
+                 filterchain_name, host, uid):
         super(WinViewer, self).__init__()
         self.host = host
         self.port = 5030
@@ -74,13 +73,15 @@ class WinViewer(QtGui.QDockWidget):
         self.fps_count = 0
         self.light_observer = None
 
-        self.shared_info.connect(SharedInfo.GLOBAL_CLOSE_EXEC, self.update_execution)
+        self.shared_info.connect(SharedInfo.GLOBAL_CLOSE_EXEC,
+                                 self.update_execution)
 
         self.reload_ui()
         self.qhlayout_light = self.ui.qhboxlayout_2
         self.light_observer = self._get_light_observer()
 
-        if self.controller.add_image_observer(self.update_image, execution_name,
+        if self.controller.add_image_observer(self.update_image,
+                                              execution_name,
                                               self.actual_filter):
             self.__add_output_observer()
             self.subscriber.subscribe(self.media_name, self.update_fps)
@@ -92,7 +93,8 @@ class WinViewer(QtGui.QDockWidget):
         self.newImage.connect(self.set_pixmap)
         self.ui.filterComboBox.currentIndexChanged.connect(self._change_filter)
         self.ui.closeButton.clicked.connect(self.__close)
-        self.ui.sizeComboBox.currentIndexChanged[str].connect(self.set_image_scale)
+        self.ui.sizeComboBox.currentIndexChanged[str].connect(
+            self.set_image_scale)
 
         self._update_filters()
         self.actual_filter = self.ui.filterComboBox.currentText()
@@ -154,7 +156,8 @@ class WinViewer(QtGui.QDockWidget):
             return
         for sFilter in lst_filter:
             self.ui.filterComboBox.addItem(sFilter.get("name", ""))
-        self.ui.filterComboBox.setCurrentIndex(self.ui.filterComboBox.count() - 1)
+        self.ui.filterComboBox.setCurrentIndex(
+            self.ui.filterComboBox.count() - 1)
 
     def _change_filter(self):
         if self.actual_filter:
@@ -191,7 +194,7 @@ class WinViewer(QtGui.QDockWidget):
 
         try:
             self.numpy_to_qimage(image)
-        except Exception as e:
+        except BaseException as e:
             log.printerror_stacktrace(logger, e, check_duplicate=True)
 
     def set_pixmap(self, img):
@@ -246,14 +249,14 @@ class ListenOutput(threading.Thread):
                     continue
 
                 self.observer(txt)
-        except Exception:
+        except BaseException:
             self.is_stopped = True
 
     def stop(self):
         self.is_stopped = True
         try:
             self.socket.shutdown(socket.SHUT_RDWR)
-        except Exception:
+        except BaseException:
             pass
         self.socket.close()
 
@@ -298,7 +301,7 @@ class LightWidget(QtGui.QWidget):
         if not self.last_is_red:
             try:
                 self.update()
-            except Exception:
+            except BaseException:
                 pass
         self.last_is_red = True
 
@@ -307,7 +310,7 @@ class LightWidget(QtGui.QWidget):
         if self.last_is_red:
             try:
                 self.update()
-            except Exception:
+            except BaseException:
                 pass
         self.last_is_red = False
 
@@ -315,7 +318,7 @@ class LightWidget(QtGui.QWidget):
         self.color.setRgb(0, 0, 0)
         try:
             self.update()
-        except Exception:
+        except BaseException:
             pass
         self.is_black = True
 

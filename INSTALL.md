@@ -75,15 +75,15 @@ Finally, you will need to compile OpenCV with python bindings from source. Pleas
 
 #### PyDC1394
 
-Note: pydc1394 is dependant on cython. Make sure it is installed, using easy_install:
+Note: pydc1394 is dependant on cython 0.19. Make sure it is installed, using easy_install:
 
 	easy_install cython
-	
+
 Go to the root of the SeaGoatVision project and setup git submodule for pydc1394:
 
 	git submodule init
 	git submodule update
-	
+
 In the case submodule update doesn't work, you can always clone the repo manually. From the root of the project:
 
 	cd thirdparty/public

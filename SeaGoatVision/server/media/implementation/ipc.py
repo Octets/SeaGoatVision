@@ -66,15 +66,16 @@ class IPC(MediaStreaming):
         self.dct_params[self.key_ipc_name] = param
 
     def serialize(self, is_config=False):
-        return {self.key_ipc_name: self.dct_params.get(self.key_ipc_name).get()}
+        return {
+            self.key_ipc_name: self.dct_params.get(self.key_ipc_name).get()}
 
     def deserialize(self, data):
         if not data:
             return False
         if not isinstance(data, dict):
             log.print_function(
-                logger.error, "Wrong format data, suppose to be dict into camera %s" %
-                              self.get_name())
+                logger.error, "Wrong format data, suppose to be dict into \
+                camera %s" % self.get_name())
             return False
         res = data.get(self.key_ipc_name, None)
         if res:
@@ -120,9 +121,10 @@ class IPC(MediaStreaming):
 
     def close(self):
         MediaStreaming.close(self)
-        # TODO need to debug, closing socket create errors and context.term freeze
-        #self.subscriber.close()
-        #self.context.term()
+        # TODO need to debug, closing socket create errors and \
+        # context.term freeze
+        # self.subscriber.close()
+        # self.context.term()
         self.subscriber = None
         return True
 

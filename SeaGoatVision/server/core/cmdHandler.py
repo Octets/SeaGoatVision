@@ -77,7 +77,8 @@ class CmdHandler:
         self.publisher.stop()
         self.publisher.deregister(keys.get_key_execution_list())
 
-    def _post_command_(self, arg):
+    @staticmethod
+    def _post_command_(arg):
         funct_name = inspect.currentframe().f_back.f_code.co_name
         del arg["self"]
         # special case, observer is reference
@@ -86,7 +87,7 @@ class CmdHandler:
         if arg:
             logger.info("Request : %s - %s" % (funct_name, arg))
         else:
-            logger.info("Request : %s" % (funct_name))
+            logger.info("Request : %s" % funct_name)
 
     #
     # CLIENT ##################################
@@ -99,14 +100,15 @@ class CmdHandler:
     # EXECUTION FILTER ################################
     #
     def start_filterchain_execution(
-            self, execution_name, media_name, filterchain_name, file_name, is_client_manager):
+            self, execution_name, media_name, filterchain_name, file_name,
+            is_client_manager):
         self._post_command_(locals())
         execution = self.dct_exec.get(execution_name, None)
 
         if execution:
             log.print_function(
                 logger.error, "The execution %s is already created." %
-                              (execution_name))
+                              execution_name)
             return False
 
         filterchain = self.resource.get_filterchain(
@@ -115,7 +117,7 @@ class CmdHandler:
         if not filterchain:
             log.print_function(
                 logger.error, "Filterchain %s not exist or contain error." %
-                              (filterchain_name))
+                              filterchain_name)
             return False
 
         # Exception, if not media_name, we take the default media_name from the
@@ -127,8 +129,8 @@ class CmdHandler:
         if not media:
             log.print_function(
                 logger.error,
-                "Media %s not exist or you didn't set the default media on filterchain." %
-                (media_name))
+                "Media %s not exist or you didn't set the default media on \
+                filterchain." % media_name)
             return False
 
         if media.is_media_video() and file_name:
@@ -148,7 +150,8 @@ class CmdHandler:
                                            execution_name)
 
         for filter_name in filterchain.get_filter_name():
-            key = keys.create_unique_exec_filter_name(execution_name, filter_name)
+            key = keys.create_unique_exec_filter_name(execution_name,
+                                                      filter_name)
             self.publisher.register(key)
 
         return True
@@ -160,29 +163,27 @@ class CmdHandler:
         if not execution:
             log.print_function(
                 logger.warning,
-                "The execution %s is already stopped." %
-                execution_name)
+                "The execution %s is already stopped." % execution_name)
             return False
 
         # Remove execution image observer from media
         observer = execution.get(KEY_MEDIA, None)
         if observer is None:
             logger.critical(
-                "Not found the observer about execution %s" %
-                execution_name)
+                "Not found the observer about execution %s" % execution_name)
             return False
         filterchain = execution.get(KEY_FILTERCHAIN, None)
         if filterchain is None:
-            logger.critical(
-                "Not found the filterchain about execution %s" %
-                execution_name)
+            logger.critical("Not found the filterchain about \
+                execution %s" % execution_name)
             return False
 
         observer.remove_observer(filterchain.execute)
 
         # deregiste key
         for filter_name in filterchain.get_filter_name():
-            key = keys.create_unique_exec_filter_name(execution_name, filter_name)
+            key = keys.create_unique_exec_filter_name(execution_name,
+                                                      filter_name)
             self.publisher.deregister(key)
 
         filterchain.destroy()
@@ -258,8 +259,7 @@ class CmdHandler:
         if media.is_media_video():
             log.print_function(
                 logger.error,
-                "Cannot start record to a media media %s." %
-                media_name)
+                "Cannot start record to a media media %s." % media_name)
             return False
         return media.start_record(path=path, options=options)
 
@@ -343,7 +343,8 @@ class CmdHandler:
         return filterchain.add_image_observer(observer, filter_name)
 
     def set_image_observer(
-            self, observer, execution_name, filter_name_old, filter_name_new, new_observer=None):
+            self, observer, execution_name, filter_name_old, filter_name_new,
+            new_observer=None):
         """
             Inform the server what filter we want to change observer
             Param :
@@ -392,7 +393,8 @@ class CmdHandler:
             return False
 
         status = True
-        if self.server_observer.send not in filterchain.get_filter_output_observers():
+        lst_obs = filterchain.get_filter_output_observers()
+        if self.server_observer.send not in lst_obs:
             status = filterchain.add_filter_output_observer(
                 self.server_observer.send)
         self.nb_observer_client += 1
@@ -414,7 +416,8 @@ class CmdHandler:
             # protection if go under zero
             if self.nb_observer_client < 0:
                 self.nb_observer_client = 0
-            return filterchain.remove_filter_output_observer(self.server_observer.send)
+            return filterchain.remove_filter_output_observer(
+                self.server_observer.send)
         return True
 
     #
@@ -461,7 +464,8 @@ class CmdHandler:
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
             return None
-        return filterchain.get_params(filter_name=filter_name, param_name=param_name)
+        return filterchain.get_params(filter_name=filter_name,
+                                      param_name=param_name)
 
     def get_filterchain_info(self, filterchain_name):
         self._post_command_(locals())
@@ -476,19 +480,22 @@ class CmdHandler:
         if not o_filter:
             log.print_function(
                 logger.error,
-                "Don't find filter %s on filterchain %s" % (filter_name, filterchain.get_name()))
+                "Don't find filter %s on filterchain %s" % (
+                    filter_name, filterchain.get_name()))
             return False
         param = o_filter.get_params(param_name=param_name)
         if not param:
             log.print_function(
-                logger.error, "Don't find param %s on filter %s" % (param_name, filter_name))
+                logger.error,
+                "Don't find param %s on filter %s" % (param_name, filter_name))
             return False
 
         param.set(value)
         # TODO update when filter is not running
         o_filter.configure()
         # send from publisher
-        data = {"execution": execution_name, "filter": filter_name, "param": param.serialize()}
+        data = {"execution": execution_name, "filter": filter_name,
+                "param": param.serialize()}
         json_data = json.dumps(data)
         self.publisher.publish(keys.get_key_filter_param(), "%s" % json_data)
         return True
@@ -507,16 +514,19 @@ class CmdHandler:
 
     def upload_filterchain(self, filterchain_name, s_file_contain):
         self._post_command_(locals())
-        return self.resource.upload_filterchain(filterchain_name, s_file_contain)
+        return self.resource.upload_filterchain(filterchain_name,
+                                                s_file_contain)
 
     def delete_filterchain(self, filterchain_name):
         self._post_command_(locals())
         return self.resource.delete_filterchain(filterchain_name)
 
     def modify_filterchain(self, old_filterchain_name,
-                           new_filterchain_name, lst_str_filters, default_media):
+                           new_filterchain_name, lst_str_filters,
+                           default_media):
         self._post_command_(locals())
-        return self.resource.modify_filterchain(old_filterchain_name, new_filterchain_name,
+        return self.resource.modify_filterchain(old_filterchain_name,
+                                                new_filterchain_name,
                                                 lst_str_filters,
                                                 default_media)
 

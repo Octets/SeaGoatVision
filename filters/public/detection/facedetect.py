@@ -14,8 +14,10 @@ class FaceDetection(Filter):
         Filter.__init__(self)
         self.nb_face = 1
         # linux path
-        path_frontal_face = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml"
-        self.face_detect_name = os.path.join('data', 'facedetect', path_frontal_face)
+        path_frontal_face = "/usr/share/opencv/haarcascades/\
+        haarcascade_frontalface_alt.xml"
+        self.face_detect_name = os.path.join(
+            'data', 'facedetect', path_frontal_face)
 
         self.face_cascade = cv2.CascadeClassifier()
         self.face_cascade.load(self.face_detect_name)

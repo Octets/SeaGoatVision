@@ -36,8 +36,8 @@ class Rectangle(Filter):
 
     def execute(self, image):
         cv2.rectangle(image,
-                     (self.x1.get(), self.y1.get()),
-                     (self.x2.get(), self.y2.get()),
-                     (0, 0, 0),
+                      (self.x1.get(), self.y1.get()),
+                      (self.x2.get(), self.y2.get()),
+                      (0, 0, 0),
                       cv2.cv.CV_FILLED)
         return image

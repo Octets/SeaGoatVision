@@ -1,5 +1,5 @@
-
-# http://docs.opencv.org/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html
+# http://docs.opencv.org/doc/tutorials/objdetect/cascade_classifier/\
+# cascade_classifier.html
 
 import cv2
 from cv2 import cv
@@ -11,12 +11,12 @@ from SeaGoatVision.server.core.filter import Filter
 
 
 class FaceSwap(Filter):
-
     """Swap faces"""
 
     def __init__(self):
         Filter.__init__(self)
-        path_frontal_face = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml"
+        path_frontal_face = "/usr/share/opencv/haarcascades/\
+        haarcascade_frontalface_alt.xml"
         self.face_detect_name = os.path.join('data',
                                              'facedetect',
                                              path_frontal_face)
@@ -30,8 +30,7 @@ class FaceSwap(Filter):
                                                    1.1,
                                                    2,
                                                    0 | cv.CV_HAAR_SCALE_IMAGE,
-                                                   (30, 30)
-                                                   )
+                                                   (30, 30))
         for i in xrange(0, len(faces)):
             lastface = faces[i - 1]
             face = faces[i]
@@ -54,11 +53,14 @@ class FaceSwap(Filter):
             miny, maxy, minx, maxx = coord
 
             face = cv2.resize(face, (lastmaxy - lastminy, lastmaxx - lastminx))
-            welp = image[lastminy:lastmaxy,
-                         lastminx:lastmaxx]
+            welp = image[lastminy:lastmaxy, lastminx:lastmaxx]
 
-            image[lastminy:lastmaxy,
-                  lastminx:lastmaxx] = cv2.addWeighted(welp, 0.5, face, 0.5, 0.0)  # cv2.merge((gray,gray,gray))
+            image[lastminy:lastmaxy, lastminx:lastmaxx] = cv2.addWeighted(welp,
+                                                                          0.5,
+                                                                          face,
+                                                                          0.5,
+                                                                          0.0)
+            # cv2.merge((gray,gray,gray))
 
         return image
 

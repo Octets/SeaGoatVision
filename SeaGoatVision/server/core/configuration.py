@@ -39,7 +39,7 @@ class Configuration(object):
 
             try:
                 from configurations.private import config as private_config
-            except Exception as e:
+            except BaseException as e:
                 logger.info(
                     "Ignore missing private configuration because: %s" % e)
             # first instance
@@ -49,7 +49,7 @@ class Configuration(object):
                     cls.private_config = private_config
                 else:
                     cls.private_config = None
-            except Exception:
+            except BaseException:
                 cls.private_config = None
             cls.print_configuration = False
             cls.verbose = False
@@ -88,7 +88,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.verbose
-            except Exception:
+            except BaseException:
                 pass
         return response
 
@@ -97,7 +97,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.port_tcp_output
-            except Exception:
+            except BaseException:
                 pass
         return response
 
@@ -106,7 +106,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.lst_media
-            except Exception:
+            except BaseException:
                 pass
         return response
 
@@ -115,7 +115,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.show_public_filterchain
-            except Exception:
+            except BaseException:
                 pass
         return response
 
@@ -124,7 +124,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.show_public_filter
-            except Exception:
+            except BaseException:
                 pass
         return response
 
@@ -133,7 +133,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.active_configuration
-            except Exception:
+            except BaseException:
                 pass
         return response
 
@@ -142,7 +142,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.path_save_record
-            except Exception:
+            except BaseException:
                 pass
         return response
 
@@ -151,7 +151,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.log_path
-            except Exception:
+            except BaseException:
                 pass
         return response
 
@@ -160,7 +160,7 @@ class Configuration(object):
         if self.private_config:
             try:
                 response = self.private_config.cmd_on_start
-            except Exception:
+            except BaseException:
                 pass
         return response
 
@@ -168,12 +168,14 @@ class Configuration(object):
     def list_filterchain(self):
         if not os.path.isdir(self.dir_filterchain):
             return []
-        return [files[:-len(self.ext_filterchain)] for files in os.listdir(self.dir_filterchain) if
+        return [files[:-len(self.ext_filterchain)] for files in
+                os.listdir(self.dir_filterchain) if
                 files.endswith(self.ext_filterchain)]
 
     def read_filterchain(self, filterchain_name):
-        file_name = self._get_filterchain_filename(filterchain_name)
-        return self._read_configuration(file_name, self.type_filterchain, False)
+        file_name = self._get_fc_filename(filterchain_name)
+        return self._read_configuration(file_name, self.type_filterchain,
+                                        False)
 
     def read_media(self, media_name):
         file_name = self._get_media_filename(media_name)
@@ -190,19 +192,21 @@ class Configuration(object):
         str_value = f.readlines()
         try:
             value = json.loads("".join(str_value))
-        except Exception:
-            log.print_function(logger.error, "The file %s not contain json data." % file_name)
+        except BaseException:
+            log.print_function(
+                logger.error, "The file %s not contain json data." % file_name)
             value = None
         f.close()
         return value
 
     def write_filterchain(self, filterchain):
-        return self._write_configuration(filterchain, self._get_filterchain_filename)
+        return self._write_configuration(filterchain, self._get_fc_filename)
 
     def write_media(self, media):
         return self._write_configuration(media, self._get_media_filename)
 
-    def _write_configuration(self, obj, fct_filename):
+    @staticmethod
+    def _write_configuration(obj, fct_filename):
         file_name = fct_filename(obj.get_name())
         f = open(file_name, "w")
         if not f:
@@ -213,31 +217,34 @@ class Configuration(object):
         return True
 
     def delete_filterchain(self, filterchain_name):
-        file_name = self._get_filterchain_filename(filterchain_name)
+        file_name = self._get_fc_filename(filterchain_name)
         try:
             os.remove(file_name)
         except OSError:
             return False
         return True
 
-    def _is_config_exist(self, file_name, type_name, ignore_not_exist):
+    @staticmethod
+    def _is_config_exist(file_name, type_name, ignore_not_exist):
         if not os.path.isfile(file_name):
             if not ignore_not_exist:
-                log.print_function(logger.error,
-                                   "The %s config %s not exist." % (file_name, type_name))
+                log.print_function(logger.error, "The %s config %s\
+                                    not exist." % (file_name, type_name))
             return False
         return True
 
     def is_filterchain_exist(self, filterchain_name):
-        file_name = self._get_filterchain_filename(filterchain_name)
+        file_name = self._get_fc_filename(filterchain_name)
         return self._is_config_exist(file_name, self.type_filterchain, True)
 
     def is_media_exist(self, media_name):
         file_name = self._get_media_filename(media_name)
         return self._is_config_exist(file_name, self.type_media, True)
 
-    def _get_filterchain_filename(self, filterchain_name):
-        return "%s%s%s" % (self.dir_filterchain, filterchain_name, self.ext_filterchain)
+    def _get_fc_filename(self, filterchain_name):
+        return "%s%s%s" % (self.dir_filterchain,
+                           filterchain_name,
+                           self.ext_filterchain)
 
     def _get_media_filename(self, media_name):
         return "%s%s%s" % (self.dir_media, media_name, self.ext_media)

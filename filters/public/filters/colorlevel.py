@@ -27,7 +27,8 @@ class ColorLevel(Filter):
         0% = Nothing
         50% = Half the original value.
         100% = Original
-        Example: With 50% Blue and the following pixel (100, 100, 100) give (50, 100, 100)"""
+        Example: With 50% Blue and the following pixel
+        (100, 100, 100) give (50, 100, 100)"""
 
     def __init__(self):
         Filter.__init__(self)

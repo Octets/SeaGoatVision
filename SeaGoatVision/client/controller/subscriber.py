@@ -32,6 +32,7 @@ logger = log.get_logger(__name__)
 
 
 class Subscriber():
+
     def __init__(self, controller, port, addr="localhost"):
         self.controller = controller
         # list of key associated with topic number
@@ -80,7 +81,8 @@ class Subscriber():
         if callback not in lst_cb:
             lst_cb.append(callback)
         else:
-            logger.warning("Callback already added on key %s : %s" % (key, callback))
+            logger.warning(
+                "Callback already added on key %s : %s" % (key, callback))
         return True
 
     def _recv_callback_topic(self, data):
@@ -94,6 +96,7 @@ class Subscriber():
 
 
 class ListenOutput(threading.Thread):
+
     def __init__(self, observer, addr, port):
         threading.Thread.__init__(self)
         # Ignore the zmq.PUB error in Eclipse.
@@ -115,11 +118,11 @@ class ListenOutput(threading.Thread):
         while nb_error < max_error and not self.is_stopped:
             try:
                 while not self.is_stopped:
-                    #try:
+                    # try:
                     data = self.socket.recv_pyobj()
                     if data:
                         self.observer(data)
-                        #except zmq.error.ZMQError:
+                        # except zmq.error.ZMQError:
                         # ignore it, it's the timeout
                         # TODO can we do something with ZMQError?
                         #    pass
@@ -128,7 +131,7 @@ class ListenOutput(threading.Thread):
                 if e.errno == 11:
                     continue
                 log.printerror_stacktrace(logger, e)
-            except Exception as e:
+            except BaseException as e:
                 log.printerror_stacktrace(logger, e)
                 nb_error += 1
         self.socket.close()

@@ -87,8 +87,8 @@ class PygameCam(MediaStreaming):
             return False
         if not isinstance(data, dict):
             log.print_function(
-                logger.error, "Wrong format data, suppose to be dict into camera %s" %
-                              self.get_name())
+                logger.error, "Wrong format data, suppose to be dict into \
+                camera %s" % self.get_name())
             return False
         res = data.get("resolution", None)
         if res:
@@ -107,7 +107,7 @@ class PygameCam(MediaStreaming):
             self.video.start()
             self.thread_image = True
             thread.start_new_thread(self.update_image, ())
-        except Exception as e:
+        except BaseException as e:
             log.printerror_stacktrace(
                 logger, "Open camera %s: %s" %
                         (self.get_name(), e))

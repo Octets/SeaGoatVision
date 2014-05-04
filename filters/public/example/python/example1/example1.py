@@ -32,7 +32,8 @@ class ExePy1(Filter):
         Filter.__init__(self)
 
         self.convert_color = Param("Convert choice", 1, min_v=0, max_v=4)
-        desc = "0 = original\n1 = BGR TO YUV\n2 = BGR TO HSV\n3 = BGR TO RGB\n4 = BGR TO GRAY"
+        desc = "0 = original\n1 = BGR TO YUV\n2 = BGR TO HSV\n3 = BGR TO RGB\n\
+        4 = BGR TO GRAY"
         self.convert_color.set_description(desc)
 
     def execute(self, image):

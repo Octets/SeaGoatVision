@@ -27,7 +27,6 @@ import scipy.weave as weave
 
 
 class Exec(Filter):
-
     """Create and edit a filter on the fly for testing purposes"""
 
     def __init__(self):
@@ -44,13 +43,13 @@ class Exec(Filter):
             self.code = code
             if self.is_python:
                 self._ccode = compile(code, '<string>', 'exec')
-        except Exception as e:
+        except BaseException as e:
             sys.stderr.write(str(e) + '\n')
             self._has_error = True
 
     def exec_python(self, image):
         if self._ccode is not None:
-            exec(self._ccode)
+            exec self._ccode
         return image
 
     def exec_cpp(self, numpy_array):
@@ -58,7 +57,8 @@ class Exec(Filter):
             """
         // Convert numpy array to C++ Mat object
         // The image data is accessed directly, there is no copy
-        cv::Mat image(Nnumpy_array[0], Nnumpy_array[1], CV_8UC(3), numpy_array);
+        cv::Mat image(Nnumpy_array[0], Nnumpy_array[1], CV_8UC(3), \
+        numpy_array);
         """ + self.code,
             arg_names=['numpy_array'],
             headers=['<opencv2/opencv.hpp>', '<opencv2/gpu/gpu.hpp>'],
@@ -78,7 +78,7 @@ class Exec(Filter):
                 image = self.exec_python(image)
             else:
                 image = self.exec_cpp(image)
-        except Exception as e:
+        except BaseException as e:
             sys.stderr.write(str(e) + '\n')
             self._has_error = True
         return image

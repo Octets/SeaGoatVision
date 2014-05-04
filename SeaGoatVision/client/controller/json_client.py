@@ -23,11 +23,11 @@ from SeaGoatVision.commons import keys
 import jsonrpclib
 import numpy as np
 import cv2
+
 logger = log.get_logger(__name__)
 
 
 class JsonClient():
-
     def __init__(self, port, host=""):
         self.rpc = jsonrpclib.Server('http://%s:%s' % (host, port))
         self._lst_port = []
@@ -55,7 +55,8 @@ class JsonClient():
         """
         status = self.rpc.add_image_observer(execution_name, filter_name)
         if status:
-            key = keys.create_unique_exec_filter_name(execution_name, filter_name)
+            key = keys.create_unique_exec_filter_name(
+                execution_name, filter_name)
             des_observer = self._deserialize_image(observer)
             self.dct_link_obs_des_obs[observer] = des_observer
             status = self.subscriber.subscribe(key, des_observer)
@@ -63,10 +64,13 @@ class JsonClient():
 
     def set_image_observer(
             self, observer, execution_name, filter_name_old, filter_name_new):
-        status = self.rpc.set_image_observer(execution_name, filter_name_old, filter_name_new)
+        status = self.rpc.set_image_observer(
+            execution_name, filter_name_old, filter_name_new)
         if status:
-            new_key = keys.create_unique_exec_filter_name(execution_name, filter_name_new)
-            old_key = keys.create_unique_exec_filter_name(execution_name, filter_name_old)
+            new_key = keys.create_unique_exec_filter_name(
+                execution_name, filter_name_new)
+            old_key = keys.create_unique_exec_filter_name(
+                execution_name, filter_name_old)
             des_observer = self.dct_link_obs_des_obs[observer]
             self.subscriber.desubscribe(old_key, des_observer)
             status = self.subscriber.subscribe(new_key, des_observer)
@@ -100,7 +104,8 @@ class JsonClient():
 
     def _deserialize_param(self, lst_param_ser):
         if lst_param_ser:
-            return [Param("temp", None, serialize=param_ser) for param_ser in lst_param_ser]
+            return [Param("temp", None, serialize=param_ser) for param_ser in
+                    lst_param_ser]
         return []
 
     def _deserialize_image(self, cb):
@@ -108,4 +113,5 @@ class JsonClient():
             img = np.loads(data)
             img_cv = cv2.imdecode(img, 1)
             cb(img_cv)
+
         return deserialize_image

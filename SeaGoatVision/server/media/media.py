@@ -52,7 +52,8 @@ class Media(object):
         pass
 
     def get_dct_media_param(self):
-        return {param.get_name(): param for param in self.get_properties_param()}
+        return {param.get_name(): param for param in
+                self.get_properties_param()}
 
     def get_properties_param(self):
         return []
@@ -145,9 +146,8 @@ class Media(object):
         if observer in self.lst_observer:
             self.lst_observer.remove(observer)
         else:
-            logger.warning(
-                "Observer missing into media %s" %
-                (self.get_name()))
+            logger.warning("Observer missing into media %s" %
+                           (self.get_name()))
         if not self.lst_observer:
             self.close()
 

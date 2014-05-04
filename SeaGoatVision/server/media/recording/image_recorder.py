@@ -73,7 +73,7 @@ class ImageRecorder:
         return path
 
     def write(self, image):
-        compress = int(self.compress  * 0.09)
+        compress = int(self.compress * 0.09)
         params = [cv2.cv.CV_IMWRITE_PNG_COMPRESSION, compress]
         cv2.imwrite(self.next_filename(), image, params)
 

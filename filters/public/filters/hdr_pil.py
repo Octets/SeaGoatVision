@@ -62,7 +62,8 @@ class HDR(Filter):
         nature = self.naturalness.get()
         if nature:
             nature /= 10.0
-        return self.get_hdr(self.images, strength=self.strength.get(), naturalness=nature)
+        return self.get_hdr(self.images, strength=self.strength.get(),
+                            naturalness=nature)
 
     """
     SOURCE: https://sites.google.com/site/bpowah/hdrandpythonpil

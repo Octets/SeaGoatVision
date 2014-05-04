@@ -24,7 +24,6 @@ import numpy as np
 
 
 class WinMapper:
-
     """Tool to identify lines in images
         Drawing code adapted from gtk demo drawingarea.py
     """
@@ -100,8 +99,8 @@ class WinMapper:
     def configure_matrices(self):
         self.matrices = []
         self.matrices.append(np.zeros(
-                             (self.pixbuf_image.get_height(),
-                              self.pixbuf_image.get_width()), np.bool))
+            (self.pixbuf_image.get_height(),
+             self.pixbuf_image.get_width()), np.bool))
 
     def draw(self, widget, x, y):
         self.draw_brush(widget, x, y, self.spnSize.get_value_as_int())
@@ -123,17 +122,18 @@ class WinMapper:
     def draw_matrix(self, x, y, size):
         rect = self.brush_size(x, y, size)
         brush = np.ones((rect.height, rect.width), np.bool)
-        self.matrices[-1] \
-            [rect.y:rect.y + rect.height, rect.x:rect.x + rect.width] = brush
+        yh = rect.y + rect.height
+        xw = rect.x + rect.width
+        self.matrices[-1][rect.y:yh, rect.x:xw] = brush
 
     def load_folder(self, folder):
         images = sources.find_all_images(folder)
         self.imageListStore.clear()
         for image in images:
             self.imageListStore.append([os.path.exists(image + '.map'),
-                                       os.path.basename(image),
-                                       image,
-                                       None])
+                                        os.path.basename(image),
+                                        image,
+                                        None])
         if len(images) > 0:
             self.lstImages.set_cursor(0)
 
@@ -171,7 +171,8 @@ class WinMapper:
     def on_btnOpen_clicked(self, widget):
         dialog = Gtk.FileChooserDialog("Choose an image folder", None,
                                        Gtk.FileChooserAction.SELECT_FOLDER,
-                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                       (Gtk.STOCK_CANCEL,
+                                        Gtk.ResponseType.CANCEL,
                                         Gtk.STOCK_OK, Gtk.ResponseType.OK))
 
         response = dialog.run()
@@ -202,8 +203,8 @@ class WinMapper:
     def on_btn_clear_clicked(self, widget):
         if self.msg_confirm_clear() == Gtk.ResponseType.YES:
             self.matrices.append(np.zeros(
-                                 (self.pixbuf_image.get_height(),
-                                  self.pixbuf_image.get_width()), np.bool))
+                (self.pixbuf_image.get_height(),
+                 self.pixbuf_image.get_width()), np.bool))
             self.configure_surface()
             self.drwImage.queue_draw()
 
@@ -265,8 +266,8 @@ class WinMapper:
 
     def on_drwImage_motion_notify_event(self, widget, event):
         (window, x, y, state) = event.window.get_pointer()
-        if (state & Gdk.ModifierType.BUTTON1_MASK
-                and self.pixbuf_image is not None):
+        pi = self.pixbuf_image is not None
+        if state & Gdk.ModifierType.BUTTON1_MASK and pi:
             self.draw(widget, x, y)
         return True
 

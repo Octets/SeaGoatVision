@@ -93,8 +93,9 @@ class ImageGenerator(MediaStreaming):
             return False
         if not isinstance(data, dict):
             log.print_function(
-                logger.error, "Wrong format data, suppose to be dict into camera %s" %
-                              self.get_name())
+                logger.error,
+                "Wrong format data, suppose to be dict into camera %s" %
+                self.get_name())
             return False
         res = data.get("width", None)
         if res is not None:

@@ -66,7 +66,8 @@ class WinParamParent(QtGui.QDockWidget):
         self.ui.resetButton.clicked.connect(self.reset)
         self.ui.defaultButton.clicked.connect(self.default)
         self.ui.txt_search.returnPressed.connect(self.on_cb_group_item_changed)
-        self.cb_group.currentIndexChanged.connect(self.on_cb_group_item_changed)
+        self.cb_group.currentIndexChanged.connect(
+            self.on_cb_group_item_changed)
 
     def call_signal_param(self, json_data):
         self.signal_update_param.emit(json_data)
@@ -129,19 +130,24 @@ class WinParamParent(QtGui.QDockWidget):
         # it's not exist, create a new one
         if not widget:
             if param_type is int:
-                widget = IntWidget(self.controller, self.shared_info, param, self.parent_layout,
+                widget = IntWidget(self.controller, self.shared_info, param,
+                                   self.parent_layout,
                                    self.set_value)
             elif param_type is float:
-                widget = FloatWidget(self.controller, self.shared_info, param, self.parent_layout,
+                widget = FloatWidget(self.controller, self.shared_info, param,
+                                     self.parent_layout,
                                      self.set_value)
             elif param_type is str:
-                widget = StrWidget(self.controller, self.shared_info, param, self.parent_layout,
+                widget = StrWidget(self.controller, self.shared_info, param,
+                                   self.parent_layout,
                                    self.set_value)
             elif param_type is bool:
-                widget = BoolWidget(self.controller, self.shared_info, param, self.parent_layout,
+                widget = BoolWidget(self.controller, self.shared_info, param,
+                                    self.parent_layout,
                                     self.set_value)
             else:
-                logger.error("The type %s is not supported in WinParamParent widget." % param_type)
+                logger.error("The type %s is not supported in WinParamParent /"
+                             "widget." % param_type)
                 return
             self.lst_active_widget.append(widget)
 
@@ -152,7 +158,9 @@ class WinParamParent(QtGui.QDockWidget):
     def fill_group(self):
         self.cb_group.clear()
         # get unique list of group
-        lst_group = set([group for param in self.lst_param for group in param.get_groups()])
+        lst_group = set(
+            [group for param in self.lst_param for group in
+             param.get_groups()])
         if lst_group:
             lst_group = list(lst_group)
             lst_group.sort()
@@ -164,7 +172,8 @@ class WinParamParent(QtGui.QDockWidget):
         # apply filter
         text = self.ui.txt_search.text()
         if text:
-            lst_param = [value for value in self.lst_param if text in value.get_name()]
+            lst_param = [value for value in self.lst_param if
+                         text in value.get_name()]
         else:
             lst_param = self.lst_param[:]
         # the first item of the group is empty
@@ -174,7 +183,8 @@ class WinParamParent(QtGui.QDockWidget):
 
     @staticmethod
     def get_lst_param_grouped(lst_param, group):
-        lst_param_sorted = sorted(lst_param, key=lambda x: x.get_name().lower())
+        lst_param_sorted = sorted(lst_param,
+                                  key=lambda x: x.get_name().lower())
         lst_param_grouped = []
         for param in lst_param_sorted:
             if not group or group in param.get_groups():
@@ -183,7 +193,9 @@ class WinParamParent(QtGui.QDockWidget):
 
 
 class ParentWidget(object):
-    def __init__(self, controller, shared_info, param, parent_layout, set_value):
+
+    def __init__(self, controller, shared_info, param, parent_layout,
+                 set_value):
         # The type of the widget cannot change
         # Manage only one parameter at time
         self.param_type = param.get_type()
@@ -230,7 +242,8 @@ class ParentWidget(object):
         param_name = param.get_name()
         if param.get_type() is not self.param_type:
             logger.error(
-                "Wrong param type receiving %s and expect %s" % (param.get_type(), self.param_type))
+                "Wrong param type receiving %s and expect %s" % (
+                    param.get_type(), self.param_type))
             return
         self.param = param
         self.lbl_desc.setText(param.get_description())
@@ -251,14 +264,17 @@ class ParentWidget(object):
 
 
 class IntWidget(ParentWidget):
-    def __init__(self, controller, shared_info, param, parent_layout, set_value):
+
+    def __init__(self, controller, shared_info, param, parent_layout,
+                 set_value):
         self.slider = None
         self.spinbox = None
         self.lbl_server_value = None
         self.checkbox = None
         self.is_used_slider = False
         self._server_param = None
-        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout,
+        super(self.__class__, self).__init__(controller, shared_info, param,
+                                             parent_layout,
                                              set_value)
 
     def _create_widget(self):
@@ -339,7 +355,9 @@ class IntWidget(ParentWidget):
 
 
 class FloatWidget(ParentWidget):
-    def __init__(self, controller, shared_info, param, parent_layout, set_value):
+
+    def __init__(self, controller, shared_info, param, parent_layout,
+                 set_value):
         self.slider = None
         self.spinbox = None
         self.lbl_server_value = None
@@ -348,7 +366,8 @@ class FloatWidget(ParentWidget):
         self._server_param = None
         self._new_slider_min = 0.0
         self._new_slider_max = 1.0
-        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout,
+        super(self.__class__, self).__init__(controller, shared_info, param,
+                                             parent_layout,
                                              set_value)
 
     def _create_widget(self):
@@ -457,11 +476,14 @@ class FloatWidget(ParentWidget):
 
 
 class StrWidget(ParentWidget):
-    def __init__(self, controller, shared_info, param, parent_layout, set_value):
+
+    def __init__(self, controller, shared_info, param, parent_layout,
+                 set_value):
         # common widget
         self.line_edit = None
         self.combo_box = None
-        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout,
+        super(self.__class__, self).__init__(controller, shared_info, param,
+                                             parent_layout,
                                              set_value)
 
     def _create_widget(self):
@@ -526,9 +548,12 @@ class StrWidget(ParentWidget):
 
 
 class BoolWidget(ParentWidget):
-    def __init__(self, controller, shared_info, param, parent_layout, set_value):
+
+    def __init__(self, controller, shared_info, param, parent_layout,
+                 set_value):
         self.checkbox = None
-        super(self.__class__, self).__init__(controller, shared_info, param, parent_layout,
+        super(self.__class__, self).__init__(controller, shared_info, param,
+                                             parent_layout,
                                              set_value)
 
     def _create_widget(self):

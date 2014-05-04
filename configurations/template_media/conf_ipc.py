@@ -21,7 +21,8 @@ from SeaGoatVision.server.media.implementation.ipc import IPC
 
 
 class ConfIpc:
-    def  __init__(self):
+
+    def __init__(self):
         self.media = IPC
         self.name = "ipc"
         self.device = "/tmp/seagoatvision_media.ipc"

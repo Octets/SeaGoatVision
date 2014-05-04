@@ -17,7 +17,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Contains the FilterChain class and helper functions to work with the filter chain."""
+"""Contains the FilterChain class and helper functions to work with the \
+filter chain."""
 
 from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.commons import keys
@@ -33,10 +34,12 @@ class FilterChain(object):
     """ Observable.  Contains the chain of filters to execute on an image.
 
     The observer must be a method that receive a filter and an image as param.
-    The observer method is called after each execution of a filter in the filter chain.
+    The observer method is called after each execution of a filter in the \
+    filter chain.
     """
 
-    def __init__(self, filterchain_name, serialize=None, default_media_name=None):
+    def __init__(self, filterchain_name, serialize=None,
+                 default_media_name=None):
         # to limit the infini import, we import in the init
         from resource import Resource
 
@@ -129,7 +132,8 @@ class FilterChain(object):
         for o_filter in self.filters:
             # find is appropriate filter if exist
             for filter_ser in lst_filter:
-                if filter_ser.get("filter_name", None) == o_filter.get_code_name():
+                if filter_ser.get("filter_name",
+                                  None) == o_filter.get_code_name():
                     status &= o_filter.deserialize(filter_ser)
         return status
 
@@ -172,7 +176,8 @@ class FilterChain(object):
             if param_name:
                 return o_filter.get_params(param_name=param_name)
             return o_filter.get_params()
-        return [(o_filter.get_name(), o_filter.get_params()) for o_filter in self.filters]
+        return [(o_filter.get_name(), o_filter.get_params()) for o_filter in
+                self.filters]
 
     def __getitem__(self, index):
         return self.filters[index]
@@ -184,7 +189,8 @@ class FilterChain(object):
             return_data = self.filters[index]
         elif name is not None:
             lst_filter = [
-                o_filter for o_filter in self.filters if o_filter.get_name() == name]
+                o_filter for o_filter in self.filters if
+                o_filter.get_name() == name]
             if lst_filter:
                 return_data = lst_filter[0]
         else:
@@ -297,17 +303,17 @@ class FilterChain(object):
                 lst_observer = self.image_observers.get(f.get_name(), [])
                 if lst_observer:
                     self.send_image(image, lst_observer)
-        except Exception as e:
+        except BaseException as e:
             msg = "(Exec exception Filter %s) %s" % (f.get_name(), e)
             log.printerror_stacktrace(logger, msg, check_duplicate=True)
         return image
 
     def send_image(self, image, lst_observer):
-        if not isinstance(image, np.ndarray) or not image.size or image.ndim != 3:
+        if not isinstance(image,
+                          np.ndarray) or not image.size or image.ndim != 3:
             return
             # copy the picture because the next filter will modify him
         # transform it in rgb
-        image2 = np.copy(image)
-        cv2.cvtColor(np.copy(image), cv.CV_BGR2RGB, image2)
+        image2 = cv2.cvtColor(np.copy(image), cv.CV_BGR2RGB)
         for observer in lst_observer:
             observer(image2)

@@ -3,7 +3,7 @@
 #    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
-#    
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -17,7 +17,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.server.imageproviders.implementation.imagefolder import ImageFolder
+from SeaGoatVision.server.imageproviders.implementation.imagefolder import \
+    ImageFolder
 
 import cv2
 from cv2 import cv
@@ -28,29 +29,31 @@ import subprocess
 import sys
 import tempfile
 
+
 class LineTest:
-    """This class test the precision of the detection of lines of a filterchain.
+    """This class test the precision of the detection of lines of a \
+    filterchain.
         It uses a folder that contains image files and mappings files.  The
-        mapping files contains the information about 
+        mapping files contains the information about
         the lines inside the images
-    
-    After creation, the launch() method should be called to execute the test.    
+
+    After creation, the launch() method should be called to execute the test.
     """
-        
+
     def __init__(self, test_folder, fchain):
         """Creates the object.
         Args:
-            test_folder: Complete path to the folder that contains the 
+            test_folder: Complete path to the folder that contains the
             test images and its mapping.
             filterchain: Complete path to the filterchain file."""
-            
+
         image_folder = self.create_image_folder_source(test_folder)
         self.fchain = fchain
         self.testable_images = self.find_testable_images(image_folder)
-        
+
         # These dictionaries contains the values calculated by the test.
         # Keys: image file name.
-        # Values: float representing the percentage. 
+        # Values: float representing the percentage.
         self.precisions = None
         self.noises = None
 
@@ -59,16 +62,16 @@ class LineTest:
         c = len(self.noises.values())
         s = sum(self.noises.values())
         return s / c
-    
+
     def avg_precision(self):
         """Returns the calculated average precision"""
         c = len(self.precisions.values())
         s = sum(self.precisions.values())
         return s / c
-    
+
     def create_graphic(self):
         data_file = self.save_data()
-        proc = subprocess.Popen(('python', 'plot.py', data_file.name), 
+        proc = subprocess.Popen(('python', 'plot.py', data_file.name),
                                 stdout=subprocess.PIPE)
         image_file = proc.stdout.readline()[:-1]
         print image_file
@@ -82,7 +85,7 @@ class LineTest:
         image_folder.return_file_name = True
         image_folder.read_folder(test_folder)
         return image_folder
-    
+
     def example_image(self, file_name):
         """Returns an example of what is correctly detected,
             noise and what is not detected.  The size of the image is 320x240.
@@ -95,10 +98,10 @@ class LineTest:
         noise = self.remove_line(filtered, mapping)
 
         ret_image = np.zeros(image.shape, np.uint8)
-        ret_image[:,:, 0] = undetected
-        ret_image[:,:, 1] = detected 
-        ret_image[:,:, 2] = noise | undetected 
-        
+        ret_image[:, :, 0] = undetected
+        ret_image[:, :, 1] = detected
+        ret_image[:, :, 2] = noise | undetected
+
         return cv2.resize(ret_image, (400, 300))
 
     def find_dist_between_blob_and_line(self, cf, cnt_map):
@@ -107,7 +110,7 @@ class LineTest:
             cf: the contour of the blob
             cnt_map: the contour of the line
         """
-        
+
         # Find the center of the blob
         moment = cv2.moments(cf)
         m00 = moment['m00']
@@ -118,7 +121,7 @@ class LineTest:
             x = cf[0][0][0]
             y = cf[0][0][1]
         min_dist = sys.maxsize
-        
+
         # If there are many lines, we find the closest one
         for cm in cnt_map:
             dist = cv2.pointPolygonTest(cm, (x, y), True)
@@ -130,25 +133,25 @@ class LineTest:
         detected = (filtered * mapping)
         undetected = (np.invert(detected) * mapping)
         noise = self.remove_line(filtered, mapping)
-        
+
     def find_noise(self, filtered, mapping):
         """Returns the percentage of noise in the image
         Args:
             filtered: the filtered image from the filterchain
             mapping: the array containing the line information"""
         filtered = self.remove_line(filtered, mapping)
-        cnt_filtered, _ = cv2.findContours(filtered, 
-                                           cv2.RETR_TREE, 
+        cnt_filtered, _ = cv2.findContours(filtered,
+                                           cv2.RETR_TREE,
                                            cv2.CHAIN_APPROX_SIMPLE)
-        cnt_map, _ = cv2.findContours(mapping, 
-                                   cv2.RETR_TREE,
-                                   cv2.CHAIN_APPROX_SIMPLE)
+        cnt_map, _ = cv2.findContours(mapping,
+                                      cv2.RETR_TREE,
+                                      cv2.CHAIN_APPROX_SIMPLE)
         noise = 0
         for cf in cnt_filtered:
             dist = abs(self.find_dist_between_blob_and_line(cf, cnt_map))
             area = np.abs(cv2.contourArea(cf))
             noise += dist * area
-            
+
         total_noise = noise / self.max_noise(cnt_map, filtered.shape)
         if total_noise > 1:
             return 1.0
@@ -178,19 +181,19 @@ class LineTest:
             if os.path.exists(file_name + '.map'):
                 testable_images[file_name] = image
         return testable_images
-    
+
     def get_test_images(self, file_name):
         """Create the image and its mapping from the file name.
         Args:
             file_name: complete path to an image in the test folder
         Returns:
-            A tuple containing the filtered image from the filterchain and 
+            A tuple containing the filtered image from the filterchain and
             the mapping of the lines in the image
         """
         image = self.testable_images[file_name]
         filtered = self.fchain.execute(image)
         filtered = self.make_binary_array(filtered)
-        
+
         mapping = np.fromfile(file_name + '.map', dtype=np.uint8)
         mapping = mapping.reshape(filtered.shape)
 
@@ -219,7 +222,7 @@ class LineTest:
         Args:
             cnt_map: the contour of the lines
             image_size: the size of the image eg (640, 480)"""
-        max_dist = math.sqrt(image_size[0]**2 + image_size[1]**2) / 4.0
+        max_dist = math.sqrt(image_size[0] ** 2 + image_size[1] ** 2) / 4.0
         max_noise = 0
         for cm in cnt_map:
             area = np.abs(cv2.contourArea(cm)) / 2.0
@@ -234,14 +237,14 @@ class LineTest:
         """Remove the line from a filtered image using the mapping"""
         detected = (filtered * mapping)
         return (filtered & np.invert(detected))
-    
+
     def save_data(self):
         precisions = np.zeros(len(self.precisions), dtype=np.float16)
         noises = np.zeros(len(self.noises), dtype=np.float16)
         for x in xrange(0, len(self.precisions)):
             precisions[x] = round(self.precisions.values()[x] * 100.0, 2)
             noises[x] = round(self.noises.values()[x] * 100.0, 2)
-            
+
         tmp = tempfile.NamedTemporaryFile()
         data = np.append(precisions, noises)
         tmp.file.write(data.tostring())
@@ -251,4 +254,3 @@ class LineTest:
     def total_images(self):
         """Returns the amount of testable images in the test folder"""
         return len(self.testable_images)
-            

@@ -77,8 +77,9 @@ class Webcam(MediaStreaming):
             return False
         if not isinstance(data, dict):
             log.print_function(
-                logger.error, "Wrong format data, suppose to be dict into camera %s" %
-                              self.get_name())
+                logger.error,
+                "Wrong format data, suppose to be dict into camera %s" %
+                self.get_name())
             return False
         res = data.get("resolution", None)
         if res:
@@ -99,7 +100,7 @@ class Webcam(MediaStreaming):
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, shape[0])
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, shape[1])
             self.video.set(cv2.cv.CV_CAP_PROP_FPS, fps)
-        except Exception as e:
+        except BaseException as e:
             log.printerror_stacktrace(
                 logger, "Open camera %s: %s" %
                         (self.get_name(), e))

@@ -43,10 +43,14 @@ class WinMedia(QtCore.QObject):
 
         self.is_recorded = False
         self.is_play = False
-        self.record_icon = QIcon(self.resource_icon_path + "RecordVideoAction.png")
-        self.save_record_icon = QIcon(self.resource_icon_path + "SaveServerImageAction.png")
-        self.play_icon = QIcon("/usr/share/icons/gnome/24x24/actions/player_play.png")
-        self.pause_icon = QIcon("/usr/share/icons/gnome/24x24/actions/player_pause.png")
+        self.record_icon = QIcon(
+            self.resource_icon_path + "RecordVideoAction.png")
+        self.save_record_icon = QIcon(
+            self.resource_icon_path + "SaveServerImageAction.png")
+        self.play_icon = QIcon(
+            "/usr/share/icons/gnome/24x24/actions/player_play.png")
+        self.pause_icon = QIcon(
+            "/usr/share/icons/gnome/24x24/actions/player_pause.png")
 
         self.dct_media = None
         self.last_selected_media = config.default_media_selected
@@ -54,7 +58,8 @@ class WinMedia(QtCore.QObject):
         self.last_value_frame = 0
         self.max_frame = 0
 
-        self.shared_info.connect(SharedInfo.GLOBAL_START_EXEC, self._start_execution)
+        self.shared_info.connect(
+            SharedInfo.GLOBAL_START_EXEC, self._start_execution)
         self.shared_info.connect(SharedInfo.GLOBAL_EXEC, self.change_execution)
 
         # TODO optimize starting thread.
@@ -118,7 +123,8 @@ class WinMedia(QtCore.QObject):
             self.last_selected_media = media_name
 
     def _movie_changed(self):
-        self.shared_info.set(SharedInfo.GLOBAL_PATH_MEDIA, self.ui.movieLineEdit.text())
+        self.shared_info.set(
+            SharedInfo.GLOBAL_PATH_MEDIA, self.ui.movieLineEdit.text())
 
     def set_slider_value(self, value, force_value=False):
         last_value = self.ui.slider_frame.value()
@@ -136,7 +142,7 @@ class WinMedia(QtCore.QObject):
         str_value = self.ui.txtframe.text()
         try:
             value = int(str_value)
-        except Exception:
+        except BaseException:
             self.ui.txtframe.setText(str(self.last_value_frame))
             return
         if value < 1 or value > self.max_frame:
@@ -170,8 +176,10 @@ class WinMedia(QtCore.QObject):
                 format_rec = keys.get_key_format_avi()
             else:
                 format_rec = keys.get_key_format_png()
-            options = {"compress": self.ui.sb_compress.value(), "format": format_rec}
-            if not self.controller.start_record(self.ui.cbMedia.currentText(), path, options):
+            options = {
+                "compress": self.ui.sb_compress.value(), "format": format_rec}
+            if not self.controller.start_record(self.ui.cbMedia.currentText(),
+                                                path, options):
                 # TODO improve error message
                 logger.error("Trying start record...")
             else:
@@ -196,7 +204,8 @@ class WinMedia(QtCore.QObject):
         media_name = self.shared_info.get(SharedInfo.GLOBAL_MEDIA)
         if not media_name:
             return
-        self.controller.cmd_to_media(media_name, keys.get_key_media_frame(), value - 1)
+        self.controller.cmd_to_media(
+            media_name, keys.get_key_media_frame(), value - 1)
 
     def set_info(self, value=None):
         # Ignore the value
@@ -235,7 +244,8 @@ class WinMedia(QtCore.QObject):
 
     def active_loop(self):
         media_name = self.ui.cbMedia.currentText()
-        self.controller.cmd_to_media(media_name, keys.get_key_media_loop(), None)
+        self.controller.cmd_to_media(
+            media_name, keys.get_key_media_loop(), None)
 
     def _set_play_icon(self):
         if not self.is_play:

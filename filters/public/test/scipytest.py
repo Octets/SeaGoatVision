@@ -1,4 +1,3 @@
-
 from scipy import weave
 import cv
 import numpy
@@ -7,7 +6,6 @@ from SeaGoatVision.server.core.filter import Filter
 
 
 class ScipyExample(Filter):
-
     """Example on how to use scipy.weave inside filters.
         The code loop inside the entire image
         and reduce the value of each pixels by half"""
@@ -34,13 +32,16 @@ class ScipyExample(Filter):
         notify.call(notify_args);
         cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
 
-        int circlex = (int)PyInt_AsLong(PyDict_GetItemString(param, "Circlex"));
-        int circley = (int)PyInt_AsLong(PyDict_GetItemString(param, "Circley"));
+        int circlex = (int)PyInt_AsLong(PyDict_GetItemString(param, \
+        "Circlex"));
+        int circley = (int)PyInt_AsLong(PyDict_GetItemString(param, \
+        "Circley"));
         int colorr = (int)PyInt_AsLong(PyDict_GetItemString(param, "colorr"));
         int colorg = (int)PyInt_AsLong(PyDict_GetItemString(param, "colorg"));
         int colorb = (int)PyInt_AsLong(PyDict_GetItemString(param, "colorb"));
 
-        cv::circle(mat, cv::Point(circlex, circley), mat.cols/4, cv::Scalar(colorr, colorg, colorb), -1);
+        cv::circle(mat, cv::Point(circlex, circley), mat.cols/4, \
+        cv::Scalar(colorr, colorg, colorb), -1);
         """,
             arg_names=['image', 'notify', 'param'],
             include_dirs=['/usr/local/include/opencv/'],
