@@ -130,6 +130,10 @@ class ListenOutput(threading.Thread):
                 # errno 11 is Resource temporarily unavailable
                 if e.errno == 11:
                     continue
+                # Context was terminated
+                if e.errno == 156384765:
+                    self.is_stopped
+                    continue
                 log.printerror_stacktrace(logger, e)
             except BaseException as e:
                 log.printerror_stacktrace(logger, e)
