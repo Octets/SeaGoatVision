@@ -24,7 +24,6 @@ logger = log.get_logger(__name__)
 
 
 class ThreadMedia(threading.Thread):
-
     """Media thread to process the images.
     """
 
@@ -82,7 +81,7 @@ class ThreadMedia(threading.Thread):
 
             start_time = time.time()
             if start_time - first_fps_time > 1:
-                self.publisher(nb_fps)
+                self.publisher({"fps": nb_fps})
                 self.nb_fps = nb_fps
                 nb_fps = 0
                 first_fps_time = start_time

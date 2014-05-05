@@ -84,7 +84,8 @@ class WinViewer(QtGui.QDockWidget):
                                               execution_name,
                                               self.actual_filter):
             self.__add_output_observer()
-            self.subscriber.subscribe(self.media_name, self.update_fps)
+            self.subscriber.subscribe("media.%s" % self.media_name,
+                                      self.update_fps)
         self.light_observer.start()
 
     def reload_ui(self):
@@ -174,7 +175,11 @@ class WinViewer(QtGui.QDockWidget):
         logger.info("Qt output exec %s - %s" % (self.execution_name, data))
 
     def update_fps(self, data):
-        self.ui.lbl_fps.setText("%s" % data)
+        if type(data) is not dict:
+            return
+        fps = data.get("fps")
+        if fps is not None:
+            self.ui.lbl_fps.setText("%s" % fps)
 
     def update_image(self, image):
         self.light_observer.active_light()

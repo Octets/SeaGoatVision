@@ -169,11 +169,8 @@ class Media(object):
         if not self.publisher:
             return None
         key = self.get_name()
-        self.publisher.register(key)
-        return self.publisher.get_callback_publish(key)
+        return self.publisher.get_callback_publish("media.%s" % key)
 
     def _remove_cb_publisher(self):
         if not self.publisher:
             return None
-        key = self.get_name()
-        self.publisher.deregister(key)

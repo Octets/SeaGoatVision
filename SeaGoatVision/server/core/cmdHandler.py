@@ -59,12 +59,12 @@ class CmdHandler:
         self.resource.set_all_publisher(self.publisher)
         self.publisher.start()
 
-        # launch command on start
-        thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
-
         self.publisher.register(keys.get_key_execution_list())
         self.publisher.register(keys.get_key_filter_param())
         self.publisher.register(keys.get_key_media_param())
+
+        # launch command on start
+        thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
 
     def get_publisher(self):
         return self.publisher

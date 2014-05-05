@@ -33,11 +33,12 @@ logger = log.get_logger(__name__)
 
 
 class WinMedia(QtCore.QObject):
-    def __init__(self, controller):
+    def __init__(self, controller, subscriber):
         super(WinMedia, self).__init__()
         self.resource_icon_path = "SeaGoatVision/client/resource/img/"
         self.ui = None
         self.controller = controller
+        self.subscriber = subscriber
         self.shared_info = SharedInfo()
         self.shared_info.connect(SharedInfo.GLOBAL_START_EXEC, self.set_info)
 
@@ -98,8 +99,19 @@ class WinMedia(QtCore.QObject):
         lst_media = sorted(self.dct_media.keys(), key=lambda x: x.lower())
         for media in lst_media:
             self.ui.cbMedia.addItem(media)
+            # subscribe to notification
+            self.subscriber.subscribe("media.%s" % media,
+                                      self._subscribe_cb(media))
         self._change_media(after_update=True)
         self.ui.cbMedia.currentIndexChanged.connect(self._change_media)
+
+    def _subscribe_cb(self, media):
+        def _cb(data):
+            if self.ui.cbMedia.currentText() == media:
+                fps = data.get("fps")
+                if fps is not None:
+                    self.ui.lblFPS.setText("%s" % fps)
+        return _cb
 
     def _change_media(self, index=-1, after_update=False):
         media_name = self.ui.cbMedia.currentText()

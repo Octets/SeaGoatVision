@@ -54,12 +54,12 @@ class WinMain(QtGui.QMainWindow):
         self.showMaximized()
 
         # create dockWidgets
-        self.win_filter_param = WinFilterParam(self.controller, subscriber)
-        self.win_media_camera = WinMediaParam(self.controller, subscriber)
-        self.win_filter_list = WinFilterList(self.controller)
-        self.win_media = WinMedia(self.controller)
-        self.win_execution = WinExecution(self.controller, subscriber)
-        self.win_filter_chain = WinFilterChain(self.controller)
+        self.win_filter_param = WinFilterParam(controller, subscriber)
+        self.win_media_camera = WinMediaParam(controller, subscriber)
+        self.win_filter_list = WinFilterList(controller)
+        self.win_media = WinMedia(controller, subscriber)
+        self.win_execution = WinExecution(controller, subscriber)
+        self.win_filter_chain = WinFilterChain(controller)
         self.win_main_viewer = WinMainViewer()
 
         # Add default widget
