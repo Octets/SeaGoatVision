@@ -35,7 +35,7 @@ logger = log.get_logger(__name__)
 class WinMedia(QtCore.QObject):
     def __init__(self, controller):
         super(WinMedia, self).__init__()
-        self.resource_icon_path = "SeaGoatVision/client/ressource/img/"
+        self.resource_icon_path = "SeaGoatVision/client/resource/img/"
         self.ui = None
         self.controller = controller
         self.shared_info = SharedInfo()

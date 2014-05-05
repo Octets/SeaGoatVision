@@ -302,14 +302,14 @@ class Firewire(MediaStreaming):
         lst_auto = [value[:-(len(self.key_auto_param))]
                     for value in self.dct_params.keys()
                     if self.key_auto_param in value]
-        lst_active_auto = [value for value in lst_auto
-                           if self.dct_params["%s\
-                           %s" % (value, self.key_auto_param)].get()]
+        lst_auto = [value for value in lst_auto
+                    if self.dct_params["%s%s" %
+                                       (value, self.key_auto_param)].get()]
 
         for key, value in self.dct_params.items():
             contain_auto_variable = False
             # search active auto
-            for active_key in lst_active_auto:
+            for active_key in lst_auto:
                 if active_key in key:
                     contain_auto_variable = True
                     if self.key_auto_param in key:
