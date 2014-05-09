@@ -36,8 +36,8 @@ class CameraManta(MediaStreaming):
 		self.run = True
 		self.video = None
 		self.video = camera.Camera();
-		self.video.initialize()
 		self.video.start();
+		self.img = self.video.getCam();
 		self._is_opened = True
 		self._create_params()
 		self.deserialize(self.config.read_media(self.get_name()))
@@ -99,7 +99,7 @@ class CameraManta(MediaStreaming):
 		return MediaStreaming.open(self)
 
 	def next(self):
-		image = self.video.getFrame()        
+		image = self.img[self.video.getFrame()]        
 		return image
 
 	def close(self):
