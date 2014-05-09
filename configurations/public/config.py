@@ -29,7 +29,7 @@ from configurations.template_media.conf_webcam import ConfWebcam
 from configurations.template_media.conf_imageGenerator import \
     ConfImageGenerator
 from configurations.template_media.conf_ipc import ConfIpc
-from configurations.template_media.conf_camera import ConfCamera
+#from configurations.template_media.conf_camera import ConfCamera
 # from configurations.template_media.conf_firewire import Conf_firewire
 # from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
 
@@ -69,8 +69,8 @@ cam = ConfIpc()
 lst_media.append(cam)
 
 #add Camera Manta
-cam = ConfCamera()
-lst_media.append(cam)
+#cam = ConfCamera()
+#lst_media.append(cam)
 
 # example of firewire
 # cam = Conf_firewire()
