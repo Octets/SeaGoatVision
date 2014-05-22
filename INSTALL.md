@@ -29,7 +29,7 @@ Installation
 	sudo pip install jsonrpclib-pelix pyzmq
 
 #### Fedora :
-	sudo yum install python numpy scipy opencv-python python-pyside PyQT4 python-imaging opencv-devel python-pip ffmpeg
+	sudo yum install python numpy scipy opencv-python python-pyside PyQt4 python-pillow-qt opencv-devel python-pip ffmpeg
 	sudo pip install jsonrpclib-pelix pyzmq
 
 #### Arch Linux :
