@@ -40,6 +40,11 @@ def run_cli(ctr, subscriber, local=False, host="localhost", port=8090,
     from SeaGoatVision.client.cli.cli import run
 
     return run(ctr, subscriber, local=local, host=host, port=port, quiet=quiet)
+    
+def run_ros(ctr, subscriber, local=False, host="localhost", port=8090,
+            quiet=False):
+	from SeaGoatVision.client.ros_client.ros_client_run import run
+	return run(ctr, subscriber, local=local, host=host, port=port, quiet=quiet)
 
 
 if __name__ == '__main__':
@@ -47,7 +52,7 @@ if __name__ == '__main__':
         description='Open client for vision server.')
     parser.add_argument(
         'interface', metavar='interface name', nargs='?', type=str,
-        default="qt",
+        default="ros",
         help='cli, gtk or qt is supported.')
     parser.add_argument(
         '--local',
@@ -99,6 +104,10 @@ if __name__ == '__main__':
     elif sInterface == "cli":
         sys.exit(
             run_cli(ctr, subscriber, local=args.local, host=args.host,
+                    port=args.port, quiet=args.quiet))
+    elif sInterface == "ros":
+		sys.exit(
+            run_ros(ctr, subscriber, local=args.local, host=args.host,
                     port=args.port, quiet=args.quiet))
     else:
         logger.error("Interface not supported : %s", sInterface)
