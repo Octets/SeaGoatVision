@@ -1,0 +1,46 @@
+{
+    "lst_filter": [
+        {
+            "lst_param": [
+                {
+                    "name": "height", 
+                    "lst_value": null, 
+                    "min_v": 1, 
+                    "value": 3, 
+                    "max_v": 10, 
+                    "threshold": null
+                }, 
+                {
+                    "name": "width", 
+                    "lst_value": null, 
+                    "min_v": 1, 
+                    "value": 7, 
+                    "max_v": 10, 
+                    "threshold": null
+                }
+            ], 
+            "filter_name": "Blur"
+        }, 
+        {
+            "lst_param": [
+                {
+                    "name": "Threshold1", 
+                    "lst_value": null, 
+                    "min_v": 0, 
+                    "value": 10, 
+                    "max_v": 255, 
+                    "threshold": null
+                }, 
+                {
+                    "name": "Threshold2", 
+                    "lst_value": null, 
+                    "min_v": 0, 
+                    "value": 100, 
+                    "max_v": 255, 
+                    "threshold": null
+                }
+            ], 
+            "filter_name": "Canny"
+        }
+    ]
+}
