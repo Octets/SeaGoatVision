@@ -19,6 +19,7 @@
 import time
 import threading
 from SeaGoatVision.commons import log
+import media
 
 logger = log.get_logger(__name__)
 
@@ -41,16 +42,17 @@ class ThreadMedia(threading.Thread):
         self.running = True
         protection_max_reset = 3
         no_reset = 0
+        nb_busy = 0
         first_fps_time = time.time()
         nb_fps = 0
         image = None
         msg_error = "Max reset - close media %s" % self.media.get_name()
+        self.media.set_status(media.MediaStatus.run)
 
         while self.running:
             # TODO try to remove this try catch for better performance
             try:
                 image = self.media.next()
-                nb_fps += 1
                 no_reset = 0
             except StopIteration:
                 if self.media.active_loop:
@@ -67,14 +69,22 @@ class ThreadMedia(threading.Thread):
                         time.sleep(sleep_time_per_fps)
 
             if image is None:
+                # if receive no image since 1 sec, the camera is maybe busy
+                nb_busy += 1
+                if nb_busy > self.media.fps:
+                    self.media.set_status(media.MediaStatus.busy)
                 time.sleep(sleep_time_per_fps)
                 continue
+            nb_busy = 0
+            nb_fps += 1
 
             # take a break if in pause
             while self.pause:
+                self.media.set_status(media.MediaStatus.pause)
                 if not self.running:
                     return
                 time.sleep(sleep_time_per_fps)
+            self.media.set_status(media.MediaStatus.run)
 
             if not self.running:
                 return
@@ -99,3 +109,4 @@ class ThreadMedia(threading.Thread):
 
     def stop(self):
         self.running = False
+        self.media.set_status(media.MediaStatus.close)

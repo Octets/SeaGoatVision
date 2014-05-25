@@ -24,16 +24,27 @@ from SeaGoatVision.commons import log
 logger = log.get_logger(__name__)
 
 
-class Media(object):
+class MediaStatus(object):
+    run = "run"
+    close = "close"
+    busy = "busy"
+    pause = "pause"
+    lst_status = [run, close, busy, pause]
 
+
+class Media(object):
     def __init__(self):
-        self.sleep_time = 1 / 30.0
+        # TODO change sleep_time dependant of real fps desire
+        self.fps = 30.0
+        self.sleep_time = 1 / self.fps
         self.lst_observer = []
         self.thread = None
         self.media_name = None
         self.active_loop = True
         self.is_client_manager = False
         self.publisher = None
+        self.cb_publish = None
+        self.status = MediaStatus.close
 
     def set_is_client_manager(self, is_client_manager):
         self.is_client_manager = is_client_manager
@@ -64,6 +75,19 @@ class Media(object):
     def get_name(self):
         return self.media_name
 
+    def get_status(self):
+        return self.status
+
+    def set_status(self, status):
+        if not status in MediaStatus.lst_status:
+            msg = "Status %s in media %s not supported." % (status,
+                                                            self.get_name())
+            logger.error(msg)
+            return
+        if self.status != status:
+            self.status = status
+            self.cb_publish({"status": status})
+
     def __iter__(self):
         return self
 
@@ -72,7 +96,11 @@ class Media(object):
 
     def get_info(self):
         fps = int(1 / self.sleep_time) if self.thread else -1
-        return {"fps": fps, "nb_frame": self.get_total_frames()}
+        return {
+            "fps": fps,
+            "nb_frame": self.get_total_frames(),
+            "status": self.get_status()
+        }
 
     def serialize(self, is_config=False):
         pass
@@ -93,8 +121,7 @@ class Media(object):
             return True
         if self.thread:
             return False
-        cb_publisher = self._get_cb_publisher()
-        self.thread = ThreadMedia(self, cb_publisher)
+        self.thread = ThreadMedia(self, self.cb_publish)
         self.thread.start()
         return True
 
@@ -115,6 +142,7 @@ class Media(object):
             return False
         self.thread.stop()
         self.thread = None
+        self.status = MediaStatus.close
         return True
 
     def initialize(self):
@@ -146,8 +174,7 @@ class Media(object):
         if observer in self.lst_observer:
             self.lst_observer.remove(observer)
         else:
-            logger.warning("Observer missing into media %s" %
-                           (self.get_name()))
+            logger.warning("Observer missing into media %s" % self.get_name())
         if not self.lst_observer:
             self.close()
 
@@ -161,6 +188,7 @@ class Media(object):
 
     def set_publisher(self, publisher):
         self.publisher = publisher
+        self.cb_publish = self._get_cb_publisher()
 
     def get_publisher(self):
         return self.publisher

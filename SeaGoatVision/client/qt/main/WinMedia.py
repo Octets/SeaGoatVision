@@ -111,6 +111,9 @@ class WinMedia(QtCore.QObject):
                 fps = data.get("fps")
                 if fps is not None:
                     self.ui.lblFPS.setText("%s" % fps)
+                status = data.get("status")
+                if status is not None:
+                    self.ui.lblStatus.setText("%s" % status)
         return _cb
 
     def _change_media(self, index=-1, after_update=False):
@@ -234,6 +237,7 @@ class WinMedia(QtCore.QObject):
         self.ui.slider_frame.setMaximum(self.max_frame)
         self.thread_player.set_max_frame(self.max_frame)
         self.ui.lblFPS.setText("%s" % info.get("fps", "-1"))
+        self.ui.lblStatus.setText("%s" % info.get("status", "None"))
         record_name = info.get("record_file_name", "")
         self.ui.txt_name_record.setText("%s" % record_name)
         self.is_recorded = bool(record_name)
