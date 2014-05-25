@@ -78,6 +78,10 @@ class ImageGenerator(MediaStreaming):
         param.set_description("Change blue color.")
         self.dct_params["color_b"] = param
 
+        param = Param("freeze", False)
+        param.set_description("Freeze the stream.")
+        self.dct_params["freeze"] = param
+
     def serialize(self, is_config=False):
         return {
             "width": self.dct_params.get("width").get(),
@@ -118,6 +122,9 @@ class ImageGenerator(MediaStreaming):
         return True
 
     def next(self):
+        freeze = self.dct_params.get("freeze").get()
+        if freeze:
+            return
         width = self.dct_params.get("width").get()
         height = self.dct_params.get("height").get()
         color_r = self.dct_params.get("color_r").get()
