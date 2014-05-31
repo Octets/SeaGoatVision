@@ -14,7 +14,7 @@
                     "name": "width", 
                     "lst_value": null, 
                     "min_v": 1, 
-                    "value": 7, 
+                    "value": 9, 
                     "max_v": 10, 
                     "threshold": null
                 }
@@ -27,7 +27,7 @@
                     "name": "Threshold1", 
                     "lst_value": null, 
                     "min_v": 0, 
-                    "value": 10, 
+                    "value": 182, 
                     "max_v": 255, 
                     "threshold": null
                 }, 
