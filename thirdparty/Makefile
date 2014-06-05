@@ -17,8 +17,8 @@
 
 all:
 	-make -C public
-	if [ -a private/Makefile ]; then make -C private; fi;
+	if [ -e private/Makefile ]; then make -C private; fi;
 
 clean:
 	-make -C public clean
-	if [ -a private/Makefile ]; then make -C private clean; fi;
+	if [ -e private/Makefile ]; then make -C private clean; fi;

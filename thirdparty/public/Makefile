@@ -16,7 +16,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 all:
-	if [ -a pydc1394/Makefile ]; then make -C pydc1394; fi;
+	if [ -e pydc1394/Makefile ]; then make -C pydc1394; fi;
 
 clean:
-	if [ -a pydc1394/Makefile ]; then make -C pydc1394 clean; fi;
+	if [ -e pydc1394/Makefile ]; then make -C pydc1394 clean; fi;
