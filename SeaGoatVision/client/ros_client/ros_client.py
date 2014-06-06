@@ -23,11 +23,13 @@ Description : Implementation of seagoat ros client
 
 
 import rospy
+import roslaunch
 import signal
 import cv2
 import cv
 from copy import deepcopy
-
+import subprocess
+import os
 import sys
 
 from rospy.numpy_msg import numpy_msg
@@ -40,8 +42,11 @@ class RosClient:
     def __init__(self, controller, subscriber,
                  host="localhost", islocal=False):
         self.publisher = rospy.Publisher('ImageArray', Image)
+        os.system("roslaunch ros_client.launch")
 
         rospy.init_node('VisionRosClient')
+
+        self._init_param()
         self.controller = controller
         self.subscriber = subscriber
         self.subscriber.start()
@@ -50,8 +55,8 @@ class RosClient:
         self.r = rospy.Rate(10)
 
         self.execution_name = "ros_client"
-        self.media_name = "Webcam"
-        self.filterchain = "TestRos"
+        self.media_name = rospy.get_param("media_name")
+        self.filterchain = rospy.get_param("filterchain")
         file_name = self.shared_info.get(SharedInfo.GLOBAL_PATH_MEDIA)
         is_client_manager = False
         self.controller.get_info_media(self.media_name)
@@ -66,7 +71,7 @@ class RosClient:
             is_client_manager
         )
 
-        self.controller.add_image_observer(self.update_image, self.execution_name, "Canny-1")
+        self.controller.add_image_observer(self.update_image, self.execution_name, rospy.get_param("filter"))
         self.controller.add_output_observer(self.execution_name)
 
         self.subscriber.subscribe("media.%s" % self.media_name,
@@ -85,9 +90,7 @@ class RosClient:
     def update_image(self, image):
 
         msg = CvBridge().cv2_to_imgmsg(image)
-        msg.header.frame_id = "seagoat"
-        cv2.imshow("image", image)
-        cv2.waitKey(10)
+        msg.header.frame_id = "seagoat"     
 
         try:
             self.publisher.publish(msg)
@@ -100,9 +103,19 @@ class RosClient:
         fps = data.get("fps")
         print "fps: "+str(fps)
 
+    def _init_param(self):
+        if not rospy.has_param("media_name"):
+            rospy.set_param("media_name", "Webcam")
+        if not rospy.has_param("filterchain"):
+            rospy.set_param("filterchain", "TestRos")
+        if not rospy.has_param("filter"):
+            rospy.set_param("filter", "Canny-1")
+
     def exit(self, signal, frame):
         print "Ros client is stopping"
         self.active = False
+
+
 
 
 

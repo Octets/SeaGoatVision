@@ -1,0 +1,5 @@
+<launch>
+	<param name="media_name" value="Camera" />
+	<param name="filerchain" value="TestRos" />
+	<param name="filter" value="Canny-1" />
+</launch>
