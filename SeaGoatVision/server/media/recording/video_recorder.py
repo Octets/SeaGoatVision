@@ -100,9 +100,7 @@ class VideoRecorder:
         self.sem.release()
 
     def get_file_name(self):
-        if not self.file_name:
-            return ""
-        return self.file_name
+        return self.file_name if self.file_name else ""
 
     def stop(self):
         logger.info("Close record on path: %s", self.file_name)

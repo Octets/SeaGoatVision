@@ -74,6 +74,7 @@ class MediaStreaming(Media):
         return self.recorder.start(self.shape, path=path, compress=compress)
 
     def stop_record(self):
+        status = False
         if self.recorder:
             self._last_record_path = self.recorder.file_name
             status = self.recorder.stop()

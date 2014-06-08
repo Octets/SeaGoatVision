@@ -38,6 +38,12 @@
       <property name="textElideMode">
        <enum>Qt::ElideRight</enum>
       </property>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
       <column>
        <property name="text">
         <string>Date</string>
