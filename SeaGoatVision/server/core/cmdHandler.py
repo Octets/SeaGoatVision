@@ -27,6 +27,7 @@ from resource import Resource
 from publisher import Publisher
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons import keys
+import time
 import inspect
 import json
 import thread
@@ -46,6 +47,9 @@ class CmdHandler:
         self.dct_exec = {}
         self.config = Configuration()
         self.resource = Resource()
+        # all record history, contains:
+        # {"time": ..., "media_name": ..., "path": ...}
+        self.lst_record_historic = []
 
         # tcp server for output observer
         self.nb_observer_client = 0
@@ -62,6 +66,7 @@ class CmdHandler:
         self.publisher.register(keys.get_key_execution_list())
         self.publisher.register(keys.get_key_filter_param())
         self.publisher.register(keys.get_key_media_param())
+        self.publisher.register(keys.get_key_lst_rec_historic())
 
         # launch command on start
         thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
@@ -76,6 +81,9 @@ class CmdHandler:
         self.server_observer.stop()
         self.publisher.stop()
         self.publisher.deregister(keys.get_key_execution_list())
+        self.publisher.deregister(keys.get_key_filter_param())
+        self.publisher.deregister(keys.get_key_media_param())
+        self.publisher.deregister(keys.get_key_lst_rec_historic())
 
     @staticmethod
     def _post_command_(arg):
@@ -108,7 +116,7 @@ class CmdHandler:
         if execution:
             log.print_function(
                 logger.error, "The execution %s is already created." %
-                              execution_name)
+                execution_name)
             return False
 
         filterchain = self.resource.get_filterchain(
@@ -117,7 +125,7 @@ class CmdHandler:
         if not filterchain:
             log.print_function(
                 logger.error, "Filterchain %s not exist or contain error." %
-                              filterchain_name)
+                filterchain_name)
             return False
 
         # Exception, if not media_name, we take the default media_name from the
@@ -146,8 +154,7 @@ class CmdHandler:
             KEY_FILTERCHAIN: filterchain, KEY_MEDIA: media}
 
         self.publisher.publish(
-            keys.get_key_execution_list(), "+%s" %
-                                           execution_name)
+            keys.get_key_execution_list(), "+%s" % execution_name)
 
         for filter_name in filterchain.get_filter_name():
             key = keys.create_unique_exec_filter_name(execution_name,
@@ -191,7 +198,7 @@ class CmdHandler:
         # publish removing filterchain
         self.publisher.publish(
             keys.get_key_execution_list(), "-%s" %
-                                           execution_name)
+            execution_name)
 
         return True
 
@@ -274,7 +281,25 @@ class CmdHandler:
                 "Cannot stop record to a media media %s." %
                 media_name)
             return False
-        return media.stop_record()
+        status = media.stop_record()
+        if status:
+            # {"time": ..., "media_name": ..., "path": ...}
+            record_status = {
+                "time": time.time(),
+                "media_name": media_name,
+                "path": media.get_path_record(),
+            }
+            self.lst_record_historic.append(record_status)
+            self.publisher.publish(keys.get_key_lst_rec_historic(),
+                                   record_status)
+        else:
+            log.print_function(logger.error,
+                               "Error to stop the record %s." % media_name)
+        return status
+
+    def get_lst_record_historic(self):
+        self._post_command_(locals())
+        return self.lst_record_historic
 
     def get_params_media(self, media_name):
         self._post_command_(locals())
@@ -309,13 +334,13 @@ class CmdHandler:
             if not param:
                 log.print_function(
                     logger.error, "Missing param %s in media %s." %
-                                  (param_name, media_name))
+                    (param_name, media_name))
                 return False
             data = {"media": media_name, "param": param.serialize()}
             json_data = json.dumps(data)
             self.publisher.publish(
                 keys.get_key_media_param(), "%s" %
-                                            json_data)
+                json_data)
         return status
 
     def save_params_media(self, media_name):

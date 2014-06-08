@@ -94,10 +94,15 @@ def get_key_all_output_filter():
     return "all_output_filter"
 
 
+def get_key_lst_rec_historic():
+    return "lst_rec_historic"
+
+
 def get_lst_key_topic_pubsub():
     return {
         get_key_all_output_filter(): 1,
         get_key_execution_list(): 2,
         get_key_filter_param(): 3,
         get_key_media_param(): 4,
+        get_key_lst_rec_historic(): 5,
     }

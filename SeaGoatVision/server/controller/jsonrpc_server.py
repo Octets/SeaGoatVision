@@ -78,6 +78,7 @@ class JsonrpcServer():
         rf(self.cmd_handler.update_param_media, "update_param_media")
         rf(self.cmd_handler.update_param, "update_param")
         rf(self.cmd_handler.subscribe, "subscribe")
+        rf(self.cmd_handler.get_lst_record_historic, "get_lst_record_historic")
 
     def run(self):
         self.server.serve_forever()

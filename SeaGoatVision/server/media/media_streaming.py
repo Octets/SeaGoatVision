@@ -35,6 +35,7 @@ class MediaStreaming(Media):
         self.recorder_video = VideoRecorder(self)
         self.recorder_image = ImageRecorder(self)
         self.recorder = None
+        self._last_record_path = None
 
     def is_media_streaming(self):
         return True
@@ -60,6 +61,10 @@ class MediaStreaming(Media):
             logger.error("Wrong argument when start_record, receive \
                 options: %s" % options)
 
+        if self.recorder:
+            logger.error("Already recording media %s." % self.get_name())
+            return False
+
         if options.get("format",
                        keys.get_key_format_avi()) == keys.get_key_format_png():
             self.recorder = self.recorder_image
@@ -69,6 +74,14 @@ class MediaStreaming(Media):
         return self.recorder.start(self.shape, path=path, compress=compress)
 
     def stop_record(self):
-        status = self.recorder.stop()
-        self.recorder = None
+        if self.recorder:
+            self._last_record_path = self.recorder.file_name
+            status = self.recorder.stop()
+            self.recorder = None
+        else:
+            logger.warning(
+                "Record of media %s was already stopped." % self.get_name())
         return status
+
+    def get_path_record(self):
+        return self._last_record_path

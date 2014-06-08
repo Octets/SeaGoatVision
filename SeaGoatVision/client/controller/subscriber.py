@@ -132,7 +132,7 @@ class ListenOutput(threading.Thread):
                     continue
                 # Context was terminated
                 if e.errno == 156384765:
-                    self.is_stopped
+                    self.is_stopped = True
                     continue
                 log.printerror_stacktrace(logger, e)
             except BaseException as e:
