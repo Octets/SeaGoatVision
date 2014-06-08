@@ -12,10 +12,13 @@ int rotationY_ = 0;
 int zoom_ = 100;
 
 void init() {
-
+	rotationX_ = ParameterAsInt("rotationX_", -360, 360, -160);
+	rotationY_ = ParameterAsInt("rotationY_", -360, 360, 0);
+	zoom_ = ParameterAsInt("zoom_", 0, 1000, 100);
 }
 
 void configure() {
+	init();
 }
 
 cv::Mat execute(cv::Mat image)
