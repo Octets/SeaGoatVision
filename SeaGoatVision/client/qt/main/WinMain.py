@@ -26,6 +26,7 @@ from WinViewer import WinViewer
 from WinFilterChain import WinFilterChain
 from WinExecution import WinExecution
 from WinMainViewer import WinMainViewer
+from WinRecHistoric import WinRecHistoric
 from WinFilterParam import WinFilterParam
 from WinMediaParam import WinMediaParam
 from PySide import QtGui
@@ -36,7 +37,6 @@ logger = log.get_logger(__name__)
 
 
 class WinMain(QtGui.QMainWindow):
-
     def __init__(self, controller, subscriber,
                  host="localhost", islocal=False):
         super(WinMain, self).__init__()
@@ -55,6 +55,7 @@ class WinMain(QtGui.QMainWindow):
 
         # create dockWidgets
         self.win_filter_param = WinFilterParam(controller, subscriber)
+        self.win_rec_historic = WinRecHistoric(controller, subscriber)
         self.win_media_camera = WinMediaParam(controller, subscriber)
         self.win_filter_list = WinFilterList(controller)
         self.win_media = WinMedia(controller, subscriber)
@@ -69,11 +70,21 @@ class WinMain(QtGui.QMainWindow):
         self.show_win_media(first_time=True)
         self.show_win_execution(first_time=True)
         self.show_win_camera(first_time=True)
+        self.show_win_rec_historic(first_time=True)
 
         # Tabify dockwidget
-        self.tabifyDockWidget(self.win_media.ui, self.win_media_camera.ui)
         self.tabifyDockWidget(
-            self.win_filter_param.ui, self.win_filter_list.ui)
+            self.win_media.ui,
+            self.win_rec_historic.ui
+        )
+        self.tabifyDockWidget(
+            self.win_media.ui,
+            self.win_media_camera.ui
+        )
+        self.tabifyDockWidget(
+            self.win_filter_param.ui,
+            self.win_filter_list.ui
+        )
 
         # Signal
         self.win_filter_list.onAddFilter.connect(
@@ -84,6 +95,7 @@ class WinMain(QtGui.QMainWindow):
         self.ui.btnExecution.clicked.connect(self.show_win_execution)
         self.ui.btnCamera.clicked.connect(self.show_win_camera)
         self.ui.btnParam.clicked.connect(self.show_win_filter)
+        self.ui.btnRecHistoric.clicked.connect(self.show_win_rec_historic)
         self.win_execution.onPreviewClick.connect(self.add_preview)
 
         self._add_tool_bar()
@@ -130,6 +142,14 @@ class WinMain(QtGui.QMainWindow):
         self.addDockWidget(
             QtCore.Qt.DockWidgetArea.RightDockWidgetArea,
             self.win_filter_param.ui)
+
+    def show_win_rec_historic(self, first_time=False):
+        if not first_time:
+            self.removeDockWidget(self.win_rec_historic.ui)
+            self.win_rec_historic.reload_ui()
+        self.addDockWidget(
+            QtCore.Qt.DockWidgetArea.RightDockWidgetArea,
+            self.win_rec_historic.ui)
 
     def show_win_camera(self, first_time=False):
         if not first_time:
