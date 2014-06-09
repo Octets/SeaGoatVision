@@ -24,7 +24,7 @@ Description :
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
 from resource import Resource
-from publisher import Publisher
+from SeaGoatVision.server.controller.publisher import Publisher
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons import keys
 import time
