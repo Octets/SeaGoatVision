@@ -55,10 +55,12 @@ class MediaStreaming(Media):
     def get_type_media(self):
         return keys.get_media_type_streaming_name()
 
-    def start_record(self, path=None, options={}):
+    def start_record(self, path=None, options=None):
+        if not options:
+            options = {}
         if type(options) != dict:
             options = {}
-            logger.error("Wrong argument when start_record, receive \
+            logger.warning("Wrong argument when start_record, receive \
                 options: %s" % options)
 
         if self.recorder:
