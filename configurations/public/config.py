@@ -30,7 +30,7 @@ from configurations.template_media.conf_imageGenerator import \
     ConfImageGenerator
 from configurations.template_media.conf_ipc import ConfIpc
 #from configurations.template_media.conf_camera import ConfCamera
-# from configurations.template_media.conf_firewire import Conf_firewire
+# from configurations.template_media.conf_firewire import ConfFirewire
 # from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
 
 # keep always true for public configuration
@@ -73,7 +73,7 @@ lst_media.append(cam)
 #lst_media.append(cam)
 
 # example of firewire
-# cam = Conf_firewire()
+# cam = ConfFirewire()
 # cam.guid = 0x123456789
 # cam.name = "Firewire"
 # lst_media.append(cam)
