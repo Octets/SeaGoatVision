@@ -1,21 +1,21 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+# This file is part of SeaGoatVision.
 #
-#    SeaGoatVision is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# SeaGoatVision is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 Parameter is used by filter and client. This is public variable with specific
 type of filter.
@@ -43,7 +43,6 @@ logger = log.get_logger(__name__)
 
 
 class Param(object):
-
     """Param autodetect basic type
     force_type need to be a <type>
     If you want specific type, cast it to basic type and use force_type
@@ -113,7 +112,7 @@ class Param(object):
                 min_v = int(min_v)
             if max_v is not None:
                 max_v = int(max_v)
-        if type_t is float or type_t is int or type_t is long:
+        if type_t is float or type_t is int:
             # check min and max
             if min_v is not None:
                 type_min = type(min_v)
@@ -284,42 +283,9 @@ class Param(object):
             raise ValueError(
                 "value is wrong type. Expected %s and receive %s" % (
                     self.type_t, type(value)))
-        if self.type_t is int or self.type_t is float:
-            delta_val = self.min_v - self.delta_float
-            if self.min_v is not None and value < delta_val:
-                raise ValueError(
-                    "Value %s is lower then min %s" % (value, self.min_v))
-            delta_val = self.max_v + self.delta_float
-            if self.max_v is not None and value > delta_val:
-                raise ValueError(
-                    "Value %s is upper then max %s" % (value, self.max_v))
-            if self.lst_value is not None and value not in self.lst_value:
-                raise ValueError("value %s is not in lst of value" % value)
-        if self.threshold is not None:
-            if threshold is None:
-                if value > self.threshold:
-                    msg = "Threshold bot %s is upper then threshold \
-                    top %s." % (value, self.threshold)
-                    raise ValueError(msg)
-            else:
-                if self.type_t is int and isinstance(threshold, float):
-                    threshold = int(threshold)
-                if self.type_t is float and isinstance(threshold, int):
-                    threshold = float(threshold)
-                if not isinstance(threshold, self.type_t):
-                    msg = "value is wrong type. Expected %s and receive %s" % (
-                        self.type_t, type(threshold))
-                    raise ValueError(msg)
-                elif value > threshold:
-                    msg = "Threshold low %s is upper then threshold high \
-                    %s." % (value, threshold)
-                    raise ValueError(msg)
-                if threshold > self.max_v:
-                    raise ValueError(
-                        "Threshold high %s is upper then max %s." % (
-                            threshold, self.max_v))
-                self.threshold = threshold
-                # check if item is in list
+        self._validate_number(value)
+        self._validate_threshold(value, threshold)
+        # check if item is in list
         if self.lst_value and value not in self.lst_value:
             raise ValueError("The value %s is not in lst_value %s." % (
                 value, self.lst_value))
@@ -327,6 +293,47 @@ class Param(object):
         # send the value on all notify callback
         for notify in self.lst_notify:
             notify(value)
+
+    def _validate_number(self, value):
+        if not (self.type_t is int or self.type_t is float):
+            return
+        delta_val = self.min_v - self.delta_float
+        if self.min_v is not None and value < delta_val:
+            msg = "Value %s is lower then min %s" % (value, self.min_v)
+            raise ValueError(msg)
+        delta_val = self.max_v + self.delta_float
+        if self.max_v is not None and value > delta_val:
+            msg = "Value %s is upper then max %s" % (value, self.max_v)
+            raise ValueError(msg)
+        if self.lst_value is not None and value not in self.lst_value:
+            raise ValueError("value %s is not in lst of value" % value)
+
+    def _validate_threshold(self, value, threshold):
+        if self.threshold is None:
+            return
+        if threshold is None:
+            if value > self.threshold:
+                msg = "Threshold bot %s is upper then threshold top %s." % (
+                    value, self.threshold)
+                raise ValueError(msg)
+            return
+        if self.type_t is int and isinstance(threshold, float):
+            threshold = int(threshold)
+        if self.type_t is float and isinstance(threshold, int):
+            threshold = float(threshold)
+        if not isinstance(threshold, self.type_t):
+            msg = "value is wrong type. Expected %s and receive %s" % (
+                self.type_t, type(threshold))
+            raise ValueError(msg)
+        elif value > threshold:
+            msg = "Threshold low %s is upper then threshold high %s." % (
+                value, threshold)
+            raise ValueError(msg)
+        if threshold > self.max_v:
+            msg = "Threshold high %s is upper then max %s." % (
+                threshold, self.max_v)
+            raise ValueError(msg)
+        self.threshold = threshold
 
     def get_type(self):
         return self.force_type
