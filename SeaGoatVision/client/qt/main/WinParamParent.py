@@ -511,10 +511,11 @@ class StrWidget(ParentWidget):
             if combo.currentText() == param.get():
                 return
             combo.clear()
-            items = [str(v) for v in lst_value]
+            lst_value_sorted = sorted(lst_value)
+            items = [str(v) for v in lst_value_sorted]
             items.sort()
             combo.addItems(items)
-            combo.setCurrentIndex(lst_value.index(param.get()))
+            combo.setCurrentIndex(lst_value_sorted.index(param.get()))
 
     def _set_server_widget(self, param):
         self.param = param
@@ -527,9 +528,12 @@ class StrWidget(ParentWidget):
             line_edit.setVisible(True)
             line_edit.setText(str(param.get()))
         else:
+            lst_value_sorted = sorted(lst_value)
             combo.setVisible(True)
             line_edit.setVisible(False)
-            combo.setCurrentIndex(lst_value.index(param.get()))
+            combo.currentIndexChanged.disconnect(self._signal_combo_change)
+            combo.setCurrentIndex(lst_value_sorted.index(param.get()))
+            combo.currentIndexChanged.connect(self._signal_combo_change)
 
     def _signal_combo_change(self, index):
         if self.is_visible and index >= 0:
