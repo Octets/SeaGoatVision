@@ -30,7 +30,13 @@ from configurations.template_media.conf_imageGenerator import \
     ConfImageGenerator
 from configurations.template_media.conf_ipc import ConfIpc
 #from configurations.template_media.conf_camera import ConfCamera
-# from configurations.template_media.conf_firewire import ConfFirewire
+# FIREWIRE
+#from configurations.template_media.conf_firewire import ConfFirewire
+#try:
+#    from thirdparty.public.pydc1394 import video1394
+#except:
+#    pass
+# END FIREWIRE
 # from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
 
 # keep always true for public configuration
