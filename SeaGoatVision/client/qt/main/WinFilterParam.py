@@ -120,6 +120,9 @@ class WinFilterParam(WinParamParent):
         status = self.controller.update_param(self.execution_name,
                                               self.filter_name, param_name,
                                               value)
+        # don't change value if type None
+        if param_type is type(None):
+            return
         if status:
             param.set(value)
         else:

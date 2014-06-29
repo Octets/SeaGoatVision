@@ -19,6 +19,7 @@
 
 # thanks for float_qslider.py : https://gist.github.com/justinfx/3427750
 
+import types
 from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.client.qt.utils import get_ui
@@ -129,26 +130,24 @@ class WinParamParent(QtGui.QDockWidget):
             widget = None
         # it's not exist, create a new one
         if not widget:
+            class_widget = None
             if param_type is int:
-                widget = IntWidget(self.controller, self.shared_info, param,
-                                   self.parent_layout,
-                                   self.set_value)
+                class_widget = IntWidget
             elif param_type is float:
-                widget = FloatWidget(self.controller, self.shared_info, param,
-                                     self.parent_layout,
-                                     self.set_value)
+                class_widget = FloatWidget
             elif param_type is str:
-                widget = StrWidget(self.controller, self.shared_info, param,
-                                   self.parent_layout,
-                                   self.set_value)
+                class_widget = StrWidget
             elif param_type is bool:
-                widget = BoolWidget(self.controller, self.shared_info, param,
-                                    self.parent_layout,
-                                    self.set_value)
+                class_widget = BoolWidget
+            elif param_type is types.NoneType:
+                class_widget = NoneWidget
             else:
-                logger.error("The type %s is not supported in WinParamParent /"
+                logger.error("The type %s is not supported in WinParamParent "
                              "widget." % param_type)
                 return
+            widget = class_widget(self.controller, self.shared_info, param,
+                                  self.parent_layout,
+                                  self.set_value)
             self.lst_active_widget.append(widget)
 
         widget.set_param(param)
@@ -193,7 +192,6 @@ class WinParamParent(QtGui.QDockWidget):
 
 
 class ParentWidget(object):
-
     def __init__(self, controller, shared_info, param, parent_layout,
                  set_value):
         # The type of the widget cannot change
@@ -264,7 +262,6 @@ class ParentWidget(object):
 
 
 class IntWidget(ParentWidget):
-
     def __init__(self, controller, shared_info, param, parent_layout,
                  set_value):
         self.slider = None
@@ -355,7 +352,6 @@ class IntWidget(ParentWidget):
 
 
 class FloatWidget(ParentWidget):
-
     def __init__(self, controller, shared_info, param, parent_layout,
                  set_value):
         self.slider = None
@@ -476,7 +472,6 @@ class FloatWidget(ParentWidget):
 
 
 class StrWidget(ParentWidget):
-
     def __init__(self, controller, shared_info, param, parent_layout,
                  set_value):
         # common widget
@@ -548,7 +543,6 @@ class StrWidget(ParentWidget):
 
 
 class BoolWidget(ParentWidget):
-
     def __init__(self, controller, shared_info, param, parent_layout,
                  set_value):
         self.checkbox = None
@@ -579,3 +573,32 @@ class BoolWidget(ParentWidget):
     def _signal_check_state(self, value):
         if self.is_visible:
             self._set_value(value)
+
+
+class NoneWidget(ParentWidget):
+    def __init__(self, controller, shared_info, param, parent_layout,
+                 set_value):
+        self.button = None
+        super(self.__class__, self).__init__(controller, shared_info, param,
+                                             parent_layout,
+                                             set_value)
+
+    def _create_widget(self):
+        self.button = button = QtGui.QPushButton()
+        button.clicked.connect(self._signal_clicked)
+
+        layout = QtGui.QHBoxLayout()
+        layout.addWidget(button)
+        return layout
+
+    def _set_widget(self):
+        param = self.param
+        self.button.setText(param.get_name())
+
+    def _set_server_widget(self, param):
+        self.param = param
+        self._set_widget()
+
+    def _signal_clicked(self):
+        if self.is_visible:
+            self._set_value(None)
