@@ -24,6 +24,13 @@ Installation
 	git clone git://github.com/Octets/SeaGoatVision.git
 
 ###B. Install dependencies
+#### Ubuntu 14.04 :
+Do this command and continue with Ubuntu section.
+
+	sudo add-apt-repository ppa:mc3man/trusty-media
+	sudo apt-get update
+	sudo apt-get install gstreamer0.10-ffmpeg ffmpeg
+
 #### Ubuntu :
 	sudo apt-get install python python-numpy python-scipy python-opencv python-pyside python-qt4 python-imaging libopencv-dev python-pip ffmpeg
 	sudo pip install jsonrpclib-pelix pyzmq
@@ -33,7 +40,7 @@ Installation
 	sudo pip install jsonrpclib-pelix pyzmq
 
 #### Arch Linux :
-Don't forget to active the "community" repositorie. See https://wiki.archlinux.org/index.php/Pacman
+Don't forget to active the "community" repository. See https://wiki.archlinux.org/index.php/Pacman
 
 	yaourt -S python2 python2-numpy python2-scipy opencv python2-pyside python2-pyqt python2-imaging python2-pip ffmpeg
 	sudo pip2 install jsonrpclib-pelix pyzmq
