@@ -36,13 +36,13 @@ Do this command and continue with Ubuntu section.
 	sudo pip install jsonrpclib-pelix pyzmq
 
 #### Fedora :
-	sudo yum install python numpy scipy opencv-python python-pyside PyQt4 python-pillow-qt opencv-devel python-pip ffmpeg
+	sudo yum install python numpy scipy opencv-python python-pyside PyQt4 python-pillow-qt opencv-devel python-pip ffmpeg czmq-devel
 	sudo pip install jsonrpclib-pelix pyzmq
 
 #### Arch Linux :
 Don't forget to active the "community" repository. See https://wiki.archlinux.org/index.php/Pacman
 
-	yaourt -S python2 python2-numpy python2-scipy opencv python2-pyside python2-pyqt python2-imaging python2-pip ffmpeg
+	yaourt -S python2 python2-numpy python2-scipy opencv python2-pyside python2-pyqt python2-imaging python2-pip ffmpeg zeromq
 	sudo pip2 install jsonrpclib-pelix pyzmq
 
 #### Windows :
