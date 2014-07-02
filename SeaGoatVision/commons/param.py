@@ -37,7 +37,6 @@ TIPS :
     p = Param("f", 2, min_v=1, max_v=8, threshold=5)
  - When value is None, you can use it like a trigger.
 """
-import numpy as np
 from SeaGoatVision.commons import log
 import types
 
@@ -48,7 +47,7 @@ class Param(object):
     """Param autodetect basic type
     force_type need to be a <type>
     If you want specific type, cast it to basic type and use force_type
-    Param manager type : None, ndarray, bool, str, int and float
+    Param manager type : None, unicode, bool, str, int, long and float
     """
 
     def __init__(self, name, value, min_v=None, max_v=None, lst_value=None,
@@ -96,18 +95,18 @@ class Param(object):
         else:
             self.force_type = self.type_t
 
-    def _valid_param(self, value, min_v, max_v, lst_value, threshold):
+    def _valid_param(self, value, min_v, max_v, lst_value, threshold,
+                     type_validated=False):
         type_t = type(value)
+        if not type_validated and not (type_t is int
+                                       or type_t is types.NoneType
+                                       or type_t is bool
+                                       or type_t is float
+                                       or type_t is str
+                                       or type_t is long
+                                       or type_t is unicode):
+            raise ValueError("Param don't manage type %s" % type_t)
         if type_t is unicode:
-            if not (type_t is int
-                    or type_t is types.NoneType
-                    or type_t is bool
-                    or type_t is float
-                    or type_t is str
-                    or type_t is np.ndarray
-                    or type_t is long
-                    or type_t is unicode):
-                raise ValueError("Param don't manage type %s" % type_t)
             type_t = str
         if type_t is long:
             type_t = int
@@ -260,7 +259,7 @@ class Param(object):
     def get(self):
         # Exception, cannot convert to numpy array
         # this can create bug in your filter if you pass wrong type
-        if self.force_type is np.ndarray or self.force_type is types.NoneType:
+        if self.force_type is types.NoneType:
             return self.value
         if self.threshold is not None:
             return self.force_type(self.value), self.force_type(self.threshold)

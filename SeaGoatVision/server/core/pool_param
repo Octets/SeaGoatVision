@@ -1,0 +1,83 @@
+#! /usr/bin/env python
+
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+#
+#    This file is part of SeaGoatVision.
+#
+#    SeaGoatVision is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+from SeaGoatVision.commons.param import Param
+from SeaGoatVision.commons.shared_param import SharedParam
+from SeaGoatVision.commons import log
+import threading
+
+logger = log.get_logger(__name__)
+
+
+class PoolParam(object):
+    """
+        This is common code to PoolPublicParam and PoolSharedParam.
+    """
+
+    def __init__(self, param_class):
+        self.param_class = param_class
+        self.is_sync = False
+        self.dct_param = {}
+        self.sync_sem = threading.semaphore()
+
+    def get_params(self, param_name=None):
+        # update local list with all params on current object
+        if not self.is_sync:
+            param_class = self.param_class
+            self.sync_sem.acquire(blocking=True)
+            if self.is_sync:
+                return self._get_params(param_name=param_name)
+            for name in dir(self):
+                var = getattr(self, name)
+                if not isinstance(var, param_class):
+                    continue
+                self.dct_param[var.get_name()] = var
+            self.is_sync = True
+            self.sync_sem.release()
+        return self._get_params(param_name=param_name)
+
+    def _get_params(self, param_name=None):
+        if param_name:
+            return self.dct_param.get(param_name)
+        return self.dct_param
+
+    def sync_params(self):
+        # refresh all params
+        self.sync_sem.acquire(blocking=True)
+        self.is_sync = False
+        self.sync_sem.release()
+        self.get_params()
+
+
+class PoolPublicParam(PoolParam):
+    """
+        Params is added in
+    """
+
+    def __init__(self):
+        super(PoolPublicParam).__init__(self, Param)
+
+
+class PoolSharedParam(PoolParam):
+    """
+        SharedParams is added in
+    """
+
+    def __init__(self):
+        super(PoolPublicParam).__init__(self, SharedParam)
