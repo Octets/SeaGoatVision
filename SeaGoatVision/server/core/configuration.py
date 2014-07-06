@@ -58,6 +58,7 @@ class Configuration(object):
         return cls._instance
 
     def __init__(self):
+        self.verbose = False
         path = "configurations/"
         if self.get_is_show_public_filterchain():
             self.dir_filterchain = path + "public/filterchain/"
@@ -80,89 +81,49 @@ class Configuration(object):
         self.verbose = is_verbose
 
     # General config
+    def _get_conf(self, var_name, default_value):
+        if self.private_config:
+            return getattr(self.private_config, var_name, default_value)
+        return default_value
+
     def get_verbose(self):
         if self.verbose:
             return True
 
-        response = self.public_config.verbose
-        if self.private_config:
-            try:
-                response = self.private_config.verbose
-            except BaseException:
-                pass
-        return response
+        return self._get_conf("verbose",
+                              self.public_config.verbose)
 
     def get_tcp_output_config(self):
-        response = self.public_config.port_tcp_output
-        if self.private_config:
-            try:
-                response = self.private_config.port_tcp_output
-            except BaseException:
-                pass
-        return response
+        return self._get_conf("port_tcp_output",
+                              self.public_config.port_tcp_output)
 
     def get_lst_media_config(self):
-        response = self.public_config.lst_media
-        if self.private_config:
-            try:
-                response = self.private_config.lst_media
-            except BaseException:
-                pass
-        return response
+        return self._get_conf("lst_media",
+                              self.public_config.lst_media)
 
     def get_is_show_public_filterchain(self):
-        response = self.public_config.show_public_filterchain
-        if self.private_config:
-            try:
-                response = self.private_config.show_public_filterchain
-            except BaseException:
-                pass
-        return response
+        return self._get_conf("show_public_filterchain",
+                              self.public_config.show_public_filterchain)
 
     def get_is_show_public_filter(self):
-        response = self.public_config.show_public_filter
-        if self.private_config:
-            try:
-                response = self.private_config.show_public_filter
-            except BaseException:
-                pass
-        return response
+        return self._get_conf("show_public_filter",
+                              self.public_config.show_public_filter)
 
     def get_is_show_private_filter(self):
-        response = False
-        if self.private_config:
-            try:
-                response = self.private_config.active_configuration
-            except BaseException:
-                pass
-        return response
+        return self._get_conf("active_configuration",
+                              self.public_config.active_configuration)
 
     def get_path_save_record(self):
-        response = self.public_config.path_save_record
-        if self.private_config:
-            try:
-                response = self.private_config.path_save_record
-            except BaseException:
-                pass
-        return response
+        return self._get_conf("path_save_record",
+                              self.public_config.path_save_record)
 
     def get_log_file_path(self):
-        response = self.public_config.log_path
-        if self.private_config:
-            try:
-                response = self.private_config.log_path
-            except BaseException:
-                pass
-        return response
+        return self._get_conf("log_path",
+                              self.public_config.log_path)
 
     def get_dct_cmd_on_start(self):
-        response = self.public_config.cmd_on_start
-        if self.private_config:
-            try:
-                response = self.private_config.cmd_on_start
-            except BaseException:
-                pass
-        return response
+        return self._get_conf("cmd_on_start",
+                              self.public_config.cmd_on_start)
 
     # Filterchain
     def list_filterchain(self):
