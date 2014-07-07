@@ -146,7 +146,7 @@ class CmdHandler:
 
         media.set_is_client_manager(is_client_manager)
 
-        filterchain.set_media_param(media.get_dct_media_param())
+        filterchain.set_media_param(media.get_params())
 
         media.add_observer(filterchain.execute)
 
@@ -306,18 +306,14 @@ class CmdHandler:
         media = self._get_media(media_name=media_name)
         if not media:
             return []
-        return media.get_properties_param()
+        return media.get_lst_params()
 
     def get_param_media(self, media_name, param_name):
         self._post_command_(locals())
         media = self._get_media(media_name=media_name)
         if not media:
             return []
-        lst_param = media.get_properties_param()
-        for param in lst_param:
-            if param.get_name() == param_name:
-                return param
-        return None
+        return media.get_params(param_name)
 
     def update_param_media(self, media_name, param_name, value):
         self._post_command_(locals())
@@ -326,11 +322,7 @@ class CmdHandler:
             return False
         status = media.update_property_param(param_name, value)
         if status:
-            lst_param = media.get_properties_param()
-            param = None
-            for param in lst_param:
-                if param.get_name() == param_name:
-                    break
+            param = media.get_params(param_name=param_name)
             if not param:
                 log.print_function(
                     logger.error, "Missing param %s in media %s." %

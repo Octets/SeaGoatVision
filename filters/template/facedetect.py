@@ -54,9 +54,9 @@ class FaceDetection(Filter):
         self.show_rectangle = Param("show_rectangle", True)
 
         # To share parameter between filter, create it with :
-        self.add_global_params(Param("width", 3, min_v=1, max_v=10))
+        self.add_shared_param(Param("width", 3, min_v=1, max_v=10))
         # On the execution, use it like this :
-        param = self.get_global_params("width")
+        param = self.get_shared_params("width")
 
     def configure(self):
         # This is called when param is modify

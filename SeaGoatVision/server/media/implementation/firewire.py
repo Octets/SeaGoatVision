@@ -85,7 +85,7 @@ class Firewire(MediaStreaming):
         self.update_all_property()
 
     def serialize(self, is_config=False):
-        return [param.serialize() for param in self.get_properties_param()]
+        return [param.serialize() for param in self.get_lst_params()]
 
     def is_opened(self):
         return self.camera is not None
@@ -374,9 +374,6 @@ class Firewire(MediaStreaming):
         param.add_notify_reset(self._transmission)
         param.add_group(group_operation)
         self.dct_params[param.get_name()] = param
-
-    def get_properties_param(self):
-        return self.dct_params.values()
 
     def update_all_property(self):
         # If property is auto, don't apply manual parameter

@@ -86,6 +86,8 @@ class WinFilterParam(WinParamParent):
                 self.filter_name)
             if self.lst_param is None:
                 self.lst_param = []
+            elif type(self.lst_param) is dict:
+                self.lst_param = self.lst_param.values()
 
         self.update_module(is_empty, self.filter_name, "Filter",
                            self.dct_filter)

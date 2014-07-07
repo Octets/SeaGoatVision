@@ -138,9 +138,6 @@ class ImageGenerator(MediaStreaming):
         image[:, :, 2] += color_r
         return image
 
-    def get_properties_param(self):
-        return self.dct_params.values()
-
     def update_property_param(self, param_name, value):
         param = self.dct_params.get(param_name, None)
         if not param:

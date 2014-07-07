@@ -50,6 +50,8 @@ class WinMediaParam(WinParamParent):
             self.lst_param = self.controller.get_params_media(self.media_name)
             if self.lst_param is None:
                 self.lst_param = []
+            elif type(self.lst_param) is dict:
+                self.lst_param = self.lst_param.values()
 
         # TODO implement description of params
         self.update_module(is_empty, self.media_name, "Media", None)

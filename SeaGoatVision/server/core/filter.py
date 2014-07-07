@@ -17,14 +17,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import log
+from SeaGoatVision.server.core.pool_param import PoolParam
 
 logger = log.get_logger(__name__)
 
 
-class Filter(object):
+class Filter(PoolParam):
     def __init__(self, name=None):
+        super(Filter, self).__init__()
         self._output_observers = list()
         self.original_image = None
         self.name = name
@@ -90,30 +91,6 @@ class Filter(object):
 
     def set_global_params_cpp(self, dct_global_param):
         pass
-
-    def add_global_params(self, param):
-        name = param.get_name()
-        if name in self.dct_global_param:
-            log.print_function(
-                logger.error, "This param is already in the list : %s", name)
-            return
-        self.dct_global_param[name] = param
-
-    def get_global_params(self, param_name):
-        return self.dct_global_param.get(param_name, None)
-
-    def get_params(self, param_name=None):
-        params = []
-        for name in dir(self):
-            var = getattr(self, name)
-            if not isinstance(var, Param):
-                continue
-            if param_name:
-                if var.get_name() == param_name:
-                    return var
-            else:
-                params.append(var)
-        return params
 
     def set_media_param(self, dct_media_param):
         self.dct_media_param = dct_media_param

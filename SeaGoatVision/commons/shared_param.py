@@ -27,7 +27,7 @@ from . import param
 logger = log.get_logger(__name__)
 
 
-class SharedParam(object, param.Param):
+class SharedParam(param.Param):
     """Like Param
     Shared Param manager type : None, ndarray, unicode, bool, str, int, long
     and float

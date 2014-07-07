@@ -128,9 +128,6 @@ class IPC(MediaStreaming):
         self.subscriber = None
         return True
 
-    def get_properties_param(self):
-        return self.dct_params.values()
-
     def update_property_param(self, param_name, value):
         param = self.dct_params.get(param_name, None)
         if not param:

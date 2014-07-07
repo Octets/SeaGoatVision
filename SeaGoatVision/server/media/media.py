@@ -17,6 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from SeaGoatVision.server.core.pool_param import PoolParam
 from thread_media import ThreadMedia
 import numpy as np
 from SeaGoatVision.commons import log
@@ -32,8 +33,9 @@ class MediaStatus(object):
     lst_status = [run, close, busy, pause]
 
 
-class Media(object):
+class Media(PoolParam):
     def __init__(self):
+        super(Media, self).__init__()
         # TODO change sleep_time dependant of real fps desire
         self.fps = 30.0
         self.sleep_time = 1 / self.fps
@@ -61,13 +63,6 @@ class Media(object):
         # complete it into media_streaming and media_video
         # type is Video or Streaming
         pass
-
-    def get_dct_media_param(self):
-        return {param.get_name(): param for param in
-                self.get_properties_param()}
-
-    def get_properties_param(self):
-        return []
 
     def update_property_param(self, param_name, value):
         return False
