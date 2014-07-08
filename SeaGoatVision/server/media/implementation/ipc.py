@@ -65,23 +65,6 @@ class IPC(MediaStreaming):
         param.add_notify_reset(self.open)
         self.dct_params[self.key_ipc_name] = param
 
-    def serialize(self, is_config=False):
-        return {
-            self.key_ipc_name: self.dct_params.get(self.key_ipc_name).get()}
-
-    def deserialize(self, data):
-        if not data:
-            return False
-        if not isinstance(data, dict):
-            log.print_function(
-                logger.error, "Wrong format data, suppose to be dict into \
-                camera %s" % self.get_name())
-            return False
-        res = data.get(self.key_ipc_name, None)
-        if res:
-            self.dct_params.get(self.key_ipc_name).set(res)
-        return True
-
     def open(self):
         self.subscriber = self.context.socket(zmq.SUB)
         self.subscriber.setsockopt(zmq.SUBSCRIBE, b'')

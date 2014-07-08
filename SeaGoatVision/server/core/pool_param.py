@@ -89,3 +89,30 @@ class PoolParam(object):
             return False
         dct_param[name] = param
         return True
+
+    # configuration
+    def serialize(self, is_config=False):
+        lst_serialize = []
+        for name, param in self.get_params().items():
+            lst_serialize.append(param.serialize(is_config=is_config))
+        return lst_serialize
+
+    def deserialize(self, data):
+        if not data:
+            return False
+        if type(data) is dict:
+            dct_params = data
+        elif type(data) is list:
+            dct_params = {param['name']: param for param in data}
+        else:
+            msg = "Wrong format data, suppose to be list in " \
+                  "%s" % self.get_name()
+            log.print_function(logger.error, msg)
+            return False
+        # search param in config
+        status = True
+        for name, param in self.get_params().items():
+            dct_param = dct_params.get(name)
+            if dct_param:
+                status &= param.deserialize(dct_param)
+        return status

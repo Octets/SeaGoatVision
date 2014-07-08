@@ -84,27 +84,8 @@ class Firewire(MediaStreaming):
         self.deserialize(self.config.read_media(self.get_name()))
         self.update_all_property()
 
-    def serialize(self, is_config=False):
-        return [param.serialize() for param in self.get_lst_params()]
-
     def is_opened(self):
         return self.camera is not None
-
-    def deserialize(self, data):
-        if not data:
-            return False
-        try:
-            for uno_data in data:
-                if not uno_data:
-                    continue
-                param = Param(None, None, serialize=uno_data)
-                own_param = self.dct_params.get(param.get_name(), None)
-                if own_param:
-                    own_param.merge(param)
-        except BaseException as e:
-            log.printerror_stacktrace(logger, e)
-            return False
-        return True
 
     def initialize(self):
         logger.debug("initialize camera %s" % self.get_name())

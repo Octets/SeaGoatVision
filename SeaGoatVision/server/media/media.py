@@ -98,10 +98,10 @@ class Media(PoolParam):
         }
 
     def serialize(self, is_config=False):
-        pass
+        return super(Media, self).serialize(is_config=is_config)
 
     def deserialize(self, data):
-        return True
+        return super(Media, self).deserialize(data)
 
     def get_real_fps(self):
         if self.thread:

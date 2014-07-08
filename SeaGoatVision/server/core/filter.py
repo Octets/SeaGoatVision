@@ -35,22 +35,14 @@ class Filter(PoolParam):
     def serialize(self, is_config=False, is_info=False):
         if is_info:
             return {"name": self.name, "doc": self.__doc__}
-        else:
-            return {"filter_name": self.__class__.__name__,
-                    "lst_param": [param.serialize(is_config=is_config) for
-                                  param in
-                                  self.get_params()]}
+        lst_param = super(Filter, self).serialize(is_config=is_config)
+        return {
+            "filter_name": self.__class__.__name__,
+            "lst_param": lst_param
+        }
 
     def deserialize(self, value):
-        status = True
-        for param_ser in value.get("lst_param"):
-            param_name = param_ser.get("name", None)
-            if not param_name:
-                continue
-            param = self.get_params(param_name=param_name)
-            if param:
-                status &= param.deserialize(param_ser)
-        return status
+        return super(Filter, self).deserialize(value.get("lst_param"))
 
     def get_name(self):
         return self.name

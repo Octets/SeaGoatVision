@@ -82,45 +82,6 @@ class ImageGenerator(MediaStreaming):
         param.set_description("Freeze the stream.")
         self.dct_params["freeze"] = param
 
-    def serialize(self, is_config=False):
-        return {
-            "width": self.dct_params.get("width").get(),
-            "height": self.dct_params.get("height").get(),
-            "fps": self.dct_params.get("fps").get(),
-            "color_r": self.dct_params.get("color_r").get(),
-            "color_g": self.dct_params.get("color_g").get(),
-            "color_b": self.dct_params.get("color_b").get(),
-        }
-
-    def deserialize(self, data):
-        if not data:
-            return False
-        if not isinstance(data, dict):
-            log.print_function(
-                logger.error,
-                "Wrong format data, suppose to be dict into camera %s" %
-                self.get_name())
-            return False
-        res = data.get("width", None)
-        if res is not None:
-            self.dct_params.get("width").set(res)
-        res = data.get("height", None)
-        if res is not None:
-            self.dct_params.get("height").set(res)
-        res = data.get("fps", None)
-        if res is not None:
-            self.dct_params.get("fps").set(res)
-        res = data.get("color_r", None)
-        if res is not None:
-            self.dct_params.get("color_r").set(res)
-        res = data.get("color_g", None)
-        if res is not None:
-            self.dct_params.get("color_g").set(res)
-        res = data.get("color_b", None)
-        if res is not None:
-            self.dct_params.get("color_b").set(res)
-        return True
-
     def next(self):
         freeze = self.dct_params.get("freeze").get()
         if freeze:

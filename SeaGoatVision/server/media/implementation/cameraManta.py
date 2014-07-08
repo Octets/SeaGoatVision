@@ -64,25 +64,6 @@ class CameraManta(MediaStreaming):
 		param.add_notify_reset(self.reset_property_param)
 		self.dct_params["fps"] = param
 
-	def serialize(self):
-		return {"resolution": self.dct_params.get("resolution").get(), "fps": self.dct_params.get("fps").get()}
-
-	def deserialize(self, data):
-		if not data:
-			return False
-		if not isinstance(data, dict):
-			log.print_function(
-				logger.error, "Wrong format data, suppose to be dict into camera %s" %
-				self.get_name())
-			return False
-		res = data.get("resolution", None)
-		if res:
-			self.dct_params.get("resolution").set(res)
-		res = data.get("fps", None)
-		if res:
-			self.dct_params.get("fps").set(res)
-		return True
-
 	def open(self):
 		try:
 			shape = self.dct_resolution[
