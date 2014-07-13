@@ -77,7 +77,7 @@ class IPC(MediaStreaming):
 
     def next(self):
         if not self.subscriber or not self.message:
-            return None
+            return
         image = None
         message = self.message[:]
         self.message = None
@@ -87,7 +87,7 @@ class IPC(MediaStreaming):
         if len_message:
             width = (lst_pixel[0] << 8) + lst_pixel[1]
             if not width:
-                return None
+                return
             image = np.array(lst_pixel[2:])
             # check if missing pixel and replace by zero
             diff = len_message % width

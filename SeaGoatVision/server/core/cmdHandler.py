@@ -213,7 +213,7 @@ class CmdHandler:
             log.print_function(
                 logger.error,
                 "Cannot get execution info, it's empty.")
-            return None
+            return
         return {KEY_MEDIA: exec_info[KEY_MEDIA].get_name(),
                 KEY_FILTERCHAIN: exec_info[KEY_FILTERCHAIN].get_name()}
 
@@ -466,10 +466,10 @@ class CmdHandler:
         # TODO search information from configuration if execution not exist
         self._post_command_(locals())
         if not execution_name:
-            return None
+            return
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
-            return None
+            return
         return filterchain.get_params(filter_name=filter_name)
 
     def get_param_filterchain(self, execution_name, filter_name, param_name):
@@ -477,10 +477,10 @@ class CmdHandler:
         # TODO search information from configuration if execution not exist
         self._post_command_(locals())
         if not execution_name:
-            return None
+            return
         filterchain = self._get_filterchain(execution_name)
         if not filterchain:
-            return None
+            return
         return filterchain.get_params(filter_name=filter_name,
                                       param_name=param_name)
 
@@ -563,18 +563,18 @@ class CmdHandler:
             msg = "Don't find execution %s. List execution name: %s" % (
                 execution_name, self.dct_exec.keys())
             log.print_function(logger.warning, msg, last_stack=True)
-            return None
+            return
         return dct_execution
 
     def _get_filterchain(self, execution_name):
         dct_execution = self._get_execution(execution_name)
         if dct_execution is None:
-            return None
+            return
         filterchain = dct_execution.get(KEY_FILTERCHAIN, None)
         if not filterchain:
             msg = "Execution %s hasn't filterchain." % execution_name
             log.print_function(logger.critical, msg, last_stack=True)
-            return None
+            return
         return filterchain
 
     def _get_media(self, media_name=None, execution_name=None):
@@ -587,10 +587,10 @@ class CmdHandler:
                     "Cannot found the media %s." %
                     media_name,
                     last_stack=True)
-                return None
+                return
         elif execution_name:
             dct_execution = self._get_execution(execution_name)
             if not dct_execution:
-                return None
+                return
             media = dct_execution.get(KEY_MEDIA, None)
         return media

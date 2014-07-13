@@ -339,7 +339,7 @@ class WinFilterChain(QtCore.QObject):
         no_line = ui_list.currentRow()
         if no_line >= 0:
             return ui_list.item(no_line).text()
-        return None
+        return
 
     def _mode_edit(self, status=True):
         self.edit_mode = status

@@ -190,10 +190,10 @@ class Media(PoolParam):
 
     def _get_cb_publisher(self):
         if not self.publisher:
-            return None
+            return
         key = self.get_name()
         return self.publisher.get_callback_publish("media.%s" % key)
 
     def _remove_cb_publisher(self):
         if not self.publisher:
-            return None
+            return

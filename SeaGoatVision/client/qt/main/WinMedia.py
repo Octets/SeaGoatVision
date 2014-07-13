@@ -283,7 +283,7 @@ class WinMedia(QtCore.QObject):
         item_cbmedia = self.ui.cbMedia.currentText()
         media_type = self.dct_media.get(item_cbmedia, None)
         if media_type != keys.get_media_type_video_name():
-            return None
+            return
         return self.ui.movieLineEdit.text()
 
     def change_execution(self, exec_info):

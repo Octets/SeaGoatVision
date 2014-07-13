@@ -183,7 +183,7 @@ class WinExecution(QtCore.QObject):
         no_line = ui_list.currentRow()
         if no_line >= 0:
             return ui_list.item(no_line).text()
-        return None
+        return
 
     def _is_unique_execution_name(self, execution_name):
         for noLine in range(self.ui.lstExecution.count()):
@@ -248,7 +248,7 @@ class WinExecution(QtCore.QObject):
         no_line = self.ui.lstExecution.currentRow()
         if no_line >= 0:
             return self.ui.lstExecution.item(no_line).text()
-        return None
+        return
 
     def _clear_form(self, mode_edit):
         if mode_edit:

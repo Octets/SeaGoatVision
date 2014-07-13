@@ -78,7 +78,7 @@ class Movie:
 
     def next(self):
         if self.video is None or not self.video.isOpened():
-            return None
+            return
         elif not self.isplaying:
             return self.last_image.copy()
 

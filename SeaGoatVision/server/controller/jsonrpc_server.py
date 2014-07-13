@@ -112,7 +112,7 @@ class JsonrpcServer():
         elif isinstance(param_obj, Param):
             return param_obj.serialize()
         else:
-            return None
+            return
 
     #
     # OBSERVATOR ################################

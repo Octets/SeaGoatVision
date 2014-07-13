@@ -229,7 +229,7 @@ class Firewire(MediaStreaming):
 
     def next(self):
         if not self.camera or not self.is_streaming:
-            return None
+            return
 
         diff_time = self.last_timestamp - self.actual_timestamp
         # logger.debug("actual time %s, last time %s, diff %s" %
@@ -238,7 +238,7 @@ class Firewire(MediaStreaming):
         if self.last_timestamp == -1:
             if not self.buffer_last_timestamp:
                 self.buffer_last_timestamp = True
-                return None
+                return
                 log.print_function(
                     logger.warning,
                     "No image receive from %s" % self.get_name())
@@ -246,7 +246,7 @@ class Firewire(MediaStreaming):
             if self.count_no_image > self.max_no_image:
                 self.count_no_image = 0
                 self.camera_closed()
-            return None
+            return
         if not diff_time:
             self.count_not_receive += 1
             if self.count_not_receive >= self.max_not_receive:
@@ -265,7 +265,7 @@ class Firewire(MediaStreaming):
                 # logger.warning(
                 #    "Receive no more image from %s, timestamp %d" %
                 #    (self.get_name(), self.actual_timestamp))
-                return None
+                return
         # reinitilize all protection
         self.buffer_last_timestamp = False
         self.count_no_image = 0
