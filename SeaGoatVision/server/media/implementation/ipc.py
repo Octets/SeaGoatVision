@@ -38,7 +38,6 @@ class IPC(MediaStreaming):
     def __init__(self, config):
         # Go into configuration/template_media for more information
         super(IPC, self).__init__()
-        self.dct_params = {}
         self.config = Configuration()
         self.own_config = config
         self.media_name = config.name
@@ -58,17 +57,14 @@ class IPC(MediaStreaming):
         self.deserialize(self.config.read_media(self.get_name()))
 
     def _create_params(self):
-        self.dct_params = {}
-
         default_ipc_name = "ipc://%s" % self.device_name
-        param = Param(self.key_ipc_name, default_ipc_name)
-        param.add_notify_reset(self.open)
-        self.dct_params[self.key_ipc_name] = param
+        self.param_ipc_name = Param(self.key_ipc_name, default_ipc_name)
+        self.param_ipc_name.add_notify(self.reload)
 
     def open(self):
         self.subscriber = self.context.socket(zmq.SUB)
         self.subscriber.setsockopt(zmq.SUBSCRIBE, b'')
-        device_name = self.dct_params.get(self.key_ipc_name).get()
+        device_name = self.param_ipc_name.get()
         logger.info("Open media device %s" % device_name)
         self.subscriber.connect(device_name)
         thread.start_new_thread(self.fill_message, tuple())
@@ -109,21 +105,6 @@ class IPC(MediaStreaming):
         # self.subscriber.close()
         # self.context.term()
         self.subscriber = None
-        return True
-
-    def update_property_param(self, param_name, value):
-        param = self.dct_params.get(param_name, None)
-        if not param:
-            return False
-        param_value = param.get()
-        if value == param_value:
-            return True
-        param.set(value)
-        self.reload()
-        return True
-
-    def reset_property_param(self, param_name, value):
-        self.reload()
         return True
 
     def fill_message(self):

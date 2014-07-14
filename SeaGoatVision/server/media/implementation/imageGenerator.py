@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -38,59 +38,49 @@ class ImageGenerator(MediaStreaming):
         self.run = True
         self._is_opened = True
 
-        self.dct_params = {}
         self._create_params()
 
         self.deserialize(self.config.read_media(self.get_name()))
 
     def _create_params(self):
-        self.dct_params = {}
-
         default_width = 800
-        param = Param("width", default_width, min_v=1, max_v=1200)
-        param.add_group("Resolution")
-        param.set_description("Change width resolution.")
-        self.dct_params["width"] = param
+        self.param_width = Param("width", default_width, min_v=1, max_v=1200)
+        self.param_width.add_group("Resolution")
+        self.param_width.set_description("Change width resolution.")
 
         default_height = 600
-        param = Param("height", default_height, min_v=1, max_v=1200)
-        param.add_group("Resolution")
-        param.set_description("Change height resolution.")
-        self.dct_params["height"] = param
+        self.param_height = Param("height", default_height, min_v=1,
+                                  max_v=1200)
+        self.param_height.add_group("Resolution")
+        self.param_height.set_description("Change height resolution.")
 
         default_fps = 30
-        param = Param("fps", default_fps, min_v=1, max_v=100)
-        param.set_description("Change frame per second.")
-        self.dct_params["fps"] = param
+        self.param_fps = Param("fps", default_fps, min_v=1, max_v=100)
+        self.param_fps.set_description("Change frame per second.")
 
-        param = Param("color_r", 0, min_v=0, max_v=255)
-        param.add_group("Color")
-        param.set_description("Change red color.")
-        self.dct_params["color_r"] = param
+        self.param_color_r = Param("color_r", 0, min_v=0, max_v=255)
+        self.param_color_r.add_group("Color")
+        self.param_color_r.set_description("Change red color.")
 
-        param = Param("color_g", 0, min_v=0, max_v=255)
-        param.add_group("Color")
-        param.set_description("Change green color.")
-        self.dct_params["color_g"] = param
+        self.param_color_g = Param("color_g", 0, min_v=0, max_v=255)
+        self.param_color_g.add_group("Color")
+        self.param_color_g.set_description("Change green color.")
 
-        param = Param("color_b", 0, min_v=0, max_v=255)
-        param.add_group("Color")
-        param.set_description("Change blue color.")
-        self.dct_params["color_b"] = param
+        self.param_color_b = Param("color_b", 0, min_v=0, max_v=255)
+        self.param_color_b.add_group("Color")
+        self.param_color_b.set_description("Change blue color.")
 
-        param = Param("freeze", False)
-        param.set_description("Freeze the stream.")
-        self.dct_params["freeze"] = param
+        self.param_freeze = Param("freeze", False)
+        self.param_freeze.set_description("Freeze the stream.")
 
     def next(self):
-        freeze = self.dct_params.get("freeze").get()
-        if freeze:
+        if self.param_freeze.get():
             return
-        width = self.dct_params.get("width").get()
-        height = self.dct_params.get("height").get()
-        color_r = self.dct_params.get("color_r").get()
-        color_g = self.dct_params.get("color_g").get()
-        color_b = self.dct_params.get("color_b").get()
+        width = self.param_width.get()
+        height = self.param_height.get()
+        color_r = self.param_color_r.get()
+        color_g = self.param_color_g.get()
+        color_b = self.param_color_b.get()
 
         image = np.zeros((height, width, 3), dtype=np.uint8)
 
@@ -98,13 +88,3 @@ class ImageGenerator(MediaStreaming):
         image[:, :, 1] += color_g
         image[:, :, 2] += color_r
         return image
-
-    def update_property_param(self, param_name, value):
-        param = self.dct_params.get(param_name, None)
-        if not param:
-            return False
-        param_value = param.get()
-        if value == param_value:
-            return True
-        param.set(value)
-        return True

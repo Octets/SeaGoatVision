@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+# This file is part of SeaGoatVision.
 #
-#    SeaGoatVision is free software: you can redistribute it and/or modify
+# SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
@@ -34,6 +34,7 @@ class JsonClient():
         self._hostname = host
         # link observer viewer with deserialize observer
         self.dct_link_obs_des_obs = {}
+        self.subscriber = None
 
     def __getattr__(self, name):
         return getattr(self.rpc, name)
@@ -85,9 +86,9 @@ class JsonClient():
         return status
 
     def get_params_filterchain(self, execution_name, filter_name):
-        lst_param_ser = self.rpc.get_params_filterchain(
+        params_ser = self.rpc.get_params_filterchain(
             execution_name, filter_name)
-        return self._deserialize_param(lst_param_ser)
+        return self._deserialize_param(params_ser)
 
     def get_param_filterchain(self, execution_name, filter_name, param_name):
         param_ser = self.rpc.get_param_filterchain(
@@ -95,20 +96,28 @@ class JsonClient():
         return Param("temp", None, serialize=param_ser)
 
     def get_params_media(self, media_name):
-        lst_param_ser = self.rpc.get_params_media(media_name)
-        return self._deserialize_param(lst_param_ser)
+        params_ser = self.rpc.get_params_media(media_name)
+        return self._deserialize_param(params_ser)
 
     def get_param_media(self, media_name, param_name):
         param_ser = self.rpc.get_param_media(media_name, param_name)
         return Param("temp", None, serialize=param_ser)
 
-    def _deserialize_param(self, lst_param_ser):
-        if lst_param_ser:
+    @staticmethod
+    def _deserialize_param(params_ser):
+        if type(params_ser) is dict:
+            value = {}
+            for name, param_ser in params_ser.items():
+                param = Param(name, None, serialize=param_ser)
+                value[param.get_name()] = param
+            return value
+        elif type(params_ser) is list:
             return [Param("temp", None, serialize=param_ser) for param_ser in
-                    lst_param_ser]
+                    params_ser]
         return []
 
-    def _deserialize_image(self, cb):
+    @staticmethod
+    def _deserialize_image(cb):
         def deserialize_image(data):
             img = np.loads(data)
             img_cv = cv2.imdecode(img, 1)

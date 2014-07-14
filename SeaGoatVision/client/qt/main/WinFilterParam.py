@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+# This file is part of SeaGoatVision.
 #
-#    SeaGoatVision is free software: you can redistribute it and/or modify
+# SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
@@ -29,7 +29,6 @@ logger = log.get_logger(__name__)
 
 
 class WinFilterParam(WinParamParent):
-
     def __init__(self, controller, subscriber):
         self.controller = controller
         self.dct_filter = self.controller.get_filter_list()
@@ -130,16 +129,17 @@ class WinFilterParam(WinParamParent):
         else:
             logger.error("Change value %s of param %s." % (value, param_name))
 
-    def default(self):
-        pass
-
     def reset(self):
-        for param in self.lst_param:
-            param.reset()
-            self.controller.update_param(self.execution_name, self.filter_name,
-                                         param.get_name(),
-                                         param.get())
-        self.set_filter()
+        lst_param_name = [param.name for param in self.lst_param]
+        self.controller.reset_param(self.execution_name,
+                                    self.filter_name,
+                                    lst_param_name)
+
+    def default(self):
+        lst_param_name = [param.name for param in self.lst_param]
+        self.controller.set_as_default_param(self.execution_name,
+                                             self.filter_name,
+                                             lst_param_name)
 
     def save(self):
         self.controller.save_params(self.execution_name)

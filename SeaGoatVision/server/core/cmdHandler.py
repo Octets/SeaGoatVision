@@ -1,17 +1,17 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+# This file is part of SeaGoatVision.
 #
-#    SeaGoatVision is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# SeaGoatVision is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
@@ -303,37 +303,51 @@ class CmdHandler:
 
     def get_params_media(self, media_name):
         self._post_command_(locals())
-        media = self._get_media(media_name=media_name)
-        if not media:
-            return []
-        return media.get_lst_params()
+        return self._get_param_media(media_name)
 
     def get_param_media(self, media_name, param_name):
         self._post_command_(locals())
-        media = self._get_media(media_name=media_name)
-        if not media:
-            return []
-        return media.get_params(param_name)
+        return self._get_param_media(media_name, param_name)
 
     def update_param_media(self, media_name, param_name, value):
         self._post_command_(locals())
-        media = self._get_media(media_name=media_name)
-        if not media:
+        # param_name can be a list or string
+        param = self._get_param_media(media_name, param_name)
+        if not param:
             return False
-        status = media.update_property_param(param_name, value)
-        if status:
-            param = media.get_params(param_name=param_name)
-            if not param:
-                log.print_function(
-                    logger.error, "Missing param %s in media %s." %
-                    (param_name, media_name))
-                return False
-            data = {"media": media_name, "param": param.serialize()}
-            json_data = json.dumps(data)
-            self.publisher.publish(
-                keys.get_key_media_param(), "%s" %
-                json_data)
-        return status
+
+        param.set(value)
+
+        self._publish_media_change(media_name, param)
+        return True
+
+    def reset_param_media(self, media_name, param_name):
+        self._post_command_(locals())
+        # param_name can be a list or string
+        lst_param = self._get_lst_param_media(media_name, param_name)
+
+        if not lst_param:
+            return False
+
+        for param in lst_param:
+            param.reset()
+
+        self._publish_media_change(media_name, lst_param)
+        return True
+
+    def set_as_default_param_media(self, media_name, param_name):
+        self._post_command_(locals())
+        # param_name can be a list or string
+        lst_param = self._get_lst_param_media(media_name, param_name)
+
+        if not lst_param:
+            return False
+
+        for param in lst_param:
+            param.set_as_default()
+
+        self._publish_media_change(media_name, lst_param)
+        return True
 
     def save_params_media(self, media_name):
         self._post_command_(locals())
@@ -465,24 +479,13 @@ class CmdHandler:
         # get actual filter from execution
         # TODO search information from configuration if execution not exist
         self._post_command_(locals())
-        if not execution_name:
-            return
-        filterchain = self._get_filterchain(execution_name)
-        if not filterchain:
-            return
-        return filterchain.get_params(filter_name=filter_name)
+        return self._get_param_filter(execution_name, filter_name)
 
     def get_param_filterchain(self, execution_name, filter_name, param_name):
         # get actual filter from execution
         # TODO search information from configuration if execution not exist
         self._post_command_(locals())
-        if not execution_name:
-            return
-        filterchain = self._get_filterchain(execution_name)
-        if not filterchain:
-            return
-        return filterchain.get_params(filter_name=filter_name,
-                                      param_name=param_name)
+        return self._get_param_filter(execution_name, filter_name, param_name)
 
     def get_filterchain_info(self, filterchain_name):
         self._post_command_(locals())
@@ -490,31 +493,48 @@ class CmdHandler:
 
     def update_param(self, execution_name, filter_name, param_name, value):
         self._post_command_(locals())
-        filterchain = self._get_filterchain(execution_name)
-        if not filterchain or not filter_name:
-            return False
-        o_filter = filterchain.get_filter(name=filter_name)
-        if not o_filter:
-            log.print_function(
-                logger.error,
-                "Don't find filter %s on filterchain %s" % (
-                    filter_name, filterchain.get_name()))
-            return False
-        param = o_filter.get_params(param_name=param_name)
+        param = self._get_param_filter(execution_name, filter_name, param_name)
         if not param:
-            log.print_function(
-                logger.error,
-                "Don't find param %s on filter %s" % (param_name, filter_name))
             return False
 
         param.set(value)
         # TODO update when filter is not running
+        o_filter = self._get_filter(execution_name, filter_name)
         o_filter.configure()
-        # send from publisher
-        data = {"execution": execution_name, "filter": filter_name,
-                "param": param.serialize()}
-        json_data = json.dumps(data)
-        self.publisher.publish(keys.get_key_filter_param(), "%s" % json_data)
+        self._publish_filter_change(execution_name, filter_name, param)
+        return True
+
+    def reset_param(self, execution_name, filter_name, param_name):
+        self._post_command_(locals())
+        lst_param = self._get_lst_param_filter(execution_name,
+                                               filter_name,
+                                               param_name)
+        if not lst_param:
+            return False
+
+        for param in lst_param:
+            param.reset()
+        # TODO update when filter is not running
+        o_filter = self._get_filter(execution_name, filter_name)
+        o_filter.configure()
+        self._publish_filter_change(execution_name, filter_name, lst_param)
+        return True
+
+    def set_as_default_param(self, execution_name, filter_name, param_name):
+        self._post_command_(locals())
+        lst_param = self._get_lst_param_filter(execution_name,
+                                               filter_name,
+                                               param_name)
+
+        if not lst_param:
+            return False
+
+        for param in lst_param:
+            param.set_as_default()
+        # TODO update when filter is not running
+        o_filter = self._get_filter(execution_name, filter_name)
+        o_filter.configure()
+        self._publish_filter_change(execution_name, filter_name, lst_param)
         return True
 
     def save_params(self, execution_name):
@@ -560,7 +580,7 @@ class CmdHandler:
     def _get_execution(self, execution_name):
         dct_execution = self.dct_exec.get(execution_name, {})
         if not dct_execution:
-            msg = "Don't find execution %s. List execution name: %s" % (
+            msg = "Missing execution %s. List execution name: %s" % (
                 execution_name, self.dct_exec.keys())
             log.print_function(logger.warning, msg, last_stack=True)
             return
@@ -594,3 +614,79 @@ class CmdHandler:
                 return
             media = dct_execution.get(KEY_MEDIA, None)
         return media
+
+    def _get_filter(self, execution_name, filter_name):
+        filterchain = self._get_filterchain(execution_name)
+        if not filterchain or not filter_name:
+            return False
+        o_filter = filterchain.get_filter(name=filter_name)
+        if not o_filter:
+            log.print_function(
+                logger.error,
+                "Missing filter %s on filterchain %s" % (
+                    filter_name, filterchain.get_name()))
+            return False
+        return o_filter
+
+    def _get_param_filter(self, execution_name, filter_name, param_name=None):
+        o_filter = self._get_filter(execution_name, filter_name)
+        if not o_filter:
+            return
+        param = o_filter.get_params(param_name=param_name)
+        if not param:
+            log.print_function(
+                logger.error,
+                "Missing param %s on filter %s" % (param_name, filter_name))
+        return param
+
+    def _get_lst_param_filter(self, execution_name, filter_name,
+                              param_name=None):
+        o_filter = self._get_filter(execution_name, filter_name)
+        if not o_filter:
+            return
+        return o_filter.get_lst_params(param_name=param_name)
+
+    def _publish_filter_change(self, execution_name, filter_name, param):
+        if type(param) is list:
+            lst_param = param
+        else:
+            lst_param = [param]
+        # send from publisher
+        for param in lst_param:
+            data = {
+                "execution": execution_name,
+                "filter": filter_name,
+                "param": param.serialize()
+            }
+            json_data = json.dumps(data)
+            self.publisher.publish(keys.get_key_filter_param(),
+                                   "%s" % json_data)
+
+    def _get_param_media(self, media_name, param_name=None):
+        media = self._get_media(media_name=media_name)
+        if not media:
+            return
+        param = media.get_params(param_name=param_name)
+        if not param:
+            log.print_function(
+                logger.error,
+                "Missing param %s on media %s" % (param_name, media_name))
+        return param
+
+    def _get_lst_param_media(self, media_name, param_name=None):
+        media = self._get_media(media_name=media_name)
+        if not media:
+            return
+        return media.get_lst_params(param_name=param_name)
+
+    def _publish_media_change(self, media_name, param):
+        if type(param) is list:
+            lst_param = param
+        else:
+            lst_param = [param]
+        # send from publisher
+        for param in lst_param:
+            data = {"media": media_name, "param": param.serialize()}
+            json_data = json.dumps(data)
+            self.publisher.publish(keys.get_key_media_param(),
+                                   "%s" % json_data)

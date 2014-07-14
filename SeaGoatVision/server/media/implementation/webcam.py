@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -59,13 +59,13 @@ class Webcam(MediaStreaming):
             "resolution",
             default_resolution_name,
             lst_value=self.dct_resolution.keys())
-        self.param_resolution.add_notify_reset(self.reset_property_param)
+        self.param_resolution.add_notify(self.reload)
 
         default_fps_name = "30"
         self.dct_fps = {default_fps_name: 30, "15": 15, "7.5": 7.5}
         self.param_fps = Param("fps", default_fps_name,
                                lst_value=self.dct_fps.keys())
-        self.param_fps.add_notify_reset(self.reset_property_param)
+        self.param_fps.add_notify(self.reload)
 
     def open(self):
         try:
@@ -95,19 +95,4 @@ class Webcam(MediaStreaming):
         MediaStreaming.close(self)
         self.video.release()
         self._is_opened = False
-        return True
-
-    def update_property_param(self, param_name, value):
-        param = self.dct_params.get(param_name, None)
-        if not param:
-            return False
-        param_value = param.get()
-        if value == param_value:
-            return True
-        param.set(value)
-        self.reload()
-        return True
-
-    def reset_property_param(self, param_name, value):
-        self.reload()
         return True

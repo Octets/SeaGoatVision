@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+# This file is part of SeaGoatVision.
 #
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ class PygameCam(MediaStreaming):
         self.media_name = config.name
         self.run = True
         self.video = None
+        self.thread_image = None
         pygame.init()
         pygame.camera.init()
 
@@ -57,32 +58,29 @@ class PygameCam(MediaStreaming):
         self.image = None
 
     def _create_params(self):
-        self.dct_params = {}
-
         default_resolution_name = "800x600"
         self.dct_resolution = {default_resolution_name: (800, 600),
                                "320x240": (320, 240),
                                "640x480": (640, 480),
                                "1024x768": (1024, 768),
                                "1280x960": (1280, 960)}
-        param = Param(
+        self.param_resolution = Param(
             "resolution",
             default_resolution_name,
             lst_value=self.dct_resolution.keys())
-        param.add_notify_reset(self.reset_property_param)
-        self.dct_params["resolution"] = param
+        self.param_resolution.add_notify(self.reload)
 
         default_fps_name = "30"
         self.dct_fps = {default_fps_name: 30, "15": 15, "7.5": 7.5}
-        param = Param("fps", default_fps_name, lst_value=self.dct_fps.keys())
-        param.add_notify_reset(self.reset_property_param)
-        self.dct_params["fps"] = param
+        self.param_fps = Param("fps", default_fps_name,
+                               lst_value=self.dct_fps.keys())
+        self.param_fps.add_notify(self.reload)
 
     def open(self):
         try:
             shape = self.dct_resolution[
-                self.dct_params.get("resolution").get()]
-            fps = self.dct_fps[self.dct_params.get("fps").get()]
+                self.param_resolution.get()]
+            fps = self.dct_fps[self.param_fps.get()]
             self.video = pygame.camera.Camera(self.own_config.path, shape)
             self.video.start()
             self.thread_image = True
@@ -90,7 +88,7 @@ class PygameCam(MediaStreaming):
         except BaseException as e:
             log.printerror_stacktrace(
                 logger, "Open camera %s: %s" %
-                        (self.get_name(), e))
+                (self.get_name(), e))
             return False
         # call open when video is ready
         return MediaStreaming.open(self)
@@ -113,19 +111,4 @@ class PygameCam(MediaStreaming):
         # TODO add semaphore?
         self.video.stop()
         self._is_opened = False
-        return True
-
-    def update_property_param(self, param_name, value):
-        param = self.dct_params.get(param_name, None)
-        if not param:
-            return False
-        param_value = param.get()
-        if value == param_value:
-            return True
-        param.set(value)
-        self.reload()
-        return True
-
-    def reset_property_param(self, param_name, value):
-        self.reload()
         return True

@@ -1,11 +1,11 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+# This file is part of SeaGoatVision.
 #
-#    SeaGoatVision is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
+# SeaGoatVision is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
@@ -45,7 +45,6 @@ class Firewire(MediaStreaming):
         self.camera = None
         self.is_streaming = False
         self.loop_try_open_camera = False
-        self.dct_params = {}
         self.call_stop = False
         self.sem_closed = threading.Semaphore()
 
@@ -56,7 +55,8 @@ class Firewire(MediaStreaming):
         self.key_auto_param = "-auto"
         self.group_name_color = "Color"
         self.group_name_shutter = "Shutter"
-        self.reference_param = {"power": self._power, "transmission": self._transmission}
+        self.reference_param = {"power": self._power,
+                                "transmission": self._transmission}
 
         fps = 15
         self.sleep_time = 1 / 15.0
@@ -93,8 +93,10 @@ class Firewire(MediaStreaming):
             return False
         try:
             init = self.camera.initialize
-            init(reset_bus=True, mode=self.own_config.mode, framerate=self.own_config.framerate,
-                 iso_speed=self.own_config.iso_speed, operation_mode=self.own_config.operation_mode)
+            init(reset_bus=True, mode=self.own_config.mode,
+                 framerate=self.own_config.framerate,
+                 iso_speed=self.own_config.iso_speed,
+                 operation_mode=self.own_config.operation_mode)
         except:
             return False
         return True
@@ -180,8 +182,9 @@ class Firewire(MediaStreaming):
         try:
             logger.debug("camera %s start." % self.get_name())
             self.camera.start(force_rgb8=True)
+            self.param_transmission.set(True)
             logger.debug("camera %s start terminated." % self.get_name())
-        except Exception as e:
+        except BaseException as e:
             logger.error(e)
             self.camera.stop()
             # something crash, restart the camera
@@ -279,6 +282,7 @@ class Firewire(MediaStreaming):
         self.loop_try_open_camera = False
         self.is_streaming = False
         if self.camera:
+            self.param_transmission.set(False)
             self.camera.stop()
             self.camera.initEvent.removeObserver(self.camera_init)
             self.camera.grabEvent.removeObserver(self.camera_observer)
@@ -293,7 +297,6 @@ class Firewire(MediaStreaming):
     ######################## PARAMS #########################
 
     def _create_params(self):
-        self.dct_params = {}
         if not self.camera:
             return
         lst_ignore_prop = ["Trigger"]
@@ -304,41 +307,41 @@ class Firewire(MediaStreaming):
             try:
                 if name == "White Balance":
                     param = Param("%s%s" % (name, self.key_auto_param), False)
-                    param.add_notify_reset(self.update_property_param)
+                    param.add_notify(self.update_property_param)
                     param.add_group(self.group_name_color)
-                    self.dct_params[param.get_name()] = param
+                    self.add_param(param)
                     param = Param(
                         "%s-red" % name,
                         value["RV_value"],
                         min_v=value["min"],
                         max_v=value["max"])
-                    param.add_notify_reset(self.update_property_param)
+                    param.add_notify(self.update_property_param)
                     param.add_group(self.group_name_color)
-                    self.dct_params[param.get_name()] = param
+                    self.add_param(param)
 
                     param = Param(
                         "%s-blue" % name,
                         value["BU_value"],
                         min_v=value["min"],
                         max_v=value["max"])
-                    param.add_notify_reset(self.update_property_param)
+                    param.add_notify(self.update_property_param)
                     param.add_group(self.group_name_color)
-                    self.dct_params[param.get_name()] = param
+                    self.add_param(param)
                     continue
                 param = Param(
                     name,
                     value["value"],
                     min_v=value["min"],
                     max_v=value["max"])
-                param.add_notify_reset(self.update_property_param)
-                self.dct_params[param.get_name()] = param
+                param.add_notify(self.update_property_param)
+                self.add_param(param)
 
                 if name == "Shutter" or name == "Gain":
                     param.add_group(self.group_name_shutter)
                     param = Param("%s%s" % (name, self.key_auto_param), False)
-                    param.add_notify_reset(self.update_property_param)
+                    param.add_notify(self.update_property_param)
                     param.add_group(self.group_name_shutter)
-                    self.dct_params[param.get_name()] = param
+                    self.add_param(param)
             except BaseException as e:
                 log.printerror_stacktrace(
                     logger, "%s - name: %s, value: %s" %
@@ -346,26 +349,26 @@ class Firewire(MediaStreaming):
 
         # add operational param
         group_operation = "operation"
-        param = Param("Power", True)
-        param.add_notify_reset(self._power)
-        param.add_group(group_operation)
-        self.dct_params[param.get_name()] = param
+        self.param_power = Param("Power", True)
+        self.param_power.add_notify(self._power)
+        self.param_power.add_group(group_operation)
 
-        param = Param("Transmission", False)
-        param.add_notify_reset(self._transmission)
-        param.add_group(group_operation)
-        self.dct_params[param.get_name()] = param
+        self.param_transmission = Param("Transmission", False)
+        self.param_transmission.add_notify(self._transmission)
+        self.param_transmission.add_group(group_operation)
+
+        self.sync_params()
 
     def update_all_property(self):
         # If property is auto, don't apply manual parameter
         lst_auto = [value[:-(len(self.key_auto_param))]
-                    for value in self.dct_params.keys()
+                    for value in self.get_params().keys()
                     if self.key_auto_param in value]
         lst_auto = [value for value in lst_auto
-                    if self.dct_params["%s%s" %
-                                       (value, self.key_auto_param)].get()]
+                    if self.get_params("%s%s" %
+                                       (value, self.key_auto_param)).get()]
 
-        for key, value in self.dct_params.items():
+        for key, value in self.get_params().items():
             contain_auto_variable = False
             # search active auto
             for active_key in lst_auto:
@@ -392,7 +395,7 @@ class Firewire(MediaStreaming):
             return False
 
         if update_object_param:
-            self.dct_params[param_name].set(value)
+            self.get_params(param_name=param_name).set(value)
 
         logger.debug(
             "Camera %s param_name %s and value %s",

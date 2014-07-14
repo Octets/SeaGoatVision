@@ -56,7 +56,6 @@ class Param(object):
         self.delta_float = 0.0001
         # Exception, can serialize
         self.lst_notify = []
-        self.lst_notify_reset = []
         self.name = name
         self.lst_value = None
         self.min_v = None
@@ -66,8 +65,9 @@ class Param(object):
         self.type_t = None
         self.threshold = None
         self.force_type = None
-        self.last_serialize_value = None
+        self.last_saved_value = None
         self.description = None
+        self.first_initialize = True
         self.lst_group = set()
 
         if serialize:
@@ -89,11 +89,14 @@ class Param(object):
                     threshold):
         self._valid_param(value, min_v, max_v, lst_value, threshold)
         self.set(value)
-        self.default_value = self.last_serialize_value = self.value
+        self.last_saved_value = self.value
+        if self.first_initialize:
+            self.default_value = self.value
         if force_type:
             self.force_type = force_type
         else:
             self.force_type = self.type_t
+        self.first_initialize = False
 
     def _valid_param(self, value, min_v, max_v, lst_value, threshold,
                      type_validated=False):
@@ -155,7 +158,8 @@ class Param(object):
         self.threshold = threshold
 
     def serialize(self, is_config=False):
-        self.last_serialize_value = self.value
+        if is_config:
+            self.last_saved_value = self.value
         # Force_type is not supported
         ser = {"name": self.name,
                "value": self.value,
@@ -191,18 +195,16 @@ class Param(object):
         return True
 
     def reset(self):
-        if self.value == self.last_serialize_value:
+        if self.value == self.last_saved_value:
             return
-        self.value = self.last_serialize_value
-        for notify in self.lst_notify_reset:
-            notify(self.get_name(), self.value)
+        self.value = self.last_saved_value
+        self._send_notification()
 
     def set_as_default(self):
         if self.value == self.default_value:
             return
         self.value = self.default_value
-        for notify in self.lst_notify_reset:
-            notify(self.get_name(), self.value)
+        self._send_notification()
 
     def merge(self, param):
         self.name = param.name
@@ -241,21 +243,6 @@ class Param(object):
             return
         self.lst_notify.remove(callback)
 
-    def add_notify_reset(self, callback):
-        # notify when set the value
-        # pass the value in argument
-        if callback in self.lst_notify_reset:
-            logger.warning("Already in notify reset %s" % self.get_name())
-            return
-        self.lst_notify_reset.append(callback)
-
-    def remove_notify_reset(self, callback):
-        if callback not in self.lst_notify_reset:
-            logger.warning("The callback wasn't in the list of notify reset "
-                           "%s" % self.get_name())
-            return
-        self.lst_notify_reset.remove(callback)
-
     def get(self):
         # Exception, cannot convert to numpy array
         # this can create bug in your filter if you pass wrong type
@@ -271,6 +258,10 @@ class Param(object):
         return self.lst_value.index(self.get())
 
     def set(self, value, threshold=None):
+        # don't change value if it's the same value, except for None
+        if type(value) is not None:
+            if value == self.value:
+                return False
         if isinstance(value, unicode):
             value = str(value)
         if self.type_t is bool:
@@ -293,8 +284,8 @@ class Param(object):
                 value, self.lst_value))
         self.value = value
         # send the value on all notify callback
-        for notify in self.lst_notify:
-            notify(value)
+        self._send_notification()
+        return True
 
     def _validate_number(self, value):
         if not (self.type_t is int or self.type_t is float):
@@ -336,6 +327,10 @@ class Param(object):
                 threshold, self.max_v)
             raise ValueError(msg)
         self.threshold = threshold
+
+    def _send_notification(self):
+        for notify in self.lst_notify:
+            notify(self.get_name(), self.value)
 
     def get_type(self):
         return self.force_type

@@ -130,7 +130,6 @@ class WinParamParent(QtGui.QDockWidget):
             widget = None
         # it's not exist, create a new one
         if not widget:
-            class_widget = None
             if param_type is int:
                 class_widget = IntWidget
             elif param_type is float:

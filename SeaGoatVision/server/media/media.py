@@ -64,9 +64,6 @@ class Media(PoolParam):
         # type is Video or Streaming
         pass
 
-    def update_property_param(self, param_name, value):
-        return False
-
     def get_name(self):
         return self.media_name
 
@@ -143,7 +140,9 @@ class Media(PoolParam):
     def initialize(self):
         pass
 
-    def reload(self):
+    def reload(self, param_name=None, value=None):
+        # TODO do observer and check parameter
+        # ignore param_name and value, it's parameter from pool_param
         if not self.thread:
             return True
         status = self.close()
@@ -151,8 +150,7 @@ class Media(PoolParam):
             return False
         # TODO force re-init filterchain
         self.initialize()
-        status = self.open()
-        return status
+        return self.open()
 
     def change_sleep_time(self, sleep_time):
         self.sleep_time = sleep_time
