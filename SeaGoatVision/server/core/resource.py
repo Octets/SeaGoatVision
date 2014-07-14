@@ -100,7 +100,7 @@ class Resource(object):
         if filterchain_name and filterchain_name != name:
             data = self.config.read_filterchain(filterchain_name)
             if not data:
-                return None
+                return
             o_filterchain = filterchain.FilterChain(
                 filterchain_name, serialize=data)
         else:
@@ -152,7 +152,7 @@ class Resource(object):
             index += 1
             if o_filter is None:
                 # error, cancel the transaction
-                return None
+                return
             chain.add_filter(o_filter)
 
         chain.set_default_media_name(default_media)
@@ -200,7 +200,7 @@ class Resource(object):
                 logger.error,
                 "The filter %s not exist in the list." %
                 filter_name)
-            return None
+            return
         # reload the module
         if o_filter.__module__ == "SeaGoatVision.server.cpp.create_module":
             module = o_filter.__module_init__
@@ -216,7 +216,7 @@ class Resource(object):
     def create_filter(self, filter_name, index):
         filter_class = self.get_filter_from_filter_name(filter_name)
         if not filter_class:
-            return None
+            return
         o_filter = filter_class()
         o_filter.set_name("%s-%d" % (filter_name, index))
         return o_filter

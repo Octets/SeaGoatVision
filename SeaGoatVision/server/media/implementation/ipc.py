@@ -38,7 +38,6 @@ class IPC(MediaStreaming):
     def __init__(self, config):
         # Go into configuration/template_media for more information
         super(IPC, self).__init__()
-        self.dct_params = {}
         self.config = Configuration()
         self.own_config = config
         self.media_name = config.name
@@ -58,34 +57,14 @@ class IPC(MediaStreaming):
         self.deserialize(self.config.read_media(self.get_name()))
 
     def _create_params(self):
-        self.dct_params = {}
-
         default_ipc_name = "ipc://%s" % self.device_name
-        param = Param(self.key_ipc_name, default_ipc_name)
-        param.add_notify_reset(self.open)
-        self.dct_params[self.key_ipc_name] = param
-
-    def serialize(self, is_config=False):
-        return {
-            self.key_ipc_name: self.dct_params.get(self.key_ipc_name).get()}
-
-    def deserialize(self, data):
-        if not data:
-            return False
-        if not isinstance(data, dict):
-            log.print_function(
-                logger.error, "Wrong format data, suppose to be dict into \
-                camera %s" % self.get_name())
-            return False
-        res = data.get(self.key_ipc_name, None)
-        if res:
-            self.dct_params.get(self.key_ipc_name).set(res)
-        return True
+        self.param_ipc_name = Param(self.key_ipc_name, default_ipc_name)
+        self.param_ipc_name.add_notify(self.reload)
 
     def open(self):
         self.subscriber = self.context.socket(zmq.SUB)
         self.subscriber.setsockopt(zmq.SUBSCRIBE, b'')
-        device_name = self.dct_params.get(self.key_ipc_name).get()
+        device_name = self.param_ipc_name.get()
         logger.info("Open media device %s" % device_name)
         self.subscriber.connect(device_name)
         thread.start_new_thread(self.fill_message, tuple())
@@ -94,7 +73,7 @@ class IPC(MediaStreaming):
 
     def next(self):
         if not self.subscriber or not self.message:
-            return None
+            return
         image = None
         message = self.message[:]
         self.message = None
@@ -104,7 +83,7 @@ class IPC(MediaStreaming):
         if len_message:
             width = (lst_pixel[0] << 8) + lst_pixel[1]
             if not width:
-                return None
+                return
             image = np.array(lst_pixel[2:])
             # check if missing pixel and replace by zero
             diff = len_message % width
@@ -126,24 +105,6 @@ class IPC(MediaStreaming):
         # self.subscriber.close()
         # self.context.term()
         self.subscriber = None
-        return True
-
-    def get_properties_param(self):
-        return self.dct_params.values()
-
-    def update_property_param(self, param_name, value):
-        param = self.dct_params.get(param_name, None)
-        if not param:
-            return False
-        param_value = param.get()
-        if value == param_value:
-            return True
-        param.set(value)
-        self.reload()
-        return True
-
-    def reset_property_param(self, param_name, value):
-        self.reload()
         return True
 
     def fill_message(self):

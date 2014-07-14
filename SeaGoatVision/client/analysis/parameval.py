@@ -67,7 +67,7 @@ class ParameterEvaluation:
         for f in self.chain.filters:
             if f.__class__.__name__ == self.fname:
                 return f
-        return None
+        return
 
     def save_data(self):
         tmp = tempfile.NamedTemporaryFile()

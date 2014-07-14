@@ -121,4 +121,4 @@ class MediaVideo(Media):
             return self.movie.next()
         if self.imagefolder:
             return self.imagefolder.next()
-        return None
+        return

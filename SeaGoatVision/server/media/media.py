@@ -17,6 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from SeaGoatVision.server.core.pool_param import PoolParam
 from thread_media import ThreadMedia
 import numpy as np
 from SeaGoatVision.commons import log
@@ -32,8 +33,9 @@ class MediaStatus(object):
     lst_status = [run, close, busy, pause]
 
 
-class Media(object):
+class Media(PoolParam):
     def __init__(self):
+        super(Media, self).__init__()
         # TODO change sleep_time dependant of real fps desire
         self.fps = 30.0
         self.sleep_time = 1 / self.fps
@@ -61,16 +63,6 @@ class Media(object):
         # complete it into media_streaming and media_video
         # type is Video or Streaming
         pass
-
-    def get_dct_media_param(self):
-        return {param.get_name(): param for param in
-                self.get_properties_param()}
-
-    def get_properties_param(self):
-        return []
-
-    def update_property_param(self, param_name, value):
-        return False
 
     def get_name(self):
         return self.media_name
@@ -103,10 +95,10 @@ class Media(object):
         }
 
     def serialize(self, is_config=False):
-        pass
+        return super(Media, self).serialize(is_config=is_config)
 
     def deserialize(self, data):
-        return True
+        return super(Media, self).deserialize(data)
 
     def get_real_fps(self):
         if self.thread:
@@ -148,7 +140,9 @@ class Media(object):
     def initialize(self):
         pass
 
-    def reload(self):
+    def reload(self, param_name=None, value=None):
+        # TODO do observer and check parameter
+        # ignore param_name and value, it's parameter from pool_param
         if not self.thread:
             return True
         status = self.close()
@@ -156,8 +150,7 @@ class Media(object):
             return False
         # TODO force re-init filterchain
         self.initialize()
-        status = self.open()
-        return status
+        return self.open()
 
     def change_sleep_time(self, sleep_time):
         self.sleep_time = sleep_time
@@ -195,10 +188,10 @@ class Media(object):
 
     def _get_cb_publisher(self):
         if not self.publisher:
-            return None
+            return
         key = self.get_name()
         return self.publisher.get_callback_publish("media.%s" % key)
 
     def _remove_cb_publisher(self):
         if not self.publisher:
-            return None
+            return

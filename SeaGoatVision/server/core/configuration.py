@@ -144,12 +144,12 @@ class Configuration(object):
 
     def _read_configuration(self, file_name, type_name, ignore_not_exist):
         if not self._is_config_exist(file_name, type_name, ignore_not_exist):
-            return None
+            return
         f = open(file_name, "r")
         if not f:
             log.print_function(
                 logger.error, "Can't open %s %s." % (file_name, type_name))
-            return None
+            return
         str_value = f.readlines()
         try:
             value = json.loads("".join(str_value))

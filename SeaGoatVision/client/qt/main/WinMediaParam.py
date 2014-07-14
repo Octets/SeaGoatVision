@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+# This file is part of SeaGoatVision.
 #
-#    SeaGoatVision is free software: you can redistribute it and/or modify
+# SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
@@ -28,7 +28,6 @@ logger = log.get_logger(__name__)
 
 
 class WinMediaParam(WinParamParent):
-
     def __init__(self, controller, subscriber):
         super(WinMediaParam, self).__init__(controller, self.set_value)
         self.subscriber = subscriber
@@ -47,9 +46,10 @@ class WinMediaParam(WinParamParent):
         is_empty = not self.media_name
 
         if not is_empty:
-            self.lst_param = self.controller.get_params_media(self.media_name)
-            if self.lst_param is None:
-                self.lst_param = []
+            params = self.controller.get_params_media(self.media_name)
+            self.lst_param = []
+            if params and type(params) is dict:
+                self.lst_param = params.values()
 
         # TODO implement description of params
         self.update_module(is_empty, self.media_name, "Media", None)
@@ -81,18 +81,15 @@ class WinMediaParam(WinParamParent):
         else:
             logger.error("Change value %s of param %s." % (value, param_name))
 
-    def default(self):
-        pass
-
     def reset(self):
-        for param in self.lst_param:
-            # TODO show status of the command
-            param.reset()
-            status = self.controller.update_param_media(
-                self.media_name,
-                param.get_name(),
-                param.get())
-        self.set_camera()
+        lst_param_name = [param.name for param in self.lst_param]
+        self.controller.reset_param_media(self.media_name,
+                                          lst_param_name)
+
+    def default(self):
+        lst_param_name = [param.name for param in self.lst_param]
+        self.controller.set_as_default_param_media(self.media_name,
+                                                   lst_param_name)
 
     def save(self):
         self.controller.save_params_media(self.media_name)

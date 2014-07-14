@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+# This file is part of SeaGoatVision.
 #
-#    SeaGoatVision is free software: you can redistribute it and/or modify
+# SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
@@ -76,7 +76,12 @@ class JsonrpcServer():
         rf(self.cmd_handler.get_filter_list, "get_filter_list")
         rf(self.cmd_handler.get_filterchain_info, "get_filterchain_info")
         rf(self.cmd_handler.update_param_media, "update_param_media")
+        rf(self.cmd_handler.reset_param_media, "reset_param_media")
+        rf(self.cmd_handler.set_as_default_param_media,
+           "set_as_default_param_media")
         rf(self.cmd_handler.update_param, "update_param")
+        rf(self.cmd_handler.reset_param, "reset_param")
+        rf(self.cmd_handler.set_as_default_param, "set_as_default_param")
         rf(self.cmd_handler.subscribe, "subscribe")
         rf(self.cmd_handler.get_lst_record_historic, "get_lst_record_historic")
 
@@ -106,13 +111,15 @@ class JsonrpcServer():
         param = self.cmd_handler.get_param_media(media_name, param_name)
         return self._serialize_param(param)
 
-    def _serialize_param(self, param_obj):
+    @staticmethod
+    def _serialize_param(param_obj):
         if isinstance(param_obj, list):
             return [param.serialize() for param in param_obj]
+        if isinstance(param_obj, dict):
+            return {name: param.serialize() for name, param in
+                    param_obj.items()}
         elif isinstance(param_obj, Param):
             return param_obj.serialize()
-        else:
-            return None
 
     #
     # OBSERVATOR ################################
@@ -153,7 +160,8 @@ class JsonrpcServer():
         return self.cmd_handler.remove_image_observer(observer, execution_name,
                                                       filter_name)
 
-    def _compress_cvmat(self, image):
+    @staticmethod
+    def _compress_cvmat(image):
         compress_img = cv2.imencode(
             ".jpeg", image, (cv.CV_IMWRITE_JPEG_QUALITY, 95))
         return compress_img[1].dumps()

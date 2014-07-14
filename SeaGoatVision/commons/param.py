@@ -37,7 +37,6 @@ TIPS :
     p = Param("f", 2, min_v=1, max_v=8, threshold=5)
  - When value is None, you can use it like a trigger.
 """
-import numpy as np
 from SeaGoatVision.commons import log
 import types
 
@@ -48,7 +47,7 @@ class Param(object):
     """Param autodetect basic type
     force_type need to be a <type>
     If you want specific type, cast it to basic type and use force_type
-    Param manager type : None, ndarray, bool, str, int and float
+    Param manager type : None, unicode, bool, str, int, long and float
     """
 
     def __init__(self, name, value, min_v=None, max_v=None, lst_value=None,
@@ -57,7 +56,6 @@ class Param(object):
         self.delta_float = 0.0001
         # Exception, can serialize
         self.lst_notify = []
-        self.lst_notify_reset = []
         self.name = name
         self.lst_value = None
         self.min_v = None
@@ -67,8 +65,9 @@ class Param(object):
         self.type_t = None
         self.threshold = None
         self.force_type = None
-        self.last_serialize_value = None
+        self.last_saved_value = None
         self.description = None
+        self.first_initialize = True
         self.lst_group = set()
 
         if serialize:
@@ -90,24 +89,27 @@ class Param(object):
                     threshold):
         self._valid_param(value, min_v, max_v, lst_value, threshold)
         self.set(value)
-        self.default_value = self.last_serialize_value = self.value
+        self.last_saved_value = self.value
+        if self.first_initialize:
+            self.default_value = self.value
         if force_type:
             self.force_type = force_type
         else:
             self.force_type = self.type_t
+        self.first_initialize = False
 
-    def _valid_param(self, value, min_v, max_v, lst_value, threshold):
+    def _valid_param(self, value, min_v, max_v, lst_value, threshold,
+                     type_validated=False):
         type_t = type(value)
+        if not type_validated and not (type_t is int
+                                       or type_t is types.NoneType
+                                       or type_t is bool
+                                       or type_t is float
+                                       or type_t is str
+                                       or type_t is long
+                                       or type_t is unicode):
+            raise ValueError("Param don't manage type %s" % type_t)
         if type_t is unicode:
-            if not (type_t is int
-                    or type_t is types.NoneType
-                    or type_t is bool
-                    or type_t is float
-                    or type_t is str
-                    or type_t is np.ndarray
-                    or type_t is long
-                    or type_t is unicode):
-                raise ValueError("Param don't manage type %s" % type_t)
             type_t = str
         if type_t is long:
             type_t = int
@@ -156,7 +158,8 @@ class Param(object):
         self.threshold = threshold
 
     def serialize(self, is_config=False):
-        self.last_serialize_value = self.value
+        if is_config:
+            self.last_saved_value = self.value
         # Force_type is not supported
         ser = {"name": self.name,
                "value": self.value,
@@ -192,18 +195,16 @@ class Param(object):
         return True
 
     def reset(self):
-        if self.value == self.last_serialize_value:
+        if self.value == self.last_saved_value:
             return
-        self.value = self.last_serialize_value
-        for notify in self.lst_notify_reset:
-            notify(self.get_name(), self.value)
+        self.value = self.last_saved_value
+        self._send_notification()
 
     def set_as_default(self):
         if self.value == self.default_value:
             return
         self.value = self.default_value
-        for notify in self.lst_notify_reset:
-            notify(self.get_name(), self.value)
+        self._send_notification()
 
     def merge(self, param):
         self.name = param.name
@@ -224,7 +225,7 @@ class Param(object):
 
     def get_list_value(self):
         if not self.lst_value:
-            return None
+            return
         return self.lst_value
 
     def add_notify(self, callback):
@@ -242,25 +243,10 @@ class Param(object):
             return
         self.lst_notify.remove(callback)
 
-    def add_notify_reset(self, callback):
-        # notify when set the value
-        # pass the value in argument
-        if callback in self.lst_notify_reset:
-            logger.warning("Already in notify reset %s" % self.get_name())
-            return
-        self.lst_notify_reset.append(callback)
-
-    def remove_notify_reset(self, callback):
-        if callback not in self.lst_notify_reset:
-            logger.warning("The callback wasn't in the list of notify reset "
-                           "%s" % self.get_name())
-            return
-        self.lst_notify_reset.remove(callback)
-
     def get(self):
         # Exception, cannot convert to numpy array
         # this can create bug in your filter if you pass wrong type
-        if self.force_type is np.ndarray or self.force_type is types.NoneType:
+        if self.force_type is types.NoneType:
             return self.value
         if self.threshold is not None:
             return self.force_type(self.value), self.force_type(self.threshold)
@@ -272,6 +258,10 @@ class Param(object):
         return self.lst_value.index(self.get())
 
     def set(self, value, threshold=None):
+        # don't change value if it's the same value, except for None
+        if type(value) is not None:
+            if value == self.value:
+                return False
         if isinstance(value, unicode):
             value = str(value)
         if self.type_t is bool:
@@ -294,8 +284,8 @@ class Param(object):
                 value, self.lst_value))
         self.value = value
         # send the value on all notify callback
-        for notify in self.lst_notify:
-            notify(value)
+        self._send_notification()
+        return True
 
     def _validate_number(self, value):
         if not (self.type_t is int or self.type_t is float):
@@ -337,6 +327,10 @@ class Param(object):
                 threshold, self.max_v)
             raise ValueError(msg)
         self.threshold = threshold
+
+    def _send_notification(self):
+        for notify in self.lst_notify:
+            notify(self.get_name(), self.value)
 
     def get_type(self):
         return self.force_type

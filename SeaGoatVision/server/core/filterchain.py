@@ -171,7 +171,7 @@ class FilterChain(object):
         if filter_name:
             o_filter = self.get_filter(name=filter_name)
             if not o_filter:
-                return None
+                return
         if o_filter:
             if param_name:
                 return o_filter.get_params(param_name=param_name)

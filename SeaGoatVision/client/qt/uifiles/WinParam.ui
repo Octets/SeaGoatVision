@@ -9,14 +9,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>250</height>
+    <width>319</width>
+    <height>275</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>300</width>
-    <height>250</height>
+    <width>319</width>
+    <height>275</height>
    </size>
   </property>
   <property name="features">
@@ -124,7 +124,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>282</width>
+         <width>301</width>
          <height>73</height>
         </rect>
        </property>
@@ -155,7 +155,7 @@
       <item>
        <widget class="QPushButton" name="defaultButton">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="text">
          <string>Set as default</string>

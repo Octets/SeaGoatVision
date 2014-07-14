@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -17,14 +17,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import log
+from SeaGoatVision.server.core.pool_param import PoolParam
 
 logger = log.get_logger(__name__)
 
 
-class Filter(object):
+class Filter(PoolParam):
     def __init__(self, name=None):
+        super(Filter, self).__init__()
         self._output_observers = list()
         self.original_image = None
         self.name = name
@@ -34,22 +35,14 @@ class Filter(object):
     def serialize(self, is_config=False, is_info=False):
         if is_info:
             return {"name": self.name, "doc": self.__doc__}
-        else:
-            return {"filter_name": self.__class__.__name__,
-                    "lst_param": [param.serialize(is_config=is_config) for
-                                  param in
-                                  self.get_params()]}
+        lst_param = super(Filter, self).serialize(is_config=is_config)
+        return {
+            "filter_name": self.__class__.__name__,
+            "lst_param": lst_param
+        }
 
     def deserialize(self, value):
-        status = True
-        for param_ser in value.get("lst_param"):
-            param_name = param_ser.get("name", None)
-            if not param_name:
-                continue
-            param = self.get_params(param_name=param_name)
-            if param:
-                status &= param.deserialize(param_ser)
-        return status
+        return super(Filter, self).deserialize(value.get("lst_param"))
 
     def get_name(self):
         return self.name
@@ -90,30 +83,6 @@ class Filter(object):
 
     def set_global_params_cpp(self, dct_global_param):
         pass
-
-    def add_global_params(self, param):
-        name = param.get_name()
-        if name in self.dct_global_param:
-            log.print_function(
-                logger.error, "This param is already in the list : %s", name)
-            return
-        self.dct_global_param[name] = param
-
-    def get_global_params(self, param_name):
-        return self.dct_global_param.get(param_name, None)
-
-    def get_params(self, param_name=None):
-        params = []
-        for name in dir(self):
-            var = getattr(self, name)
-            if not isinstance(var, Param):
-                continue
-            if param_name:
-                if var.get_name() == param_name:
-                    return var
-            else:
-                params.append(var)
-        return params
 
     def set_media_param(self, dct_media_param):
         self.dct_media_param = dct_media_param
