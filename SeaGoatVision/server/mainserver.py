@@ -27,7 +27,7 @@ import sys
 from core.configuration import Configuration
 from SeaGoatVision.commons import log
 logger = log.get_logger(__name__)
-config = Configuration()
+config = None
 path = config.get_log_file_path()
 if path:
     log.add_handler(path)
@@ -36,6 +36,10 @@ from controller import jsonrpc_server
 
 
 def run(p_port=None, verbose=False):
+    if not sys.argv :
+        config = Configuration()
+    else :
+        config = Configuration(sys.argv)
     global config
     config.set_verbose(verbose)
     # recheck if its locked because the last check is maybe a false lock

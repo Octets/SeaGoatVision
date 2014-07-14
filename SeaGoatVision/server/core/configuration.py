@@ -57,24 +57,35 @@ class Configuration(object):
             cls._instance = super(Configuration, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self):
-        self.verbose = False
-        path = "configurations/"
-        if self.get_is_show_public_filterchain():
-            self.dir_filterchain = path + "public/filterchain/"
-            self.dir_media = path + "public/"
+    def __init__(self, config_path = None):
+        if not config_path:
+            self.verbose = False
+            path = "configurations/"
+            if self.get_is_show_public_filterchain():
+                self.dir_filterchain = path + "public/filterchain/"
+                self.dir_media = path + "public/"
+                if not self.print_configuration:
+                    logger.info("Loading public configuration.")
+            else:
+                self.dir_filterchain = path + "private/filterchain/"
+                self.dir_media = path + "private/"
+                if not self.print_configuration:
+                    logger.info("Loading private configuration.")
+            self.print_configuration = True
+            self.type_filterchain = "filterchain"
+            self.type_media = "media"
+            self.ext_filterchain = ".%s" % self.type_filterchain
+            self.ext_media = ".%s" % self.type_media
+        else :
+            self.dir_filterchain = path + "conf_" + config_path
+            self.dir_media = path + "conf_" + config_path + "/"
             if not self.print_configuration:
                 logger.info("Loading public configuration.")
-        else:
-            self.dir_filterchain = path + "private/filterchain/"
-            self.dir_media = path + "private/"
-            if not self.print_configuration:
-                logger.info("Loading private configuration.")
-        self.print_configuration = True
-        self.type_filterchain = "filterchain"
-        self.type_media = "media"
-        self.ext_filterchain = ".%s" % self.type_filterchain
-        self.ext_media = ".%s" % self.type_media
+            self.print_configuration = True
+            self.type_filterchain = "filterchain"
+            self.type_media = "media"
+            self.ext_filterchain = ".%s" % self.type_filterchain
+            self.ext_media = ".%s" % self.type_media
 
     # Setter ####
     def set_verbose(self, is_verbose):
