@@ -22,6 +22,7 @@ Description : Configuration manage configuration file.
 """
 # Note, this file should not import core object, because they depend of him
 
+import importlib
 import os
 import json
 from SeaGoatVision.commons import log
@@ -32,20 +33,32 @@ logger = log.get_logger(__name__)
 class Configuration(object):
     _instance = None
 
-    def __new__(cls):
+    def __new__(cls, config_path=None):
         # Singleton
         if not cls._instance:
             from configurations.public import config as public_config
-
+            #############
+            #try:
+            #    from configurations.private import config as private_config
+            #    if config_path:
+            #        custom_config = ("conf_"+config_path)
+            #        private_config = importlib.import_module("configurations.private.%s" % custom_config)
+            #except BaseException as e:
+            #    logger.info(
+            #        "Ignore missing private configuration because: %s" % e)
+            #############
             try:
                 from configurations.private import config as private_config
             except BaseException as e:
                 logger.info(
                     "Ignore missing private configuration because: %s" % e)
             # first instance
+
+            # first instance
             cls.public_config = public_config
             try:
                 if private_config.active_configuration:
+                    logger.info()
                     cls.private_config = private_config
                 else:
                     cls.private_config = None
@@ -57,35 +70,24 @@ class Configuration(object):
             cls._instance = super(Configuration, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, config_path = None):
-        if not config_path:
-            self.verbose = False
-            path = "configurations/"
-            if self.get_is_show_public_filterchain():
-                self.dir_filterchain = path + "public/filterchain/"
-                self.dir_media = path + "public/"
-                if not self.print_configuration:
-                    logger.info("Loading public configuration.")
-            else:
-                self.dir_filterchain = path + "private/filterchain/"
-                self.dir_media = path + "private/"
-                if not self.print_configuration:
-                    logger.info("Loading private configuration.")
-            self.print_configuration = True
-            self.type_filterchain = "filterchain"
-            self.type_media = "media"
-            self.ext_filterchain = ".%s" % self.type_filterchain
-            self.ext_media = ".%s" % self.type_media
-        else :
-            self.dir_filterchain = path + "conf_" + config_path
-            self.dir_media = path + "conf_" + config_path + "/"
+    def __init__(self):
+        path = "configurations/"
+        self.verbose = False
+        if self.get_is_show_public_filterchain():
+            self.dir_filterchain = path + "public/filterchain/"
+            self.dir_media = path + "public/"
             if not self.print_configuration:
                 logger.info("Loading public configuration.")
-            self.print_configuration = True
-            self.type_filterchain = "filterchain"
-            self.type_media = "media"
-            self.ext_filterchain = ".%s" % self.type_filterchain
-            self.ext_media = ".%s" % self.type_media
+        else:
+            self.dir_filterchain = path + "private/filterchain/"
+            self.dir_media = path + "private/"
+            if not self.print_configuration:
+                logger.info("Loading private configuration.")
+        self.print_configuration = True
+        self.type_filterchain = "filterchain"
+        self.type_media = "media"
+        self.ext_filterchain = ".%s" % self.type_filterchain
+        self.ext_media = ".%s" % self.type_media
 
     # Setter ####
     def set_verbose(self, is_verbose):
