@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+# This file is part of SeaGoatVision.
 #
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -242,6 +242,10 @@ class ParentWidget(object):
                 "Wrong param type receiving %s and expect %s" % (
                     param.get_type(), self.param_type))
             return
+
+        is_lock = param.get_is_lock()
+        self.group_box.setDisabled(is_lock)
+
         self.param = param
         self.lbl_desc.setText(param.get_description())
         self.group_box.setTitle(param_name)

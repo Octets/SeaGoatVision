@@ -2,7 +2,7 @@
 
 # Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This file is part of SeaGoatVision.
+# This file is part of SeaGoatVision.
 #
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -70,17 +70,46 @@ class ImageGenerator(MediaStreaming):
         self.param_color_b.add_group("Color")
         self.param_color_b.set_description("Change blue color.")
 
+        self.param_auto_color = Param("auto-change-color", False)
+        self.param_auto_color.set_description(
+            "Change the color automatically.")
+        self.param_auto_color.add_group("Color")
+
         self.param_freeze = Param("freeze", False)
         self.param_freeze.set_description("Freeze the stream.")
 
     def next(self):
         if self.param_freeze.get():
             return
+
         width = self.param_width.get()
         height = self.param_height.get()
         color_r = self.param_color_r.get()
         color_g = self.param_color_g.get()
         color_b = self.param_color_b.get()
+
+        if self.param_auto_color.get():
+            color_r += 1
+            if color_r > 255:
+                color_r = 0
+            color_g += 2
+            if color_g > 255:
+                color_g = 0
+            color_b += 3
+            if color_b > 255:
+                color_b = 0
+
+            self.param_color_r.set(color_r)
+            self.param_color_r.set_lock(True)
+            self.param_color_g.set(color_g)
+            self.param_color_g.set_lock(True)
+            self.param_color_b.set(color_b)
+            self.param_color_b.set_lock(True)
+        else:
+            self.param_color_r.set_lock(False)
+            self.param_color_g.set_lock(False)
+            self.param_color_b.set_lock(False)
+
 
         image = np.zeros((height, width, 3), dtype=np.uint8)
 

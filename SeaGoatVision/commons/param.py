@@ -51,7 +51,7 @@ class Param(object):
     """
 
     def __init__(self, name, value, min_v=None, max_v=None, lst_value=None,
-                 force_type=None, thres_h=None, serialize=None):
+                 force_type=None, thres_h=None, serialize=None, is_lock=False):
         # constant float
         self.delta_float = 0.0001
         # Exception, can serialize
@@ -68,6 +68,7 @@ class Param(object):
         self.last_saved_value = None
         self.description = None
         self.first_initialize = True
+        self._is_lock = is_lock
         self.lst_group = set()
 
         if serialize:
@@ -83,11 +84,13 @@ class Param(object):
         if not isinstance(name, str) and not isinstance(name, unicode):
             raise ValueError("Name must be string value.")
 
-        self._init_param(value, min_v, max_v, lst_value, force_type, thres_h)
+        self._init_param(value, min_v, max_v, lst_value, force_type, thres_h,
+                         is_lock)
 
     def _init_param(self, value, min_v, max_v, lst_value, force_type,
-                    threshold):
+                    threshold, is_lock):
         self._valid_param(value, min_v, max_v, lst_value, threshold)
+        self._is_lock = is_lock
         self.set(value)
         self.last_saved_value = self.value
         if self.first_initialize:
@@ -161,12 +164,15 @@ class Param(object):
         if is_config:
             self.last_saved_value = self.value
         # Force_type is not supported
-        ser = {"name": self.name,
-               "value": self.value,
-               "min_v": self.min_v,
-               "max_v": self.max_v,
-               "lst_value": self.lst_value,
-               "threshold": self.threshold}
+        ser = {
+            "name": self.name,
+            "value": self.value,
+            "min_v": self.min_v,
+            "max_v": self.max_v,
+            "lst_value": self.lst_value,
+            "threshold": self.threshold,
+            "is_lock": self._is_lock,
+        }
         if not is_config:
             ser["description"] = self.description
             ser["lst_group"] = list(self.lst_group)
@@ -179,12 +185,15 @@ class Param(object):
         if not name:
             return False
         self.name = name
-        self._init_param(value.get("value", None),
-                         value.get("min_v", None),
-                         value.get("max_v", None),
-                         value.get("lst_value", None),
-                         value.get("force_type", None),
-                         value.get("threshold", None))
+        self._init_param(
+            value.get("value", None),
+            value.get("min_v", None),
+            value.get("max_v", None),
+            value.get("lst_value", None),
+            value.get("force_type", None),
+            value.get("threshold", None),
+            value.get("is_lock", None),
+        )
 
         description = value.get("description", None)
         if description:
@@ -348,3 +357,9 @@ class Param(object):
 
     def get_groups(self):
         return list(self.lst_group)
+
+    def set_lock(self, is_lock):
+        self._is_lock = is_lock
+
+    def get_is_lock(self):
+        return self._is_lock

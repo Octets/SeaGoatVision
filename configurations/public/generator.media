@@ -1,8 +1,74 @@
-{
-    "color_g": 0, 
-    "color_b": 255, 
-    "height": 600, 
-    "width": 800, 
-    "fps": 30, 
-    "color_r": 0
-}
+[
+    {
+        "is_lock": true, 
+        "name": "color_g", 
+        "lst_value": null, 
+        "min_v": 0, 
+        "value": 82, 
+        "max_v": 255, 
+        "threshold": null
+    }, 
+    {
+        "is_lock": true, 
+        "name": "color_b", 
+        "lst_value": null, 
+        "min_v": 0, 
+        "value": 111, 
+        "max_v": 255, 
+        "threshold": null
+    }, 
+    {
+        "is_lock": false, 
+        "name": "freeze", 
+        "lst_value": null, 
+        "min_v": null, 
+        "value": false, 
+        "max_v": null, 
+        "threshold": null
+    }, 
+    {
+        "is_lock": false, 
+        "name": "width", 
+        "lst_value": null, 
+        "min_v": 1, 
+        "value": 800, 
+        "max_v": 1200, 
+        "threshold": null
+    }, 
+    {
+        "is_lock": false, 
+        "name": "fps", 
+        "lst_value": null, 
+        "min_v": 1, 
+        "value": 30, 
+        "max_v": 100, 
+        "threshold": null
+    }, 
+    {
+        "is_lock": false, 
+        "name": "auto-change-color", 
+        "lst_value": null, 
+        "min_v": null, 
+        "value": true, 
+        "max_v": null, 
+        "threshold": null
+    }, 
+    {
+        "is_lock": false, 
+        "name": "height", 
+        "lst_value": null, 
+        "min_v": 1, 
+        "value": 600, 
+        "max_v": 1200, 
+        "threshold": null
+    }, 
+    {
+        "is_lock": true, 
+        "name": "color_r", 
+        "lst_value": null, 
+        "min_v": 0, 
+        "value": 41, 
+        "max_v": 255, 
+        "threshold": null
+    }
+]
