@@ -74,12 +74,12 @@ class Configuration(object):
             self.dir_filterchain = path + "public/filterchain/"
             self.dir_media = path + "public/"
             if not self.print_configuration:
-                logger.info("Loading public configuration.")
+                logger.info("Loading public filterchain configuration.")
         else:
             self.dir_filterchain = path + "private/filterchain/"
             self.dir_media = path + "private/"
             if not self.print_configuration:
-                logger.info("Loading private configuration.")
+                logger.info("Loading private filterchain configuration.")
         self.print_configuration = True
         self.type_filterchain = "filterchain"
         self.type_media = "media"
