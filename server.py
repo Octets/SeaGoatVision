@@ -38,6 +38,12 @@ if __name__ == '__main__':
         '--verbose',
         action="store_true",
         help="increase output verbosity")
+    parser.add_argument(
+        "-c",
+        '--config',
+        type=str,
+        help="specify config file",
+        default=None)
     args = parser.parse_args(args=argument)
     port = args.port if args.port else None
-    run(p_port=port, verbose=args.verbose)
+    run(p_port=port, verbose=args.verbose, config_path=args.config)
