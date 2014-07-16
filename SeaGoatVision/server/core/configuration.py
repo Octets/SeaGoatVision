@@ -123,8 +123,9 @@ class Configuration(object):
                               self.public_config.show_public_filter)
 
     def get_is_show_private_filter(self):
-        return self._get_conf("active_configuration",
-                              self.public_config.active_configuration)
+        default_public = self.public_config.active_configuration
+        return self.private_config and self._get_conf("active_configuration",
+                                                      default_public)
 
     def get_path_save_record(self):
         return self._get_conf("path_save_record",
