@@ -26,22 +26,21 @@ import sys
 
 from core.configuration import Configuration
 from SeaGoatVision.commons import log
+
 logger = log.get_logger(__name__)
 config = None
 path = None
-if path:
-    log.add_handler(path)
 # Import required RPC modules
 from controller import jsonrpc_server
 
 
 def run(p_port=None, verbose=False, config_path=None):
-    if not config_path:
-        config = Configuration()
-    else:
-        config = Configuration(config_path)
     global config
+    config = Configuration(config_path=config_path)
     path = config.get_log_file_path()
+    # choose the log file path
+    if path:
+        log.add_handler(path)
     config.set_verbose(verbose)
     # recheck if its locked because the last check is maybe a false lock
     pid = os.getpid()

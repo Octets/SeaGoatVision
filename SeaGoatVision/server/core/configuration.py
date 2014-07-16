@@ -37,30 +37,29 @@ class Configuration(object):
         # Singleton
         if not cls._instance:
             from configurations.public import config as public_config
+            # import private config
             try:
-                from configurations.private import config as private_config
+                cls.private_config = None
                 if config_path:
-                    custom_config = ("conf_"+config_path)
-                    private_config = importlib.import_module("configurations.private.%s" % custom_config)
-            except BaseException as e:
-                logger.info(
-                    "Ignore missing private configuration because: %s" % e)
-            try:
-                from configurations.private import config as private_config
-            except BaseException as e:
-                logger.info(
-                    "Ignore missing private configuration because: %s" % e)
-            # first instance
+                    custom_config = ("config_%s" % config_path)
+                    module_name = "configurations.private.%s" % custom_config
+                    private_config = importlib.import_module(module_name)
+                    specific_conf = ", %s" % custom_config
+                else:
+                    from configurations.private import config as private_config
 
-            # first instance
-            cls.public_config = public_config
-            try:
+                    specific_conf = ""
                 if private_config.active_configuration:
                     cls.private_config = private_config
-                else:
-                    cls.private_config = None
-            except BaseException:
-                cls.private_config = None
+                    logger.info(
+                        "Loading private configuration%s." % specific_conf)
+            except BaseException as e:
+                logger.info(
+                    "Ignore missing private configuration because: %s" % e)
+            if not private_config:
+                logger.info("Loading public configuration.")
+            # first instance
+            cls.public_config = public_config
             cls.print_configuration = False
             cls.verbose = False
             # instance class
@@ -68,18 +67,22 @@ class Configuration(object):
         return cls._instance
 
     def __init__(self, config_path=None):
-        path = "configurations/"
+        # ignore config_path, it's used in __new__
         self.verbose = False
-        if self.get_is_show_public_filterchain():
-            self.dir_filterchain = path + "public/filterchain/"
-            self.dir_media = path + "public/"
-            if not self.print_configuration:
-                logger.info("Loading public filterchain configuration.")
-        else:
-            self.dir_filterchain = path + "private/filterchain/"
-            self.dir_media = path + "private/"
-            if not self.print_configuration:
-                logger.info("Loading private filterchain configuration.")
+
+        path = "configurations/"
+        is_public = self.get_is_show_public_filterchain()
+        mode_config_filter = "public" if is_public else "private"
+        mode_config_media = "private" if self.private_config else "public"
+
+        self.dir_filterchain = path + "%s/filterchain/" % mode_config_filter
+        # don't print 2 times and more this information
+        if not self.print_configuration:
+            logger.info(
+                "Loading %s filterchain and %s media." % (
+                    mode_config_filter, mode_config_media))
+
+        self.dir_media = path + "%s/" % mode_config_media
         self.print_configuration = True
         self.type_filterchain = "filterchain"
         self.type_media = "media"
