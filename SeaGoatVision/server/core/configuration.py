@@ -155,6 +155,7 @@ class Configuration(object):
     def _read_configuration(self, file_name, type_name, ignore_not_exist):
         if not self._is_config_exist(file_name, type_name, ignore_not_exist):
             return
+        logger.info("Opening the %s file..." % file_name)
         f = open(file_name, "r")
         if not f:
             log.print_function(
