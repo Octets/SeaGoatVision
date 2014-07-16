@@ -37,16 +37,14 @@ class Configuration(object):
         # Singleton
         if not cls._instance:
             from configurations.public import config as public_config
-            #############
-            #try:
-            #    from configurations.private import config as private_config
-            #    if config_path:
-            #        custom_config = ("conf_"+config_path)
-            #        private_config = importlib.import_module("configurations.private.%s" % custom_config)
-            #except BaseException as e:
-            #    logger.info(
-            #        "Ignore missing private configuration because: %s" % e)
-            #############
+            try:
+                from configurations.private import config as private_config
+                if config_path:
+                    custom_config = ("conf_"+config_path)
+                    private_config = importlib.import_module("configurations.private.%s" % custom_config)
+            except BaseException as e:
+                logger.info(
+                    "Ignore missing private configuration because: %s" % e)
             try:
                 from configurations.private import config as private_config
             except BaseException as e:
@@ -58,7 +56,6 @@ class Configuration(object):
             cls.public_config = public_config
             try:
                 if private_config.active_configuration:
-                    logger.info()
                     cls.private_config = private_config
                 else:
                     cls.private_config = None
@@ -70,7 +67,7 @@ class Configuration(object):
             cls._instance = super(Configuration, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self):
+    def __init__(self, config_path=None):
         path = "configurations/"
         self.verbose = False
         if self.get_is_show_public_filterchain():
