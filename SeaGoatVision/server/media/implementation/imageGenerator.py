@@ -110,7 +110,6 @@ class ImageGenerator(MediaStreaming):
             self.param_color_g.set_lock(False)
             self.param_color_b.set_lock(False)
 
-
         image = np.zeros((height, width, 3), dtype=np.uint8)
 
         image[:, :, 0] += color_b

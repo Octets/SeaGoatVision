@@ -243,7 +243,7 @@ class ParentWidget(object):
                     param.get_type(), self.param_type))
             return
 
-        is_lock = param.get_is_lock()
+        is_lock = bool(param.get_is_lock())
         self.group_box.setDisabled(is_lock)
 
         self.param = param
