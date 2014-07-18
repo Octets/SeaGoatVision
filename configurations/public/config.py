@@ -49,7 +49,7 @@ verbose = False
 log_path = None
 # exemple of log_path
 # log_path = "/tmp/log_%s.log" %
-# datetime.datetime.now().strftime("%Y-%m-%d_%I:%M:%S")
+# datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 
 # Networking
 # Server tcp output notification
