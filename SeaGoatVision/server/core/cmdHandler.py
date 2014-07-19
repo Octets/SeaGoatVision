@@ -50,6 +50,7 @@ class CmdHandler:
         # all record history, contains:
         # {"time": ..., "media_name": ..., "path": ...}
         self.lst_record_historic = []
+        self._is_keep_alive_media = self.config.get_is_keep_alive_media()
 
         # tcp server for output observer
         self.nb_observer_client = 0
@@ -149,6 +150,8 @@ class CmdHandler:
         filterchain.set_media_param(media.get_params())
 
         media.add_observer(filterchain.execute)
+        if self._is_keep_alive_media:
+            media.add_observer(self._keep_alive_media)
 
         self.dct_exec[execution_name] = {
             KEY_FILTERCHAIN: filterchain, KEY_MEDIA: media}
@@ -268,6 +271,8 @@ class CmdHandler:
                 logger.error,
                 "Cannot start record to a media media %s." % media_name)
             return False
+        if self._is_keep_alive_media:
+            media.add_observer(self._keep_alive_media)
         return media.start_record(path=path, options=options)
 
     def stop_record(self, media_name):
@@ -690,3 +695,6 @@ class CmdHandler:
             json_data = json.dumps(data)
             self.publisher.publish(keys.get_key_media_param(),
                                    "%s" % json_data)
+
+    def _keep_alive_media(self, image):
+        pass

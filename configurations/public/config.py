@@ -19,7 +19,6 @@
 
 # This file contain configuration about server.py
 
-
 # from SeaGoatVision.commons import global_env
 # if you need to know if you start in local, use next function call
 # global_env.get_is_local() return True or False
@@ -43,6 +42,8 @@ from configurations.template_media.conf_ipc import ConfIpc
 # It's useful if you need to disable private config
 active_configuration = True
 verbose = False
+# This variable will never stop a media after it started
+keep_alive_media = False
 
 # Log
 # no log When log_path is None else put a string path with file_name
@@ -54,7 +55,6 @@ log_path = None
 # Networking
 # Server tcp output notification
 port_tcp_output = 8090
-
 
 # Media
 path_save_record = ""  # empty string will record on root of seagoat project
@@ -92,7 +92,6 @@ lst_media.append(cam)
 
 # Filterchain
 show_public_filterchain = True
-
 
 # Filter
 show_public_filter = True

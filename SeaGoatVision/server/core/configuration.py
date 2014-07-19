@@ -127,6 +127,10 @@ class Configuration(object):
         return self.private_config and self._get_conf("active_configuration",
                                                       default_public)
 
+    def get_is_keep_alive_media(self):
+        default_public = self.public_config.keep_alive_media
+        return self._get_conf("keep_alive_media", default_public)
+
     def get_path_save_record(self):
         return self._get_conf("path_save_record",
                               self.public_config.path_save_record)
