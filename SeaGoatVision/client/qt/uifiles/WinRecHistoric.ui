@@ -59,6 +59,11 @@
         <string>Path</string>
        </property>
       </column>
+      <column>
+       <property name="text">
+        <string>prvw</string>
+       </property>
+      </column>
      </widget>
     </item>
    </layout>

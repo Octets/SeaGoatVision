@@ -1,4 +1,29 @@
-{
-    "resolution": "320x240", 
-    "fps": "15"
-}
+[
+    {
+        "name": "resolution", 
+        "lst_value": [
+            "1024x768", 
+            "640x480", 
+            "320x240", 
+            "800x600", 
+            "1280x960", 
+            "1280x1024"
+        ], 
+        "min_v": null, 
+        "value": "1280x1024", 
+        "max_v": null, 
+        "threshold": null
+    }, 
+    {
+        "name": "fps", 
+        "lst_value": [
+            "30", 
+            "15", 
+            "7.5"
+        ], 
+        "min_v": null, 
+        "value": "30", 
+        "max_v": null, 
+        "threshold": null
+    }
+]

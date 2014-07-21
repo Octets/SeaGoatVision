@@ -34,6 +34,7 @@ class SharedInfo(object):
     GLOBAL_PATH_MEDIA = "path_media"
     GLOBAL_START_EXEC = "start_exec"
     GLOBAL_RELOAD_FILTER = "reload_filter"
+    GLOBAL_HIST_REC_PATH_MEDIA = "hist_rec_path_media"
 
     def __new__(cls):
         # Singleton
@@ -50,6 +51,7 @@ class SharedInfo(object):
             cls.dct_variable[cls.GLOBAL_PATH_MEDIA] = None
             cls.dct_variable[cls.GLOBAL_START_EXEC] = None
             cls.dct_variable[cls.GLOBAL_RELOAD_FILTER] = None
+            cls.dct_variable[cls.GLOBAL_HIST_REC_PATH_MEDIA] = None
 
             cls.dct_signal = {}
             for key in cls.dct_variable.keys():

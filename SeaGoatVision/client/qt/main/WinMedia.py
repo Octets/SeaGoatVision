@@ -62,6 +62,7 @@ class WinMedia(QtCore.QObject):
         self.shared_info.connect(
             SharedInfo.GLOBAL_START_EXEC, self._start_execution)
         self.shared_info.connect(SharedInfo.GLOBAL_EXEC, self.change_execution)
+        self.shared_info.connect(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, self._change_hist_media_path)
 
         # TODO optimize starting thread.
         self.thread_player = PlayerFile(controller, self._get_actual_no_frame,
@@ -299,6 +300,12 @@ class WinMedia(QtCore.QObject):
         # necessary
         self.ui.cbMedia.setCurrentIndex(index)
         return True
+
+    def _change_hist_media_path(self, value=None):
+        filename = self.shared_info.get(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA)
+        if len(filename) > 0:
+            self.ui.movieLineEdit.setText(filename)
+        self.ui.cbMedia.setCurrentIndex(1)
 
 
 class PlayerFile(threading.Thread):

@@ -46,6 +46,7 @@ class WinExecution(QtCore.QObject):
         self.shared_info.connect(SharedInfo.GLOBAL_MEDIA, self._change_media)
         self.shared_info.connect(
             SharedInfo.GLOBAL_FILTERCHAIN, self._change_filterchain)
+        self.shared_info.connect(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, self._change_media_path)
 
         self.subscriber.subscribe(
             keys.get_key_execution_list(), self.update_execution_list)
@@ -270,3 +271,7 @@ class WinExecution(QtCore.QObject):
                 SharedInfo.GLOBAL_FILTERCHAIN)
             if filterchain_name:
                 self.ui.txtFilterchain.setText(filterchain_name)
+
+    def _change_media_path(self, value=None):
+        if self.ui.previewButton.isEnabled():
+            self.preview()
