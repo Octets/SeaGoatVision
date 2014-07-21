@@ -339,7 +339,7 @@ class Param(object):
 
     def _send_notification(self):
         for notify in self.lst_notify:
-            notify(self.get_name(), self.value)
+            notify(self)
 
     def get_type(self):
         return self.force_type
@@ -357,6 +357,12 @@ class Param(object):
 
     def get_groups(self):
         return list(self.lst_group)
+
+    def lock(self):
+        self.set_lock(True)
+
+    def unlock(self):
+        self.set_lock(False)
 
     def set_lock(self, is_lock):
         self._is_lock = is_lock

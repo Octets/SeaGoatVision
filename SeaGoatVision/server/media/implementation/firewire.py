@@ -53,8 +53,6 @@ class Firewire(MediaStreaming):
         # the id is guid or no, writing into open_camera
         self.id = ""
         self.key_auto_param = "-auto"
-        self.group_name_color = "Color"
-        self.group_name_shutter = "Shutter"
         self.reference_param = {"power": self._power,
                                 "transmission": self._transmission}
 
@@ -299,6 +297,8 @@ class Firewire(MediaStreaming):
     def _create_params(self):
         if not self.camera:
             return
+        group_name_color = "Color"
+        group_name_shutter = "Shutter"
         lst_ignore_prop = ["Trigger"]
         dct_prop = self.camera.get_dict_available_features()
         for name, value in dct_prop.items():
@@ -308,7 +308,7 @@ class Firewire(MediaStreaming):
                 if name == "White Balance":
                     param = Param("%s%s" % (name, self.key_auto_param), False)
                     param.add_notify(self.update_property_param)
-                    param.add_group(self.group_name_color)
+                    param.add_group(group_name_color)
                     self.add_param(param)
                     param = Param(
                         "%s-red" % name,
@@ -316,7 +316,7 @@ class Firewire(MediaStreaming):
                         min_v=value["min"],
                         max_v=value["max"])
                     param.add_notify(self.update_property_param)
-                    param.add_group(self.group_name_color)
+                    param.add_group(group_name_color)
                     self.add_param(param)
 
                     param = Param(
@@ -325,7 +325,7 @@ class Firewire(MediaStreaming):
                         min_v=value["min"],
                         max_v=value["max"])
                     param.add_notify(self.update_property_param)
-                    param.add_group(self.group_name_color)
+                    param.add_group(group_name_color)
                     self.add_param(param)
                     continue
                 param = Param(
@@ -337,10 +337,10 @@ class Firewire(MediaStreaming):
                 self.add_param(param)
 
                 if name == "Shutter" or name == "Gain":
-                    param.add_group(self.group_name_shutter)
+                    param.add_group(group_name_shutter)
                     param = Param("%s%s" % (name, self.key_auto_param), False)
                     param.add_notify(self.update_property_param)
-                    param.add_group(self.group_name_shutter)
+                    param.add_group(group_name_shutter)
                     self.add_param(param)
             except BaseException as e:
                 log.printerror_stacktrace(
@@ -368,34 +368,30 @@ class Firewire(MediaStreaming):
                     if self.get_params("%s%s" %
                                        (value, self.key_auto_param)).get()]
 
-        for key, value in self.get_params().items():
+        for key, param in self.get_params().items():
             contain_auto_variable = False
             # search active auto
             for active_key in lst_auto:
                 if active_key in key:
                     contain_auto_variable = True
                     if self.key_auto_param in key:
-                        self.update_property_param(
-                            key,
-                            value.get(),
-                            update_object_param=False)
+                        self.update_property_param(param,
+                                                   update_object_param=False)
             if contain_auto_variable:
                 continue
             # find auto key disable and cancel it
             if self.key_auto_param in key:
                 continue
-            self.update_property_param(
-                key,
-                value.get(),
-                update_object_param=False)
+            self.update_property_param(param, update_object_param=False)
 
-    def update_property_param(
-            self, param_name, value, update_object_param=True):
+    def update_property_param(self, param, update_object_param=True):
         if not self.camera:
             return False
+        param_name = param.get_name()
+        value = param.get()
 
         if update_object_param:
-            self.get_params(param_name=param_name).set(value)
+            param.set(value)
 
         logger.debug(
             "Camera %s param_name %s and value %s",
@@ -403,7 +399,7 @@ class Firewire(MediaStreaming):
             param_name,
             value)
         if param_name.lower() in self.reference_param.keys():
-            self.reference_param[param_name.lower()](param_name, value)
+            self.reference_param[param_name.lower()](param)
             return True
 
         if self.key_auto_param in param_name:
@@ -424,8 +420,10 @@ class Firewire(MediaStreaming):
             self.camera.set_property(param_name, value)
         return True
 
-    def _power(self, param_name, value):
+    def _power(self, param):
+        value = param.get()
         self.camera.power = int(bool(value))
 
-    def _transmission(self, param_name, value):
+    def _transmission(self, param):
+        value = param.get()
         self.camera.transmission = int(bool(value))

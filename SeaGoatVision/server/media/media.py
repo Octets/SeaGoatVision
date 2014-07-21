@@ -140,7 +140,7 @@ class Media(PoolParam):
     def initialize(self):
         pass
 
-    def reload(self, param_name=None, value=None):
+    def reload(self, param=None):
         # TODO do observer and check parameter
         # ignore param_name and value, it's parameter from pool_param
         if not self.thread:
