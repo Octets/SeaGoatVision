@@ -77,8 +77,8 @@ class Param(object):
                 msg = "Wrong deserialize parameter, can't know the name - "
                 "%s." % serialize
                 raise ValueError(msg)
-            logger.debug("Param %s deserialization complete, value %s" % (
-                self.name, self.value))
+            #logger.debug("Param %s deserialization complete, value %s" % (
+            #    self.name, self.value))
             return
 
         if not isinstance(name, str) and not isinstance(name, unicode):
@@ -366,6 +366,7 @@ class Param(object):
 
     def set_lock(self, is_lock):
         self._is_lock = is_lock
+        self._send_notification()
 
     def get_is_lock(self):
         return self._is_lock

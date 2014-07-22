@@ -253,6 +253,8 @@ class ParentWidget(object):
 
     def set_param_server(self, param):
         self._set_server_widget(param)
+        is_lock = bool(param.get_is_lock())
+        self.group_box.setDisabled(is_lock)
 
     def _create_widget(self):
         raise NotImplementedError("Need to implement _create_widget.")
