@@ -157,7 +157,7 @@ def params_code():
         }
 
         void param_set_desc(std::string name, std::string description) {
-            if(!params.has_key(name)) { 
+            if(!params.has_key(name)) {
                 printf("ERROR from cpp_code param_set_desc: key %s not exist.\\n", name.c_str());
                 return;
             }

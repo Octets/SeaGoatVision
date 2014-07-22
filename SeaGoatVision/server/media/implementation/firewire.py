@@ -176,7 +176,7 @@ class Firewire(MediaStreaming):
 
         self.camera.initEvent.addObserver(self.camera_init)
         self.camera.grabEvent.addObserver(self.camera_observer)
-        #self.camera.stopEvent.addObserver(self.camera_closed)
+        # self.camera.stopEvent.addObserver(self.camera_closed)
         try:
             logger.debug("camera %s start." % self.get_name())
             self.camera.start(force_rgb8=True)
@@ -215,9 +215,9 @@ class Firewire(MediaStreaming):
             "Receive events camera close %s, retry to reopen it." % self.id)
         # clean camera
         self.camera.grabEvent.removeObserver(self.camera_observer)
-        #self.camera.stopEvent.removeObserver(self.camera_closed)
+        # self.camera.stopEvent.removeObserver(self.camera_closed)
         self.actual_image = None
-        #self.camera.safe_clean(free_camera=False)
+        # self.camera.safe_clean(free_camera=False)
         self.camera = None
         self.is_streaming = False
         # reopen the camera
@@ -284,7 +284,7 @@ class Firewire(MediaStreaming):
             self.camera.stop()
             self.camera.initEvent.removeObserver(self.camera_init)
             self.camera.grabEvent.removeObserver(self.camera_observer)
-            #self.camera.stopEvent.removeObserver(self.camera_closed)
+            # self.camera.stopEvent.removeObserver(self.camera_closed)
             self.camera.safe_clean()
             self.camera = None
             return True
@@ -292,7 +292,7 @@ class Firewire(MediaStreaming):
             logger.warning("Camera %s already close." % self.get_name())
         return False
 
-    ######################## PARAMS #########################
+    # PARAMS
 
     def _create_params(self):
         if not self.camera:

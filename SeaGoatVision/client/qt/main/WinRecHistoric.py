@@ -78,7 +78,8 @@ class WinRecHistoric(QtCore.QObject):
                       QtGui.QTableWidgetItem(data.get("media_name")))
         table.setItem(no_row, 2, QtGui.QTableWidgetItem(data.get("path")))
         table.setItem(no_row, 3, QtGui.QTableWidgetItem())
-        table.item(no_row, 3).setIcon(QIcon(self.resource_icon_path + "PreviewAction.png"))
+        table.item(no_row, 3).setIcon(
+            QIcon(self.resource_icon_path + "PreviewAction.png"))
         table.item(no_row, 3).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         table.itemDoubleClicked.connect(self.preview)
 

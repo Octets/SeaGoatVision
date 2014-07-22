@@ -52,7 +52,7 @@ class Resource(object):
             # initialize subscriber server
             publisher = Publisher(5031)
             cls.publisher = publisher
-            #self.resource.set_all_publisher(publisher)
+            # self.resource.set_all_publisher(publisher)
             publisher.start()
 
             publisher.register(keys.get_key_execution_list())

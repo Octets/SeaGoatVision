@@ -77,7 +77,7 @@ class Param(object):
                 msg = "Wrong deserialize parameter, can't know the name - "
                 "%s." % serialize
                 raise ValueError(msg)
-            #logger.debug("Param %s deserialization complete, value %s" % (
+            # logger.debug("Param %s deserialization complete, value %s" % (
             #    self.name, self.value))
             return
 

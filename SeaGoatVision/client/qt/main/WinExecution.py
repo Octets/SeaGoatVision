@@ -46,7 +46,8 @@ class WinExecution(QtCore.QObject):
         self.shared_info.connect(SharedInfo.GLOBAL_MEDIA, self._change_media)
         self.shared_info.connect(
             SharedInfo.GLOBAL_FILTERCHAIN, self._change_filterchain)
-        self.shared_info.connect(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, self._change_media_path)
+        self.shared_info.connect(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA,
+                                 self._change_media_path)
 
         self.subscriber.subscribe(
             keys.get_key_execution_list(), self.update_execution_list)

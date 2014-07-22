@@ -62,7 +62,8 @@ class WinMedia(QtCore.QObject):
         self.shared_info.connect(
             SharedInfo.GLOBAL_START_EXEC, self._start_execution)
         self.shared_info.connect(SharedInfo.GLOBAL_EXEC, self.change_execution)
-        self.shared_info.connect(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, self._change_hist_media_path)
+        self.shared_info.connect(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA,
+                                 self._change_hist_media_path)
 
         # TODO optimize starting thread.
         self.thread_player = PlayerFile(controller, self._get_actual_no_frame,
@@ -115,6 +116,7 @@ class WinMedia(QtCore.QObject):
                 status = data.get("status")
                 if status is not None:
                     self.ui.lblStatus.setText("%s" % status)
+
         return _cb
 
     def _change_media(self, index=-1, after_update=False):
