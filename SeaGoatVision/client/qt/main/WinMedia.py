@@ -305,7 +305,6 @@ class WinMedia(QtCore.QObject):
         filename = self.shared_info.get(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA)
         if len(filename) > 0:
             self.ui.movieLineEdit.setText(filename)
-        self.ui.cbMedia.setCurrentIndex(1)
 
 
 class PlayerFile(threading.Thread):

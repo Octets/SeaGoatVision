@@ -273,5 +273,8 @@ class WinExecution(QtCore.QObject):
                 self.ui.txtFilterchain.setText(filterchain_name)
 
     def _change_media_path(self, value=None):
+        if self.ui.newButton.isEnabled():
+            self.new()
+        self.ui.txtMedia.setText(keys.get_media_file_video_name())
         if self.ui.previewButton.isEnabled():
             self.preview()
