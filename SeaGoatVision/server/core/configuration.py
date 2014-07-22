@@ -37,6 +37,7 @@ class Configuration(object):
         # Singleton
         if not cls._instance:
             from configurations.public import config as public_config
+            private_config = None
             # import private config
             try:
                 cls.private_config = None
