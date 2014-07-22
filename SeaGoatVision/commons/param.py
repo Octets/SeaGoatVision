@@ -268,6 +268,9 @@ class Param(object):
 
     def set(self, value, threshold=None):
         # don't change value if it's the same value, except for None
+        if self.type_t is types.NoneType:
+            self._send_notification()
+            return True
         if type(value) is not None:
             if value == self.value:
                 return False

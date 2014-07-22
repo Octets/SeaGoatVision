@@ -75,6 +75,12 @@ class ImageGenerator(MediaStreaming):
             "Change the color automatically.")
         self.param_auto_color.add_group("Color")
 
+        self.param_transpose_r_color = Param("Transpose red color", None)
+        self.param_transpose_r_color.set_description(
+            "Copy the red color on others color.")
+        self.param_transpose_r_color.add_notify(self._transpose_red_color)
+        self.param_transpose_r_color.add_group("Color")
+
         self.param_freeze = Param("freeze", False)
         self.param_freeze.set_description("Freeze the stream.")
 
@@ -116,3 +122,8 @@ class ImageGenerator(MediaStreaming):
         image[:, :, 1] += color_g
         image[:, :, 2] += color_r
         return image
+
+    def _transpose_red_color(self, param):
+        color_r = self.param_color_r.get()
+        self.param_color_g.set(color_r)
+        self.param_color_b.set(color_r)
