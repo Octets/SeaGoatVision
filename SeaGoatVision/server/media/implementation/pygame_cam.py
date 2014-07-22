@@ -63,7 +63,8 @@ class PygameCam(MediaStreaming):
                                "320x240": (320, 240),
                                "640x480": (640, 480),
                                "1024x768": (1024, 768),
-                               "1280x960": (1280, 960)}
+                               "1280x960": (1280, 960),
+                               "1280x1024": (1280, 1024)}
         self.param_resolution = Param(
             "resolution",
             default_resolution_name,
