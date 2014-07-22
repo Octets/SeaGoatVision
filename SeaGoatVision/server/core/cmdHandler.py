@@ -12,10 +12,10 @@
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# GNU General Public License for more details.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 Description :
@@ -24,12 +24,10 @@ Description :
 from SeaGoatVision.server.tcp_server import Server
 from configuration import Configuration
 from resource import Resource
-from SeaGoatVision.server.controller.publisher import Publisher
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons import keys
 import time
 import inspect
-import json
 import thread
 
 logger = log.get_logger(__name__)
@@ -59,15 +57,7 @@ class CmdHandler:
         self.notify_event_client = {}
         self.id_client_notify = 0
 
-        # initialize subscriber server
-        self.publisher = Publisher(5031)
-        self.resource.set_all_publisher(self.publisher)
-        self.publisher.start()
-
-        self.publisher.register(keys.get_key_execution_list())
-        self.publisher.register(keys.get_key_filter_param())
-        self.publisher.register(keys.get_key_media_param())
-        self.publisher.register(keys.get_key_lst_rec_historic())
+        self.publisher = self.resource.get_publisher()
 
         # launch command on start
         thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
@@ -148,6 +138,7 @@ class CmdHandler:
         media.set_is_client_manager(is_client_manager)
 
         filterchain.set_media_param(media.get_params())
+        filterchain.set_execution_name(execution_name)
 
         media.add_observer(filterchain.execute)
         if self._is_keep_alive_media:
@@ -156,14 +147,12 @@ class CmdHandler:
         self.dct_exec[execution_name] = {
             KEY_FILTERCHAIN: filterchain, KEY_MEDIA: media}
 
-        self.publisher.publish(
+        publisher = self.publisher
+        publisher.publish(
             keys.get_key_execution_list(), "+%s" % execution_name)
 
-        for filter_name in filterchain.get_filter_name():
-            key = keys.create_unique_exec_filter_name(execution_name,
-                                                      filter_name)
-            self.publisher.register(key)
-
+        for o_filter in filterchain.get_filter():
+            o_filter.set_publisher(publisher)
         return True
 
     def stop_filterchain_execution(self, execution_name):
@@ -191,6 +180,7 @@ class CmdHandler:
         observer.remove_observer(filterchain.execute)
 
         # deregiste key
+        # TODO move this in filter destroy
         for filter_name in filterchain.get_filter_name():
             key = keys.create_unique_exec_filter_name(execution_name,
                                                       filter_name)
@@ -315,15 +305,13 @@ class CmdHandler:
         return self._get_param_media(media_name, param_name)
 
     def update_param_media(self, media_name, param_name, value):
-        self._post_command_(locals())
+        # self._post_command_(locals())
         # param_name can be a list or string
         param = self._get_param_media(media_name, param_name)
         if not param:
             return False
 
         param.set(value)
-
-        self._publish_media_change(media_name, param)
         return True
 
     def reset_param_media(self, media_name, param_name):
@@ -336,8 +324,6 @@ class CmdHandler:
 
         for param in lst_param:
             param.reset()
-
-        self._publish_media_change(media_name, lst_param)
         return True
 
     def set_as_default_param_media(self, media_name, param_name):
@@ -350,8 +336,6 @@ class CmdHandler:
 
         for param in lst_param:
             param.set_as_default()
-
-        self._publish_media_change(media_name, lst_param)
         return True
 
     def save_params_media(self, media_name):
@@ -497,7 +481,7 @@ class CmdHandler:
         return self.resource.get_filterchain_info(filterchain_name)
 
     def update_param(self, execution_name, filter_name, param_name, value):
-        self._post_command_(locals())
+        # self._post_command_(locals())
         param = self._get_param_filter(execution_name, filter_name, param_name)
         if not param:
             return False
@@ -506,7 +490,6 @@ class CmdHandler:
         # TODO update when filter is not running
         o_filter = self._get_filter(execution_name, filter_name)
         o_filter.configure()
-        self._publish_filter_change(execution_name, filter_name, param)
         return True
 
     def reset_param(self, execution_name, filter_name, param_name):
@@ -522,7 +505,6 @@ class CmdHandler:
         # TODO update when filter is not running
         o_filter = self._get_filter(execution_name, filter_name)
         o_filter.configure()
-        self._publish_filter_change(execution_name, filter_name, lst_param)
         return True
 
     def set_as_default_param(self, execution_name, filter_name, param_name):
@@ -539,7 +521,6 @@ class CmdHandler:
         # TODO update when filter is not running
         o_filter = self._get_filter(execution_name, filter_name)
         o_filter.configure()
-        self._publish_filter_change(execution_name, filter_name, lst_param)
         return True
 
     def save_params(self, execution_name):
@@ -651,22 +632,6 @@ class CmdHandler:
             return
         return o_filter.get_lst_params(param_name=param_name)
 
-    def _publish_filter_change(self, execution_name, filter_name, param):
-        if type(param) is list:
-            lst_param = param
-        else:
-            lst_param = [param]
-        # send from publisher
-        for param in lst_param:
-            data = {
-                "execution": execution_name,
-                "filter": filter_name,
-                "param": param.serialize()
-            }
-            json_data = json.dumps(data)
-            self.publisher.publish(keys.get_key_filter_param(),
-                                   "%s" % json_data)
-
     def _get_param_media(self, media_name, param_name=None):
         media = self._get_media(media_name=media_name)
         if not media:
@@ -683,18 +648,6 @@ class CmdHandler:
         if not media:
             return
         return media.get_lst_params(param_name=param_name)
-
-    def _publish_media_change(self, media_name, param):
-        if type(param) is list:
-            lst_param = param
-        else:
-            lst_param = [param]
-        # send from publisher
-        for param in lst_param:
-            data = {"media": media_name, "param": param.serialize()}
-            json_data = json.dumps(data)
-            self.publisher.publish(keys.get_key_media_param(),
-                                   "%s" % json_data)
 
     def _keep_alive_media(self, image):
         pass

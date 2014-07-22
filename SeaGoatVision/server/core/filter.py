@@ -17,8 +17,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from SeaGoatVision.commons import log
 from SeaGoatVision.server.core.pool_param import PoolParam
+from SeaGoatVision.commons import keys
+from SeaGoatVision.commons import log
+import json
 
 logger = log.get_logger(__name__)
 
@@ -31,6 +33,9 @@ class Filter(PoolParam):
         self.name = name
         self.dct_global_param = {}
         self.dct_media_param = {}
+        self.execution_name = None
+        self._publisher = None
+        self._publish_key = None
 
     def serialize(self, is_config=False, is_info=False):
         if is_info:
@@ -87,6 +92,9 @@ class Filter(PoolParam):
     def set_media_param(self, dct_media_param):
         self.dct_media_param = dct_media_param
 
+    def set_execution_name(self, execution_name):
+        self.execution_name = execution_name
+
     def get_media_param(self, param_name):
         return self.dct_media_param.get(param_name, None)
 
@@ -108,6 +116,35 @@ class Filter(PoolParam):
 
     def remove_output_observer(self, observer):
         self._output_observers.remove(observer)
+
+    def set_publisher(self, publisher):
+        self._publisher = publisher
+        # create publisher key
+        execution_name = self.execution_name
+        filter_name = self.name
+        key = keys.create_unique_exec_filter_name(execution_name,
+                                                  filter_name)
+        self._publish_key = key
+        self._publisher.register(key)
+        # create callback publisher
+        self._cb_publish = self._get_cb_publisher()
+
+    def _add_notification_param(self, param):
+        # send from publisher
+        if not self._publisher:
+            return
+        data = {
+            "execution": self.execution_name,
+            "filter": self.name,
+            "param": param.serialize()
+        }
+        json_data = json.dumps(data)
+        self._publisher.publish(keys.get_key_filter_param(), json_data)
+
+    def _get_cb_publisher(self):
+        if not self._publisher:
+            return
+        return self._publisher.get_callback_publish(self._publish_key)
 
     def get_media(self, name):
         from resource import Resource

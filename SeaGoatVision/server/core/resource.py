@@ -22,6 +22,7 @@ Description : Manage the resource of the server: filters and media
 """
 import inspect
 
+from SeaGoatVision.server.controller.publisher import Publisher
 from configuration import Configuration
 from SeaGoatVision.commons import keys
 from SeaGoatVision.server.core import filterchain
@@ -33,7 +34,7 @@ logger = log.get_logger(__name__)
 
 
 class Resource(object):
-    # TODO the ressource.py need to manage execution access
+    # TODO the resource.py need to manage execution access
     _instance = None
 
     def __new__(cls):
@@ -47,6 +48,17 @@ class Resource(object):
             # {"filter_name" : class_filter}
             cls.dct_filterchain = {}
             cls.dct_filter = {}
+
+            # initialize subscriber server
+            publisher = Publisher(5031)
+            cls.publisher = publisher
+            #self.resource.set_all_publisher(publisher)
+            publisher.start()
+
+            publisher.register(keys.get_key_execution_list())
+            publisher.register(keys.get_key_filter_param())
+            publisher.register(keys.get_key_media_param())
+            publisher.register(keys.get_key_lst_rec_historic())
 
             # instance class
             cls._instance = super(Resource, cls).__new__(cls)
@@ -256,6 +268,7 @@ class Resource(object):
             keys.get_media_empty_name())
 
         self.dct_media = dct_media
+        self.set_all_publisher()
 
     def get_media_name_list(self):
         return self.dct_media.keys()
@@ -263,7 +276,11 @@ class Resource(object):
     def get_media(self, name):
         return self.dct_media.get(name, None)
 
-    def set_all_publisher(self, publisher):
+    # Publisher
+    def get_publisher(self):
+        return self.publisher
+
+    def set_all_publisher(self):
+        publisher = self.publisher
         for media in self.dct_media.values():
             media.set_publisher(publisher)
-            publisher.register("media.%s" % media.get_name())

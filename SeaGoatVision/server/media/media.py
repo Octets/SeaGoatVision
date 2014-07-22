@@ -20,7 +20,9 @@
 from SeaGoatVision.server.core.pool_param import PoolParam
 from thread_media import ThreadMedia
 import numpy as np
+from SeaGoatVision.commons import keys
 from SeaGoatVision.commons import log
+import json
 
 logger = log.get_logger(__name__)
 
@@ -44,9 +46,15 @@ class Media(PoolParam):
         self.media_name = None
         self.active_loop = True
         self.is_client_manager = False
-        self.publisher = None
-        self.cb_publish = None
-        self.status = MediaStatus.close
+        # set publisher
+        self._publisher = None
+        self.status = None
+        self.set_status(MediaStatus.close)
+
+    def set_publisher(self, publisher):
+        self._publisher = publisher
+        publisher.register("media.%s" % self.media_name)
+        self._cb_publish = self._get_cb_publisher()
 
     def set_is_client_manager(self, is_client_manager):
         self.is_client_manager = is_client_manager
@@ -75,10 +83,10 @@ class Media(PoolParam):
             msg = "Status %s in media %s not supported." % (status,
                                                             self.get_name())
             logger.error(msg)
-            return
-        if self.status != status:
+            self.status = MediaStatus.close
+        if self.status != status and self._cb_publish:
             self.status = status
-            self.cb_publish({"status": status})
+            self._cb_publish({"status": status})
 
     def __iter__(self):
         return self
@@ -113,7 +121,7 @@ class Media(PoolParam):
             return True
         if self.thread:
             return False
-        self.thread = ThreadMedia(self, self.cb_publish)
+        self.thread = ThreadMedia(self, self._cb_publish)
         self.thread.start()
         return True
 
@@ -176,22 +184,23 @@ class Media(PoolParam):
         for observer in self.lst_observer:
             observer(np.copy(image))
 
+    def _add_notification_param(self, param):
+        # send from publisher
+        if not self._publisher:
+            return
+        data = {"media": self.media_name, "param": param.serialize()}
+        json_data = json.dumps(data)
+        self._publisher.publish(keys.get_key_media_param(), json_data)
+
     def set_loop_enable(self, enable):
         self.active_loop = enable
 
-    def set_publisher(self, publisher):
-        self.publisher = publisher
-        self.cb_publish = self._get_cb_publisher()
-
-    def get_publisher(self):
-        return self.publisher
-
     def _get_cb_publisher(self):
-        if not self.publisher:
+        if not self._publisher:
             return
         key = self.get_name()
-        return self.publisher.get_callback_publish("media.%s" % key)
+        return self._publisher.get_callback_publish("media.%s" % key)
 
     def _remove_cb_publisher(self):
-        if not self.publisher:
+        if not self._publisher:
             return

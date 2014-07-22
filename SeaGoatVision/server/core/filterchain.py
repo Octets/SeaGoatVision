@@ -158,14 +158,7 @@ class FilterChain(object):
         return self.filter_output_observers
 
     def get_filter_list(self):
-        class Filter:
-            def __init__(self):
-                pass
-
-        ret_value = []
-        for item in self.filters:
-            ret_value.append(item.serialize(is_info=True))
-        return ret_value
+        return [item.serialize(is_info=True) for item in self.filters]
 
     def get_params(self, o_filter=None, filter_name=None, param_name=None):
         if filter_name:
@@ -199,6 +192,11 @@ class FilterChain(object):
 
     def get_filter_name(self):
         return [o_filter.get_name() for o_filter in self.filters]
+
+    def set_execution_name(self, execution_name):
+        # add execution name in each filter, need it for notification
+        for o_filter in self.filters:
+            o_filter.set_execution_name(execution_name)
 
     def add_filter(self, o_filter):
         self.filters.append(o_filter)

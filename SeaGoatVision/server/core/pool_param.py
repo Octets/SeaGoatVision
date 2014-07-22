@@ -34,6 +34,8 @@ class PoolParam(object):
         self._dct_param_manual = {}
         self._dct_shared_param = None
         self._dct_shared_param_manual = {}
+        self._publisher = None
+        self._cb_publish = None
 
     # Get
     def get_params(self, param_name=None):
@@ -71,14 +73,18 @@ class PoolParam(object):
             if isinstance(var, Param):
                 name = var.get_name()
                 dct_param[name] = var
+                var.add_notify(self._add_notification_param)
             elif isinstance(var, SharedParam):
                 name = var.get_name()
                 dct_shared_param[name] = var
+                var.add_notify(self._add_notification_param)
         # add manual param
         for name, param in self._dct_param_manual.items():
             dct_param[name] = param
+            param.add_notify(self._add_notification_param)
         for name, param in self._dct_shared_param_manual.items():
             dct_shared_param[name] = param
+            param.add_notify(self._add_notification_param)
         # copy it on used dict
         self._dct_param = dct_param
         self._dct_shared_param = dct_shared_param
@@ -88,6 +94,8 @@ class PoolParam(object):
         if self._dct_param is None:
             self.sync_params()
         self._add_param(self._dct_param, self._dct_param_manual, param)
+        # notify itself
+        param.add_notify(self._add_notification_param)
 
     def add_shared_param(self, param):
         if self._dct_shared_param is None:
@@ -104,6 +112,10 @@ class PoolParam(object):
         dct_param[name] = param
         dct_param_manual[name] = param
         return True
+
+    def _add_notification_param(self, param):
+        # inherit it in child class
+        pass
 
     # configuration
     def serialize(self, is_config=False):
