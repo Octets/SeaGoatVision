@@ -44,13 +44,13 @@ class WinExecution(QtCore.QObject):
         self.reload_ui()
 
         self.shared_info.connect(SharedInfo.GLOBAL_MEDIA, self._change_media)
-        self.shared_info.connect(
-            SharedInfo.GLOBAL_FILTERCHAIN, self._change_filterchain)
+        self.shared_info.connect(SharedInfo.GLOBAL_FILTERCHAIN,
+                                 self._change_filterchain)
         self.shared_info.connect(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA,
                                  self._change_media_path)
 
-        self.subscriber.subscribe(
-            keys.get_key_execution_list(), self.update_execution_list)
+        self.subscriber.subscribe(keys.get_key_execution_list(),
+                                  self.update_execution_list)
 
     def reload_ui(self):
         self.ui = get_ui(self)
@@ -115,9 +115,6 @@ class WinExecution(QtCore.QObject):
     def cancel(self):
         self._mode_edit(False)
         self._on_selected_lst_execution_change()
-
-    def get_execution_name(self):
-        return self._get_selected_execution_name()
 
     #
     # PRIVATE FUNCTION  ############################
@@ -274,6 +271,7 @@ class WinExecution(QtCore.QObject):
                 self.ui.txtFilterchain.setText(filterchain_name)
 
     def _change_media_path(self, value=None):
+        # TODO validate if not another execution is created with same argument
         if self.ui.newButton.isEnabled():
             self.new()
         self.ui.txtMedia.setText(keys.get_media_file_video_name())

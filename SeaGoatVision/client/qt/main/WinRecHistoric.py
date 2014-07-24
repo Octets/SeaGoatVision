@@ -36,6 +36,7 @@ class WinRecHistoric(QtCore.QObject):
     def __init__(self, controller, subscriber):
         super(WinRecHistoric, self).__init__()
         self.ui = None
+        self.resource_icon_path = "SeaGoatVision/client/resource/img/"
         self.controller = controller
         self.subscriber = subscriber
         self.shared_info = SharedInfo()
@@ -51,7 +52,6 @@ class WinRecHistoric(QtCore.QObject):
         # Comments: 0 Comments
         # Public Tags:
         # Stats: 137 downloads, 1246 views, 0 Favs
-        self.resource_icon_path = "SeaGoatVision/client/resource/img/"
 
         self.subscriber.subscribe(keys.get_key_lst_rec_historic(),
                                   self.update_record)
@@ -87,7 +87,6 @@ class WinRecHistoric(QtCore.QObject):
         if item.column() == 3:
             table = self.ui.tableRecord
             file_name = table.item(item.row(), 2).text()
-            self.shared_info.set(
-                SharedInfo.GLOBAL_PATH_MEDIA, file_name)
-            self.shared_info.set(
-                SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, file_name)
+            self.shared_info.set(SharedInfo.GLOBAL_PATH_MEDIA, file_name)
+            self.shared_info.set(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA,
+                                 file_name)
