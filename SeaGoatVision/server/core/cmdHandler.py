@@ -29,6 +29,7 @@ from SeaGoatVision.commons import keys
 import time
 import inspect
 import thread
+import os
 
 logger = log.get_logger(__name__)
 
@@ -49,6 +50,7 @@ class CmdHandler:
         # {"time": ..., "media_name": ..., "path": ...}
         self.lst_record_historic = []
         self._is_keep_alive_media = self.config.get_is_keep_alive_media()
+        self.old_rec_dir_path = "."
 
         # tcp server for output observer
         self.nb_observer_client = 0
@@ -291,6 +293,23 @@ class CmdHandler:
             log.print_function(logger.error,
                                "Error to stop the record %s." % media_name)
         return status
+
+    def get_lst_old_record_historic(self):
+        self._post_command_(locals())
+        root_dir = self.old_rec_dir_path
+        lst_old_record_historic = []
+        for dirName, subdirList, fileList in os.walk(root_dir, topdown=False):
+            for fname in fileList:
+                file_ext = os.path.splitext(fname)[1]
+                if file_ext == '.avi':
+                    file_creation_time = os.path.getctime(dirName + "/" + fname)
+                    record_status = {
+                        "time": file_creation_time,
+                        "name": fname,
+                        "path": dirName,
+                    }
+                    lst_old_record_historic.append(record_status)
+        return lst_old_record_historic
 
     def get_lst_record_historic(self):
         self._post_command_(locals())
