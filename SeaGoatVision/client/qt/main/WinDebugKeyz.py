@@ -53,12 +53,12 @@ class WinDebugKeyz(QtCore.QObject):
         # Stats: 137 downloads, 1246 views, 0 Favs
         self.resource_icon_path = "SeaGoatVision/client/resource/img/"
 
-        self.subscriber.subscribe(keys.get_key_lst_rec_historic(),
-                                  self.update_record)
+        #self.subscriber.subscribe(keys.get_key_lst_rec_historic(),
+        #                         self.update_record)
 
     def reload_ui(self):
         self.ui = get_ui(self)
-        self.refresh_list()
+        #self.refresh_list()
 
     def refresh_list(self):
         #TODO refresh list from server data
@@ -68,29 +68,31 @@ class WinDebugKeyz(QtCore.QObject):
         #    self.update_record(item)
 
     def update_record(self, data):
+        pass
         #TODO DATA[socket, private key, public key]
-        if not ("time" in data and "media_name" in data and "path" in data):
-            return
-        table = self.ui.tableRecord
-        no_row = table.rowCount()
-        table.insertRow(no_row)
-        date = datetime.datetime.fromtimestamp(data.get("time"))
-        str_date = date.strftime('%Y-%m-%d %H:%M:%S')
-        table.setItem(no_row, 0, QtGui.QTableWidgetItem(str_date))
-        table.setItem(no_row, 1,
-                      QtGui.QTableWidgetItem(data.get("media_name")))
-        table.setItem(no_row, 2, QtGui.QTableWidgetItem(data.get("path")))
-        table.setItem(no_row, 3, QtGui.QTableWidgetItem())
-        table.item(no_row, 3).setIcon(
-            QIcon(self.resource_icon_path + "PreviewAction.png"))
-        table.item(no_row, 3).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-        table.itemDoubleClicked.connect(self.preview)
+        #if not ("time" in data and "media_name" in data and "path" in data):
+        #    return
+        #table = self.ui.tableRecord
+        #no_row = table.rowCount()
+        #table.insertRow(no_row)
+        #date = datetime.datetime.fromtimestamp(data.get("time"))
+        #str_date = date.strftime('%Y-%m-%d %H:%M:%S')
+        #table.setItem(no_row, 0, QtGui.QTableWidgetItem(str_date))
+        #table.setItem(no_row, 1,
+        #              QtGui.QTableWidgetItem(data.get("media_name")))
+        #table.setItem(no_row, 2, QtGui.QTableWidgetItem(data.get("path")))
+        #table.setItem(no_row, 3, QtGui.QTableWidgetItem())
+        #table.item(no_row, 3).setIcon(
+        #    QIcon(self.resource_icon_path + "PreviewAction.png"))
+        #table.item(no_row, 3).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+        #table.itemDoubleClicked.connect(self.preview)
 
     def preview(self, item):
-        if item.column() == 3:
-            table = self.ui.tableRecord
-            file_name = table.item(item.row(), 2).text()
-            self.shared_info.set(
-                SharedInfo.GLOBAL_PATH_MEDIA, file_name)
-            self.shared_info.set(
-                SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, file_name)
+        pass
+        #if item.column() == 3:
+        #    table = self.ui.tableRecord
+        #    file_name = table.item(item.row(), 2).text()
+        #    self.shared_info.set(
+        #        SharedInfo.GLOBAL_PATH_MEDIA, file_name)
+        #    self.shared_info.set(
+        #        SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, file_name)
