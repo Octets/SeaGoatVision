@@ -50,7 +50,7 @@ class CmdHandler:
         # {"time": ..., "media_name": ..., "path": ...}
         self.lst_record_historic = []
         self._is_keep_alive_media = self.config.get_is_keep_alive_media()
-        self.old_rec_dir_path = "."
+        self.old_rec_dir_path = self.config.get_path_save_record()
 
         # tcp server for output observer
         self.nb_observer_client = 0
