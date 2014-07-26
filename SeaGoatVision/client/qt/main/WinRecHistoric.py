@@ -22,8 +22,8 @@ from SeaGoatVision.client.qt.shared_info import SharedInfo
 from SeaGoatVision.commons import keys
 from PySide.QtGui import QIcon
 
-from PySide.QtCore import Qt
 from PySide import QtCore, QtGui
+from PySide.QtCore import Qt
 from SeaGoatVision.commons import log
 import datetime
 
@@ -41,8 +41,7 @@ class WinRecHistoric(QtCore.QObject):
         self.subscriber = subscriber
         self.shared_info = SharedInfo()
         self.reload_ui()
-        self.mode_edit = False
-        self.last_index = 0
+        self.lst_old_record_historic = []
         # eye icon taken from : http://www.iconspedia.com/icon/eye-icon-49269.html
         #
         # Part of: Mono General 4 icon pack
@@ -59,6 +58,7 @@ class WinRecHistoric(QtCore.QObject):
     def reload_ui(self):
         self.ui = get_ui(self)
         self.refresh_list()
+        self.load_old_records_hist()
 
     def refresh_list(self):
         lst_record = self.controller.get_lst_record_historic()
@@ -81,12 +81,45 @@ class WinRecHistoric(QtCore.QObject):
         table.item(no_row, 3).setIcon(
             QIcon(self.resource_icon_path + "PreviewAction.png"))
         table.item(no_row, 3).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-        table.itemDoubleClicked.connect(self.preview)
+        table.itemDoubleClicked.connect(self._rec_prvw_dbl_clicked)
 
-    def preview(self, item):
+    def preview(self, file_name):
+        self.shared_info.set(SharedInfo.GLOBAL_PATH_MEDIA, file_name)
+        self.shared_info.set(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, file_name)
+
+    def load_old_records_hist(self):
+        self.clear_old_records()
+        self.lst_old_record_historic = self.controller.get_lst_old_record_historic()
+        table = self.ui.tableFileName
+        table.itemDoubleClicked.connect(self._old_rec_prvw_dbl_clicked)
+        no_row = 0
+        for rec in self.lst_old_record_historic:
+            table.insertRow(no_row)
+            date = datetime.datetime.fromtimestamp(rec.get("time"))
+            str_date = date.strftime('%Y-%m-%d %H:%M:%S')
+            table.setItem(no_row, 0, QtGui.QTableWidgetItem(str_date))
+            table.setItem(no_row, 1, QtGui.QTableWidgetItem(rec.get("name")))
+            table.setItem(no_row, 2, QtGui.QTableWidgetItem(rec.get("path")))
+            table.setItem(no_row, 3, QtGui.QTableWidgetItem())
+            table.item(no_row, 3).setIcon(
+                QIcon(self.resource_icon_path + "PreviewAction.png"))
+            table.item(no_row, 3).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            ++no_row
+
+    def clear_old_records(self):
+        table = self.ui.tableFileName
+        while table.rowCount() > 0:
+            table.removeRow(0)
+
+    def _rec_prvw_dbl_clicked(self, item):
         if item.column() == 3:
             table = self.ui.tableRecord
             file_name = table.item(item.row(), 2).text()
-            self.shared_info.set(SharedInfo.GLOBAL_PATH_MEDIA, file_name)
-            self.shared_info.set(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA,
-                                 file_name)
+            self.preview(file_name)
+
+    def _old_rec_prvw_dbl_clicked(self, item):
+        if item.column() == 3:
+            table = self.ui.tableFileName
+            file_name = table.item(item.row(), 2).text() + "/" + table.item(item.row(), 1).text()
+            self.preview(file_name)
+
