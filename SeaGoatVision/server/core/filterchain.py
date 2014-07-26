@@ -78,6 +78,7 @@ class FilterChain(object):
                 self.remove_image_observer(obs, filter_name)
 
         for o_filter in self.filters:
+            o_filter.destroy_param()
             o_filter.destroy()
 
     def serialize(self, is_config=False):

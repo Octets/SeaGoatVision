@@ -70,7 +70,10 @@ class CmdHandler:
     def close(self):
         logger.info("Close cmdHandler and close server.")
         for execution in self.dct_exec.values():
-            execution[KEY_MEDIA].close()
+            media = execution[KEY_MEDIA]
+            media.close()
+            media.destroy()
+
         self.server_observer.stop()
         self.publisher.stop()
         self.publisher.deregister(keys.get_key_execution_list())

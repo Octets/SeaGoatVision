@@ -141,5 +141,5 @@ class ImageGenerator(MediaStreaming):
         else:
             self.param_color_g.stop_pooling()
 
-    def _pool_random_green(self):
+    def _pool_random_green(self, param):
         return randrange(255)

@@ -51,6 +51,9 @@ class Media(PoolParam):
         self.status = None
         self.set_status(MediaStatus.close)
 
+    def destroy(self):
+        self.destroy_param()
+
     def set_publisher(self, publisher):
         self._publisher = publisher
         publisher.register("media.%s" % self.media_name)

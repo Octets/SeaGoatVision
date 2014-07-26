@@ -37,6 +37,16 @@ class PoolParam(object):
         self._publisher = None
         self._cb_publish = None
 
+    def destroy_param(self):
+        for param in self._dct_param.values():
+            param.destroy()
+        for param in self._dct_param_manual.values():
+            param.destroy()
+        for param in self._dct_shared_param.values():
+            param.destroy()
+        for param in self._dct_shared_param_manual.values():
+            param.destroy()
+
     # Get
     def get_params(self, param_name=None):
         if self._dct_param is None:

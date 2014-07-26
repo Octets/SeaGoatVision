@@ -163,6 +163,11 @@ class Param(object):
         self.type_t = type_t
         self.threshold = threshold
 
+    def destroy(self):
+        if self._thread_pool:
+            self._thread_pool.stop()
+            self._thread_pool = None
+
     def serialize(self, is_config=False):
         if is_config:
             self.last_saved_value = self.value
@@ -407,11 +412,11 @@ class Param(object):
             while self.is_running:
                 try:
                     while self.is_running:
-                        value = cb()
+                        value = cb(param)
                         param.set(value)
                         time.sleep(sleep_time)
                 except:
-                    pass
+                    time.sleep(sleep_time)
 
         def stop(self):
             self.is_running = False
