@@ -74,6 +74,9 @@ class Firewire(MediaStreaming):
         self.count_no_image = 0
         self.max_no_image = 120
 
+        self.lst_param_shutter = []
+        self.lst_param_whitebalance = []
+
         if not self.try_open_camera(repeat_loop=3, sleep_time=1):
             return
 
@@ -306,28 +309,36 @@ class Firewire(MediaStreaming):
                 continue
             try:
                 if name == "White Balance":
+                    # add auto white balance
                     param = Param("%s%s" % (name, self.key_auto_param), False)
                     param.add_notify(self.update_property_param)
                     param.add_group(group_name_color)
+                    param.add_notify(self._trig_auto_whitebalance)
                     self.add_param(param)
+                    # add specific color of white balance
                     param = Param(
-                        "%s-red" % name,
+                        "RV_value",
                         value["RV_value"],
                         min_v=value["min"],
                         max_v=value["max"])
+                    param.set_description("%s-red" % name)
                     param.add_notify(self.update_property_param)
                     param.add_group(group_name_color)
+                    self.lst_param_whitebalance.append(param)
                     self.add_param(param)
 
                     param = Param(
-                        "%s-blue" % name,
+                        "BU_value",
                         value["BU_value"],
                         min_v=value["min"],
                         max_v=value["max"])
+                    param.set_description("%s-blue" % name)
                     param.add_notify(self.update_property_param)
+                    self.lst_param_whitebalance.append(param)
                     param.add_group(group_name_color)
                     self.add_param(param)
                     continue
+
                 param = Param(
                     name,
                     value["value"],
@@ -336,16 +347,18 @@ class Firewire(MediaStreaming):
                 param.add_notify(self.update_property_param)
                 self.add_param(param)
 
-                if name == "Shutter" or name == "Gain":
+                if name == "Shutter":
+                    self.lst_param_shutter.append(param)
                     param.add_group(group_name_shutter)
+                    # add auto param
                     param = Param("%s%s" % (name, self.key_auto_param), False)
+                    param.add_notify(self._trig_auto_shutter)
                     param.add_notify(self.update_property_param)
                     param.add_group(group_name_shutter)
                     self.add_param(param)
             except BaseException as e:
                 log.printerror_stacktrace(
-                    logger, "%s - name: %s, value: %s" %
-                    (e, name, value))
+                    logger, "%s - name: %s, value: %s" % (e, name, value))
 
         # add operational param
         group_operation = "operation"
@@ -358,6 +371,34 @@ class Firewire(MediaStreaming):
         self.param_transmission.add_group(group_operation)
 
         self.sync_params()
+
+    def _trig_auto(self, param, lst_param, cb):
+        if not self.camera:
+            return False
+        is_active = bool(param.get())
+        for param in lst_param:
+            # lock/unlock and start/stop pooling
+            param.set_lock(is_active)
+            if is_active:
+                param.start_pooling(cb)
+            else:
+                param.stop_pooling()
+        return True
+
+    def _trig_auto_shutter(self, param):
+        return self._trig_auto(param, self.lst_param_shutter, self._get_cam_property)
+
+    def _trig_auto_whitebalance(self, param):
+        return self._trig_auto(param, self.lst_param_whitebalance, self._get_cam_whitebalance_property)
+
+    def _get_cam_property(self, param):
+        return self.camera.get_property(param.get_name())
+
+    def _get_cam_whitebalance_property(self, param):
+        blue, red = self.camera.get_whitebalance()
+        if "RV" in param.get_name():
+            return red
+        return blue
 
     def update_all_property(self):
         # If property is auto, don't apply manual parameter
@@ -385,7 +426,7 @@ class Firewire(MediaStreaming):
             self.update_property_param(param, update_object_param=False)
 
     def update_property_param(self, param, update_object_param=True):
-        if not self.camera:
+        if not self.camera or param.get_is_lock():
             return False
         param_name = param.get_name()
         value = param.get()
@@ -405,17 +446,10 @@ class Firewire(MediaStreaming):
         if self.key_auto_param in param_name:
             new_param_name = param_name[:-len(self.key_auto_param)]
             self.camera.set_property_auto(new_param_name, value)
-        elif "White Balance" in param_name:
-            if "red" in param_name:
-                self.camera.set_whitebalance(RV_value=value)
-            elif "blue" in param_name:
-                self.camera.set_whitebalance(BU_value=value)
-            else:
-                log.print_function(
-                    logger.error,
-                    "Can define the right color %s" %
-                    param_name)
-                return False
+        elif "RV" in param_name:
+            self.camera.set_whitebalance(RV_value=value)
+        elif "BU" in param_name:
+            self.camera.set_whitebalance(BU_value=value)
         else:
             self.camera.set_property(param_name, value)
         return True
