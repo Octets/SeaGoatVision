@@ -84,6 +84,7 @@ class JsonrpcServer():
         rf(self.cmd_handler.set_as_default_param, "set_as_default_param")
         rf(self.cmd_handler.subscribe, "subscribe")
         rf(self.cmd_handler.get_lst_record_historic, "get_lst_record_historic")
+        rf(self.cmd_handler.get_number_clients(), "get_number_clients")
 
     def run(self):
         self.server.serve_forever()
@@ -109,6 +110,12 @@ class JsonrpcServer():
 
     def get_param_media(self, media_name, param_name):
         param = self.cmd_handler.get_param_media(media_name, param_name)
+        return self._serialize_param(param)
+
+    def get_number_clients(self, client_name):
+        print "Iam pirate"
+        logger.info("iam pirate")
+        param = self.cmd_handler.get_number_clients()
         return self._serialize_param(param)
 
     @staticmethod

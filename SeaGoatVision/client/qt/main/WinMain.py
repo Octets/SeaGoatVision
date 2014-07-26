@@ -78,11 +78,6 @@ class WinMain(QtGui.QMainWindow):
         self.show_win_rec_historic(first_time=True)
         self.show_win_debug_keyz(first_time=True)
 
-        if self.win_debug_keyz.ui:
-            print "ninja style"
-        else:
-            print "doctor style"
-
         # Tabify dockwidget
         self.tabifyDockWidget(
             self.win_media.ui,

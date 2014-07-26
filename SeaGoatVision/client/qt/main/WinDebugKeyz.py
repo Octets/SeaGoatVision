@@ -42,51 +42,34 @@ class WinDebugKeyz(QtCore.QObject):
         self.reload_ui()
         self.mode_edit = False
         self.last_index = 0
-        # eye icon taken from : http://www.iconspedia.com/icon/eye-icon-49269.html
-        #
-        # Part of: Mono General 4 icon pack
-        # Author: Custom Icon Design, http://www.customicondesign.com/
-        # License: Free for non commercial use.
-        # Maximum Size Available: 256x256 px
-        # Comments: 0 Comments
-        # Public Tags:
-        # Stats: 137 downloads, 1246 views, 0 Favs
-        self.resource_icon_path = "SeaGoatVision/client/resource/img/"
-
-        #self.subscriber.subscribe(keys.get_key_lst_rec_historic(),
-        #                         self.update_record)
+        self.number_client = 0
+        #self.subscriber.subscribe(keys.get_key_lst_rec_historic(), self.update_record)
 
     def reload_ui(self):
         self.ui = get_ui(self)
-        #self.refresh_list()
+        self.refresh_list()
 
     def refresh_list(self):
         #TODO refresh list from server data
-        pass
-        #lst_record = self.controller.get_lst_record_historic()
-        #for item in lst_record:
-        #    self.update_record(item)
+        self.number_client = self.controller.get_number_clients()
+        #print "[Debug] win debug key, update record data: " + str(self.number_client)
+        self.update_record(self.number_client)
 
     def update_record(self, data):
-        pass
+        print str(data)
         #TODO DATA[socket, private key, public key]
         #if not ("time" in data and "media_name" in data and "path" in data):
         #    return
-        #table = self.ui.tableRecord
-        #no_row = table.rowCount()
-        #table.insertRow(no_row)
-        #date = datetime.datetime.fromtimestamp(data.get("time"))
-        #str_date = date.strftime('%Y-%m-%d %H:%M:%S')
-        #table.setItem(no_row, 0, QtGui.QTableWidgetItem(str_date))
-        #table.setItem(no_row, 1,
-        #              QtGui.QTableWidgetItem(data.get("media_name")))
-        #table.setItem(no_row, 2, QtGui.QTableWidgetItem(data.get("path")))
-        #table.setItem(no_row, 3, QtGui.QTableWidgetItem())
-        #table.item(no_row, 3).setIcon(
-        #    QIcon(self.resource_icon_path + "PreviewAction.png"))
-        #table.item(no_row, 3).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+        table = self.ui.tableRecord
+        no_row = table.rowCount()
+        table.insertRow(no_row)
+        table.setItem(no_row, 0, QtGui.QTableWidgetItem("Ninja"))
+        table.setItem(no_row, 1, QtGui.QTableWidgetItem("Pirate"))
+        table.setItem(no_row, 2, QtGui.QTableWidgetItem("Doctor"))
+        table.setItem(no_row, 3, QtGui.QTableWidgetItem("Pokemon"))
         #table.itemDoubleClicked.connect(self.preview)
 
+    #TODO transform to kill process
     def preview(self, item):
         pass
         #if item.column() == 3:

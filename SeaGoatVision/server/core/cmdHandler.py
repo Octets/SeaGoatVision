@@ -34,6 +34,7 @@ logger = log.get_logger(__name__)
 
 KEY_MEDIA = "media"
 KEY_FILTERCHAIN = "filterchain"
+NUMBER_CLIENTS = 0
 
 
 class CmdHandler:
@@ -48,6 +49,9 @@ class CmdHandler:
         # all record history, contains:
         # {"time": ..., "media_name": ..., "path": ...}
         self.lst_record_historic = []
+        #TODO WIP self.lst_debug_keyz = []
+        self.increment_no_clients()
+
         self._is_keep_alive_media = self.config.get_is_keep_alive_media()
 
         # tcp server for output observer
@@ -62,6 +66,14 @@ class CmdHandler:
         # launch command on start
         thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
 
+    def get_number_clients(self):
+        return self.server_observer.get_count()
+
+    def increment_no_clients(self):
+        global NUMBER_CLIENTS
+        NUMBER_CLIENTS += 1
+        print NUMBER_CLIENTS
+
     def get_publisher(self):
         return self.publisher
 
@@ -75,6 +87,7 @@ class CmdHandler:
         self.publisher.deregister(keys.get_key_filter_param())
         self.publisher.deregister(keys.get_key_media_param())
         self.publisher.deregister(keys.get_key_lst_rec_historic())
+        #TODO WIP debug keys
 
     @staticmethod
     def _post_command_(arg):
