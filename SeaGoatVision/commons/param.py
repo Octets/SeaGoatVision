@@ -39,6 +39,8 @@ TIPS :
 """
 from SeaGoatVision.commons import log
 import types
+import threading
+import time
 
 logger = log.get_logger(__name__)
 
@@ -70,6 +72,7 @@ class Param(object):
         self.first_initialize = True
         self._is_lock = is_lock
         self.lst_group = set()
+        self._thread_pool = None
 
         if serialize:
             status = self.deserialize(serialize)
@@ -373,3 +376,42 @@ class Param(object):
 
     def get_is_lock(self):
         return self._is_lock
+
+    def start_pooling(self, callback, sleep_time=0.1):
+        if self._thread_pool:
+            return False
+        self._thread_pool = self.PoolParam(self, callback, sleep_time)
+        self._thread_pool.start()
+        return True
+
+    def stop_pooling(self):
+        if not self._thread_pool:
+            return False
+        self._thread_pool.stop()
+        self._thread_pool = None
+        return True
+
+    class PoolParam(threading.Thread):
+        def __init__(self, param, callback, sleep_time):
+            threading.Thread.__init__(self)
+            self.cb = callback
+            self.param = param
+            self.sleep_time = sleep_time
+            self.is_running = False
+
+        def run(self):
+            self.is_running = True
+            sleep_time = self.sleep_time
+            param = self.param
+            cb = self.cb
+            while self.is_running:
+                try:
+                    while self.is_running:
+                        value = cb()
+                        param.set(value)
+                        time.sleep(sleep_time)
+                except:
+                    pass
+
+        def stop(self):
+            self.is_running = False
