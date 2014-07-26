@@ -24,10 +24,8 @@ from PySide.QtGui import QIcon
 
 from PySide import QtCore, QtGui
 from PySide.QtCore import Qt
-from PySide.QtGui import QFileDialog
 from SeaGoatVision.commons import log
 import datetime
-import os
 
 logger = log.get_logger(__name__)
 
@@ -38,6 +36,12 @@ class WinRecHistoric(QtCore.QObject):
     def __init__(self, controller, subscriber):
         super(WinRecHistoric, self).__init__()
         self.ui = None
+        self.resource_icon_path = "SeaGoatVision/client/resource/img/"
+        self.controller = controller
+        self.subscriber = subscriber
+        self.shared_info = SharedInfo()
+        self.reload_ui()
+        self.lst_old_record_historic = []
         # eye icon taken from : http://www.iconspedia.com/icon/eye-icon-49269.html
         #
         # Part of: Mono General 4 icon pack
@@ -47,12 +51,6 @@ class WinRecHistoric(QtCore.QObject):
         # Comments: 0 Comments
         # Public Tags:
         # Stats: 137 downloads, 1246 views, 0 Favs
-        self.resource_icon_path = "SeaGoatVision/client/resource/img/"
-        self.controller = controller
-        self.subscriber = subscriber
-        self.shared_info = SharedInfo()
-        self.reload_ui()
-        self.lst_old_record_historic = []
 
         self.subscriber.subscribe(keys.get_key_lst_rec_historic(),
                                   self.update_record)
@@ -86,10 +84,8 @@ class WinRecHistoric(QtCore.QObject):
         table.itemDoubleClicked.connect(self._rec_prvw_dbl_clicked)
 
     def preview(self, file_name):
-        self.shared_info.set(
-            SharedInfo.GLOBAL_PATH_MEDIA, file_name)
-        self.shared_info.set(
-            SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, file_name)
+        self.shared_info.set(SharedInfo.GLOBAL_PATH_MEDIA, file_name)
+        self.shared_info.set(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, file_name)
 
     def load_old_records_hist(self):
         self.clear_old_records()
@@ -126,3 +122,4 @@ class WinRecHistoric(QtCore.QObject):
             table = self.ui.tableFileName
             file_name = table.item(item.row(), 2).text() + "/" + table.item(item.row(), 1).text()
             self.preview(file_name)
+

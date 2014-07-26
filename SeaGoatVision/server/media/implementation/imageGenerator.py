@@ -22,6 +22,7 @@ from SeaGoatVision.server.core.configuration import Configuration
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import log
 import numpy as np
+from random import randrange
 
 logger = log.get_logger(__name__)
 
@@ -75,6 +76,12 @@ class ImageGenerator(MediaStreaming):
             "Change the color automatically.")
         self.param_auto_color.add_group("Color")
 
+        self.param_random_green = Param("pooling_green_random", False)
+        self.param_random_green.set_description(
+            "Active pooling update of green color with random value.")
+        self.param_random_green.add_notify(self._active_green_pooling)
+        self.param_random_green.add_group("Color")
+
         self.param_transpose_r_color = Param("Transpose red color", None)
         self.param_transpose_r_color.set_description(
             "Copy the red color on others color.")
@@ -127,3 +134,12 @@ class ImageGenerator(MediaStreaming):
         color_r = self.param_color_r.get()
         self.param_color_g.set(color_r)
         self.param_color_b.set(color_r)
+
+    def _active_green_pooling(self, param):
+        if param.get():
+            self.param_color_g.start_pooling(self._pool_random_green)
+        else:
+            self.param_color_g.stop_pooling()
+
+    def _pool_random_green(self):
+        return randrange(255)
