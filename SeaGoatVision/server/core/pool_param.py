@@ -38,14 +38,24 @@ class PoolParam(object):
         self._cb_publish = None
 
     def destroy_param(self):
-        for param in self._dct_param.values():
-            param.destroy()
-        for param in self._dct_param_manual.values():
-            param.destroy()
-        for param in self._dct_shared_param.values():
-            param.destroy()
-        for param in self._dct_shared_param_manual.values():
-            param.destroy()
+        def destroy_dct(dct):
+            if dct:
+                for param in dct.values():
+                    param.destroy()
+        destroy_dct(self._dct_param)
+        destroy_dct(self._dct_param_manual)
+        destroy_dct(self._dct_shared_param)
+        destroy_dct(self._dct_shared_param_manual)
+
+    def stop_pooling_all_param(self):
+        def stop_pooling(dct):
+            if dct:
+                for param in dct.values():
+                    param.stop_pooling()
+        stop_pooling(self._dct_param)
+        stop_pooling(self._dct_param_manual)
+        stop_pooling(self._dct_shared_param)
+        stop_pooling(self._dct_shared_param_manual)
 
     # Get
     def get_params(self, param_name=None):

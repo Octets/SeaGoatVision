@@ -139,6 +139,7 @@ class Media(PoolParam):
     def close(self):
         logger.info("Close media %s" % self.get_name())
         self._remove_cb_publisher()
+        self.stop_pooling_all_param()
         if self.is_client_manager:
             return True
         if not self.thread:
