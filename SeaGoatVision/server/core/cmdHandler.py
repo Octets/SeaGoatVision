@@ -297,6 +297,8 @@ class CmdHandler:
     def get_lst_old_record_historic(self):
         self._post_command_(locals())
         root_dir = self.old_rec_dir_path
+        if not root_dir:
+            root_dir = "."
         lst_old_record_historic = []
         for dirName, subdirList, fileList in os.walk(root_dir, topdown=False):
             for fname in fileList:
