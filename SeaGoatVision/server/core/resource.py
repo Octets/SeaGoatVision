@@ -59,6 +59,7 @@ class Resource(object):
             publisher.register(keys.get_key_filter_param())
             publisher.register(keys.get_key_media_param())
             publisher.register(keys.get_key_lst_rec_historic())
+            publisher.register(keys.get_key_count())
 
             # instance class
             cls._instance = super(Resource, cls).__new__(cls)

@@ -29,6 +29,7 @@ from WinMainViewer import WinMainViewer
 from WinRecHistoric import WinRecHistoric
 from WinFilterParam import WinFilterParam
 from WinMediaParam import WinMediaParam
+from WinDebugKeyz import WinDebugKeyz
 from PySide import QtGui
 from PySide import QtCore
 from SeaGoatVision.commons import log
@@ -62,6 +63,7 @@ class WinMain(QtGui.QMainWindow):
         self.win_execution = WinExecution(controller, subscriber)
         self.win_filter_chain = WinFilterChain(controller)
         self.win_main_viewer = WinMainViewer()
+        self.win_debug_keyz = WinDebugKeyz(controller, subscriber)
 
         # Add default widget
         self.show_win_filter(first_time=True)
@@ -71,6 +73,7 @@ class WinMain(QtGui.QMainWindow):
         self.show_win_execution(first_time=True)
         self.show_win_camera(first_time=True)
         self.show_win_rec_historic(first_time=True)
+        self.show_win_debug_keyz(first_time=True)
 
         # Tabify dockwidget
         self.tabifyDockWidget(
@@ -96,6 +99,7 @@ class WinMain(QtGui.QMainWindow):
         self.ui.btnCamera.clicked.connect(self.show_win_camera)
         self.ui.btnParam.clicked.connect(self.show_win_filter)
         self.ui.btnRecHistoric.clicked.connect(self.show_win_rec_historic)
+        self.ui.btnDebugKeyz.clicked.connect(self.show_win_debug_keyz)
         self.win_execution.onPreviewClick.connect(self.add_preview)
 
         self._add_tool_bar()
@@ -150,6 +154,12 @@ class WinMain(QtGui.QMainWindow):
         self.addDockWidget(
             QtCore.Qt.DockWidgetArea.RightDockWidgetArea,
             self.win_rec_historic.ui)
+
+    def show_win_debug_keyz(self, first_time=False):
+        if not first_time:
+            self.removeDockWidget(self.win_debug_keyz.ui)
+            self.win_debug_keyz.reload_ui()
+        self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self.win_debug_keyz.ui)
 
     def show_win_camera(self, first_time=False):
         if not first_time:

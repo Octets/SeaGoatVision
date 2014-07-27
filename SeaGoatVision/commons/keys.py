@@ -98,6 +98,10 @@ def get_key_lst_rec_historic():
     return "lst_rec_historic"
 
 
+def get_key_count():
+    return "count_keys"
+
+
 def get_lst_key_topic_pubsub():
     return {
         get_key_all_output_filter(): 1,
@@ -105,4 +109,5 @@ def get_lst_key_topic_pubsub():
         get_key_filter_param(): 3,
         get_key_media_param(): 4,
         get_key_lst_rec_historic(): 5,
+        get_key_count(): 6,
     }

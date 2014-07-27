@@ -26,10 +26,11 @@ from configuration import Configuration
 from resource import Resource
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons import keys
+import os
 import time
 import inspect
 import thread
-import os
+import json
 
 logger = log.get_logger(__name__)
 
@@ -49,6 +50,8 @@ class CmdHandler:
         # all record history, contains:
         # {"time": ..., "media_name": ..., "path": ...}
         self.lst_record_historic = []
+        self.count_keys = {}
+
         self._is_keep_alive_media = self.config.get_is_keep_alive_media()
         self.old_rec_dir_path = self.config.get_path_save_record()
 
@@ -63,6 +66,9 @@ class CmdHandler:
 
         # launch command on start
         thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
+
+    def get_count_keys(self):
+        return self.count_keys
 
     def get_publisher(self):
         return self.publisher
@@ -80,6 +86,7 @@ class CmdHandler:
         self.publisher.deregister(keys.get_key_filter_param())
         self.publisher.deregister(keys.get_key_media_param())
         self.publisher.deregister(keys.get_key_lst_rec_historic())
+        self.publisher.deregister(keys.get_key_count())
 
     @staticmethod
     def _post_command_(arg):
@@ -320,6 +327,10 @@ class CmdHandler:
         self._post_command_(locals())
         return self.lst_record_historic
 
+    def get_count_keys(self):
+        self._post_command_(locals())
+        return self.count_keys
+
     def get_params_media(self, media_name):
         self._post_command_(locals())
         return self._get_param_media(media_name)
@@ -468,6 +479,14 @@ class CmdHandler:
     # PUBLISHER  ##################################
     #
     def subscribe(self, key):
+        if key in self.count_keys:
+            qty = self.count_keys[key]
+            self.count_keys[key] = qty + 1
+        else:
+            self.count_keys.update({key: 1})
+        data = {"keys": self.count_keys}
+        json_data = json.dumps(data)
+        self.publisher.publish(keys.get_key_count(), json_data)
         return self.publisher.subscribe(key)
 
     #
