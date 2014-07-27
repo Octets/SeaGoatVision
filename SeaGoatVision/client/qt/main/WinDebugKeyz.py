@@ -52,41 +52,23 @@ class WinDebugKeyz(QtCore.QObject):
         self.refresh_list()
 
     def refresh_list(self):
-        #TODO refresh list from server data
+        # TODO refresh list from server data
         self.count_keys = self.controller.get_count_keys()
         data = {"keys": self.count_keys}
         json_data = json.dumps(data)
         self.update_record_table(json_data)
 
     def update_record_table(self, json_data):
-        #TODO DATA[socket, private key, public key]
+        # TODO DATA[socket, private key, public key]
         data = json.loads(json_data)
         values = data.get("keys", None)
-        #print("[Debug] win debug key, update record data: %s" % values)
         table = self.ui.tableRecord
         for value in values:
-            #print("i got stuff %s: " % value)
             item = table.findItems(str(value), Qt.MatchExactly)
             if not item:
                 no_row = table.rowCount()
-                #print("no row %s" % no_row)
                 table.insertRow(no_row)
                 table.setItem(no_row, 0, QtGui.QTableWidgetItem(str(value)))
                 table.setItem(no_row, 1, QtGui.QTableWidgetItem(str(values[value])))
             else:
-                #print("update item %s" % value)
                 table.setItem(item[0].row(), 1, QtGui.QTableWidgetItem(str(values[value])))
-
-
-        #table.itemDoubleClicked.connect(self.preview)
-
-    #TODO transform to kill process
-    def preview(self, item):
-        pass
-        #if item.column() == 3:
-        #    table = self.ui.tableRecord
-        #    file_name = table.item(item.row(), 2).text()
-        #    self.shared_info.set(
-        #        SharedInfo.GLOBAL_PATH_MEDIA, file_name)
-        #    self.shared_info.set(
-        #        SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, file_name)

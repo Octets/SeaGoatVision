@@ -29,7 +29,6 @@ from WinMainViewer import WinMainViewer
 from WinRecHistoric import WinRecHistoric
 from WinFilterParam import WinFilterParam
 from WinMediaParam import WinMediaParam
-#WIP
 from WinDebugKeyz import WinDebugKeyz
 from PySide import QtGui
 from PySide import QtCore
@@ -64,8 +63,6 @@ class WinMain(QtGui.QMainWindow):
         self.win_execution = WinExecution(controller, subscriber)
         self.win_filter_chain = WinFilterChain(controller)
         self.win_main_viewer = WinMainViewer()
-
-        #WIP
         self.win_debug_keyz = WinDebugKeyz(controller, subscriber)
 
         # Add default widget

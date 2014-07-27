@@ -49,7 +49,6 @@ class CmdHandler:
         # all record history, contains:
         # {"time": ..., "media_name": ..., "path": ...}
         self.lst_record_historic = []
-        #TODO WIP count number of each type of key = []
         self.count_keys = {}
 
         self._is_keep_alive_media = self.config.get_is_keep_alive_media()
@@ -82,7 +81,7 @@ class CmdHandler:
         self.publisher.deregister(keys.get_key_filter_param())
         self.publisher.deregister(keys.get_key_media_param())
         self.publisher.deregister(keys.get_key_lst_rec_historic())
-        #TODO WIP count_keys
+        self.publisher.deregister(keys.get_key_count())
 
     @staticmethod
     def _post_command_(arg):
