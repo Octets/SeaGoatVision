@@ -26,10 +26,15 @@ from configuration import Configuration
 from resource import Resource
 from SeaGoatVision.commons import log
 from SeaGoatVision.commons import keys
+from SeaGoatVision.server.media.recording.video_recorder import VideoRecorder
+from SeaGoatVision.server.media.implementation.movie import Movie
 import time
 import inspect
 import thread
+import threading
 import os
+#from recording.video_recorder import VideoRecorder
+from subprocess import Popen, PIPE
 
 logger = log.get_logger(__name__)
 
@@ -256,6 +261,9 @@ class CmdHandler:
             {"compress": 0, "format": "avi"}
         """
         media = self._get_media(media_name=media_name)
+
+        #print "media: " + media.__class__.__name__
+
         if not media:
             return False
         if media.is_media_video():
@@ -365,6 +373,15 @@ class CmdHandler:
         if not media:
             return False
         return self.config.write_media(media)
+
+    def cut_video(self, video_name, begin, end, cut_video_name):
+        self._post_command_(locals())
+        video_media = Movie(video_name)
+        if not video_media:
+            return False
+        rec_thread = ThreadRecordCutVideo(video_media, begin, end, cut_video_name, self)
+        rec_thread.start()
+        return True
 
     #
     # OBSERVER  #################################
@@ -672,3 +689,51 @@ class CmdHandler:
 
     def _keep_alive_media(self, image):
         pass
+
+    def add_lst_record_historic(self, media_name, path):
+        # {"time": ..., "media_name": ..., "path": ...}
+        record_status = {
+            "time": time.time(),
+            "media_name": media_name,
+            "path": path,
+        }
+        self.lst_record_historic.append(record_status)
+        self.publisher.publish(keys.get_key_lst_rec_historic(), record_status)
+
+
+class ThreadRecordCutVideo(threading.Thread):
+    """
+    """
+
+    def __init__(self, video_media, begin, end, cut_video_name, controller):
+        threading.Thread.__init__(self)
+        self.video_media = video_media
+        self.begin = begin
+        self.end = end
+        self.cut_video_name = cut_video_name
+        self.recorder = VideoRecorder(self._Media())
+        self.controller = controller
+        #self.resource = Resource()
+        #self.publisher = self.resource.get_publisher()
+
+    def run(self):
+        #self.video_media.change_frame(self.begin)
+        self.recorder.start(123, self.cut_video_name)
+        self.video_media.set_position(self.begin)
+        for frame_no in range(self.begin, self.end):
+            img = self.video_media.next()
+            self.recorder.add_image(img)
+        self.recorder.stop()
+        #mystr[-4:]
+        if self.cut_video_name[-4:] == ".avi":
+            new_file_name = self.cut_video_name
+        else:
+            new_file_name = self.cut_video_name + ".avi"
+        self.controller.add_lst_record_historic("Movie", new_file_name)
+
+    class _Media():
+        def add_observer(self, cp):
+            pass
+
+        def remove_observer(self, cb):
+            pass
