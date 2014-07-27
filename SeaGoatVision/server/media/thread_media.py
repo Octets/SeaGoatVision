@@ -20,6 +20,7 @@ import time
 import threading
 from SeaGoatVision.commons import log
 import media
+import numpy as np
 
 logger = log.get_logger(__name__)
 
@@ -28,7 +29,7 @@ class ThreadMedia(threading.Thread):
     """Media thread to process the images.
     """
 
-    def __init__(self, media, publisher):
+    def __init__(self, media, publisher, rotate_param):
         threading.Thread.__init__(self)
         # self.daemon = True
         self.media = media
@@ -36,6 +37,7 @@ class ThreadMedia(threading.Thread):
         self.pause = False
         self.nb_fps = 0
         self.publisher = publisher
+        self.rotate_param = rotate_param
 
     def run(self):
         sleep_time_per_fps = self.media.sleep_time
@@ -48,12 +50,17 @@ class ThreadMedia(threading.Thread):
         image = None
         msg_error = "Max reset - close media %s" % self.media.get_name()
         self.media.set_status(media.MediaStatus.run)
+        rotate_param = self.rotate_param
 
         while self.running:
             # TODO try to remove this try catch for better performance
             try:
                 image = self.media.next()
                 no_reset = 0
+                # apply rotate picture
+                angle = rotate_param.get()
+                if angle:
+                    image = np.rot90(image, angle)
             except StopIteration:
                 if self.media.active_loop:
                     self.media.reset()

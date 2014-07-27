@@ -22,6 +22,7 @@ from thread_media import ThreadMedia
 import numpy as np
 from SeaGoatVision.commons import keys
 from SeaGoatVision.commons import log
+from SeaGoatVision.commons.param import Param
 import json
 
 logger = log.get_logger(__name__)
@@ -50,6 +51,11 @@ class Media(PoolParam):
         self._publisher = None
         self.status = None
         self.set_status(MediaStatus.close)
+        # add generic param
+        self._rotate_param = Param('angle', 0, max_v=3, min_v=0)
+        desc = "Rotate the picture. 0 - 90 - 180 - 270"
+        self._rotate_param.set_description(desc)
+        self._rotate_param.add_group("Generic")
 
     def destroy(self):
         self.destroy_param()
@@ -124,7 +130,7 @@ class Media(PoolParam):
             return True
         if self.thread:
             return False
-        self.thread = ThreadMedia(self, self._cb_publish)
+        self.thread = ThreadMedia(self, self._cb_publish, self._rotate_param)
         self.thread.start()
         return True
 

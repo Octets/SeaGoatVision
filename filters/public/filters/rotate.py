@@ -24,12 +24,12 @@ from SeaGoatVision.server.core.filter import Filter
 
 
 class Rotate(Filter):
-
-    """Draw a black rectangle on top of the image"""
+    """
+    Rotate picture
+    """
 
     def __init__(self):
         Filter.__init__(self)
-        self.enable = Param('enable', True)
         self.angle = Param('angle', 0, max_v=3, min_v=0)
 
     def execute(self, image):

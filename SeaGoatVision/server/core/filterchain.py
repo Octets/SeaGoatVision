@@ -296,8 +296,9 @@ class FilterChain(object):
 
         try:
             for f in self.filters:
-                f.set_original_image(original_image)
-                image = f.execute(image)
+                if f.get_is_active():
+                    f.set_original_image(original_image)
+                    image = f.execute(image)
 
                 lst_observer = self.image_observers.get(f.get_name(), [])
                 if lst_observer:

@@ -20,6 +20,7 @@
 from SeaGoatVision.server.core.pool_param import PoolParam
 from SeaGoatVision.commons import keys
 from SeaGoatVision.commons import log
+from SeaGoatVision.commons.param import Param
 import json
 
 logger = log.get_logger(__name__)
@@ -36,6 +37,11 @@ class Filter(PoolParam):
         self.execution_name = None
         self._publisher = None
         self._publish_key = None
+
+        # add generic param
+        self._active_param = Param("_active_filter", True)
+        self._active_param.set_description("Enable filter in filterchain.")
+        self._active_param.add_group("Generic")
 
     def serialize(self, is_config=False, is_info=False):
         if is_info:
@@ -60,6 +66,9 @@ class Filter(PoolParam):
 
     def set_name(self, name):
         self.name = name
+
+    def get_is_active(self):
+        return bool(self._active_param.get())
 
     def destroy(self):
         # edit me
