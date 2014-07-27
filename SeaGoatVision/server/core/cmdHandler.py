@@ -31,6 +31,7 @@ import time
 import inspect
 import thread
 import json
+from collections import defaultdict
 
 logger = log.get_logger(__name__)
 
@@ -50,7 +51,7 @@ class CmdHandler:
         # all record history, contains:
         # {"time": ..., "media_name": ..., "path": ...}
         self.lst_record_historic = []
-        self.count_keys = {}
+        self.count_keys = defaultdict(int)
 
         self._is_keep_alive_media = self.config.get_is_keep_alive_media()
         self.old_rec_dir_path = self.config.get_path_save_record()
@@ -66,9 +67,6 @@ class CmdHandler:
 
         # launch command on start
         thread.start_new_thread(self.config.get_dct_cmd_on_start(), (self,))
-
-    def get_count_keys(self):
-        return self.count_keys
 
     def get_publisher(self):
         return self.publisher
@@ -479,14 +477,8 @@ class CmdHandler:
     # PUBLISHER  ##################################
     #
     def subscribe(self, key):
-        if key in self.count_keys:
-            qty = self.count_keys[key]
-            self.count_keys[key] = qty + 1
-        else:
-            self.count_keys.update({key: 1})
-        data = {"keys": self.count_keys}
-        json_data = json.dumps(data)
-        self.publisher.publish(keys.get_key_count(), json_data)
+        self.count_keys[key] += 1
+        self.publisher.publish(keys.get_key_count(), self.count_keys)
         return self.publisher.subscribe(key)
 
     #

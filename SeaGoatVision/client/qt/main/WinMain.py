@@ -88,6 +88,10 @@ class WinMain(QtGui.QMainWindow):
             self.win_filter_param.ui,
             self.win_filter_list.ui
         )
+        self.tabifyDockWidget(
+            self.win_filter_chain.ui,
+            self.win_debug_keyz.ui
+        )
 
         # Signal
         self.win_filter_list.onAddFilter.connect(
