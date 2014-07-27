@@ -46,17 +46,12 @@
       </attribute>
       <column>
        <property name="text">
-        <string>Date</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Client socket</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>Key</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Quantity</string>
        </property>
       </column>
       <column>

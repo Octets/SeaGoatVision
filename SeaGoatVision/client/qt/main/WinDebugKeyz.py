@@ -16,6 +16,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import json
 
 from SeaGoatVision.client.qt.utils import get_ui
 from SeaGoatVision.client.qt.shared_info import SharedInfo
@@ -42,8 +43,9 @@ class WinDebugKeyz(QtCore.QObject):
         self.reload_ui()
         self.mode_edit = False
         self.last_index = 0
-        self.number_client = 0
-        #self.subscriber.subscribe(keys.get_key_lst_rec_historic(), self.update_record)
+        self.count_keys = 0
+
+        self.subscriber.subscribe(keys.get_key_count(), self.update_record_table)
 
     def reload_ui(self):
         self.ui = get_ui(self)
@@ -51,22 +53,31 @@ class WinDebugKeyz(QtCore.QObject):
 
     def refresh_list(self):
         #TODO refresh list from server data
-        self.number_client = self.controller.get_number_clients()
-        #print "[Debug] win debug key, update record data: " + str(self.number_client)
-        self.update_record(self.number_client)
+        self.count_keys = self.controller.get_count_keys()
+        data = {"keys": self.count_keys}
+        json_data = json.dumps(data)
+        self.update_record_table(json_data)
 
-    def update_record(self, data):
-        print str(data)
+    def update_record_table(self, json_data):
         #TODO DATA[socket, private key, public key]
-        #if not ("time" in data and "media_name" in data and "path" in data):
-        #    return
+        data = json.loads(json_data)
+        values = data.get("keys", None)
+        #print("[Debug] win debug key, update record data: %s" % values)
         table = self.ui.tableRecord
-        no_row = table.rowCount()
-        table.insertRow(no_row)
-        table.setItem(no_row, 0, QtGui.QTableWidgetItem("Ninja"))
-        table.setItem(no_row, 1, QtGui.QTableWidgetItem("Pirate"))
-        table.setItem(no_row, 2, QtGui.QTableWidgetItem("Doctor"))
-        table.setItem(no_row, 3, QtGui.QTableWidgetItem("Pokemon"))
+        for value in values:
+            #print("i got stuff %s: " % value)
+            item = table.findItems(str(value), Qt.MatchExactly)
+            if not item:
+                no_row = table.rowCount()
+                #print("no row %s" % no_row)
+                table.insertRow(no_row)
+                table.setItem(no_row, 0, QtGui.QTableWidgetItem(str(value)))
+                table.setItem(no_row, 1, QtGui.QTableWidgetItem(str(values[value])))
+            else:
+                #print("update item %s" % value)
+                table.setItem(item[0].row(), 1, QtGui.QTableWidgetItem(str(values[value])))
+
+
         #table.itemDoubleClicked.connect(self.preview)
 
     #TODO transform to kill process

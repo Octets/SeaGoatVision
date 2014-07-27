@@ -75,11 +75,6 @@ class Server:
                     self.handlers.remove(handler)
                 logger.warning("Client disconnected %s", handler.info)
 
-    #TODO WIP
-    def get_count(self):
-        return len(self.handlers)
-
-
 class ClientHandler:
 
     def __init__(self, conn):

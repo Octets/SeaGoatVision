@@ -103,14 +103,6 @@ class JsonClient():
         param_ser = self.rpc.get_param_media(media_name, param_name)
         return Param("temp", None, serialize=param_ser)
 
-    #TODO WIP
-    def get_number_clients(self):
-        test = {"code"}
-        param_ser = self.rpc.get_number_clients(test)
-        print "iam ninja"
-        #return Param("temp", None, serialize=param_ser)
-        return self._deserialize_param(param_ser)
-
     @staticmethod
     def _deserialize_param(params_ser):
         if type(params_ser) is dict:
