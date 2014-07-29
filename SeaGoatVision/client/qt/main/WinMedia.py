@@ -88,6 +88,9 @@ class WinMedia(QtCore.QObject):
         self.ui.slider_frame.valueChanged.connect(self._slider_value_change)
         self.ui.txtframe.returnPressed.connect(self._txt_frame_value_change)
         self.ui.spin_box_fps.valueChanged.connect(self._change_fps)
+        self.ui.sliceButton.clicked.connect(self.click_slice_button)
+        self.ui.cancelButton.clicked.connect(self.click_cancel_button)
+        self.ui.cutButton.clicked.connect(self.click_cut_button)
 
         self._set_record_icon()
         self._set_play_icon()
@@ -122,7 +125,9 @@ class WinMedia(QtCore.QObject):
     def _change_media(self, index=-1, after_update=False):
         media_name = self.ui.cbMedia.currentText()
         frame_webcam = self.ui.frame_webcam
+        frame_slice = self.ui.frame_slice
         frame_webcam.setVisible(False)
+        frame_slice.setVisible(False)
         frame_video = self.ui.frame_video
         frame_video.setVisible(False)
 
@@ -307,6 +312,20 @@ class WinMedia(QtCore.QObject):
         filename = self.shared_info.get(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA)
         if len(filename) > 0:
             self.ui.movieLineEdit.setText(filename)
+
+    def click_slice_button(self):
+        self.ui.frame_slice.setVisible(True)
+
+    def click_cancel_button(self):
+        self.ui.frame_slice.setVisible(False)
+
+    def click_cut_button(self):
+        begin = self.ui.beginSpinBox.value()
+        end = self.ui.endSpinBox.value()
+        file_name = self.ui.movieLineEdit.text()
+        cut_file_name = self.ui.nameLineEdit.text()
+        self.controller.cut_video(file_name, begin, end, cut_file_name)
+        self.ui.frame_slice.setVisible(False)
 
 
 class PlayerFile(threading.Thread):

@@ -40,32 +40,22 @@ class WinRecHistoric(QtCore.QObject):
         self.controller = controller
         self.subscriber = subscriber
         self.shared_info = SharedInfo()
-        self.reload_ui()
         self.lst_old_record_historic = []
-        # eye icon taken from : http://www.iconspedia.com/icon/eye-icon-49269.html
-        #
-        # Part of: Mono General 4 icon pack
-        # Author: Custom Icon Design, http://www.customicondesign.com/
-        # License: Free for non commercial use.
-        # Maximum Size Available: 256x256 px
-        # Comments: 0 Comments
-        # Public Tags:
-        # Stats: 137 downloads, 1246 views, 0 Favs
-
+        self.reload_ui()
         self.subscriber.subscribe(keys.get_key_lst_rec_historic(),
-                                  self.update_record)
+                                  self.update_record_table)
 
     def reload_ui(self):
         self.ui = get_ui(self)
         self.refresh_list()
-        self.load_old_records_hist()
+        self.update_old_record_table()
 
     def refresh_list(self):
         lst_record = self.controller.get_lst_record_historic()
         for item in lst_record:
-            self.update_record(item)
+            self.update_record_table(item)
 
-    def update_record(self, data):
+    def update_record_table(self, data):
         if not ("time" in data and "media_name" in data and "path" in data):
             return
         table = self.ui.tableRecord
@@ -87,7 +77,7 @@ class WinRecHistoric(QtCore.QObject):
         self.shared_info.set(SharedInfo.GLOBAL_PATH_MEDIA, file_name)
         self.shared_info.set(SharedInfo.GLOBAL_HIST_REC_PATH_MEDIA, file_name)
 
-    def load_old_records_hist(self):
+    def update_old_record_table(self):
         self.clear_old_records()
         self.lst_old_record_historic = self.controller.get_lst_old_record_historic()
         table = self.ui.tableFileName
@@ -104,11 +94,10 @@ class WinRecHistoric(QtCore.QObject):
             table.item(no_row, 3).setIcon(
                 QIcon(self.resource_icon_path + "PreviewAction.png"))
             table.item(no_row, 3).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-            ++no_row
 
     def clear_old_records(self):
         table = self.ui.tableFileName
-        while table.rowCount() > 0:
+        while table.rowCount():
             table.removeRow(0)
 
     def _rec_prvw_dbl_clicked(self, item):
@@ -122,4 +111,3 @@ class WinRecHistoric(QtCore.QObject):
             table = self.ui.tableFileName
             file_name = table.item(item.row(), 2).text() + "/" + table.item(item.row(), 1).text()
             self.preview(file_name)
-
