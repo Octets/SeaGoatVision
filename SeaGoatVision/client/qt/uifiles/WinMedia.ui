@@ -422,7 +422,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="beginSpinBox"/>
+           <widget class="QSpinBox" name="beginSpinBox">
+            <property name="maximum">
+             <number>999999999</number>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_5">
@@ -432,7 +436,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="endSpinBox"/>
+           <widget class="QSpinBox" name="endSpinBox">
+            <property name="minimum">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <number>999999999</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
