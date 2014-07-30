@@ -385,6 +385,12 @@ class CmdHandler:
 
     def cut_video(self, video_name, begin, end, cut_video_name):
         self._post_command_(locals())
+        if not os.path.isfile(video_name):
+            log.print_function(logger.error, "File specified %s doesn't exist." % video_name)
+            return
+        if not video_name[-4:] == ".avi":
+            log.print_function(logger.error, "File specified %s is not .avi." % video_name)
+            return
         video_media = Movie(video_name)
         if not video_media:
             return False
@@ -728,19 +734,24 @@ class ThreadRecordCutVideo(threading.Thread):
         #self.publisher = self.resource.get_publisher()
 
     def run(self):
-        #self.video_media.change_frame(self.begin)
-        self.recorder.start(123, self.cut_video_name)
-        self.video_media.set_position(self.begin)
-        for frame_no in range(self.begin, self.end):
-            img = self.video_media.next()
-            self.recorder.add_image(img)
-        self.recorder.stop()
-        #mystr[-4:]
-        if self.cut_video_name[-4:] == ".avi":
-            new_file_name = self.cut_video_name
-        else:
-            new_file_name = self.cut_video_name + ".avi"
-        self.controller.add_lst_record_historic("Movie", new_file_name)
+        if not self.end > self.begin:
+            log.print_function(logger.error,
+                               "end frame (%d) is not greater than begin frame (%d)." % (self.end, self.begin))
+            return
+        if not (self.begin >= 0 and self.end <= self.video_media.get_total_frames()):
+            log.print_function(logger.error,
+                               "begin frame(%d) and end frame(%d) must be between 0 and %d."
+                               % (self.end, self.begin, self.video_media.get_total_frames()))
+            return
+        if self.recorder.start(123, self.cut_video_name):
+            self.video_media.set_position(self.begin)
+            for frame_no in range(self.begin, self.end):
+                img = self.video_media.next()
+                self.recorder.add_image(img)
+            new_file_name = self.recorder.get_file_name()
+            self.recorder.stop()
+            self.controller.add_lst_record_historic("Movie", new_file_name)
+            log.print_function(logger.info, "Video has been cut and new video has been saved to %s" % new_file_name)
 
     class _Media():
         def add_observer(self, cp):
