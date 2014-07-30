@@ -34,7 +34,6 @@ import time
 import inspect
 import thread
 import threading
-
 logger = log.get_logger(__name__)
 
 KEY_MEDIA = "media"

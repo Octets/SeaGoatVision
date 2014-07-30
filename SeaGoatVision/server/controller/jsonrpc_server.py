@@ -84,6 +84,7 @@ class JsonrpcServer():
         rf(self.cmd_handler.set_as_default_param, "set_as_default_param")
         rf(self.cmd_handler.subscribe, "subscribe")
         rf(self.cmd_handler.get_lst_record_historic, "get_lst_record_historic")
+        rf(self.cmd_handler.cut_video, "cut_video")
         rf(self.cmd_handler.get_lst_old_record_historic,
            "get_lst_old_record_historic")
         rf(self.cmd_handler.get_count_keys, "get_count_keys")
