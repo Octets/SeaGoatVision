@@ -74,8 +74,8 @@ class CmdHandler:
 
     def close(self):
         logger.info("Close cmdHandler and close server.")
-        for execution in self.dct_exec.values():
-            media = execution[KEY_MEDIA]
+        for media_name in self.resource.get_media_name_list():
+            media = self.resource.get_media(media_name)
             media.close()
             media.destroy()
 
