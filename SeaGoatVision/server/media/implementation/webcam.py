@@ -94,6 +94,7 @@ class Webcam(MediaStreaming):
 
     def close(self):
         MediaStreaming.close(self)
-        self.video.release()
+        if self.video:
+            self.video.release()
         self._is_opened = False
         return True

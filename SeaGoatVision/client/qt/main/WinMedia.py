@@ -54,7 +54,6 @@ class WinMedia(QtCore.QObject):
             "/usr/share/icons/gnome/24x24/actions/player_pause.png")
 
         self.dct_media = None
-        self.last_selected_media = config.default_media_selected
 
         self.last_value_frame = 0
         self.max_frame = 0
@@ -96,8 +95,6 @@ class WinMedia(QtCore.QObject):
         self._set_play_icon()
         self._update_media()
 
-        self.select_media(self.last_selected_media)
-
     def _update_media(self):
         self.ui.cbMedia.currentIndexChanged.disconnect(self._change_media)
         self.dct_media = self.controller.get_media_list()
@@ -109,6 +106,12 @@ class WinMedia(QtCore.QObject):
                                       self._subscribe_cb(media))
         self._change_media(after_update=True)
         self.ui.cbMedia.currentIndexChanged.connect(self._change_media)
+
+        default_select_media = config.default_media_selected
+        if default_select_media not in self.dct_media.keys():
+            default_select_media = self.controller.get_default_media_name()
+        self.last_selected_media = default_select_media
+        self.select_media(default_select_media)
 
     def _subscribe_cb(self, media):
         def _cb(data):

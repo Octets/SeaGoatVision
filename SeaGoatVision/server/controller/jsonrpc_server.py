@@ -62,6 +62,7 @@ class JsonrpcServer():
         rf(self.cmd_handler.get_execution_list, "get_execution_list")
         rf(self.cmd_handler.get_execution_info, "get_execution_info")
         rf(self.cmd_handler.get_media_list, "get_media_list")
+        rf(self.cmd_handler.get_default_media_name, "get_default_media_name")
         rf(self.cmd_handler.start_record, "start_record")
         rf(self.cmd_handler.stop_record, "stop_record")
         rf(self.cmd_handler.cmd_to_media, "cmd_to_media")
