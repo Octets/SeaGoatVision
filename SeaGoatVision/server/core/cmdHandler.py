@@ -134,13 +134,15 @@ class CmdHandler:
         # filterchain
         if not media_name:
             media_name = filterchain.get_default_media_name()
+            if not media_name:
+                media_name = self.config.get_default_media_name()
 
         media = self.resource.get_media(media_name)
         if not media:
             log.print_function(
                 logger.error,
-                "Media %s not exist or you didn't set the default media on \
-                filterchain." % media_name)
+                "Media %s not exist or you didn't set the default media on "
+                "filterchain." % media_name)
             return False
 
         if media.is_media_video() and file_name:

@@ -65,6 +65,7 @@ lst_media = []
 # add camera webcam with default value
 cam = ConfWebcam()
 # cam.name = "Webcam" # already use the default name
+default_media_name = cam.name
 lst_media.append(cam)
 
 # add image generator

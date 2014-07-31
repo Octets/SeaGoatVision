@@ -136,6 +136,10 @@ class Configuration(object):
         return self._get_conf("path_save_record",
                               self.public_config.path_save_record)
 
+    def get_default_media_name(self):
+        return self._get_conf("default_media_name",
+                              self.public_config.default_media_name)
+
     def get_log_file_path(self):
         return self._get_conf("log_path",
                               self.public_config.log_path)
