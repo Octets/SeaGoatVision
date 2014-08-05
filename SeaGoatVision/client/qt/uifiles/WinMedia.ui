@@ -407,7 +407,7 @@
         <rect>
          <x>20</x>
          <y>0</y>
-         <width>311</width>
+         <width>314</width>
          <height>111</height>
         </rect>
        </property>
@@ -424,7 +424,7 @@
           <item>
            <widget class="QSpinBox" name="beginSpinBox">
             <property name="maximum">
-             <number>999999999</number>
+             <number>1000000000</number>
             </property>
            </widget>
           </item>
@@ -437,11 +437,8 @@
           </item>
           <item>
            <widget class="QSpinBox" name="endSpinBox">
-            <property name="minimum">
-             <number>0</number>
-            </property>
             <property name="maximum">
-             <number>999999999</number>
+             <number>1000000000</number>
             </property>
            </widget>
           </item>
@@ -478,6 +475,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="cleanButton">
+            <property name="text">
+             <string>Clean</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -494,8 +498,6 @@
         </item>
        </layout>
       </widget>
-      <zorder>verticalLayoutWidget_4</zorder>
-      <zorder>frame_video</zorder>
      </widget>
     </item>
     <item>
@@ -600,8 +602,6 @@
         </item>
        </layout>
       </widget>
-      <zorder>verticalLayoutWidget</zorder>
-      <zorder>frame_video</zorder>
      </widget>
     </item>
    </layout>

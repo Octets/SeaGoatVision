@@ -90,6 +90,7 @@ class WinMedia(QtCore.QObject):
         self.ui.sliceButton.clicked.connect(self.click_slice_button)
         self.ui.cancelButton.clicked.connect(self.click_cancel_button)
         self.ui.cutButton.clicked.connect(self.click_cut_button)
+        self.ui.cleanButton.clicked.connect(self.click_clean_button)
 
         self._set_record_icon()
         self._set_play_icon()
@@ -329,6 +330,11 @@ class WinMedia(QtCore.QObject):
         cut_file_name = self.ui.nameLineEdit.text()
         self.controller.cut_video(file_name, begin, end, cut_file_name)
         self.ui.frame_slice.setVisible(False)
+
+    def click_clean_button(self):
+        self.ui.beginSpinBox.setValue(0)
+        self.ui.endSpinBox.setValue(0)
+        self.ui.nameLineEdit.setText("")
 
 
 class PlayerFile(threading.Thread):
