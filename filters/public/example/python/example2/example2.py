@@ -25,7 +25,6 @@ from SeaGoatVision.server.core.filter import Filter
 
 
 class ExePy2(Filter):
-
     """
     Python Example Test #2
     Example filter to test params.
@@ -73,8 +72,9 @@ class ExePy2(Filter):
 
         self.nb_face = 1
         # linux path
-        path_frontal_face = "/usr/share/opencv/haarcascades/\
-        haarcascade_frontalface_alt.xml"
+        path_frontal_face = os.path.join('/', 'usr', 'share', 'opencv',
+                                         'haarcascades',
+                                         'haarcascade_frontalface_alt.xml')
         self.face_detect_name = os.path.join('data', 'facedetect',
                                              path_frontal_face)
         self.face_cascade = cv2.CascadeClassifier()

@@ -14,8 +14,9 @@ class GetFirstFace(Filter):
 
     def __init__(self):
         Filter.__init__(self)
-        path_frontal_face = "/usr/share/opencv/haarcascades/\
-        haarcascade_frontalface_alt.xml"
+        path_frontal_face = os.path.join('/', 'usr', 'share', 'opencv',
+                                         'haarcascades',
+                                         'haarcascade_frontalface_alt.xml')
         self.face_detect_name = os.path.join('data',
                                              'facedetect',
                                              path_frontal_face)
