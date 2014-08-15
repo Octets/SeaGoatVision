@@ -28,8 +28,7 @@ def create_execute(cppfunc):
     """
 
     def execute(self, image):
-        cppfunc(image)
-        return image
+        return cppfunc(image)
     return execute
 
 

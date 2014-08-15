@@ -52,8 +52,10 @@ def execute_code():
     return """
         cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
         cv::Mat ret = execute(mat);
-        if (mat.data != ret.data)
-            image = ret.data;
+        /* Convert cv::Mat to numpy */
+        npy_intp dims[3] = {ret.rows, ret.cols, 3};
+        PyObject *value = PyArray_SimpleNewFromData(3, dims, NPY_UBYTE, ret.data);
+        return_val = value;
     """
 
 
