@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -27,29 +27,18 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
-def run(local=False, host="localhost", port=8090):
-    if local:
-        from SeaGoatVision.server.core.manager import Manager
-        # Directly connected to the vision server
-        c = Manager()
-    else:
-        from SeaGoatVision.client.controller.controllerProtobuf import ControllerProtobuf
-        # Protobuf
-        c = ControllerProtobuf(host, port)
 
-    if not c.is_connected():
-        logger.critical("Vision server is not accessible. Exit now.")
-        return
-
+def run(ctr, subscriber, local=False, host="localhost", port=8090):
     app = QApplication(sys.argv)
-    win = main.WinMain(c, host=host, islocal=local)
+    win = main.WinMain(ctr, subscriber, host=host, islocal=local)
     win.show()
     try:
         rint = app.exec_()
-    except Exception as e:
+    except BaseException as e:
         logger.critical("Exit error : %s" % e)
+        rint = -1
     # close the server
     win.quit()
-    c.close()
+    ctr.close()
 
     return rint

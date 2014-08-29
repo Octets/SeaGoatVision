@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -19,37 +19,66 @@
 
 # This file contain configuration about server.py
 
-import datetime
-from configurations.template_media.conf_webcam import Conf_webcam
-from configurations.template_media.conf_firewire import Conf_firewire
-from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
+# from SeaGoatVision.commons import global_env
+# if you need to know if you start in local, use next function call
+# global_env.get_is_local() return True or False
+# Uncomment the other camera module when you need it.
+# import datetime
+from configurations.template_media.conf_webcam import ConfWebcam
+from configurations.template_media.conf_imageGenerator import \
+    ConfImageGenerator
+from configurations.template_media.conf_ipc import ConfIpc
+"""
+from configurations.template_media.conf_camera import ConfCamera
+# FIREWIRE
+from configurations.template_media.conf_firewire import ConfFirewire
+try:
+    from thirdparty.public.pydc1394 import video1394
+except:
+    pass
+# END FIREWIRE
+ from configurations.template_media.conf_pygame_cam import Conf_pygame_cam
+"""
 
 # keep always true for public configuration
 # It's useful if you need to disable private config
 active_configuration = True
+verbose = False
+# This variable will never stop a media after it started
+keep_alive_media = False
 
-## Log
+# Log
 # no log When log_path is None else put a string path with file_name
 log_path = None
 # exemple of log_path
-#log_path = "/tmp/log_%s.log" % datetime.datetime.now().strftime("%Y-%m-%d_%I:%M:%S")
+# log_path = "/tmp/log_%s.log" %
+# datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 
-## Networking
-### Server tcp output notification
+# Networking
+# Server tcp output notification
 port_tcp_output = 8090
 
-
-## Media
-path_save_record = "" # empty string will record on root of seagoat project
+# Media
+path_save_record = ""  # empty string will record on root of seagoat project
 lst_media = []
 
 # add camera webcam with default value
-cam = Conf_webcam()
+cam = ConfWebcam()
 # cam.name = "Webcam" # already use the default name
+default_media_name = cam.name
+lst_media.append(cam)
+
+# add image generator
+cam = ConfImageGenerator()
+lst_media.append(cam)
+
+# add IPC connector image
+cam = ConfIpc()
+# cam.device = "/tmp/seagoatvision_media.ipc"
 lst_media.append(cam)
 
 # example of firewire
-# cam = Conf_firewire()
+# cam = ConfFirewire()
 # cam.guid = 0x123456789
 # cam.name = "Firewire"
 # lst_media.append(cam)
@@ -60,15 +89,15 @@ lst_media.append(cam)
 # cam.name = "Webcam"
 # lst_media.append(cam)
 
-## Filterchain
+# Filterchain
 show_public_filterchain = True
 
-
-## Filter
+# Filter
 show_public_filter = True
 
-## Other
-def cmd_on_start(manager):
-    # you can add command directly with the manager when the server is ready
-    pass
+# Other
 
+
+def cmd_on_start(cmd_handler):
+    # you can add command directly with the cmdHandler when the server is ready
+    pass

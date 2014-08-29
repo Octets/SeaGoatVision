@@ -1,6 +1,6 @@
 #! /usr/bin/env python2.7
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -24,11 +24,26 @@ import argparse
 import sys
 argument = sys.argv[1:]
 from SeaGoatVision.server.mainserver import run
-from SeaGoatVision.commons import log
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Vision Server')
-    parser.add_argument('--port', type=int, default="0", help='Port of the host.')
+    parser.add_argument(
+        "-p",
+        '--port',
+        type=int,
+        default="0",
+        help='port of the host')
+    parser.add_argument(
+        "-v",
+        '--verbose',
+        action="store_true",
+        help="increase output verbosity")
+    parser.add_argument(
+        "-c",
+        '--config',
+        type=str,
+        help="specify config file",
+        default=None)
     args = parser.parse_args(args=argument)
     port = args.port if args.port else None
-    run(p_port=port)
+    run(p_port=port, verbose=args.verbose, config_path=args.config)

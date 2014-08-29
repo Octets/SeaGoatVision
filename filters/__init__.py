@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This filename is part of SeaGoatVision.
+#    This file is part of SeaGoatVision.
 #
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,4 +22,5 @@ config = Configuration()
 
 if config.get_is_show_public_filter():
     from public import *
-from private import *
+if config.get_is_show_private_filter():
+    from private import *

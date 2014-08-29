@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -19,34 +19,35 @@
 
 from SeaGoatVision.client.qt.utils import get_ui
 
+
 class WinExec:
 
     def __init__(self):
 
-        #self.filtre = filtre
-        #self.filtre_init = copy.copy(filtre)
-        #self.cb = cb
+        # self.filtre = filtre
+        # self.filtre_init = copy.copy(filtre)
+        # self.cb = cb
 
         self.ui = get_ui(self)
-        #self.window = ui.get_object(win_name(self))
-        #self.txtCurrent = ui.get_object('txtCurrent')
-        #self.txtWorking = ui.get_object('txtWorking')
+        # self.window = ui.get_object(win_name(self))
+        # self.txtCurrent = ui.get_object('txtCurrent')
+        # self.txtWorking = ui.get_object('txtWorking')
 
-        #self.init_window()
+        # self.init_window()
 
     def init_window(self):
         self.txtCurrent.get_buffer().set_text(self.filtre.code)
         self.txtWorking.get_buffer().set_text(self.filtre.code)
 
-    def on_btnOK_clicked(self, widget):
+    def on_btn_ok_clicked(self, widget):
         self.cb()
         self.window.destroy()
 
-    def on_btnCancel_clicked(self, widget):
+    def on_btn_cancel_clicked(self, widget):
         self.filtre.code = self.filtre_init.code
         self.init_window()
 
-    def on_btnApply_clicked(self, widget):
+    def on_btn_apply_clicked(self, widget):
         start, end = self.txtWorking.get_buffer().get_bounds()
         code = self.txtWorking.get_buffer().get_text(start, end, False)
         self.txtCurrent.get_buffer().set_text(code)

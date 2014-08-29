@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -19,17 +19,23 @@
 
 from media import Media
 from SeaGoatVision.commons import keys
-#from recording.video_recorder import Video_recorder
-from recording.image_recorder import Image_recorder
+from recording.video_recorder import VideoRecorder
+from recording.image_recorder import ImageRecorder
+from SeaGoatVision.commons import log
 
-class Media_streaming(Media):
+logger = log.get_logger(__name__)
+
+
+class MediaStreaming(Media):
     def __init__(self):
-        super(Media_streaming, self).__init__()
-        self.isOpened = False
+        super(MediaStreaming, self).__init__()
+        self._is_opened = False
         self.writer = None
         self.shape = None
-        #self.recorder = Video_recorder(self)
-        self.recorder = Image_recorder(self)
+        self.recorder_video = VideoRecorder(self)
+        self.recorder_image = ImageRecorder(self)
+        self.recorder = None
+        self._last_record_path = None
 
     def is_media_streaming(self):
         return True
@@ -38,18 +44,47 @@ class Media_streaming(Media):
         return False
 
     def is_opened(self):
-        return self.isOpened
+        return self._is_opened
 
     def get_info(self):
-        info = super(Media_streaming, self).get_info()
-        info["record_file_name"] = self.recorder.get_file_name()
+        info = super(MediaStreaming, self).get_info()
+        if self.recorder:
+            info["record_file_name"] = self.recorder.get_file_name()
         return info
 
     def get_type_media(self):
         return keys.get_media_type_streaming_name()
 
-    def start_record(self, path=None):
-        return self.recorder.start(self.shape, path=path)
+    def start_record(self, path=None, options=None):
+        if not options:
+            options = {}
+        if type(options) != dict:
+            options = {}
+            logger.warning("Wrong argument when start_record, receive \
+                options: %s" % options)
+
+        if self.recorder:
+            logger.error("Already recording media %s." % self.get_name())
+            return False
+
+        if options.get("format",
+                       keys.get_key_format_avi()) == keys.get_key_format_png():
+            self.recorder = self.recorder_image
+        else:
+            self.recorder = self.recorder_video
+        compress = options.get("compress", 0)
+        return self.recorder.start(self.shape, path=path, compress=compress)
 
     def stop_record(self):
-        return self.recorder.stop()
+        status = False
+        if self.recorder:
+            self._last_record_path = self.recorder.file_name
+            status = self.recorder.stop()
+            self.recorder = None
+        else:
+            logger.warning(
+                "Record of media %s was already stopped." % self.get_name())
+        return status
+
+    def get_path_record(self):
+        return self._last_record_path

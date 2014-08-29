@@ -1,7 +1,7 @@
 SeaGoatVision
 =============
 SeaGoatVision is a vision server to develop and execute filter on different media.
-This Vision Serveur is tested on OpenCV 2.4.5 with Python 2.7 on Fedora 18, Ubuntu 12.04 and Arch Linux.
+This Vision Server is tested on OpenCV 2.4.5 with Python 2.7 on Fedora 18, Ubuntu 12.04, Arch Linux and OSX 10.9.
 
 Requirements
 ------------
@@ -12,28 +12,40 @@ Requirements
  - OpenCV 2.4 w/ Python/Numpy bindings
  - Numpy
  - Scipy
+ - JSON-RPC
+ - ZeroMQ
 
 Until OpenCV 2.4 is fully supported, the preferred way is to compile OpenCV manually:
 http://opencv.willowgarage.com/wiki/InstallGuide
 
 Installation
 ------------
-### A. Download the project ###
-    git clone git://github.com/Octets/SeaGoatVision.git
+### A. Download the project
+	git clone git://github.com/Octets/SeaGoatVision.git
 
-###B. Install dependencies###
-#### Ubuntu : ####
-	sudo apt-get install python python-numpy python-scipy python-opencv python-protobuf protobuf-compiler python-pyside python-qt4 python-imaging
+###B. Install dependencies
+#### Ubuntu 14.04 :
+Do this command and continue with Ubuntu section.
 
-#### Fedora : ####
-	sudo yum install python numpy scipy opencv-python protobuf-python protobuf protobuf-compiler python-pyside PyQT4 python-imaging
+	sudo add-apt-repository ppa:mc3man/trusty-media
+	sudo apt-get update
+	sudo apt-get install gstreamer0.10-ffmpeg ffmpeg
 
-#### Arch Linux : ####
-Don't forget to active the "community" repositorie. See https://wiki.archlinux.org/index.php/Pacman
+#### Ubuntu :
+	sudo apt-get install python python-numpy python-scipy python-opencv python-pyside python-qt4 python-imaging libopencv-dev python-pip ffmpeg
+	sudo pip install jsonrpclib-pelix pyzmq
 
-	pacman -S python2 python2-numpy python2-scipy opencv protobuf protobuf-python python2-pyside python2-pyqt python2-imaging
+#### Fedora :
+	sudo yum install python numpy scipy opencv-python python-pyside PyQt4 python-pillow-qt opencv-devel python-pip ffmpeg czmq-devel
+	sudo pip install jsonrpclib-pelix pyzmq
 
-#### Windows : ####
+#### Arch Linux :
+Don't forget to active the "community" repository. See https://wiki.archlinux.org/index.php/Pacman
+
+	yaourt -S python2 python2-numpy python2-scipy opencv python2-pyside python2-pyqt python2-imaging python2-pip ffmpeg zeromq
+	sudo pip2 install jsonrpclib-pelix pyzmq
+
+#### Windows :
 Install the following dependencies:
 
  - Python:	http://python.org/ftp/python/2.7.3/python-2.7.3.msi
@@ -43,46 +55,50 @@ Install the following dependencies:
  - PySide:	http://qt-project.org/wiki/PySide_Binaries_Windows
  - PIL:		http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe
  - OpenCV:	http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv	# OpenCV installer for Windows.
+ - pip:		https://github.com/simpleservices/app_report-python/wiki/How-to-install-pip-on-Windows
+ - ffmpeg:	http://ffmpeg.zeranoe.com/builds/	# Install the static version
 
-### C. Install OpenCV 2.4 ###
-If your package management has opencv 2.4, it's not necessary to follow this section.
+	pip install jsonrpclib-pelix pyzmq
 
-To check if your package management have opencv 2.4;
+#### Mac OSX :
+Start by installing Xcode command-line tools. On 10.9 Mavericks, this is as straightforward as entering this line in a terminal:
 
-###Try i.e. with Ubuntu###
-	apt-cache search opencv
+	xcode-select --install
 
-###If the output is showing something like opencv 2.4, install it and go to step D.###
+On previous versions, you'll have to download the package from Apple Dev website at http://developers.apple.com/downloads .
 
-###1. Install required OpenCV dependencies###
-	sudo apt-get install cmake cmake-gui gcc pkg-config libavformat-dev libswscale-dev
+You will also need the QT4 library. Grab it from the official QT Project site (http://qtproject.org/downloads). You'll also need to fetch the PySide Mac binary from the side. Install both.
 
-###2. Download the archive manually###
-	From here: http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.4.5/opencv-2.4.5.tar.gz
-	Go to directory containing downloaded file with a command line.
+For recording video, we use ffmpeg : http://ffmpegmac.net/
 
-###3. Extract the archive###
-	tar -xvf OpenCV-2.4.5.tar.gz && cd OpenCV-2.4.5
+Then, from the terminal:
 
-###4. Configure###
-	mkdir release
-	cd release
-	cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_PYTHON_SUPPORT=ON ..
+	sudo easy_install pip pil
+	sudo pip install numpy scipy pyqt libopencv jsonrpclib-pelix pyzmq
 
-###5. Compile (replace # by the number of processor core)###
-	make -j#
+Finally, you will need to compile OpenCV with python bindings from source. Please refer to the FAQ for this.
 
-###6. Install###
-	sudo make install
+### C. Third-party Libs
 
-###7. Do crazy stuff!###
+#### PyDC1394
 
-More information is available here: http://opencv.willowgarage.com/wiki/InstallGuide
+Note: pydc1394 is dependant on cython 0.19. Make sure it is installed, using easy_install:
 
-### D. Compile the project ###
-Note: The third-party pydc1394 is dependant of cython 0.19. Be sure you have it, else install it with easy_install from his website.
-On the root of the project:
+	easy_install cython
+
+Go to the root of the SeaGoatVision project and setup git submodule for pydc1394:
 
 	git submodule init
 	git submodule update
+
+In the case submodule update doesn't work, you can always clone the repo manually. From the root of the project:
+
+	cd thirdparty/public
+	rm -rf pydc1394
+	git clone https://github.com/mathben/PyDC1394.git pydc1394
+
+### D. Compile
+To compile the filters in Cpp and the third-party, do on the root of the project:
+
 	make
+

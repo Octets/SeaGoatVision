@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -22,29 +22,35 @@ Description : Start the Vision Server
 """
 
 import os
+import sys
 
 from core.configuration import Configuration
 from SeaGoatVision.commons import log
-logger = log.get_logger(__name__)
-config = Configuration()
-path = config.get_log_file_path()
-if path:
-    log.add_handler(path)
-# Import required RPC modules
-import thirdparty.public.protobuf.socketrpc.server as server_rpc
-from controller import protobufServerImpl as impl
 
-def run(p_port=None):
+logger = log.get_logger(__name__)
+config = None
+path = None
+# Import required RPC modules
+from controller import jsonrpc_server
+
+
+def run(p_port=None, verbose=False, config_path=None):
     global config
+    config = Configuration(config_path=config_path)
+    path = config.get_log_file_path()
+    # choose the log file path
+    if path:
+        log.add_handler(path)
+    config.set_verbose(verbose)
     # recheck if its locked because the last check is maybe a false lock
     pid = os.getpid()
-    sFileLockName = "/tmp/SeaGoat.lock"
-    if is_lock(sFileLockName):
-        exit(-1)
+    file_lock_path = "/tmp/SeaGoat.lock"
+    if is_lock(file_lock_path):
+        sys.exit(-1)
 
-    fileLock = open(sFileLockName, "w")
-    fileLock.write("%s" % pid)
-    fileLock.close()
+    file_lock = open(file_lock_path, "w")
+    file_lock.write("%s" % pid)
+    file_lock.close()
 
     if not p_port:
         port = config.get_tcp_output_config()
@@ -52,11 +58,13 @@ def run(p_port=None):
         port = p_port
 
     # Create and register the service
-    # Note that this is an instantiation of the implementation class,
-    # *not* the class defined in the proto file.
-    server_service = impl.ProtobufServerImpl()
-    server = server_rpc.SocketRpcServer(port, "")
-    server.registerService(server_service)
+    server = jsonrpc_server.JsonrpcServer(port)
+    try:
+        server.register()
+    except BaseException as e:
+        log.printerror_stacktrace(logger, e)
+        server.close()
+        sys.exit(1)
 
     # Start the server
     logger.info('Serving on port %s - pid %s', port, pid)
@@ -65,43 +73,49 @@ def run(p_port=None):
         server.run()
     except (KeyboardInterrupt, SystemExit):
         logger.info("Close SeaGoat. See you later!")
-    except Exception:
-        raise(Exception)
+    except BaseException:
+        raise
     finally:
-        server_service.close()
+        server.close()
         # force closing the file
-        os.remove(sFileLockName)
+        os.remove(file_lock_path)
 
-def is_lock(sFileLockName):
+
+def is_lock(file_lock_name):
     # Create lock file
     # This technique counter the concurrence
-    if os.path.isfile(sFileLockName):
-        bIsLocked = True
+    if os.path.isfile(file_lock_name):
+        is_locked = True
     else:
-        bIsLocked = False
+        is_locked = False
 
-    if bIsLocked:
-        fileLock = open(sFileLockName, "r")
-        pid = fileLock.readline()
+    if is_locked:
+        file_lock = open(file_lock_name, "r")
+        pid = file_lock.readline()
         # check if this pid really exist
         if pid.isdigit():
             pid = int(pid)
             if check_pid(pid):
-                logger.info("SeaGoat already run with the pid : %s - lock file %s", pid, sFileLockName)
-                fileLock.close()
+                logger.info(
+                    "SeaGoat already run with the pid : %s - lock file %s",
+                    pid,
+                    file_lock_name)
+                file_lock.close()
             else:
                 # its a false lock
-                bIsLocked = False
+                is_locked = False
         else:
-            logger.info("SeaGoat lock is corrupted, see file : %s", sFileLockName)
-    return bIsLocked
+            logger.info(
+                "SeaGoat lock is corrupted, see file : %s",
+                file_lock_name)
+    return is_locked
+
 
 def check_pid(pid):
-    """ Check For the existence of a unix pid. """
+    """ Check For the existence of a pid. """
     try:
         os.kill(pid, 0)
     except OSError:
         return False
     else:
         return True
-

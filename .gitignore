@@ -2,11 +2,15 @@
 .project
 .pydevproject
 .settings
+.idea
+.orig 
 
 build
 filters/private
 thirdparty/private
 configurations/private
+*.so
+*.o
 
 # text editor
 *.swp

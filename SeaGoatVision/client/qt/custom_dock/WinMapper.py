@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -17,9 +17,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# TODO obsolete file
 from SeaGoatVision.client.qt.utils import *
 import cv2
 import numpy as np
+
 
 class WinMapper:
     """Tool to identify lines in images
@@ -86,9 +88,10 @@ class WinMapper:
 
     def configure_surface(self):
         self.surface = self.drwImage.get_window().create_similar_surface(
-                                                                         cairo.CONTENT_COLOR_ALPHA,
-                                                                         self.pixbuf_image.get_width(),
-                                                                         self.pixbuf_image.get_height())
+            cairo.CONTENT_COLOR_ALPHA,
+            self.pixbuf_image.get_width(
+            ),
+            self.pixbuf_image.get_height())
         context = cairo.Context(self.surface)
         context.set_source_rgba(0, 0, 0, 0)
         context.paint()
@@ -96,8 +99,8 @@ class WinMapper:
     def configure_matrices(self):
         self.matrices = []
         self.matrices.append(np.zeros(
-                             (self.pixbuf_image.get_height(),
-                             self.pixbuf_image.get_width()), np.bool))
+            (self.pixbuf_image.get_height(),
+             self.pixbuf_image.get_width()), np.bool))
 
     def draw(self, widget, x, y):
         self.draw_brush(widget, x, y, self.spnSize.get_value_as_int())
@@ -107,9 +110,9 @@ class WinMapper:
         rect = self.brush_size(x, y, size)
         context = cairo.Context(self.surface)
         context.set_source_rgba(
-                                self.color.red,
-                                self.color.green,
-                                self.color.blue, 1)
+            self.color.red,
+            self.color.green,
+            self.color.blue, 1)
 
         Gdk.cairo_rectangle(context, rect)
         context.fill()
@@ -119,17 +122,18 @@ class WinMapper:
     def draw_matrix(self, x, y, size):
         rect = self.brush_size(x, y, size)
         brush = np.ones((rect.height, rect.width), np.bool)
-        self.matrices[-1] \
-            [rect.y:rect.y + rect.height, rect.x:rect.x + rect.width] = brush
+        yh = rect.y + rect.height
+        xw = rect.x + rect.width
+        self.matrices[-1][rect.y:yh, rect.x:xw] = brush
 
     def load_folder(self, folder):
         images = sources.find_all_images(folder)
         self.imageListStore.clear()
         for image in images:
             self.imageListStore.append([os.path.exists(image + '.map'),
-                                       os.path.basename(image),
-                                       image,
-                                       None])
+                                        os.path.basename(image),
+                                        image,
+                                        None])
         if len(images) > 0:
             self.lstImages.set_cursor(0)
 
@@ -154,8 +158,9 @@ class WinMapper:
             s = f.read()
             f.close()
             self.matrices[-1] = np.fromstring(s, np.bool).reshape(
-                                                                  self.pixbuf_image.get_height(),
-                                                                  self.pixbuf_image.get_width())
+                self.pixbuf_image.get_height(
+                ),
+                self.pixbuf_image.get_width())
 
     def apply_matrix_to_pixbuf(self):
         for x in xrange(0, self.pixbuf_image.get_width() - 1):
@@ -166,8 +171,9 @@ class WinMapper:
     def on_btnOpen_clicked(self, widget):
         dialog = Gtk.FileChooserDialog("Choose an image folder", None,
                                        Gtk.FileChooserAction.SELECT_FOLDER,
-                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                       Gtk.STOCK_OK, Gtk.ResponseType.OK))
+                                       (Gtk.STOCK_CANCEL,
+                                        Gtk.ResponseType.CANCEL,
+                                        Gtk.STOCK_OK, Gtk.ResponseType.OK))
 
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -177,32 +183,32 @@ class WinMapper:
                 self.load_folder(folder)
         dialog.destroy()
 
-    def on_btnFirst_clicked(self, widget):
+    def on_btn_first_clicked(self, widget):
         self.lstImages.set_cursor(0)
 
-    def on_btnPrevious_clicked(self, widget):
+    def on_btn_previous_clicked(self, widget):
         position = tree_selected_index(self.lstImages) - 1
         if position >= 0:
             self.lstImages.set_cursor(position)
 
-    def on_btnNext_clicked(self, widget):
+    def on_btn_next_clicked(self, widget):
         position = tree_selected_index(self.lstImages) + 1
         if position < len(self.imageListStore):
             self.lstImages.set_cursor(position)
 
-    def on_btnLast_clicked(self, widget):
+    def on_btn_last_clicked(self, widget):
         position = len(self.imageListStore) - 1
         self.lstImages.set_cursor(position)
 
-    def on_btnClear_clicked(self, widget):
+    def on_btn_clear_clicked(self, widget):
         if self.msg_confirm_clear() == Gtk.ResponseType.YES:
             self.matrices.append(np.zeros(
-                                 (self.pixbuf_image.get_height(),
-                                 self.pixbuf_image.get_width()), np.bool))
+                (self.pixbuf_image.get_height(),
+                 self.pixbuf_image.get_width()), np.bool))
             self.configure_surface()
             self.drwImage.queue_draw()
 
-    def on_btnUndo_clicked(self, widget):
+    def on_btn_undo_clicked(self, widget):
         if len(self.matrices) == 1:
             return
         matrix = self.matrices[-1]
@@ -260,8 +266,8 @@ class WinMapper:
 
     def on_drwImage_motion_notify_event(self, widget, event):
         (window, x, y, state) = event.window.get_pointer()
-        if (state & Gdk.ModifierType.BUTTON1_MASK
-            and self.pixbuf_image is not None):
+        pi = self.pixbuf_image is not None
+        if state & Gdk.ModifierType.BUTTON1_MASK and pi:
             self.draw(widget, x, y)
         return True
 

@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Club Capra - capra.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -17,11 +17,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import cv2
-import cv2.cv as cv
+from cv2 import cv
+from SeaGoatVision.commons.param import Param
 from SeaGoatVision.server.core.filter import Filter
 
-# Heritence of Filter is facultatif if you need framework tools.
+# Heritence of Filter is optional if you need framework tools.
 # you have access to :
 # self.get_params(param_name=None) to get a list or object of Params
 # self.notify_output_observers(string) to send a notification to observer
@@ -30,16 +32,19 @@ from SeaGoatVision.server.core.filter import Filter
 # self.add_output_observer(observer) to add a function observer
 # self.remove_output_observer(observer) to remove a function observer
 
+
 class FaceDetection(Filter):
     """Detect faces and eyes"""
 
     def __init__(self):
         Filter.__init__(self)
         self.nb_face = 1
-        self.eye_detect_name = os.path.join('data', 'facedetect',
-                                        'haarcascade_eye_tree_eyeglasses.xml')
-        self.face_detect_name = os.path.join('data', 'facedetect',
-                                             'haarcascade_frontalface_alt.xml')
+        eye_xml = 'haarcascade_eye_tree_eyeglasses.xml'
+        self.eye_detect_name = os.path.join('/', 'usr', 'share', 'opencv',
+                                            'haarcascades', eye_xml)
+        self.face_detect_nam = os.path.join('/', 'usr', 'share', 'opencv',
+                                            'haarcascades',
+                                            'haarcascade_frontalface_alt.xml')
         self.eye_cascade = cv2.CascadeClassifier()
         self.face_cascade = cv2.CascadeClassifier()
         self.eye_cascade.load(self.eye_detect_name)
@@ -47,9 +52,9 @@ class FaceDetection(Filter):
         self.show_rectangle = Param("show_rectangle", True)
 
         # To share parameter between filter, create it with :
-        self.add_global_params(Param("width", 3, min_v=1, max_v=10))
+        self.add_shared_param(Param("width", 3, min_v=1, max_v=10))
         # On the execution, use it like this :
-        param = self.get_global_params("width")
+        # param = self.get_shared_params("width")
 
     def configure(self):
         # This is called when param is modify
@@ -63,7 +68,7 @@ class FaceDetection(Filter):
                                                    2,
                                                    0 | cv.CV_HAAR_SCALE_IMAGE,
                                                    (30, 30)
-                                                )
+        )
         for face in faces:
             faceimg = self.draw_rectangle(image, face, (0, 0, 255))
             self.nb_face = 1
@@ -90,7 +95,8 @@ class FaceDetection(Filter):
 
         c_x = (maxx - minx) / 2 + minx
         c_y = (maxy - miny) / 2 + miny
-        self.notify_output_observers("facedetect%d : x=%d, y=%d" % \
-                (self.nb_face, c_x, c_y))
+        self.notify_output_observers(
+            "facedetect%d : x=%d, y=%d" %
+            (self.nb_face, c_x, c_y))
         self.nb_face += 1
         return image[miny:maxy, minx:maxx]

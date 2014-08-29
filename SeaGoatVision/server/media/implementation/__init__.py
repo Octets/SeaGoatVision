@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This filename is part of SeaGoatVision.
-#    
+#    This file is part of SeaGoatVision.
+#
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 This module contains the code for the media.
-Media are objects that returns file_names.  
+Media are objects that returns file_names.
 It can be a a webcam, list of files from the hard drive or anything else.
 
 Media should implement the iterator protocol:

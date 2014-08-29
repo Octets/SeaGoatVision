@@ -7,7 +7,7 @@ f = file('/home/benoit/testtt/test.png.mapping', 'r')
 s = f.read()
 f.close()
 mapping = pylab.np.fromstring(s, bool).reshape(480, 640)
-#mapping = np.invert(mapping)
+# mapping = np.invert(mapping)
 
 b = blue[mapping].flatten()
 g = green[mapping].flatten()
@@ -18,6 +18,6 @@ print b.size
 print x.size
 
 pylab.plot(x, b, 'b.', label='Blue channel')
-#plot(x, g, 'g.', label='Green channel')
-#plot(x, r, 'r.', label='Red channel')
+# plot(x, g, 'g.', label='Green channel')
+# plot(x, r, 'r.', label='Red channel')
 pylab.show()

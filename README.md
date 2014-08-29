@@ -3,12 +3,18 @@ SeaGoatVision
 
 Description
 --------------
-SeaGoatVision is a vision server to execute filter on picture.
+SeaGoatVision is a computer vision system running into a server.
 
- - Manage multiple client
+Actually, this platform is used to doing robotic.
+
+Principal feature :
+ - Manage multiple client and media
  - Run filterchain
- - Manage multiple source
+ - Control filter by parameters
  - Give environnement for debug and create filter
+ - Run in local or in remote
+ - Can send message to other platform
+ - Execute Python and C++ filters
 
 Installation
 -------------
@@ -28,7 +34,7 @@ Go on website https://github.com/Octets/SeaGoatVision and create an issue.
 
 Known bugs
 ---------------
-It's not a release version, the project is in developpement.
+The bugs is showing in issues of the project : https://github.com/Octets/SeaGoatVision/issues?labels=bug&page=1&state=open
 
 Troubleshooting
 -------------------
@@ -36,11 +42,11 @@ The project is only supported in python 2.7, because opencv is not supported in 
 
 Credits
 ---------
-Thanks club Capra and club Sonia for support us.
+Thanks club Capra and club Sonia to support us.
 
  - http://capra.etsmtl.ca
- - https://sonia.etsmtl.ca
+ - http://sonia.etsmtl.ca
 
-Changelog
-----------------
-Waiting for release.
+Release
+-------
+Read RELEASE file.

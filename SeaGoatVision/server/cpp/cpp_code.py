@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This filename is part of SeaGoatVision.
+#    This file is part of SeaGoatVision.
 #
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 
 def init_code(call_c_init):
     """
@@ -34,6 +35,7 @@ def init_code(call_c_init):
         """
     return code
 
+
 def destroy_code():
     """
     call the destructor
@@ -42,6 +44,7 @@ def destroy_code():
         destroy();
     """
 
+
 def execute_code():
     """
     Return the code that calls a c++ filter
@@ -49,9 +52,12 @@ def execute_code():
     return """
         cv::Mat mat(Nimage[0], Nimage[1], CV_8UC(3), image);
         cv::Mat ret = execute(mat);
-        if (mat.data != ret.data)
-            image = ret.data;
+        /* Convert cv::Mat to numpy */
+        npy_intp dims[3] = {ret.rows, ret.cols, 3};
+        PyObject *value = PyArray_SimpleNewFromData(3, dims, NPY_UBYTE, ret.data);
+        return_val = value;
     """
+
 
 def set_original_image_code():
     return """
@@ -59,10 +65,12 @@ def set_original_image_code():
         original_image = mat_original;
     """
 
+
 def set_global_params_code():
     return """
         global_param = dct_global_param;
     """
+
 
 def params_code():
     """
@@ -148,6 +156,28 @@ def params_code():
                 py_init_param.call(args);
             }
             return param_get_string(name);
+        }
+
+        void param_set_desc(std::string name, std::string description) {
+            if(!params.has_key(name)) {
+                printf("ERROR from cpp_code param_set_desc: key %s not exist.\\n", name.c_str());
+                return;
+            }
+            py::object obj_param = params.get(name);
+            py::tuple args(1);
+            args[0] = description;
+            obj_param.mcall("set_description", args);
+        }
+
+        void param_add_group(std::string name, std::string group) {
+            if(!params.has_key(name)) {
+                printf("ERROR from cpp_code param_add_group: key %s not exist.\\n", name.c_str());
+                return;
+            }
+            py::object obj_param = params.get(name);
+            py::tuple args(1);
+            args[0] = group;
+            obj_param.mcall("add_group", args);
         }
 
         double param_double(std::string name, double value, double min, double max) {
@@ -354,6 +384,7 @@ def params_code():
         }
     """
 
+
 def notify_code():
     """
     Notify send information to output observer.
@@ -383,6 +414,7 @@ def notify_code():
         }
     """
 
+
 def help_code():
     """
     Return the code that returns the help string from a c++ file
@@ -394,6 +426,7 @@ def help_code():
         return_val = "";
         #endif
     """
+
 
 def config_code():
     """

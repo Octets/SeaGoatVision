@@ -1,6 +1,6 @@
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This filename is part of SeaGoatVision.
+#    This file is part of SeaGoatVision.
 #
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,18 +17,21 @@
 
 # This Makefile manage filter in cpp situate in folder filters.
 # Build is done into directory build
+.PHONY : filter third_party clean_python clean_third_party clean
 
-all: third_party
+all: third_party filter
+
+filter:
 	./filters/build_cpp_filter.py
 
 third_party:
-	-make -C thirdparty/public/pydc1394
+	-make -C thirdparty
 
 clean_python:
 	find . -type f -name '*.pyc' -exec rm {} \;
 
 clean_third_party:
-	-make -C thirdparty/public/pydc1394 clean
+	-make -C thirdparty clean
 
 clean: clean_python clean_third_party
 	-rm -Rf ./build

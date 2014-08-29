@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
-#    This filename is part of SeaGoatVision.
+#    This file is part of SeaGoatVision.
 #
 #    SeaGoatVision is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -24,15 +24,18 @@ from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
-class Image_recorder:
+
+class ImageRecorder:
+
     def __init__(self, media):
         self.writer = None
         self.media = media
         self.config = Configuration()
         self.file_name = None
         self.index = 0
+        self.compress = 0
 
-    def start(self, shape, path=None, fps=30):
+    def start(self, shape, path=None, fps=30, compress=0):
         # TODO manage multiple record
         # manage only one record at time
         if self.writer:
@@ -48,6 +51,8 @@ class Image_recorder:
         if os.path.isfile(path):
             log.print_function(logger.error, "File already exist %s" % path)
             return False
+
+        self.compress = compress
 
         if not os.path.isdir(path):
             try:
@@ -68,7 +73,9 @@ class Image_recorder:
         return path
 
     def write(self, image):
-        cv2.imwrite(self.next_filename(), image)
+        compress = int(self.compress * 0.09)
+        params = [cv2.cv.CV_IMWRITE_PNG_COMPRESSION, compress]
+        cv2.imwrite(self.next_filename(), image, params)
 
     def get_file_name(self):
         if not self.file_name:

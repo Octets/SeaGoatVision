@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -19,7 +19,9 @@
 
 from SeaGoatVision.server.media.implementation.webcam import Webcam
 
-class Conf_webcam:
+
+class ConfWebcam:
+
     def __init__(self):
         self.media = Webcam
         self.name = "Webcam"

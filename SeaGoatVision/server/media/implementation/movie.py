@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -18,9 +18,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-import cv2.cv as cv
+from cv2 import cv
+
 
 class Movie:
+
     def __init__(self, file_name):
         self.video = None
         self.isplaying = True
@@ -76,7 +78,7 @@ class Movie:
 
     def next(self):
         if self.video is None or not self.video.isOpened():
-            return None
+            return
         elif not self.isplaying:
             return self.last_image.copy()
 

@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -17,31 +17,48 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-Description : contain shared variable inter-widget and signal connect with interrupt
+Description : contain shared variable inter-widget and signal connect with \
+interrupt
 """
 
-class Shared_info(object):
+
+class SharedInfo(object):
     _instance = None
+
+    GLOBAL_MEDIA = "media"
+    GLOBAL_FILTERCHAIN = "filter_chain"
+    GLOBAL_FILTER = "filter"
+    GLOBAL_EXEC = "exec"
+    GLOBAL_CLOSE_EXEC = "close_exec"
+    GLOBAL_FILTERCHAIN_EDIT_MODE = "filter_chain_edit_mode"
+    GLOBAL_PATH_MEDIA = "path_media"
+    GLOBAL_START_EXEC = "start_exec"
+    GLOBAL_RELOAD_FILTER = "reload_filter"
+    GLOBAL_HIST_REC_PATH_MEDIA = "hist_rec_path_media"
+
     def __new__(cls):
         # Singleton
         if not cls._instance:
             # first instance
             # list of shared variable
             cls.dct_variable = {}
-            cls.dct_variable["media"] = None
-            cls.dct_variable["filterchain"] = None
-            cls.dct_variable["filter"] = None
-            cls.dct_variable["execution"] = None
-            cls.dct_variable["filterchain_edit_mode"] = None
-            cls.dct_variable["path_media"] = None
-            cls.dct_variable["start_execution"] = None
+            cls.dct_variable[cls.GLOBAL_MEDIA] = None
+            cls.dct_variable[cls.GLOBAL_FILTERCHAIN] = None
+            cls.dct_variable[cls.GLOBAL_FILTER] = None
+            cls.dct_variable[cls.GLOBAL_EXEC] = None
+            cls.dct_variable[cls.GLOBAL_CLOSE_EXEC] = None
+            cls.dct_variable[cls.GLOBAL_FILTERCHAIN_EDIT_MODE] = None
+            cls.dct_variable[cls.GLOBAL_PATH_MEDIA] = None
+            cls.dct_variable[cls.GLOBAL_START_EXEC] = None
+            cls.dct_variable[cls.GLOBAL_RELOAD_FILTER] = None
+            cls.dct_variable[cls.GLOBAL_HIST_REC_PATH_MEDIA] = None
 
             cls.dct_signal = {}
             for key in cls.dct_variable.keys():
-                 cls.dct_signal[key] = []
+                cls.dct_signal[key] = []
 
             # instance class
-            cls._instance = super(Shared_info, cls).__new__(cls)
+            cls._instance = super(SharedInfo, cls).__new__(cls)
         return cls._instance
 
     def connect(self, key, callback):
@@ -49,7 +66,7 @@ class Shared_info(object):
             return False
         lst_callback = self.dct_signal[key]
         if callback in lst_callback:
-            return False 
+            return False
         lst_callback.append(callback)
         # call if already contain value
         value = self.dct_variable.get(key, None)
@@ -59,7 +76,7 @@ class Shared_info(object):
 
     def get(self, key):
         return self.dct_variable.get(key, None)
-    
+
     def set(self, key, value):
         if key not in self.dct_variable:
             return False

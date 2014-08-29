@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -17,26 +17,32 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Contains the FilterChain class and helper functions to work with the filter chain."""
+"""Contains the FilterChain class and helper functions to work with the \
+filter chain."""
 
 from SeaGoatVision.server.core.filter import Filter
 from SeaGoatVision.commons import keys
 import cv2
-import cv2.cv as cv
+from cv2 import cv
 import numpy as np
 from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class FilterChain(object):
     """ Observable.  Contains the chain of filters to execute on an image.
 
     The observer must be a method that receive a filter and an image as param.
-    The observer method is called after each execution of a filter in the filter chain.
+    The observer method is called after each execution of a filter in the \
+    filter chain.
     """
-    def __init__(self, filterchain_name, serialize=None, default_media_name=None):
+
+    def __init__(self, filterchain_name, serialize=None,
+                 default_media_name=None):
         # to limit the infini import, we import in the init
         from resource import Resource
+
         self.resource = Resource()
 
         self.filters = []
@@ -47,7 +53,8 @@ class FilterChain(object):
         self.original_image_observer = []
         self.dct_global_param = {}
         self.dct_media_param = {}
-        # If starting filterchain with empty media_name, we take the default media
+        # If starting filterchain with empty media_name, we take the default
+        # media
         self.default_media_name = default_media_name
 
         if serialize:
@@ -55,6 +62,8 @@ class FilterChain(object):
         else:
             # add default filter
             self.add_filter(Filter(keys.get_empty_filter_name()))
+
+        self.do_configure()
 
     def destroy(self):
         # clean everything!
@@ -69,11 +78,14 @@ class FilterChain(object):
                 self.remove_image_observer(obs, filter_name)
 
         for o_filter in self.filters:
+            o_filter.destroy_param()
             o_filter.destroy()
 
-    def serialize(self):
+    def serialize(self, is_config=False):
         # Keep list of filter with param
-        dct = {"lst_filter":[o_filter.serialize() for o_filter in self.filters if o_filter.name != keys.get_empty_filter_name()]}
+        dct = {"lst_filter": [o_filter.serialize(is_config=is_config)
+                              for o_filter in self.filters if
+                              o_filter.name != keys.get_empty_filter_name()]}
         if self.default_media_name:
             dct["default_media_name"] = self.default_media_name
         return dct
@@ -92,26 +104,37 @@ class FilterChain(object):
             o_filter = self.resource.create_filter(filter_name, index)
             index += 1
             if not o_filter:
-                log.print_function(logger.warning, "Cannot create filter %s, maybe it not exists." % filter_name)
+                log.print_function(
+                    logger.warning,
+                    "Cannot create filter %s, maybe it not exists." %
+                    filter_name)
                 continue
             status &= o_filter.deserialize(filter_to_ser)
             self.add_filter(o_filter)
         if status:
-            log.print_function(logger.info, "Deserialize filterchain %s success." % name)
+            log.print_function(
+                logger.info,
+                "Deserialize filterchain %s success." %
+                name)
         else:
-            log.print_function(logger.warning, "Deserialize filterchain %s failed." % name)
+            log.print_function(
+                logger.warning,
+                "Deserialize filterchain %s failed." %
+                name)
         return status
 
     def deserialize_update(self, name, value):
         status = True
         self.filterchain_name = name
         lst_filter = value.get("lst_filter", [])
-        self.default_media_name = value.get("default_media_name", None)
+        if self.default_media_name is None:
+            self.default_media_name = value.get("default_media_name", None)
 
         for o_filter in self.filters:
             # find is appropriate filter if exist
             for filter_ser in lst_filter:
-                if filter_ser.get("filter_name", None) == o_filter.get_code_name():
+                if filter_ser.get("filter_name",
+                                  None) == o_filter.get_code_name():
                     status &= o_filter.deserialize(filter_ser)
         return status
 
@@ -136,36 +159,45 @@ class FilterChain(object):
         return self.filter_output_observers
 
     def get_filter_list(self):
-        class Filter: pass
-        retValue = []
-        for item in self.filters:
-            o_filter = Filter()
-            setattr(o_filter, "name", item.get_name())
-            setattr(o_filter, "doc", item.__doc__)
-            retValue.append(o_filter)
-        return retValue
+        return [item.serialize(is_info=True) for item in self.filters]
 
-    def get_params(self, o_filter=None, filter_name=None):
+    def get_params(self, o_filter=None, filter_name=None, param_name=None):
         if filter_name:
             o_filter = self.get_filter(name=filter_name)
             if not o_filter:
-                return None
+                return
         if o_filter:
+            if param_name:
+                return o_filter.get_params(param_name=param_name)
             return o_filter.get_params()
-        return [(o_filter.get_name(), o_filter.get_params()) for o_filter in self.filters]
+        return [(o_filter.get_name(), o_filter.get_params()) for o_filter in
+                self.filters]
 
     def __getitem__(self, index):
         return self.filters[index]
 
     def get_filter(self, index=None, name=None):
+        return_data = None
         if index is not None:
             # TODO not better return self[index] ??
-            return self.filters[index]
+            return_data = self.filters[index]
         elif name is not None:
-            lst_filter = [o_filter for o_filter in self.filters if o_filter.get_name() == name]
+            lst_filter = [
+                o_filter for o_filter in self.filters if
+                o_filter.get_name() == name]
             if lst_filter:
-                return lst_filter[0]
-        return None
+                return_data = lst_filter[0]
+        else:
+            return_data = self.filters
+        return return_data
+
+    def get_filter_name(self):
+        return [o_filter.get_name() for o_filter in self.filters]
+
+    def set_execution_name(self, execution_name):
+        # add execution name in each filter, need it for notification
+        for o_filter in self.filters:
+            o_filter.set_execution_name(execution_name)
 
     def add_filter(self, o_filter):
         self.filters.append(o_filter)
@@ -184,7 +216,7 @@ class FilterChain(object):
                 filter_output_obs_copy = self.filter_output_observers[:]
                 for output in filter_output_obs_copy:
                     self.remove_filter_output_observer(output)
-                # recreate the instance
+                    # recreate the instance
                 # index -1 to ignore the default filter
                 o_filter.set_name("%s-%d" % (o_filter.get_name(), index - 1))
                 obj = self.filters[index]
@@ -200,36 +232,42 @@ class FilterChain(object):
         b_original = False
         if keys.get_filter_original_name() == filter_name:
             b_original = True
-            lstObserver = self.original_image_observer
+            lst_observer = self.original_image_observer
         else:
-            lstObserver = self.image_observers.get(filter_name, [])
-        if lstObserver:
-            if observer in lstObserver:
-                log.print_function(logger.warning, "This observer already observer the filter %s" % filter_name)
+            lst_observer = self.image_observers.get(filter_name, [])
+        if lst_observer:
+            if observer in lst_observer:
+                log.print_function(
+                    logger.warning,
+                    "This observer already observer the filter %s" %
+                    filter_name)
                 return False
             else:
-                lstObserver.append(observer)
+                lst_observer.append(observer)
         elif not b_original:
             self.image_observers[filter_name] = [observer]
         else:
-            lstObserver.append(observer)
+            lst_observer.append(observer)
         return True
 
     def remove_image_observer(self, observer, filter_name):
         b_original = False
         if keys.get_filter_original_name() == filter_name:
             b_original = True
-            lstObserver = self.original_image_observer
+            lst_observer = self.original_image_observer
         else:
-            lstObserver = self.image_observers.get(filter_name, [])
-        if lstObserver:
-            if observer in lstObserver:
-                lstObserver.remove(observer)
-                if not lstObserver and not b_original:
+            lst_observer = self.image_observers.get(filter_name, [])
+        if lst_observer:
+            if observer in lst_observer:
+                lst_observer.remove(observer)
+                if not lst_observer and not b_original:
                     del self.image_observers[filter_name]
                 return True
 
-        log.print_function(logger.warning, "This observer is not in observation list for filter %s" % filter_name)
+        log.print_function(
+            logger.warning,
+            "This observer is not in observation list for filter %s" %
+            filter_name)
         return False
 
     def add_filter_output_observer(self, output):
@@ -246,32 +284,36 @@ class FilterChain(object):
                 f.remove_output_observer(output)
         return True
 
+    def do_configure(self):
+        for f in self.filters:
+            f.configure()
+
     def execute(self, image):
-        original_image = np.copy(image);
+        original_image = np.copy(image)
         # first image observator
         if self.original_image_observer:
             self.send_image(original_image, self.original_image_observer)
 
-        for f in self.filters:
-            f.set_original_image(original_image)
-            try:
-                image = f.execute(image)
-            except Exception as e:
-                msg = "(Exec exception Filter %s) %s" % (f.get_name(), e)
-                log.printerror_stacktrace(logger, msg, check_duplicate=True)
-                break
+        try:
+            for f in self.filters:
+                if f.get_is_active():
+                    f.set_original_image(original_image)
+                    image = f.execute(image)
 
-            lst_observer = self.image_observers.get(f.get_name(), [])
-            if lst_observer:
-                self.send_image(image, lst_observer)
+                lst_observer = self.image_observers.get(f.get_name(), [])
+                if lst_observer:
+                    self.send_image(image, lst_observer)
+        except BaseException as e:
+            msg = "(Exec exception Filter %s) %s" % (f.get_name(), e)
+            log.printerror_stacktrace(logger, msg, check_duplicate=True)
         return image
 
     def send_image(self, image, lst_observer):
-        if type(image) is not np.ndarray or not image.size:
+        if not isinstance(image,
+                          np.ndarray) or not image.size or image.ndim != 3:
             return
-        # copy the picture because the next filter will modify him
+            # copy the picture because the next filter will modify him
         # transform it in rgb
-        image2 = np.copy(image)
-        cv2.cvtColor(np.copy(image), cv.CV_BGR2RGB, image2)
+        image2 = cv2.cvtColor(np.copy(image), cv.CV_BGR2RGB)
         for observer in lst_observer:
             observer(image2)

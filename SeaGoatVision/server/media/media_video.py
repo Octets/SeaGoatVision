@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -24,9 +24,11 @@ from implementation.movie import Movie
 from implementation.imagefolder import ImageFolder
 from SeaGoatVision.commons import keys
 
-class Media_video(Media):
+
+class MediaVideo(Media):
+
     def __init__(self, name):
-        super(Media_video, self).__init__()
+        super(MediaVideo, self).__init__()
         self.movie = None
         self.imagefolder = None
 
@@ -73,7 +75,7 @@ class Media_video(Media):
             return False
         elif action == keys.get_key_media_loop():
             self.set_loop_enable(not self.active_loop)
-        elif action == keys.set_key_media_frame():
+        elif action == keys.get_key_media_frame():
             self.change_frame(value)
         else:
             return False
@@ -100,7 +102,7 @@ class Media_video(Media):
             self.imagefolder = ImageFolder()
             self.imagefolder.read_image(file_name)
             return True
-        #if the file is not a video, videocapture not return None
+        # if the file is not a video, videocapture not return None
         # check if it's supported video
         video = cv2.VideoCapture(file_name)
         if video:
@@ -119,4 +121,4 @@ class Media_video(Media):
             return self.movie.next()
         if self.imagefolder:
             return self.imagefolder.next()
-        return None
+        return

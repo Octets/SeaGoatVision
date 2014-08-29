@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+# Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -18,14 +18,15 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cv2
-from SeaGoatVision.server.media.media_streaming import Media_streaming
+from SeaGoatVision.server.media.media_streaming import MediaStreaming
 from SeaGoatVision.server.core.configuration import Configuration
 from SeaGoatVision.commons.param import Param
 from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
-class Webcam(Media_streaming):
+
+class Webcam(MediaStreaming):
     """Return images from the webcam."""
 
     def __init__(self, config):
@@ -38,7 +39,7 @@ class Webcam(Media_streaming):
         self.video = None
         video = cv2.VideoCapture(config.no)
         if video.isOpened():
-            self.isOpened = True
+            self._is_opened = True
             video.release()
 
         self._create_params()
@@ -49,79 +50,51 @@ class Webcam(Media_streaming):
         self.dct_params = {}
 
         default_resolution_name = "800x600"
-        self.dct_resolution = {default_resolution_name:(800, 600),
-                               "320x240":(320, 240),
-                               "640x480":(640, 480),
-                               "1024x768":(1024, 768),
-                               "1280x960":(1280, 960)}
-        param = Param("resolution", default_resolution_name, lst_value=self.dct_resolution.keys())
-        param.add_notify_reset(self.reset_property_param)
-        self.dct_params["resolution"] = param
+        self.dct_resolution = {default_resolution_name: (800, 600),
+                               "320x240": (320, 240),
+                               "640x480": (640, 480),
+                               "1024x768": (1024, 768),
+                               "1280x960": (1280, 960),
+                               "1280x1024": (1280, 1024)}
+        self.param_resolution = Param(
+            "resolution",
+            default_resolution_name,
+            lst_value=self.dct_resolution.keys())
+        self.param_resolution.add_notify(self.reload)
 
         default_fps_name = "30"
-        self.dct_fps = {default_fps_name:30, "15":15, "7.5":7.5}
-        param = Param("fps", default_fps_name, lst_value=self.dct_fps.keys())
-        param.add_notify_reset(self.reset_property_param)
-        self.dct_params["fps"] = param
-
-    def serialize(self):
-        return {"resolution":self.dct_params.get("resolution").get(), "fps":self.dct_params.get("fps").get()}
-
-    def deserialize(self, data):
-        if not data:
-            return False
-        if type(data) is not dict:
-            log.print_function(logger.error, "Wrong format data, suppose to be dict into camera %s" % self.get_name())
-            return False
-        res = data.get("resolution", None)
-        if res:
-            self.dct_params.get("resolution").set(res)
-        res = data.get("fps", None)
-        if res:
-            self.dct_params.get("fps").set(res)
-        return True
+        self.dct_fps = {default_fps_name: 30, "15": 15, "7.5": 7.5}
+        self.param_fps = Param("fps", default_fps_name,
+                               lst_value=self.dct_fps.keys())
+        self.param_fps.add_notify(self.reload)
 
     def open(self):
         try:
-            shape = self.dct_resolution[self.dct_params.get("resolution").get()]
-            fps = self.dct_fps[self.dct_params.get("fps").get()]
+            shape = self.dct_resolution[self.param_resolution.get()]
+            fps = self.dct_fps[self.param_fps.get()]
 
+            # TODO check argument video capture
             self.video = cv2.VideoCapture(self.own_config.no)
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, shape[0])
             self.video.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, shape[1])
             self.video.set(cv2.cv.CV_CAP_PROP_FPS, fps)
-        except Exception as e:
-            log.printerror_stacktrace(logger, "Open camera %s: %s" % (self.get_name(), e))
+        except BaseException as e:
+            log.printerror_stacktrace(
+                logger, "Open camera %s: %s" %
+                (self.get_name(), e))
             return False
         # call open when video is ready
-        return Media_streaming.open(self)
+        return MediaStreaming.open(self)
 
     def next(self):
         run, image = self.video.read()
-        if run == False:
+        if not run:
             raise StopIteration
         return image
 
     def close(self):
-        Media_streaming.close(self)
-        self.video.release()
-        self.isOpened = False
-        return True
-
-    def get_properties_param(self):
-        return self.dct_params.values()
-
-    def update_property_param(self, param_name, value):
-        param = self.dct_params.get(param_name, None)
-        if not param:
-            return False
-        param_value = param.get()
-        if value == param_value:
-            return True
-        param.set(value)
-        self.reload()
-        return True
-
-    def reset_property_param(self, param_name, value):
-        self.reload()
+        MediaStreaming.close(self)
+        if self.video:
+            self.video.release()
+        self._is_opened = False
         return True

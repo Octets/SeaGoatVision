@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -18,12 +18,21 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Description : Run the command line interface to communicate with the SeaGoatVision Server
+Description : Run the command line interface to communicate with the \
+SeaGoatVision Server
 """
-import sys
 import fileinput
 
-def run(local=False, host="localhost", port=8090, quiet=False):
+
+def run(ctr, subscriber, local=False,
+        host="localhost", port=8090, quiet=False):
+    # TODO implement using subscriber
     from vCmd import VCmd
-    VCmd(stdin=fileinput.input(), local=local, host=host, port=port, quiet=quiet).cmdloop()
+    VCmd(
+        ctr,
+        stdin=fileinput.input(),
+        local=local,
+        host=host,
+        port=port,
+        quiet=quiet).cmdloop()
     return 0

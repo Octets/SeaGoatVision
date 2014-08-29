@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -20,7 +20,9 @@
 import cv2
 import os
 
+
 class ImageFolder:
+
     def __init__(self):
         self.file_names = []
         self.pos = 0
@@ -38,7 +40,7 @@ class ImageFolder:
 
     def next(self):
         if not self.file_names:
-            return None
+            return
         if self.pos > len(self.file_names):
             self.pos = 0
             raise StopIteration
@@ -54,7 +56,7 @@ class ImageFolder:
     def current_pos(self):
         return self.pos
 
-    def current_file_name(self, pos= -1):
+    def current_file_name(self, pos=-1):
         if pos == -1:
             pos = self.pos
         return self.file_names[pos]
@@ -74,8 +76,8 @@ class ImageFolder:
             for filename in files:
                 path = os.path.join(root, filename)
                 # TODO do we need to check if file is real image??
-                #image = cv2.imread(path)
-                #if image is not None:
+                # image = cv2.imread(path)
+                # if image is not None:
                 #    images.append(path)
                 images.append(path)
         list.sort(images)

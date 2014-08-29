@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -20,37 +20,32 @@
 """
 Description : Implementation of cmd, command line of python
 """
-# SOURCE of this code about the commande line : http://www.doughellmann.com/PyMOTW/cmd/
+# SOURCE of this code about the commande line :
+# http://www.doughellmann.com/PyMOTW/cmd/
 import cmd
 from SeaGoatVision.commons import log
 
 logger = log.get_logger(__name__)
 
+
 class VCmd(cmd.Cmd):
-    def __init__(self, local=False, host="localhost", port=8090, completekey='tab', stdin=None, stdout=None, quiet=False):
-        cmd.Cmd.__init__(self, completekey=completekey, stdin=stdin, stdout=stdout)
+
+    def __init__(self, ctr, local=False, host="localhost", port=8090,
+                 completekey='tab', stdin=None, stdout=None, quiet=False):
+        cmd.Cmd.__init__(
+            self,
+            completekey=completekey,
+            stdin=stdin,
+            stdout=stdout)
         self.quiet = quiet
-        if local:
-            from SeaGoatVision.server.core.manager import Manager
-            self.controller = Manager()
-        else:
-            from SeaGoatVision.client.controller.controllerProtobuf import ControllerProtobuf
-            # Protobuf
-            self.controller = ControllerProtobuf(host, port, quiet=quiet)
-
-        # Directly connected to the vision server
-        # self.controller = Manager()
-
-        if not self.controller.is_connected():
-            logger.info("Vision server is not accessible.")
-            return None
+        self.controller = ctr
 
         if self.quiet:
             self.prompt = ""
 
-    ##########################################################################
+    #
     # List of command
-    ##########################################################################
+    #
     def do_is_connected(self, line):
         if not self.quiet:
             if self.controller.is_connected():
@@ -59,22 +54,26 @@ class VCmd(cmd.Cmd):
                 logger.info("You are disconnected.")
 
     def do_get_filter_list(self, line):
-        lstFilter = self.controller.get_filter_list()
-        if lstFilter is not None:
-            logger.info("Nombre de ligne %s, tableau : %s" % (len(lstFilter), lstFilter))
+        lst_filter = self.controller.get_filter_list()
+        if lst_filter is not None:
+            logger.info(
+                "Nombre de ligne %s, tableau : %s" %
+                (len(lst_filter), lst_filter))
         else:
             logger.info("No filterlist")
 
     def do_get_filterchain_list(self, line):
-        lstFilterChain = self.controller.get_filterchain_list()
-        lst_name = [item.name for item in lstFilterChain]
+        lst_filter_chain = self.controller.get_filterchain_list()
+        lst_name = [item.get("name") for item in lst_filter_chain]
         if not self.quiet:
-            if lstFilterChain is not None:
-                logger.info("Nombre de ligne %s, tableau : %s" % (len(lstFilterChain), lst_name))
+            if lst_filter_chain is not None:
+                logger.info(
+                    "Nombre de ligne %s, tableau : %s" %
+                    (len(lst_filter_chain), lst_name))
             else:
-                logger.info("No lstFilterChain")
+                logger.info("No lst_filter_chain")
         else:
-             logger.info(lst_name)
+            logger.info(lst_name)
 
     def do_add_output_observer(self, line):
         # execution_name
@@ -103,7 +102,8 @@ class VCmd(cmd.Cmd):
             if filterchain == "None":
                 filterchain = ""
 
-        self.controller.start_filterchain_execution(name, media, filterchain)
+        self.controller.start_filterchain_execution(
+            name, media, filterchain, None, False)
 
     def do_stop_filterchain_execution(self, line):
         # execution_name
@@ -116,7 +116,7 @@ class VCmd(cmd.Cmd):
         path = None
         if len(param) > 1:
             path = param[1]
-        self.controller.start_record(param[0], path=path)
+        self.controller.start_record(param[0], path)
 
     def do_stop_record(self, line):
         # media_name

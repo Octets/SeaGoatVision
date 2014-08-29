@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-#    Copyright (C) 2012  Octets - octets.etsmtl.ca
+#    Copyright (C) 2012-2014  Octets - octets.etsmtl.ca
 #
 #    This file is part of SeaGoatVision.
 #
@@ -18,4 +18,3 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 default_media_selected = "Webcam"
-
