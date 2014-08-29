@@ -47,7 +47,6 @@ Thanks club Capra and club Sonia to support us.
  - http://capra.etsmtl.ca
  - http://sonia.etsmtl.ca
 
-Changelog
-----------------
- - 0.2 : version with Qt graphic interface, GTK is removed. Integrate Firewire camera, client/server with Protobuf, add parameters between client and filter/media. The analyser of filter and the camera Ethernet is removed temporary.
- - 0.1 : version with GTK graphic interface. Ready for the Capra competition. Can create and run filterchain, reload filters, save parameters, observer filters output, run python and c++ filters, and record video.
+Release
+-------
+Read RELEASE file.
